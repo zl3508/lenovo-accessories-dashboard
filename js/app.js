@@ -39,16 +39,16 @@ const homeButton = document.querySelector("#homeButton");
 const sourceStatus = document.querySelector("#sourceStatus");
 
 const granularityLabels = {
-  month: "月",
-  quarter: "季度",
-  year: "年",
+  month: "Month",
+  quarter: "Quarter",
+  year: "Year",
 };
 
 const categoryViews = {
-  market: "市场分析",
-  competitive: "竞品分析",
-  overview: "品类总览",
-  products: "产品列表",
+  market: "Market Analysis",
+  competitive: "Competitor Analysis",
+  overview: "Category Overview",
+  products: "Product List",
 };
 
 const marketModules = {
@@ -187,13 +187,12 @@ function renderHome() {
         <div class="hero-copy">
           <p class="eyebrow">Static GitHub Pages Dashboard</p>
           <h1>Lenovo Product Data Visualization</h1>
-          <p class="lead">Adapter、Power Bank、Power Cable 三个品类的数据已拆分为静态 JSON，页面通过原生 CSS + JS + Plotly.js 直接聚合和渲染。</p>
         </div>
         <div class="hero-stats">
           <div class="stat-tile">
             <span>Products</span>
             <strong>${data.catalog.products.length}</strong>
-            <small>当前模型数，后续可继续加入新分类。</small>
+            <small>Current model count with room for future categories.</small>
           </div>
           <div class="stat-tile">
             <span>Latest Revenue</span>
@@ -216,9 +215,9 @@ function renderHome() {
       <section class="section-head">
         <div>
           <p class="eyebrow">Product Categories</p>
-          <h2>选择产品分区</h2>
+          <h2>Select a Category</h2>
         </div>
-        <p>每个分区包含对应的品类筛选、model 对比、单品四维度详情，以及月 / 季度 / 年聚合。</p>
+        <p>Each category includes filters, model comparison, product detail views, and month / quarter / year aggregation.</p>
       </section>
 
       <section class="category-grid">
@@ -240,7 +239,7 @@ function renderCategoryCard(category, latest) {
     <button class="category-card" type="button" style="--accent:${category.accent}" data-route-category="${category.id}">
       <header>
         <div>
-          <p class="eyebrow">${escapeHtml(category.labelZh)}</p>
+          <p class="eyebrow">Product Category</p>
           <h2>${escapeHtml(category.label)}</h2>
         </div>
         <span class="tag">${productCount} models</span>
@@ -262,7 +261,7 @@ function renderCategory(categoryId) {
     <div class="view-stack" style="--accent:${category.accent}">
       <section class="page-head">
         <div>
-          <p class="eyebrow">${escapeHtml(category.labelZh)}</p>
+          <p class="eyebrow">Product Category</p>
           <h1>${escapeHtml(category.label)}</h1>
         </div>
         <div class="toolbar-group">

@@ -669,10 +669,21 @@ input[type="search"] {
   display: grid;
   gap: 10px;
   align-content: start;
+  border: 1px solid color-mix(in srgb, var(--accent, var(--red)) 24%, var(--line));
+  border-left: 5px solid var(--accent, var(--red));
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent, var(--red)) 8%, white), rgba(255, 255, 255, 0.94)),
+    var(--surface);
+  box-shadow: 0 12px 26px rgba(31, 35, 40, 0.06);
 }
 
 .policy-card strong {
   display: block;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent, var(--red)) 18%, var(--line));
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.7);
   color: var(--ink);
   line-height: 1.45;
 }

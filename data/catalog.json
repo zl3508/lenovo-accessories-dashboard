@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T12:19:30Z",
+  "generatedAt": "2026-04-30T13:19:39Z",
   "periods": [
     "2025-03-01",
     "2025-04-01",
@@ -19,21 +19,21 @@
     {
       "id": "adapter",
       "label": "Adapter",
-      "labelZh": "充电器",
+      "labelZh": "Charging Adapters",
       "description": "Wall, desktop, wireless, and 2-in-1 charging adapters.",
       "accent": "#e2231a"
     },
     {
       "id": "power_bank",
       "label": "Power Bank",
-      "labelZh": "移动电源",
+      "labelZh": "Portable Power",
       "description": "Portable battery products across daily, travel, and outdoor use.",
       "accent": "#e2231a"
     },
     {
       "id": "power_cable",
       "label": "Power Cable",
-      "labelZh": "充电线",
+      "labelZh": "Charging Cables",
       "description": "USB-C, USB-A, Lightning, high-wattage, and bundled cables.",
       "accent": "#e2231a"
     }
