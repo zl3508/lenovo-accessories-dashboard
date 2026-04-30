@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T11:15:16Z",
+  "generatedAt": "2026-04-30T12:19:30Z",
   "periods": [
     "2025-03-01",
     "2025-04-01",
@@ -28,14 +28,14 @@
       "label": "Power Bank",
       "labelZh": "移动电源",
       "description": "Portable battery products across daily, travel, and outdoor use.",
-      "accent": "#0f766e"
+      "accent": "#e2231a"
     },
     {
       "id": "power_cable",
       "label": "Power Cable",
       "labelZh": "充电线",
       "description": "USB-C, USB-A, Lightning, high-wattage, and bundled cables.",
-      "accent": "#b45309"
+      "accent": "#e2231a"
     }
   ],
   "filters": {
@@ -64,11 +64,6 @@
         "id": "interfaceProtocols",
         "label": "Interface Protocol",
         "match": "array"
-      },
-      {
-        "id": "isTwoInOne",
-        "label": "2-in-1",
-        "match": "boolean"
       }
     ],
     "power_bank": [
@@ -91,11 +86,6 @@
         "id": "scenarios",
         "label": "Scenario",
         "match": "array"
-      },
-      {
-        "id": "isTwoInOne",
-        "label": "2-in-1",
-        "match": "boolean"
       }
     ],
     "power_cable": [
@@ -133,10 +123,8 @@
         "travel",
         "GaN",
         "multi-device",
-        "dual port",
         "high wattage",
         "desktop",
-        "wireless",
         "2-in-1"
       ],
       "powerMode": [
@@ -154,10 +142,6 @@
         "USB-C PD 3.1",
         "USB-A QC",
         "Qi2"
-      ],
-      "isTwoInOne": [
-        false,
-        true
       ]
     },
     "power_bank": {
@@ -166,7 +150,6 @@
         "daily carry",
         "USB-C",
         "magnetic",
-        "wireless",
         "high capacity",
         "high wattage",
         "travel",
@@ -191,10 +174,6 @@
         "travel",
         "workstation",
         "outdoor"
-      ],
-      "isTwoInOne": [
-        false,
-        true
       ]
     },
     "power_cable": {
@@ -406,8 +385,7 @@
       ],
       "tags": [
         "multi-device",
-        "travel",
-        "dual port"
+        "travel"
       ]
     },
     {
@@ -517,7 +495,6 @@
       ],
       "tags": [
         "desktop",
-        "wireless",
         "multi-device"
       ]
     },
@@ -649,7 +626,6 @@
       ],
       "tags": [
         "magnetic",
-        "wireless",
         "daily carry"
       ]
     },

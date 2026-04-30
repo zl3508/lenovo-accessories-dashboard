@@ -1,6 +1,6 @@
 :root {
   color-scheme: light;
-  --bg: #f6f5f2;
+  --bg: #f7f6f3;
   --surface: #ffffff;
   --surface-soft: #fbfaf7;
   --ink: #1f2328;
@@ -8,6 +8,7 @@
   --line: #dedbd2;
   --line-strong: #c9c3b8;
   --red: #e2231a;
+  --black: #111827;
   --teal: #0f766e;
   --amber: #b45309;
   --blue: #2563eb;
@@ -179,15 +180,15 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: clamp(34px, 5vw, 68px);
-  line-height: 0.98;
+  font-size: clamp(30px, 4.2vw, 54px);
+  line-height: 1;
   letter-spacing: 0;
 }
 
 h2 {
   margin-bottom: 0;
-  font-size: clamp(24px, 3vw, 38px);
-  line-height: 1.05;
+  font-size: clamp(21px, 2.4vw, 30px);
+  line-height: 1.12;
   letter-spacing: 0;
 }
 
@@ -295,7 +296,7 @@ h3 {
 }
 
 .category-card h2 {
-  font-size: clamp(26px, 3.2vw, 42px);
+  font-size: clamp(24px, 2.8vw, 34px);
 }
 
 .category-card p {
@@ -421,13 +422,68 @@ h3 {
   border-radius: var(--radius);
   background: transparent;
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 760;
 }
 
 .category-tabs button.is-active {
   border-color: var(--accent, var(--red));
   background: color-mix(in srgb, var(--accent, var(--red)) 10%, white);
   color: var(--ink);
+}
+
+.module-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent, var(--red)) 22%, var(--line));
+  border-radius: var(--radius);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent, var(--red)) 7%, white), rgba(255, 255, 255, 0.82)),
+    var(--surface);
+}
+
+.module-tabs button {
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.module-tabs button.is-active {
+  border-color: var(--accent, var(--red));
+  background: var(--accent, var(--red));
+  color: #fff;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--accent, var(--red)) 20%, transparent);
+}
+
+.module-head {
+  display: grid;
+  gap: 5px;
+}
+
+.module-head span {
+  color: var(--accent, var(--red));
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.module-head h2 {
+  font-size: clamp(20px, 2vw, 26px);
+}
+
+.module-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .segmented {
@@ -667,6 +723,11 @@ input[type="search"] {
   text-align: center;
   font-weight: 900;
   line-height: 1.05;
+}
+
+.word-cloud.compact {
+  min-height: 330px;
+  padding: 22px;
 }
 
 .chart-grid {

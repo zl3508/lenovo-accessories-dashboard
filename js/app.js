@@ -12,6 +12,8 @@ const state = {
   categoryId: null,
   productId: null,
   categoryView: "market",
+  marketModule: "policy",
+  overviewModule: "summary",
   granularity: "month",
   detailGranularity: "month",
   selectedPeriod: { category: null, detail: null },
@@ -48,15 +50,29 @@ const categoryViews = {
   products: "产品列表",
 };
 
-const dimensionLabels = {
-  market: "Market 市场",
-  product: "Product 产品",
-  supply: "Supply Chain 供应链",
-  reviews: "User Reviews 用户评价",
+const marketModules = {
+  policy: "Policy Insights",
+  industry: "Industry Trends",
+  structure: "Market Structure",
 };
 
-const palette = ["#e2231a", "#0f766e", "#b45309", "#2563eb", "#7c3aed", "#15803d", "#be123c", "#475569"];
-const redScale = ["#f4c7c3", "#e9877f", "#d7301f", "#a62a22", "#7f231c"];
+const overviewModules = {
+  summary: "Product Summary",
+  filter: "Data Filters",
+  feedback: "User Feedback",
+  decision: "Product Decision",
+};
+
+const dimensionLabels = {
+  market: "Market",
+  competitor: "Competitor",
+  product: "Product",
+  supply: "Supply",
+  user: "User",
+};
+
+const palette = ["#e2231a", "#1f2328", "#6b7280", "#b91c1c", "#374151", "#0f766e", "#d97706", "#2563eb"];
+const redScale = ["#f5c7c3", "#e98079", "#e2231a", "#b91c1c", "#7f1d1d"];
 const powerOrder = ["45W and below", "60W and below", "65W", "45W to 99W", "100W to 199W", "100W and above", "200W and above"];
 const priceBands = ["<$25", "$25-45", "$45-65", "$65+"];
 
@@ -254,6 +270,7 @@ function renderCategory(categoryId) {
         </div>
       </section>
       ${renderCategoryTabs()}
+      ${renderModuleTabs(categoryId)}
       <div id="categoryViewMount"></div>
     </div>
   `;
@@ -289,6 +306,19 @@ function renderCategoryTabs() {
   `;
 }
 
+function renderModuleTabs(categoryId) {
+  const modules = state.categoryView === "market" ? marketModules : state.categoryView === "overview" ? overviewModules : null;
+  if (!modules) return "";
+  const active = state.categoryView === "market" ? state.marketModule : state.overviewModule;
+  return `
+    <section class="module-tabs" aria-label="${state.categoryView} modules">
+      ${Object.entries(modules)
+        .map(([key, label]) => `<button class="${active === key ? "is-active" : ""}" type="button" data-action="module-view" data-module="${key}">${escapeHtml(label)}</button>`)
+        .join("")}
+    </section>
+  `;
+}
+
 function renderMarketAnalysis(categoryId) {
   const category = indexes.categories.get(categoryId);
   const period = selectedPeriod();
@@ -296,14 +326,56 @@ function renderMarketAnalysis(categoryId) {
   const lenovo = latestBrands.find((row) => row.brand === "Lenovo") || {};
   const totalUnits = latestBrands.reduce((sum, row) => sum + row.brandUnits, 0);
   const reports = data.catalog.policyReports?.[categoryId] || [];
+  const moduleMarkup = {
+    policy: `
+      <section class="module-block">
+        <div class="module-head">
+          <span>Market Module</span>
+          <h2>Policy Insights</h2>
+          <p>Policy reports, sources, and portfolio implications.</p>
+        </div>
+        <div class="policy-grid">
+          ${reports.map((report) => renderPolicyCard(report)).join("")}
+        </div>
+      </section>
+    `,
+    industry: `
+      <section class="module-block">
+        <div class="module-head">
+          <span>Market Module</span>
+          <h2>Industry Trends</h2>
+        </div>
+        <div class="chart-grid">
+          ${chartShell("industryHighPowerPlot", "High Power Migration", "share of demand")}
+          ${chartShell("industryPortsPlot", "Port Upgrade Trend", "sample share")}
+          ${chartShell("industryPriceCurvePlot", "Price Decline by Power", "AUR by period")}
+          ${chartShell("industryTechPlot", "Technology Penetration", "feature adoption")}
+        </div>
+      </section>
+    `,
+    structure: `
+      <section class="module-block">
+        <div class="module-head">
+          <span>Market Module</span>
+          <h2>Market Structure</h2>
+        </div>
+        <div class="chart-grid">
+          ${chartShell("structurePowerTrendPlot", "Power Segment Structure", "stacked share")}
+          ${chartShell("structurePowerPortHeatmap", "Power × Port Distribution", period)}
+          ${chartShell("structurePricePowerPlot", "Price Band × Power Structure", period)}
+          ${chartShell("structureScenarioPlot", "Use Case Split", period)}
+        </div>
+      </section>
+    `,
+  }[state.marketModule];
 
   return `
     <div class="view-stack">
       <section class="analysis-hero">
         <div>
           <p class="eyebrow">Market Analysis</p>
-          <h2>${escapeHtml(category.label)} 整体市场分析</h2>
-          <p>市场分析分为政策解读、行业趋势和市场结构三层，当前周期为 ${escapeHtml(period)}。</p>
+          <h2>${escapeHtml(category.label)} Market Analysis</h2>
+          <p>Use the module buttons above to switch between policy, trend, and structure analysis. Current period: ${escapeHtml(period)}.</p>
         </div>
         <div class="insight-list">
           <div><span>Market Units</span><strong>${fmtCompact(totalUnits)}</strong></div>
@@ -312,49 +384,7 @@ function renderMarketAnalysis(categoryId) {
           <div><span>Selected Period</span><strong>${escapeHtml(period)}</strong></div>
         </div>
       </section>
-
-      <section class="module-block">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Module 1</p>
-            <h2>政策解读</h2>
-          </div>
-          <p>记录政策、报告来源和对产品组合的影响，便于后续自动化更新政策库。</p>
-        </div>
-        <div class="policy-grid">
-          ${reports.map((report) => renderPolicyCard(report)).join("")}
-        </div>
-      </section>
-
-      <section class="module-block">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Module 2</p>
-            <h2>行业趋势分析</h2>
-          </div>
-        </div>
-        <div class="chart-grid">
-          ${chartShell("industryHighPowerPlot", "高功率迁移速度", "share of demand")}
-          ${chartShell("industryPortsPlot", "接口升级趋势", "sample share")}
-          ${chartShell("industryPriceCurvePlot", "同功率价格下降曲线", "AUR by period")}
-          ${chartShell("industryTechPlot", "技术渗透率趋势", "feature adoption")}
-        </div>
-      </section>
-
-      <section class="module-block">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Module 3</p>
-            <h2>市场结构分析</h2>
-          </div>
-        </div>
-        <div class="chart-grid">
-          ${chartShell("structurePowerTrendPlot", "功率段结构趋势", "stacked share")}
-          ${chartShell("structurePowerPortHeatmap", "功率 × 接口组合分布", period)}
-          ${chartShell("structurePricePowerPlot", "价格带 × 功率结构", period)}
-          ${chartShell("structureScenarioPlot", "使用场景拆分", period)}
-        </div>
-      </section>
+      ${moduleMarkup}
     </div>
   `;
 }
@@ -385,8 +415,8 @@ function renderCompetitiveAnalysis(categoryId) {
       <section class="analysis-hero">
         <div>
           <p class="eyebrow">Competitive Analysis</p>
-          <h2>竞品分析</h2>
-          <p>聚焦 Anker、Belkin、Ugreen 等非 Lenovo 品牌，展示出货、市场占有率、新品动作和明星产品。</p>
+          <h2>Competitor Analysis</h2>
+          <p>Compare competitor sales, power mix, pricing, launch signals, and positioning.</p>
         </div>
         <div class="insight-list">
           <div><span>Top Competitor</span><strong>${escapeHtml(top.brand || "—")}</strong></div>
@@ -396,23 +426,19 @@ function renderCompetitiveAnalysis(categoryId) {
         </div>
       </section>
 
-      <section class="competitor-grid">
-        ${competitorRows.map((row) => renderCompetitorCard(row)).join("")}
-      </section>
-
       <section class="chart-grid">
-        ${chartShell("competitorDemandByPowerPlot", "各品牌需求规模对比（按功率拆分）", period)}
-        ${chartShell("competitorSalesPlot", "竞品销售情况", `${granularityLabels[state.granularity]} revenue trend`)}
+        ${chartShell("competitorDemandByPowerPlot", "Brand Demand by Power", period)}
+        ${chartShell("competitorSalesPlot", "Competitor Sales Trend", `${granularityLabels[state.granularity]} revenue trend`)}
         <div class="chart-shell">
           <div class="chart-title">
-            <strong>价格带 × 功率结构（按品牌）</strong>
+            <strong>Price Band × Power Mix by Brand</strong>
             <select class="inline-select" data-action="competitor-brand">
               ${brands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.competitorBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
             </select>
           </div>
           <div id="competitorPricePowerPlot" class="plot"></div>
         </div>
-        ${chartShell("competitorBubblePlot", "品牌定位矩阵（价格 × 平均功率）", "Bubble size = sales")}
+        ${chartShell("competitorBubblePlot", "Brand Positioning Matrix", "price × weighted power")}
         <div class="detail-panel">${renderLaunchTable(categoryId)}</div>
       </section>
     </div>
@@ -440,35 +466,30 @@ function renderCategoryOverview(categoryId) {
   const metricRows = data.productMetrics.filter((row) => row.categoryId === categoryId && selectedIds.includes(row.modelId));
   const latestRows = metricRows.filter((row) => rowInSelectedPeriod(row));
   const latestSummary = summarizeProductRows(latestRows);
-
-  return `
-    <div class="view-stack">
+  const modules = {
+    summary: `
       <section class="module-block">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Template 1</p>
-            <h2>产品总结模版</h2>
-          </div>
+        <div class="module-head">
+          <span>Overview Module</span>
+          <h2>Product Summary</h2>
         </div>
         ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
       </section>
-
+    `,
+    filter: `
       <section class="module-block">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Template 2</p>
-            <h2>数据筛选模版</h2>
-          </div>
-          <p>筛选逻辑和原有图表保留，Adapter 新增 3 个及以上接口分类。</p>
+        <div class="module-head">
+          <span>Overview Module</span>
+          <h2>Data Filters</h2>
+          <p>Filter models, compare performance, and open product detail pages.</p>
         </div>
         ${renderCategoryFilters(categoryId)}
         <section class="chart-grid">
-          ${chartShell("categorySalesPlot", "销量对比", `${granularityLabels[state.granularity]} · selected models`)}
-          ${chartShell("categoryProfitPlot", "利润对比", "Gross profit")}
-          ${chartShell("categoryRevenuePlot", "收入趋势", "Net revenue", true)}
+          ${chartShell("categorySalesPlot", "Sales Comparison", `${granularityLabels[state.granularity]} · selected models`)}
+          ${chartShell("categoryProfitPlot", "Profit Comparison", "Gross profit")}
+          ${chartShell("categoryRevenuePlot", "Revenue Trend", "Net revenue", true)}
           ${chartShell("categoryMarginPlot", "Margin / Return Rate", "Selected period")}
         </section>
-
         <section class="product-browser product-browser-full">
           <section class="product-list product-list-full">
             <div class="product-list-head">
@@ -478,8 +499,8 @@ function renderCategoryOverview(categoryId) {
               </div>
               <div class="toolbar-group product-list-tools">
                 <input type="search" value="${escapeAttr(state.search)}" placeholder="Search product" data-action="search-products" />
-                <button class="solid-button" type="button" data-action="show-all-products">显示全部产品</button>
-                <button class="ghost-button" type="button" data-action="select-visible-models">选择当前</button>
+                <button class="solid-button" type="button" data-action="show-all-products">Show all</button>
+                <button class="ghost-button" type="button" data-action="select-visible-models">Select visible</button>
               </div>
             </div>
             <div class="product-rows">
@@ -488,40 +509,44 @@ function renderCategoryOverview(categoryId) {
           </section>
         </section>
       </section>
-
+    `,
+    feedback: `
       <section class="module-block">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Template 3</p>
-            <h2>用户反馈模块</h2>
-          </div>
+        <div class="module-head">
+          <span>Overview Module</span>
+          <h2>User Feedback</h2>
         </div>
         <div class="chart-grid">
           <div class="chart-shell">
-            <div class="chart-title"><strong>用户关键词词云</strong><span>${escapeHtml(selectedPeriod())}</span></div>
+            <div class="chart-title"><strong>Keyword Cloud</strong><span>${escapeHtml(selectedPeriod())}</span></div>
             <div id="feedbackWordCloud" class="word-cloud"></div>
           </div>
-          ${chartShell("feedbackPainPowerPlot", "痛点与功率关系", "stacked share")}
-          ${chartShell("feedbackRatingMatrix", "评分矩阵（功率 × 接口）", selectedPeriod())}
-          ${chartShell("feedbackReturnReasonsPlot", "退货原因分布", selectedPeriod())}
-          ${chartShell("feedbackReturnRiskMatrix", "退货率与售后率矩阵（功率 × 接口）", "risk heatmap")}
-          ${chartShell("feedbackRatingReturnPlot", "评分 × 退货率风险图", "bubble = sales")}
+          ${chartShell("feedbackPainPowerPlot", "Pain Point × Power", "stacked share")}
+          ${chartShell("feedbackRatingMatrix", "Rating Matrix", "power × ports")}
+          ${chartShell("feedbackReturnReasonsPlot", "Return Reasons", selectedPeriod())}
+          ${chartShell("feedbackReturnRiskMatrix", "Return / Service Risk", "risk heatmap")}
+          ${chartShell("feedbackRatingReturnPlot", "Rating × Return Risk", "bubble = sales")}
         </div>
       </section>
-
+    `,
+    decision: `
       <section class="module-block">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Template 4</p>
-            <h2>产品决策</h2>
-          </div>
+        <div class="module-head">
+          <span>Overview Module</span>
+          <h2>Product Decision</h2>
         </div>
         <div class="chart-grid">
-          ${chartShell("decisionOpportunityPlot", "机会矩阵（增长 × 份额 × 利润）", "bubble = sales")}
-          ${chartShell("decisionGapPlot", "产品空白区（功率 × 接口 × 价格带）", selectedPeriod())}
+          ${chartShell("decisionOpportunityPlot", "Opportunity Matrix", "growth × share × margin")}
+          ${chartShell("decisionGapPlot", "Portfolio Gap Map", selectedPeriod())}
           <div class="detail-panel">${renderDecisionCards(categoryId, selectedIds)}</div>
         </div>
       </section>
+    `,
+  };
+
+  return `
+    <div class="view-stack">
+      ${modules[state.overviewModule]}
     </div>
   `;
 }
@@ -535,9 +560,9 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
     .sort((a, b) => b.summary.margin - a.summary.margin)[0];
   const watch = summaries.slice().sort((a, b) => a.summary.margin - b.summary.margin)[0];
   const cards = [
-    ["主力款", main, "highest revenue"],
-    ["利润款", profit, "highest margin"],
-    ["观察款", watch, "margin watch"],
+    ["Core Model", main, "highest revenue"],
+    ["Profit Model", profit, "highest margin"],
+    ["Watch Model", watch, "margin watch"],
   ];
 
   return `
@@ -552,10 +577,10 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
       </div>
       <div class="chart-grid">
-        ${chartShell("matrixContributionPlot", "重点产品销售额贡献", "Latest period")}
-        ${chartShell("matrixBubblePlot", "产品矩阵：价格 × 毛利率", "Circle size = sales volume")}
-        ${chartShell("resourceContributionPlot", "功率段资源占用 vs 销量贡献", "SKU / units / revenue share")}
-        ${chartShell("portSalesStructurePlot", "接口数 × 销量结构", "stacked by power segment")}
+        ${chartShell("matrixContributionPlot", "Revenue Contribution", "latest period")}
+        ${chartShell("matrixBubblePlot", "Price × Gross Margin Matrix", "circle size = sales volume")}
+        ${chartShell("resourceContributionPlot", "Power Resource vs Sales Contribution", "SKU / units / revenue share")}
+        ${chartShell("portSalesStructurePlot", "Port Count × Sales Structure", "stacked by power segment")}
       </div>
     </section>
   `;
@@ -590,11 +615,11 @@ function renderProductListPage(categoryId) {
         <div class="section-head">
           <div>
             <p class="eyebrow">Product List</p>
-            <h2>产品列表</h2>
+            <h2>Product List</h2>
           </div>
           <div class="toolbar-group product-list-tools">
             <input type="search" value="${escapeAttr(state.search)}" placeholder="Search product" data-action="search-products" />
-            <button class="ghost-button" type="button" data-action="show-all-products">显示全部产品</button>
+            <button class="ghost-button" type="button" data-action="show-all-products">Show all</button>
           </div>
         </div>
         <div class="product-card-grid">
@@ -639,7 +664,7 @@ function renderCategoryFilters(categoryId) {
       <div class="section-head">
         <div>
           <p class="eyebrow">Filters</p>
-          <h2>品类筛选</h2>
+          <h2>Category Filters</h2>
         </div>
         <button class="ghost-button" type="button" data-action="reset-category-filters">Reset</button>
       </div>
@@ -720,7 +745,7 @@ function renderProductRow(product, selectedIds) {
         <span class="metric-label">Margin</span>
         <strong>${fmtPercent(summary.margin)}</strong>
       </div>
-      <button class="ghost-button" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">详情</button>
+      <button class="ghost-button" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">Details</button>
     </article>
   `;
 }
@@ -730,7 +755,7 @@ function renderEmptyProducts() {
     <section class="empty-state">
       <div>
         <h3>No products</h3>
-        <p>调整筛选条件后可继续查看 model 对比。</p>
+        <p>Adjust filters to continue model comparison.</p>
       </div>
     </section>
   `;
@@ -858,7 +883,7 @@ function drawHighPowerMigration(categoryId, periods, rows) {
     mode: "lines+markers",
     line: { color: redScale[idx + 1] || palette[idx], width: 2.8 },
   }));
-  drawPlot("industryHighPowerPlot", traces, { yaxis: { title: "占比 %", ticksuffix: "%" } });
+  drawPlot("industryHighPowerPlot", traces, { yaxis: { title: "Share %", ticksuffix: "%" } });
 }
 
 function drawPortUpgradeTrend(categoryId, periods, rows) {
@@ -878,7 +903,7 @@ function drawPortUpgradeTrend(categoryId, periods, rows) {
     groupnorm: "percent",
     line: { color: redScale[idx] || palette[idx], width: 1.5 },
   }));
-  drawPlot("industryPortsPlot", traces, { yaxis: { title: "样本占比 %", ticksuffix: "%", range: [0, 100] } });
+  drawPlot("industryPortsPlot", traces, { yaxis: { title: "Sample Share %", ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawSamePowerPriceCurve(categoryId, periods, rows, powerSegments) {
@@ -893,7 +918,7 @@ function drawSamePowerPriceCurve(categoryId, periods, rows, powerSegments) {
     mode: "lines+markers",
     line: { color: redScale[idx] || palette[idx], width: 2.4 },
   }));
-  drawPlot("industryPriceCurvePlot", traces, { yaxis: { title: "平均价格", tickprefix: "$" } });
+  drawPlot("industryPriceCurvePlot", traces, { yaxis: { title: "Average Price", tickprefix: "$" } });
 }
 
 function drawTechnologyPenetration(categoryId, periods, rows) {
@@ -911,7 +936,7 @@ function drawTechnologyPenetration(categoryId, periods, rows) {
     mode: "lines+markers",
     line: { color: redScale[idx] || palette[idx], width: 2.4 },
   }));
-  drawPlot("industryTechPlot", traces, { yaxis: { title: "采用率 %", ticksuffix: "%", range: [0, 100] } });
+  drawPlot("industryTechPlot", traces, { yaxis: { title: "Adoption %", ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawPowerStructureTrend(categoryId, periods, rows, powerSegments) {
@@ -930,7 +955,7 @@ function drawPowerStructureTrend(categoryId, periods, rows, powerSegments) {
     groupnorm: "percent",
     line: { color: redScale[idx] || palette[idx], width: 1.5 },
   }));
-  drawPlot("structurePowerTrendPlot", traces, { yaxis: { title: "样本占比 %", ticksuffix: "%", range: [0, 100] } });
+  drawPlot("structurePowerTrendPlot", traces, { yaxis: { title: "Sample Share %", ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawPowerPortHeatmap(id, rows, powerSegments, portSegments, title = "Units") {
@@ -958,7 +983,7 @@ function drawPowerPortHeatmap(id, rows, powerSegments, portSegments, title = "Un
         colorbar: { title },
       },
     ],
-    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "Port Count" }, yaxis: { title: "Power Segment" } },
   );
 }
 
@@ -975,7 +1000,7 @@ function drawPricePowerStructure(categoryId, rows, powerSegments, id = "structur
     type: "bar",
     marker: { color: redScale[idx] || palette[idx] },
   }));
-  drawPlot(id, traces, { barmode: "stack", yaxis: { title: "样本占比 %", ticksuffix: "%", range: [0, 100] } });
+  drawPlot(id, traces, { barmode: "stack", yaxis: { title: "Sample Share %", ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawScenarioDonut(categoryId, rows) {
@@ -1081,7 +1106,7 @@ function drawCompetitorPricePower(categoryId, brandRows, powerSegments) {
   for (const trace of traces) {
     trace.y = trace.y.map((value, idx) => (totals[idx] ? (value / totals[idx]) * 100 : 0));
   }
-  drawPlot("competitorPricePowerPlot", traces, { barmode: "stack", yaxis: { title: "占比 %", ticksuffix: "%", range: [0, 100] } });
+  drawPlot("competitorPricePowerPlot", traces, { barmode: "stack", yaxis: { title: "Share %", ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
@@ -1146,26 +1171,26 @@ function drawResourceContribution(categoryId, productIds) {
       {
         x: segments,
         y: segments.map((segment) => (products.filter((product) => productPowerSegment(product) === segment).length / totalSkus) * 100),
-        name: "SKU占比",
+        name: "SKU Share",
         type: "bar",
         marker: { color: "#f4c7c3" },
       },
       {
         x: segments,
         y: segments.map((segment) => (rows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + row.unitsNet, 0) / totalUnits) * 100),
-        name: "销量占比",
+        name: "Unit Share",
         type: "bar",
         marker: { color: "#d7301f" },
       },
       {
         x: segments,
         y: segments.map((segment) => (rows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + row.revenueNet, 0) / totalRevenue) * 100),
-        name: "收入占比",
+        name: "Revenue Share",
         type: "bar",
         marker: { color: "#111827" },
       },
     ],
-    { barmode: "group", yaxis: { title: "占比 %", ticksuffix: "%" } },
+    { barmode: "group", yaxis: { title: "Share %", ticksuffix: "%" } },
   );
 }
 
@@ -1232,7 +1257,7 @@ function drawPainPowerRelationship(reviewRows, powers) {
     type: "bar",
     marker: { color: redScale[idx] || palette[idx] },
   }));
-  drawPlot("feedbackPainPowerPlot", traces, { barmode: "stack", yaxis: { title: "痛点占比 %", ticksuffix: "%" } });
+  drawPlot("feedbackPainPowerPlot", traces, { barmode: "stack", yaxis: { title: "Pain Point Share %", ticksuffix: "%" } });
 }
 
 function drawRatingMatrix(reviewRows, powers, ports) {
@@ -1257,10 +1282,10 @@ function drawRatingMatrix(reviewRows, powers, ports) {
         ],
         zmin: 3.6,
         zmax: 4.8,
-        colorbar: { title: "评分" },
+        colorbar: { title: "Rating" },
       },
     ],
-    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "Port Count" }, yaxis: { title: "Power Segment" } },
   );
 }
 
@@ -1285,7 +1310,7 @@ function drawReturnReasons(metricRows, reviewRows) {
         marker: { color: "#d7301f" },
       },
     ],
-    { margin: { l: 120, r: 20, t: 8, b: 42 }, xaxis: { title: "退货样本数" } },
+    { margin: { l: 120, r: 20, t: 8, b: 42 }, xaxis: { title: "Return Samples" } },
   );
 }
 
@@ -1311,10 +1336,10 @@ function drawReturnRiskMatrix(metricRows, powers, ports) {
           [0.5, "#de6f62"],
           [1, "#7f231c"],
         ],
-        colorbar: { title: "售后率 %" },
+        colorbar: { title: "Service Rate %" },
       },
     ],
-    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "Port Count" }, yaxis: { title: "Power Segment" } },
   );
 }
 
@@ -1349,7 +1374,7 @@ function drawRatingReturnRisk(productIds, reviewRows, metricRows) {
         },
       },
     ],
-    { xaxis: { title: "销量加权评分", range: [3.8, 4.9] }, yaxis: { title: "退货率 %", ticksuffix: "%" } },
+    { xaxis: { title: "Sales Weighted Rating", range: [3.8, 4.9] }, yaxis: { title: "Return Rate %", ticksuffix: "%" } },
   );
 }
 
@@ -1360,11 +1385,11 @@ function renderDecisionCards(categoryId, selectedIds) {
   const harvest = items.slice().sort((a, b) => b.share - a.share)[0];
   const risk = items.slice().sort((a, b) => b.returnRate - a.returnRate)[0];
   return `
-    <div class="chart-title"><strong>策略机会与决策</strong><span>${escapeHtml(selectedPeriod())}</span></div>
+    <div class="chart-title"><strong>Strategy Opportunities</strong><span>${escapeHtml(selectedPeriod())}</span></div>
     <div class="news-list">
-      ${renderDecisionItem("加码机会", top, "增长和利润同时较强，适合增加资源投入。")}
-      ${renderDecisionItem("收割主力", harvest, "份额贡献最高，适合保持供给和价格纪律。")}
-      ${renderDecisionItem("风险观察", risk, "退货或售后风险较高，需要优先复盘体验问题。")}
+      ${renderDecisionItem("Scale Opportunity", top, "Growth and margin are both strong; allocate more product and channel resources.")}
+      ${renderDecisionItem("Core Harvest", harvest, "Share contribution is highest; keep supply and pricing discipline stable.")}
+      ${renderDecisionItem("Risk Watch", risk, "Return or service risk is elevated; review experience issues first.")}
     </div>
   `;
 }
@@ -1434,7 +1459,7 @@ function drawDecisionModule(categoryId, selectedIds) {
         colorbar: { title: "Gap Score" },
       },
     ],
-    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "Port Count" }, yaxis: { title: "Power Segment" } },
   );
 }
 
@@ -1468,7 +1493,7 @@ function renderLaunchTable(categoryId) {
     .slice(0, 8);
   return `
     <div class="chart-title">
-      <strong>竞品新品动作</strong>
+      <strong>Competitor Launch Signals</strong>
       <span>modeled launch signals</span>
     </div>
     <table class="data-table">
@@ -1578,10 +1603,10 @@ function renderSpecItems(product) {
 function renderDetailKpis(product, selectedVariant) {
   if (state.dimension === "market") {
     const rows = data.marketMetrics.filter((row) => row.modelId === product.id);
-    const latest = rows.filter((row) => rowInSelectedPeriod(row, "detail")).at(0) || {};
+    const latest = aggregateMarketRows(rows, (row) => periodKey(row.date, state.detailGranularity)).get(selectedPeriod("detail")) || {};
     return [
       renderKpi("Model Share", fmtPercent(latest.modelMarketShare || 0), "Total category market"),
-      renderKpi("Lenovo Share", fmtPercent(latest.lenovoCategoryShare || 0), "Category share"),
+      renderKpi("Lenovo Mix", fmtPercent(latest.modelRevenueShareWithinLenovo || 0), "Sales within Lenovo"),
       renderKpi("Market Rank", latest.marketRankInLenovo ? `#${latest.marketRankInLenovo}` : "—", "Within Lenovo models"),
       renderKpi("Search Index", latest.searchIndex ? latest.searchIndex.toFixed(1) : "—", "Modeled demand signal"),
     ].join("");
@@ -1600,7 +1625,18 @@ function renderDetailKpis(product, selectedVariant) {
       renderKpi("Launch Signal", escapeHtml(launch), selectedPeriod("detail")),
     ].join("");
   }
-  if (state.dimension === "reviews") {
+  if (state.dimension === "competitor") {
+    const rows = getComparableBrandRows(product);
+    const lenovo = rows.find((row) => row.brand === "Lenovo") || {};
+    const top = rows.filter((row) => row.brand !== "Lenovo").sort((a, b) => b.marketShare - a.marketShare)[0] || {};
+    return [
+      renderKpi("Comparable Set", `${rows.length} brands`, `${productPower(product)}W · ${productPortSegment(product)}`),
+      renderKpi("Lenovo Share", fmtPercent(lenovo.marketShare || 0), "selected period"),
+      renderKpi("Top Rival", escapeHtml(top.brand || "—"), escapeHtml(top.starProduct || "—")),
+      renderKpi("Lenovo Price", fmtCurrency(lenovo.avgAUR || product.listPrice), "AUR proxy"),
+    ].join("");
+  }
+  if (state.dimension === "user") {
     const rows = data.consumerInsights.filter((row) => row.modelId === product.id);
     const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail"));
     const totalReviews = Math.max(...latestRows.map((row) => row.totalReviews), 0);
@@ -1635,30 +1671,36 @@ function renderDetailCharts(product, selectedVariant) {
   if (!target) return;
   if (state.dimension === "market") {
     target.innerHTML = `
-      ${chartShell("detailPlotA", "市场份额", `${granularityLabels[state.detailGranularity]} trend`)}
-      ${chartShell("detailPlotB", "需求与搜索", "Market units / search index")}
-      ${chartShell("detailPlotC", "价格竞争指数", "AUR vs list price", true)}
+      ${chartShell("detailPlotA", "Market Share & Lenovo Mix", `${granularityLabels[state.detailGranularity]} trend`)}
+      ${chartShell("detailPlotB", "Market Demand", "category units / search index")}
     `;
     drawMarketDetail(product);
+  } else if (state.dimension === "competitor") {
+    target.innerHTML = `
+      ${chartShell("detailPlotA", "Comparable Brand Share", `${productPower(product)}W · ${productPortSegment(product)}`)}
+      ${chartShell("detailPlotB", "Price & Selling Point", "AUR proxy / value proposition")}
+    `;
+    drawCompetitorDetail(product);
   } else if (state.dimension === "supply") {
     target.innerHTML = `
-      ${chartShell("detailPlotA", "组件价格指数", "Related components")}
-      ${chartShell("detailPlotB", "交付周期与产能", "Lead time / utilization")}
+      ${chartShell("detailPlotA", "Component Price Index", "related components")}
+      ${chartShell("detailPlotB", "Lead Time & Capacity", "delivery / utilization")}
       <div class="detail-panel">${renderSupplyNews(product)}</div>
     `;
     drawSupplyDetail(product);
-  } else if (state.dimension === "reviews") {
+  } else if (state.dimension === "user") {
     target.innerHTML = `
-      ${chartShell("detailPlotA", "评价情绪", `${granularityLabels[state.detailGranularity]} aggregation`)}
-      ${chartShell("detailPlotB", "关键词频率", "Latest period")}
-      ${chartShell("detailPlotC", "评分趋势", "Average rating", true)}
+      <div class="chart-shell">
+        <div class="chart-title"><strong>Keyword Cloud</strong><span>${escapeHtml(selectedPeriod("detail"))}</span></div>
+        <div id="detailUserWordCloud" class="word-cloud compact"></div>
+      </div>
+      ${chartShell("detailPlotB", "Rating / Return / Service Trend", "combined user health")}
     `;
     drawReviewDetail(product);
   } else {
     target.innerHTML = `
-      ${chartShell("detailPlotA", "Variant 销量", `${granularityLabels[state.detailGranularity]} comparison`)}
-      ${chartShell("detailPlotB", "Variant 利润", "Gross profit")}
-      ${chartShell("detailPlotC", "Margin / Return Rate", "Product health", true)}
+      ${chartShell("detailPlotA", "Sales & Revenue Trend", `${granularityLabels[state.detailGranularity]} comparison`)}
+      ${chartShell("detailPlotB", "Cost & Gross Margin Trend", "product economics")}
     `;
     drawProductDetail(product, selectedVariant);
   }
@@ -1681,11 +1723,11 @@ function drawMarketDetail(product) {
       },
       {
         x: periods,
-        y: periods.map((period) => (byPeriod.get(period)?.lenovoCategoryShare || 0) * 100),
-        name: "Lenovo Category Share",
+        y: periods.map((period) => (byPeriod.get(period)?.modelRevenueShareWithinLenovo || 0) * 100),
+        name: "Lenovo Sales Mix",
         type: "scatter",
         mode: "lines+markers",
-        line: { color: "#0f766e", width: 2 },
+        line: { color: "#1f2328", width: 2.5 },
       },
     ],
     { yaxis: { title: "Share %", ticksuffix: "%" } },
@@ -1715,20 +1757,6 @@ function drawMarketDetail(product) {
       yaxis2: { title: "Index", overlaying: "y", side: "right", showgrid: false },
     },
   );
-  drawPlot(
-    "detailPlotC",
-    [
-      {
-        x: periods,
-        y: periods.map((period) => byPeriod.get(period)?.competitivePriceIndex || 0),
-        name: "Competitive Price Index",
-        type: "scatter",
-        mode: "lines+markers",
-        line: { color: "#7c3aed", width: 3 },
-      },
-    ],
-    { yaxis: { title: "Index" } },
-  );
 }
 
 function drawProductDetail(product, selectedVariant) {
@@ -1736,67 +1764,134 @@ function drawProductDetail(product, selectedVariant) {
     if (row.modelId !== product.id) return false;
     return selectedVariant === "all" || row.variantId === selectedVariant;
   });
-  const variantIds = unique(rows.map((row) => row.variantId));
   const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.detailGranularity))));
-  const traces = variantIds.map((variantId, idx) => {
-    const variant = indexes.variants.get(variantId);
-    const byPeriod = aggregateProductRows(
-      rows.filter((row) => row.variantId === variantId),
-      (row) => periodKey(row.date, state.detailGranularity),
-    );
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.unitsNet || 0),
-      name: variant?.name || variantId,
-      type: "scatter",
-      mode: "lines+markers",
-      line: { color: palette[idx % palette.length], width: 2.4 },
-    };
-  });
-  drawPlot("detailPlotA", traces, { yaxis: { title: "Units" } });
-
-  const profitTraces = variantIds.map((variantId, idx) => {
-    const variant = indexes.variants.get(variantId);
-    const byPeriod = aggregateProductRows(
-      rows.filter((row) => row.variantId === variantId),
-      (row) => periodKey(row.date, state.detailGranularity),
-    );
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.grossProfit || 0),
-      name: variant?.name || variantId,
-      type: "bar",
-      marker: { color: palette[idx % palette.length] },
-    };
-  });
-  drawPlot("detailPlotB", profitTraces, { barmode: "group", yaxis: { title: "Gross Profit" } });
-
   const byPeriod = aggregateProductRows(rows, (row) => periodKey(row.date, state.detailGranularity));
   drawPlot(
-    "detailPlotC",
+    "detailPlotA",
     [
       {
         x: periods,
-        y: periods.map((period) => (byPeriod.get(period)?.margin || 0) * 100),
-        name: "Margin",
-        type: "scatter",
-        mode: "lines+markers",
-        line: { color: indexes.categories.get(product.categoryId).accent, width: 3 },
+        y: periods.map((period) => byPeriod.get(period)?.unitsNet || 0),
+        name: "Units",
+        type: "bar",
+        marker: { color: "#e2231a" },
       },
       {
         x: periods,
-        y: periods.map((period) => (byPeriod.get(period)?.returnRate || 0) * 100),
-        name: "Return Rate",
+        y: periods.map((period) => byPeriod.get(period)?.revenueNet || 0),
+        name: "Revenue",
         type: "scatter",
         mode: "lines+markers",
         yaxis: "y2",
-        line: { color: "#2563eb", width: 2 },
+        line: { color: "#1f2328", width: 2.6 },
       },
     ],
     {
-      yaxis: { title: "Margin %", ticksuffix: "%" },
-      yaxis2: { title: "Return %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
+      yaxis: { title: "Units" },
+      yaxis2: { title: "Revenue", overlaying: "y", side: "right", tickprefix: "$", showgrid: false },
     },
+  );
+  drawPlot(
+    "detailPlotB",
+    [
+      {
+        x: periods,
+        y: periods.map((period) => {
+          const summary = byPeriod.get(period);
+          return summary ? summary.revenueNet - summary.grossProfit : 0;
+        }),
+        name: "Cost",
+        type: "bar",
+        marker: { color: "#6b7280" },
+      },
+      {
+        x: periods,
+        y: periods.map((period) => (byPeriod.get(period)?.margin || 0) * 100),
+        name: "Gross Margin",
+        type: "scatter",
+        mode: "lines+markers",
+        yaxis: "y2",
+        line: { color: "#e2231a", width: 2.6 },
+      },
+    ],
+    {
+      yaxis: { title: "Cost", tickprefix: "$" },
+      yaxis2: { title: "Gross Margin %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
+    },
+  );
+}
+
+function getComparableBrandRows(product) {
+  const brandRows = brandRowsForSelectedPeriod(product.categoryId, true);
+  const powerSegment = productPowerSegment(product);
+  const priceBand = priceBandForProduct(product);
+  const portCount = productPortCount(product);
+  const premium = {
+    Apple: 1.18,
+    Anker: 1.08,
+    Belkin: 1.04,
+    Lenovo: 1,
+    Samsung: 0.98,
+    UGREEN: 0.92,
+    Ugreen: 0.92,
+    Baseus: 0.86,
+    RAVPower: 0.9,
+    Xiaomi: 0.82,
+    Aukey: 0.84,
+    "Amazon Basics": 0.72,
+  };
+  const comparable = brandRows.map((row) => {
+    const brand = row.brand;
+    const powerFit = competitorPowerWeight(product.categoryId, brand, powerSegment);
+    const priceFit = competitorPriceBandWeight(brand, priceBand);
+    const portFit = portCount >= 3 ? (["Anker", "Belkin", "Lenovo"].includes(brand) ? 0.34 : 0.22) : portCount === 2 ? 0.28 : 0.2;
+    const comparableScore = row.brandUnits * (0.42 + powerFit * 2.1 + priceFit * 1.15 + portFit);
+    return {
+      ...row,
+      comparableScore,
+      avgAUR: brand === "Lenovo" ? product.listPrice : product.listPrice * (premium[brand] || 0.9) * (1 + Math.max(0, portCount - 1) * 0.035),
+      specLabel: `${productPower(product)}W · ${productPortSegment(product)}`,
+    };
+  });
+  const total = comparable.reduce((sum, row) => sum + row.comparableScore, 0) || 1;
+  return comparable
+    .map((row) => ({ ...row, marketShare: row.comparableScore / total }))
+    .sort((a, b) => b.marketShare - a.marketShare)
+    .slice(0, 7);
+}
+
+function drawCompetitorDetail(product) {
+  const rows = getComparableBrandRows(product);
+  drawPlot(
+    "detailPlotA",
+    [
+      {
+        x: rows.map((row) => row.brand),
+        y: rows.map((row) => row.marketShare * 100),
+        text: rows.map((row) => fmtPercent(row.marketShare)),
+        customdata: rows.map((row) => [row.starProduct, row.heroFeature]),
+        type: "bar",
+        marker: { color: rows.map((row) => (row.brand === "Lenovo" ? "#e2231a" : "#1f2328")) },
+        hovertemplate: "<b>%{x}</b><br>Share %{y:.1f}%<br>%{customdata[0]}<br>%{customdata[1]}<extra></extra>",
+      },
+    ],
+    { yaxis: { title: "Comparable Share %", ticksuffix: "%" } },
+  );
+  drawPlot(
+    "detailPlotB",
+    [
+      {
+        x: rows.map((row) => row.avgAUR),
+        y: rows.map((row) => row.brand),
+        text: rows.map((row) => row.heroFeature),
+        customdata: rows.map((row) => [row.starProduct, fmtPercent(row.marketShare)]),
+        type: "bar",
+        orientation: "h",
+        marker: { color: rows.map((row) => (row.brand === "Lenovo" ? "#e2231a" : "#6b7280")) },
+        hovertemplate: "<b>%{y}</b><br>AUR $%{x:.0f}<br>%{customdata[0]}<br>Share %{customdata[1]}<br>%{text}<extra></extra>",
+      },
+    ],
+    { margin: { l: 98, r: 24, t: 8, b: 44 }, xaxis: { title: "Average Unit Price", tickprefix: "$" } },
   );
 }
 
@@ -1851,54 +1946,69 @@ function drawSupplyDetail(product) {
 function drawReviewDetail(product) {
   const rows = data.consumerInsights.filter((row) => row.modelId === product.id);
   const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.detailGranularity))));
-  const sentiments = ["Positive", "Neutral", "Negative"];
-  const colors = { Positive: "#15803d", Neutral: "#b45309", Negative: "#be123c" };
-  const traces = sentiments.map((sentiment) => {
-    const byPeriod = aggregateReviewRows(
-      rows.filter((row) => row.sentiment === sentiment),
-      (row) => periodKey(row.date, state.detailGranularity),
-    );
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.frequency || 0),
-      name: sentiment,
-      type: "bar",
-      marker: { color: colors[sentiment] },
-    };
-  });
-  drawPlot("detailPlotA", traces, { barmode: "stack", yaxis: { title: "Frequency" } });
-
   const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail")).sort((a, b) => b.frequency - a.frequency);
+  renderDetailWordCloud(latestRows);
+  const reviewByPeriod = aggregateReviewRows(rows, (row) => periodKey(row.date, state.detailGranularity));
+  const metricRows = data.productMetrics.filter((row) => row.modelId === product.id);
+  const metricByPeriod = aggregateProductRows(metricRows, (row) => periodKey(row.date, state.detailGranularity));
+  const negativeShareByPeriod = new Map(
+    periods.map((period) => {
+      const bucket = rows.filter((row) => periodKey(row.date, state.detailGranularity) === period);
+      const total = bucket.reduce((sum, row) => sum + row.frequency, 0) || 1;
+      const negative = bucket.filter((row) => row.sentiment === "Negative").reduce((sum, row) => sum + row.frequency, 0);
+      return [period, negative / total];
+    }),
+  );
   drawPlot(
     "detailPlotB",
     [
       {
-        x: latestRows.map((row) => row.frequency),
-        y: latestRows.map((row) => row.keyword),
-        type: "bar",
-        orientation: "h",
-        marker: { color: latestRows.map((row) => colors[row.sentiment]) },
-        name: "Keyword",
-      },
-    ],
-    { margin: { l: 118, r: 20, t: 8, b: 36 }, xaxis: { title: "Frequency" } },
-  );
-
-  const byPeriod = aggregateReviewRows(rows, (row) => periodKey(row.date, state.detailGranularity));
-  drawPlot(
-    "detailPlotC",
-    [
-      {
         x: periods,
-        y: periods.map((period) => byPeriod.get(period)?.avgRating || 0),
+        y: periods.map((period) => reviewByPeriod.get(period)?.avgRating || 0),
         name: "Rating",
         type: "scatter",
         mode: "lines+markers",
-        line: { color: indexes.categories.get(product.categoryId).accent, width: 3 },
+        line: { color: "#1f2328", width: 2.8 },
+      },
+      {
+        x: periods,
+        y: periods.map((period) => (metricByPeriod.get(period)?.returnRate || 0) * 100),
+        name: "Return Rate",
+        type: "scatter",
+        mode: "lines+markers",
+        yaxis: "y2",
+        line: { color: "#e2231a", width: 2.4 },
+      },
+      {
+        x: periods,
+        y: periods.map((period) => ((metricByPeriod.get(period)?.returnRate || 0) + (negativeShareByPeriod.get(period) || 0) * 0.04) * 100),
+        name: "Service Rate",
+        type: "scatter",
+        mode: "lines+markers",
+        yaxis: "y2",
+        line: { color: "#6b7280", width: 2.2, dash: "dot" },
       },
     ],
-    { yaxis: { title: "Average Rating", range: [3.6, 5] } },
+    {
+      yaxis: { title: "Average Rating", range: [3.6, 5] },
+      yaxis2: { title: "Rate %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
+    },
   );
+}
+
+function renderDetailWordCloud(reviewRows) {
+  const node = document.getElementById("detailUserWordCloud");
+  if (!node) return;
+  const byKeyword = new Map();
+  for (const row of reviewRows) byKeyword.set(row.keyword, (byKeyword.get(row.keyword) || 0) + row.frequency);
+  const entries = [...byKeyword.entries()].sort((a, b) => b[1] - a[1]).slice(0, 18);
+  const max = Math.max(...entries.map(([, value]) => value), 1);
+  node.innerHTML = entries
+    .map(([word, value], idx) => {
+      const size = 15 + (value / max) * 26;
+      return `<span style="font-size:${size}px;color:${redScale[idx % redScale.length]}">${escapeHtml(word)}</span>`;
+    })
+    .join("");
 }
 
 function renderSupplyNews(product) {
@@ -1907,7 +2017,7 @@ function renderSupplyNews(product) {
     .sort((a, b) => b.impactLevel - a.impactLevel);
   return `
     <div class="chart-title">
-      <strong>供应链信息</strong>
+      <strong>Supply Signals</strong>
       <span>${escapeHtml(selectedPeriod("detail"))}</span>
     </div>
     <div class="news-list">
@@ -2083,6 +2193,10 @@ function handleClick(event) {
   } else if (action === "category-view") {
     state.categoryView = button.dataset.view;
     render();
+  } else if (action === "module-view") {
+    if (state.categoryView === "market") state.marketModule = button.dataset.module;
+    if (state.categoryView === "overview") state.overviewModule = button.dataset.module;
+    render();
   } else if (action === "granularity") {
     const scope = button.dataset.scope;
     if (scope === "detail") state.detailGranularity = button.dataset.granularity;
@@ -2213,6 +2327,7 @@ function aggregateMarketRows(rows, keyFn) {
         lenovoCategoryUnits: bucket.reduce((sum, row) => sum + row.lenovoCategoryUnits, 0),
         modelMarketShare: avg(bucket.map((row) => row.modelMarketShare)),
         lenovoCategoryShare: avg(bucket.map((row) => row.lenovoCategoryShare)),
+        modelRevenueShareWithinLenovo: avg(bucket.map((row) => row.modelRevenueShareWithinLenovo)),
         marketRankInLenovo: avg(bucket.map((row) => row.marketRankInLenovo)),
         categoryAUR: avg(bucket.map((row) => row.categoryAUR)),
         searchIndex: avg(bucket.map((row) => row.searchIndex)),
@@ -2338,7 +2453,6 @@ function productPortCount(product) {
 
 function productPortSegment(product) {
   const count = productPortCount(product);
-  if (count >= 4) return "4 ports";
   if (count >= 3) return "3+ ports";
   if (count === 2) return "2 ports";
   return "1 port";

@@ -36,14 +36,14 @@ CATEGORIES = [
         "label": "Power Bank",
         "labelZh": "移动电源",
         "description": "Portable battery products across daily, travel, and outdoor use.",
-        "accent": "#0f766e",
+        "accent": "#e2231a",
     },
     {
         "id": "power_cable",
         "label": "Power Cable",
         "labelZh": "充电线",
         "description": "USB-C, USB-A, Lightning, high-wattage, and bundled cables.",
-        "accent": "#b45309",
+        "accent": "#e2231a",
     },
 ]
 
@@ -54,14 +54,12 @@ FILTERS = {
         {"id": "powerMode", "label": "Wired / Wireless", "match": "scalar"},
         {"id": "portCountBand", "label": "Ports", "match": "scalar"},
         {"id": "interfaceProtocols", "label": "Interface Protocol", "match": "array"},
-        {"id": "isTwoInOne", "label": "2-in-1", "match": "boolean"},
     ],
     "power_bank": [
         {"id": "features", "label": "Feature", "match": "array"},
         {"id": "capacityBand", "label": "Capacity", "match": "scalar"},
         {"id": "outputBand", "label": "Output Power", "match": "scalar"},
         {"id": "scenarios", "label": "Scenario", "match": "array"},
-        {"id": "isTwoInOne", "label": "2-in-1", "match": "boolean"},
     ],
     "power_cable": [
         {"id": "features", "label": "Feature", "match": "array"},
@@ -69,6 +67,10 @@ FILTERS = {
         {"id": "powerBand", "label": "Power", "match": "scalar"},
         {"id": "scenarios", "label": "Scenario", "match": "array"},
     ],
+}
+
+FILTER_VALUE_EXCLUSIONS = {
+    "features": {"wireless", "dual port"},
 }
 
 PRODUCTS = [
@@ -839,7 +841,7 @@ def build_catalog(months: list[str], source_meta: dict[str, Any]) -> dict[str, A
         all_variants.extend(product_variants)
         p = {k: v for k, v in product.items() if k not in {"baseMonthlyUnits", "costRatio", "growth"}}
         p["variants"] = [v["id"] for v in product_variants]
-        p["tags"] = product["attributes"].get("features", [])[:3]
+        p["tags"] = [value for value in product["attributes"].get("features", []) if value not in FILTER_VALUE_EXCLUSIONS["features"]][:3]
         catalog_products.append(p)
 
     filter_values: dict[str, dict[str, list[Any]]] = {}
@@ -852,7 +854,7 @@ def build_catalog(months: list[str], source_meta: dict[str, Any]) -> dict[str, A
             for product in category_products:
                 raw = product["attributes"].get(config["id"])
                 if isinstance(raw, list):
-                    values.extend(raw)
+                    values.extend([value for value in raw if value not in FILTER_VALUE_EXCLUSIONS.get(config["id"], set())])
                 elif raw is not None:
                     values.append(raw)
             unique_values = []
