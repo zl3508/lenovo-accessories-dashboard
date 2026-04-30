@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lenovo Accessories Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button class="brand-lockup" id="homeButton" type="button">
+          <span class="brand-mark">Lenovo</span>
+          <span>
+            <strong>Accessories Intelligence</strong>
+            <small id="sourceStatus">Loading data</small>
+          </span>
+        </button>
+        <nav class="top-nav" id="topNav" aria-label="Product categories"></nav>
+      </header>
+
+      <main id="app" class="app-main">
+        <section class="loading-state">
+          <h1>Loading dashboard</h1>
+          <p>Preparing product metrics and filters.</p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
