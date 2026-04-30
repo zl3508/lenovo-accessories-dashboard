@@ -22,6 +22,7 @@ const state = {
   search: "",
   selectedModels: {},
   competitorBrand: {},
+  structureBrand: {},
   variantId: "all",
 };
 
@@ -326,6 +327,8 @@ function renderMarketAnalysis(categoryId) {
   const lenovo = latestBrands.find((row) => row.brand === "Lenovo") || {};
   const totalUnits = latestBrands.reduce((sum, row) => sum + row.brandUnits, 0);
   const reports = data.catalog.policyReports?.[categoryId] || [];
+  const structureBrands = unique(data.brandMarket.filter((row) => row.categoryId === categoryId).map((row) => row.brand));
+  state.structureBrand[categoryId] ||= structureBrands.includes("Lenovo") ? "Lenovo" : structureBrands[0];
   const moduleMarkup = {
     policy: `
       <section class="module-block">
@@ -362,7 +365,15 @@ function renderMarketAnalysis(categoryId) {
         <div class="chart-grid">
           ${chartShell("structurePowerTrendPlot", "Power Segment Structure", "stacked share")}
           ${chartShell("structurePowerPortHeatmap", "Power × Port Distribution", period)}
-          ${chartShell("structurePricePowerPlot", "Price Band × Power Structure", period)}
+          <div class="chart-shell">
+            <div class="chart-title">
+              <strong>Price Band × Power Structure</strong>
+              <select class="inline-select" data-action="structure-brand">
+                ${structureBrands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.structureBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
+              </select>
+            </div>
+            <div id="structurePricePowerPlot" class="plot"></div>
+          </div>
           ${chartShell("structureScenarioPlot", "Use Case Split", period)}
         </div>
       </section>
@@ -487,7 +498,7 @@ function renderCategoryOverview(categoryId) {
         <section class="chart-grid">
           ${chartShell("categorySalesPlot", "Sales Comparison", `${granularityLabels[state.granularity]} · selected models`)}
           ${chartShell("categoryProfitPlot", "Profit Comparison", "Gross profit")}
-          ${chartShell("categoryRevenuePlot", "Revenue Trend", "Net revenue", true)}
+          ${chartShell("categoryRevenuePlot", "Revenue Trend", "Net revenue")}
           ${chartShell("categoryMarginPlot", "Margin / Return Rate", "Selected period")}
         </section>
         <section class="product-browser product-browser-full">
@@ -988,6 +999,11 @@ function drawPowerPortHeatmap(id, rows, powerSegments, portSegments, title = "Un
 }
 
 function drawPricePowerStructure(categoryId, rows, powerSegments, id = "structurePricePowerPlot") {
+  const brand = state.structureBrand[categoryId] || "Lenovo";
+  if (brand !== "Lenovo") {
+    drawBrandPricePowerStructure(categoryId, brand, powerSegments, id);
+    return;
+  }
   const traces = powerSegments.map((segment, idx) => ({
     x: priceBands,
     y: priceBands.map((band) => {
@@ -1000,6 +1016,25 @@ function drawPricePowerStructure(categoryId, rows, powerSegments, id = "structur
     type: "bar",
     marker: { color: redScale[idx] || palette[idx] },
   }));
+  drawPlot(id, traces, { barmode: "stack", yaxis: { title: "Sample Share %", ticksuffix: "%", range: [0, 100] } });
+}
+
+function drawBrandPricePowerStructure(categoryId, brand, powerSegments, id) {
+  const row = brandRowsForSelectedPeriod(categoryId, true).find((item) => item.brand === brand);
+  const traces = powerSegments.map((segment, idx) => ({
+    x: priceBands,
+    y: priceBands.map((band) => {
+      const base = row ? row.brandRevenue : 0;
+      return base * competitorPowerWeight(categoryId, brand, segment) * competitorPriceBandWeight(brand, band);
+    }),
+    name: segment,
+    type: "bar",
+    marker: { color: redScale[idx] || palette[idx] },
+  }));
+  const totals = priceBands.map((_, col) => traces.reduce((sum, trace) => sum + trace.y[col], 0));
+  for (const trace of traces) {
+    trace.y = trace.y.map((value, idx) => (totals[idx] ? (value / totals[idx]) * 100 : 0));
+  }
   drawPlot(id, traces, { barmode: "stack", yaxis: { title: "Sample Share %", ticksuffix: "%", range: [0, 100] } });
 }
 
@@ -1694,7 +1729,9 @@ function renderDetailCharts(product, selectedVariant) {
         <div class="chart-title"><strong>Keyword Cloud</strong><span>${escapeHtml(selectedPeriod("detail"))}</span></div>
         <div id="detailUserWordCloud" class="word-cloud compact"></div>
       </div>
-      ${chartShell("detailPlotB", "Rating / Return / Service Trend", "combined user health")}
+      ${chartShell("detailUserSentimentPlot", "Sentiment Trend", `${granularityLabels[state.detailGranularity]} aggregation`)}
+      ${chartShell("detailUserKeywordPlot", "Keyword Frequency", "latest period")}
+      ${chartShell("detailPlotB", "Rating / Return / Service Trend", "combined user health", true)}
     `;
     drawReviewDetail(product);
   } else {
@@ -1948,6 +1985,39 @@ function drawReviewDetail(product) {
   const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.detailGranularity))));
   const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail")).sort((a, b) => b.frequency - a.frequency);
   renderDetailWordCloud(latestRows);
+  const sentiments = ["Positive", "Neutral", "Negative"];
+  const colors = { Positive: "#15803d", Neutral: "#b45309", Negative: "#b91c1c" };
+  const sentimentTraces = sentiments.map((sentiment) => {
+    const byPeriod = aggregateReviewRows(
+      rows.filter((row) => row.sentiment === sentiment),
+      (row) => periodKey(row.date, state.detailGranularity),
+    );
+    return {
+      x: periods,
+      y: periods.map((period) => byPeriod.get(period)?.frequency || 0),
+      name: sentiment,
+      type: "bar",
+      marker: { color: colors[sentiment] },
+    };
+  });
+  drawPlot("detailUserSentimentPlot", sentimentTraces, { barmode: "stack", yaxis: { title: "Frequency" } });
+
+  const topKeywords = latestRows.slice(0, 8).reverse();
+  drawPlot(
+    "detailUserKeywordPlot",
+    [
+      {
+        x: topKeywords.map((row) => row.frequency),
+        y: topKeywords.map((row) => row.keyword),
+        type: "bar",
+        orientation: "h",
+        marker: { color: topKeywords.map((row) => colors[row.sentiment]) },
+        name: "Keyword",
+        hovertemplate: "<b>%{y}</b><br>Frequency %{x}<extra></extra>",
+      },
+    ],
+    { margin: { l: 116, r: 22, t: 8, b: 42 }, xaxis: { title: "Frequency" } },
+  );
   const reviewByPeriod = aggregateReviewRows(rows, (row) => periodKey(row.date, state.detailGranularity));
   const metricRows = data.productMetrics.filter((row) => row.modelId === product.id);
   const metricByPeriod = aggregateProductRows(metricRows, (row) => periodKey(row.date, state.detailGranularity));
@@ -2235,6 +2305,11 @@ function handleChange(event) {
   }
   if (target.dataset.action === "competitor-brand") {
     state.competitorBrand[state.categoryId] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "structure-brand") {
+    state.structureBrand[state.categoryId] = target.value;
     render();
     return;
   }
