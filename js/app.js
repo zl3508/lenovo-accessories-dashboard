@@ -14,10 +14,12 @@ const state = {
   categoryView: "market",
   granularity: "month",
   detailGranularity: "month",
+  selectedPeriod: { category: null, detail: null },
   dimension: "market",
   filters: {},
   search: "",
   selectedModels: {},
+  competitorBrand: {},
   variantId: "all",
 };
 
@@ -54,6 +56,9 @@ const dimensionLabels = {
 };
 
 const palette = ["#e2231a", "#0f766e", "#b45309", "#2563eb", "#7c3aed", "#15803d", "#be123c", "#475569"];
+const redScale = ["#f4c7c3", "#e9877f", "#d7301f", "#a62a22", "#7f231c"];
+const powerOrder = ["45W and below", "60W and below", "65W", "45W to 99W", "100W to 199W", "100W and above", "200W and above"];
+const priceBands = ["<$25", "$25-45", "$45-65", "$65+"];
 
 init();
 
@@ -263,6 +268,8 @@ function renderCategory(categoryId) {
     const selectedIds = getSelectedModelIds(categoryId, visibleProducts);
     drawProductMatrix(categoryId, visibleProducts, selectedIds);
     drawCategoryCharts(categoryId, selectedIds);
+    drawFeedbackModule(categoryId, selectedIds);
+    drawDecisionModule(categoryId, selectedIds);
   } else if (state.categoryView === "products") {
     mount.innerHTML = renderProductListPage(categoryId);
   } else {
@@ -284,16 +291,11 @@ function renderCategoryTabs() {
 
 function renderMarketAnalysis(categoryId) {
   const category = indexes.categories.get(categoryId);
-  const latest = data.catalog.periods.at(-1);
-  const latestBrands = data.brandMarket.filter((row) => row.categoryId === categoryId && row.date === latest);
+  const period = selectedPeriod();
+  const latestBrands = brandRowsForSelectedPeriod(categoryId);
   const lenovo = latestBrands.find((row) => row.brand === "Lenovo") || {};
   const totalUnits = latestBrands.reduce((sum, row) => sum + row.brandUnits, 0);
-  const productDemand = data.marketMetrics
-    .filter((row) => row.categoryId === categoryId && row.date === latest)
-    .slice()
-    .sort((a, b) => b.searchIndex - a.searchIndex);
-  const topDemand = indexes.products.get(productDemand[0]?.modelId);
-  const fastest = getFastestGrowingProduct(categoryId);
+  const reports = data.catalog.policyReports?.[categoryId] || [];
 
   return `
     <div class="view-stack">
@@ -301,35 +303,82 @@ function renderMarketAnalysis(categoryId) {
         <div>
           <p class="eyebrow">Market Analysis</p>
           <h2>${escapeHtml(category.label)} 整体市场分析</h2>
-          <p>默认页面聚合品牌份额、出货量、品类需求和 Lenovo 具体 model 需求变化，作为进入该品类后的总览入口。</p>
+          <p>市场分析分为政策解读、行业趋势和市场结构三层，当前周期为 ${escapeHtml(period)}。</p>
         </div>
         <div class="insight-list">
           <div><span>Market Units</span><strong>${fmtCompact(totalUnits)}</strong></div>
           <div><span>Lenovo Share</span><strong>${fmtPercent(lenovo.marketShare || 0)}</strong></div>
-          <div><span>Top Demand Model</span><strong>${escapeHtml(topDemand?.shortName || "—")}</strong></div>
-          <div><span>Fastest Growth</span><strong>${escapeHtml(fastest?.product.shortName || "—")}</strong></div>
+          <div><span>Policy Reports</span><strong>${reports.length}</strong></div>
+          <div><span>Selected Period</span><strong>${escapeHtml(period)}</strong></div>
         </div>
       </section>
 
-      <section class="chart-grid">
-        ${chartShell("marketSharePlot", "不同公司市场份额", formatPeriod(latest, "month"))}
-        ${chartShell("brandShipmentsPlot", "品牌出货量变化", `${granularityLabels[state.granularity]} trend`)}
-        ${chartShell("categoryDemandPlot", "品类需求变化", "Total market units / Lenovo share")}
-        ${chartShell("modelDemandPlot", "具体产品需求变化", "Search index by Lenovo model")}
+      <section class="module-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Module 1</p>
+            <h2>政策解读</h2>
+          </div>
+          <p>记录政策、报告来源和对产品组合的影响，便于后续自动化更新政策库。</p>
+        </div>
+        <div class="policy-grid">
+          ${reports.map((report) => renderPolicyCard(report)).join("")}
+        </div>
+      </section>
+
+      <section class="module-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Module 2</p>
+            <h2>行业趋势分析</h2>
+          </div>
+        </div>
+        <div class="chart-grid">
+          ${chartShell("industryHighPowerPlot", "高功率迁移速度", "share of demand")}
+          ${chartShell("industryPortsPlot", "接口升级趋势", "sample share")}
+          ${chartShell("industryPriceCurvePlot", "同功率价格下降曲线", "AUR by period")}
+          ${chartShell("industryTechPlot", "技术渗透率趋势", "feature adoption")}
+        </div>
+      </section>
+
+      <section class="module-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Module 3</p>
+            <h2>市场结构分析</h2>
+          </div>
+        </div>
+        <div class="chart-grid">
+          ${chartShell("structurePowerTrendPlot", "功率段结构趋势", "stacked share")}
+          ${chartShell("structurePowerPortHeatmap", "功率 × 接口组合分布", period)}
+          ${chartShell("structurePricePowerPlot", "价格带 × 功率结构", period)}
+          ${chartShell("structureScenarioPlot", "使用场景拆分", period)}
+        </div>
       </section>
     </div>
   `;
 }
 
+function renderPolicyCard(report) {
+  return `
+    <article class="policy-card">
+      <span class="tag">${escapeHtml(report.region)} · ${escapeHtml(report.effectiveDate)}</span>
+      <h3>${escapeHtml(report.title)}</h3>
+      <p>${escapeHtml(report.summary)}</p>
+      <strong>${escapeHtml(report.impact)}</strong>
+      <a href="${escapeAttr(report.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(report.source)}</a>
+    </article>
+  `;
+}
+
 function renderCompetitiveAnalysis(categoryId) {
-  const latest = data.catalog.periods.at(-1);
-  const competitorRows = data.brandMarket
-    .filter((row) => row.categoryId === categoryId && row.date === latest && !row.isLenovo)
-    .slice()
-    .sort((a, b) => b.marketShare - a.marketShare);
+  const period = selectedPeriod();
+  const competitorRows = brandRowsForSelectedPeriod(categoryId, false).sort((a, b) => b.marketShare - a.marketShare);
   const top = competitorRows[0] || {};
   const launches = data.brandMarket.filter((row) => row.categoryId === categoryId && !row.isLenovo && row.newProductLaunch);
   const avgCompetitorShare = competitorRows.reduce((sum, row) => sum + row.marketShare, 0);
+  const brands = unique(data.brandMarket.filter((row) => row.categoryId === categoryId && !row.isLenovo).map((row) => row.brand));
+  state.competitorBrand[categoryId] ||= brands[0];
 
   return `
     <div class="view-stack">
@@ -352,9 +401,18 @@ function renderCompetitiveAnalysis(categoryId) {
       </section>
 
       <section class="chart-grid">
-        ${chartShell("competitorSharePlot", "竞品市场占有率", formatPeriod(latest, "month"))}
-        ${chartShell("competitorShipmentsPlot", "竞品出货情况", `${granularityLabels[state.granularity]} trend`)}
-        ${chartShell("competitorBubblePlot", "竞品价格 × 份额", "Bubble size = shipments")}
+        ${chartShell("competitorDemandByPowerPlot", "各品牌需求规模对比（按功率拆分）", period)}
+        ${chartShell("competitorSalesPlot", "竞品销售情况", `${granularityLabels[state.granularity]} revenue trend`)}
+        <div class="chart-shell">
+          <div class="chart-title">
+            <strong>价格带 × 功率结构（按品牌）</strong>
+            <select class="inline-select" data-action="competitor-brand">
+              ${brands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.competitorBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
+            </select>
+          </div>
+          <div id="competitorPricePowerPlot" class="plot"></div>
+        </div>
+        ${chartShell("competitorBubblePlot", "品牌定位矩阵（价格 × 平均功率）", "Bubble size = sales")}
         <div class="detail-panel">${renderLaunchTable(categoryId)}</div>
       </section>
     </div>
@@ -380,37 +438,89 @@ function renderCategoryOverview(categoryId) {
   const visibleProducts = getFilteredProducts(categoryId);
   const selectedIds = getSelectedModelIds(categoryId, visibleProducts);
   const metricRows = data.productMetrics.filter((row) => row.categoryId === categoryId && selectedIds.includes(row.modelId));
-  const latestRows = metricRows.filter((row) => row.date === data.catalog.periods.at(-1));
+  const latestRows = metricRows.filter((row) => rowInSelectedPeriod(row));
   const latestSummary = summarizeProductRows(latestRows);
 
   return `
     <div class="view-stack">
-      ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
-      ${renderCategoryFilters(categoryId)}
-      <section class="chart-grid">
-        ${chartShell("categorySalesPlot", "销量对比", `${granularityLabels[state.granularity]} · selected models`)}
-        ${chartShell("categoryProfitPlot", "利润对比", "Gross profit")}
-        ${chartShell("categoryRevenuePlot", "收入趋势", "Net revenue", true)}
-        ${chartShell("categoryMarginPlot", "Margin / Return Rate", "Latest period")}
+      <section class="module-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Template 1</p>
+            <h2>产品总结模版</h2>
+          </div>
+        </div>
+        ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
       </section>
 
-      <section class="product-browser product-browser-full">
-        <section class="product-list product-list-full">
-          <div class="product-list-head">
-            <div>
-              <h3>Products</h3>
-              <span class="product-meta">${visibleProducts.length} visible · ${selectedIds.length} charted</span>
-            </div>
-            <div class="toolbar-group product-list-tools">
-              <input type="search" value="${escapeAttr(state.search)}" placeholder="Search product" data-action="search-products" />
-              <button class="solid-button" type="button" data-action="show-all-products">显示全部产品</button>
-              <button class="ghost-button" type="button" data-action="select-visible-models">选择当前</button>
-            </div>
+      <section class="module-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Template 2</p>
+            <h2>数据筛选模版</h2>
           </div>
-          <div class="product-rows">
-            ${visibleProducts.length ? visibleProducts.map((product) => renderProductRow(product, selectedIds)).join("") : renderEmptyProducts()}
-          </div>
+          <p>筛选逻辑和原有图表保留，Adapter 新增 3 个及以上接口分类。</p>
+        </div>
+        ${renderCategoryFilters(categoryId)}
+        <section class="chart-grid">
+          ${chartShell("categorySalesPlot", "销量对比", `${granularityLabels[state.granularity]} · selected models`)}
+          ${chartShell("categoryProfitPlot", "利润对比", "Gross profit")}
+          ${chartShell("categoryRevenuePlot", "收入趋势", "Net revenue", true)}
+          ${chartShell("categoryMarginPlot", "Margin / Return Rate", "Selected period")}
         </section>
+
+        <section class="product-browser product-browser-full">
+          <section class="product-list product-list-full">
+            <div class="product-list-head">
+              <div>
+                <h3>Products</h3>
+                <span class="product-meta">${visibleProducts.length} visible · ${selectedIds.length} charted</span>
+              </div>
+              <div class="toolbar-group product-list-tools">
+                <input type="search" value="${escapeAttr(state.search)}" placeholder="Search product" data-action="search-products" />
+                <button class="solid-button" type="button" data-action="show-all-products">显示全部产品</button>
+                <button class="ghost-button" type="button" data-action="select-visible-models">选择当前</button>
+              </div>
+            </div>
+            <div class="product-rows">
+              ${visibleProducts.length ? visibleProducts.map((product) => renderProductRow(product, selectedIds)).join("") : renderEmptyProducts()}
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <section class="module-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Template 3</p>
+            <h2>用户反馈模块</h2>
+          </div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-shell">
+            <div class="chart-title"><strong>用户关键词词云</strong><span>${escapeHtml(selectedPeriod())}</span></div>
+            <div id="feedbackWordCloud" class="word-cloud"></div>
+          </div>
+          ${chartShell("feedbackPainPowerPlot", "痛点与功率关系", "stacked share")}
+          ${chartShell("feedbackRatingMatrix", "评分矩阵（功率 × 接口）", selectedPeriod())}
+          ${chartShell("feedbackReturnReasonsPlot", "退货原因分布", selectedPeriod())}
+          ${chartShell("feedbackReturnRiskMatrix", "退货率与售后率矩阵（功率 × 接口）", "risk heatmap")}
+          ${chartShell("feedbackRatingReturnPlot", "评分 × 退货率风险图", "bubble = sales")}
+        </div>
+      </section>
+
+      <section class="module-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Template 4</p>
+            <h2>产品决策</h2>
+          </div>
+        </div>
+        <div class="chart-grid">
+          ${chartShell("decisionOpportunityPlot", "机会矩阵（增长 × 份额 × 利润）", "bubble = sales")}
+          ${chartShell("decisionGapPlot", "产品空白区（功率 × 接口 × 价格带）", selectedPeriod())}
+          <div class="detail-panel">${renderDecisionCards(categoryId, selectedIds)}</div>
+        </div>
       </section>
     </div>
   `;
@@ -434,7 +544,7 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
     <section class="product-matrix">
       <div class="kpi-grid">
         ${renderKpi("Latest Units", fmtCompact(latestSummary.unitsNet), "Net shipped")}
-        ${renderKpi("Latest Revenue", fmtCurrency(latestSummary.revenueNet), formatPeriod(data.catalog.periods.at(-1), "month"))}
+        ${renderKpi("Latest Revenue", fmtCurrency(latestSummary.revenueNet), selectedPeriod())}
         ${renderKpi("Gross Profit", fmtCurrency(latestSummary.grossProfit), "Selected models")}
         ${renderKpi("Gross Margin", fmtPercent(latestSummary.margin), "Weighted by revenue")}
       </div>
@@ -444,6 +554,8 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
       <div class="chart-grid">
         ${chartShell("matrixContributionPlot", "重点产品销售额贡献", "Latest period")}
         ${chartShell("matrixBubblePlot", "产品矩阵：价格 × 毛利率", "Circle size = sales volume")}
+        ${chartShell("resourceContributionPlot", "功率段资源占用 vs 销量贡献", "SKU / units / revenue share")}
+        ${chartShell("portSalesStructurePlot", "接口数 × 销量结构", "stacked by power segment")}
       </div>
     </section>
   `;
@@ -495,7 +607,7 @@ function renderProductListPage(categoryId) {
 }
 
 function renderProductCard(product) {
-  const latestRows = data.productMetrics.filter((row) => row.modelId === product.id && row.date === data.catalog.periods.at(-1));
+  const latestRows = data.productMetrics.filter((row) => row.modelId === product.id && rowInSelectedPeriod(row));
   const summary = summarizeProductRows(latestRows);
   const attrs = product.attributes;
   const primarySpec = attrs.wattage ? `${attrs.wattage}W` : attrs.outputW ? `${attrs.capacityBand} / ${attrs.outputW}W` : `${attrs.lengthBand} / ${attrs.powerBand}`;
@@ -559,12 +671,11 @@ function renderFilterSelect(categoryId, filter) {
 }
 
 function getProductLatestSummaries(categoryId, productIds) {
-  const latest = data.catalog.periods.at(-1);
   const ids = productIds || data.catalog.products.filter((product) => product.categoryId === categoryId).map((product) => product.id);
   return ids
     .map((id) => {
       const product = indexes.products.get(id);
-      const rows = data.productMetrics.filter((row) => row.modelId === id && row.date === latest);
+      const rows = data.productMetrics.filter((row) => row.modelId === id && rowInSelectedPeriod(row));
       return product ? { product, summary: summarizeProductRows(rows) } : null;
     })
     .filter(Boolean);
@@ -586,7 +697,7 @@ function getFastestGrowingProduct(categoryId) {
 }
 
 function renderProductRow(product, selectedIds) {
-  const latestRows = data.productMetrics.filter((row) => row.modelId === product.id && row.date === data.catalog.periods.at(-1));
+  const latestRows = data.productMetrics.filter((row) => row.modelId === product.id && rowInSelectedPeriod(row));
   const summary = summarizeProductRows(latestRows);
   const checked = selectedIds.includes(product.id) ? "checked" : "";
   const attrs = product.attributes;
@@ -682,10 +793,10 @@ function drawCategoryCharts(categoryId, selectedIds) {
     { yaxis: { title: "USD" } },
   );
 
-  const latest = data.catalog.periods.at(-1);
+  const latest = selectedPeriod();
   const latestByModel = products.map((product) => ({
     product,
-    summary: summarizeProductRows(categoryRows.filter((row) => row.modelId === product.id && row.date === latest)),
+    summary: summarizeProductRows(categoryRows.filter((row) => row.modelId === product.id && periodKey(row.date, state.granularity) === latest)),
   }));
   drawPlot(
     "categoryMarginPlot",
@@ -715,148 +826,262 @@ function drawCategoryCharts(categoryId, selectedIds) {
 }
 
 function drawMarketAnalysis(categoryId) {
-  const latest = data.catalog.periods.at(-1);
-  const brandRows = data.brandMarket.filter((row) => row.categoryId === categoryId);
-  const latestBrands = brandRows.filter((row) => row.date === latest).sort((a, b) => b.marketShare - a.marketShare);
-  const periods = sortedPeriods(unique(brandRows.map((row) => periodKey(row.date, state.granularity))));
-  const brands = unique(brandRows.map((row) => row.brand));
+  const period = selectedPeriod();
+  const trendPeriods = periodsThroughSelected(state.granularity, period);
+  const categoryRows = data.productMetrics.filter((row) => row.categoryId === categoryId && trendPeriods.includes(periodKey(row.date, state.granularity)));
+  const selectedRows = categoryRows.filter((row) => rowInSelectedPeriod(row));
+  const powerSegments = getCategoryPowerSegments(categoryId);
+  const portSegments = getCategoryPortSegments(categoryId);
 
+  drawHighPowerMigration(categoryId, trendPeriods, categoryRows);
+  drawPortUpgradeTrend(categoryId, trendPeriods, categoryRows);
+  drawSamePowerPriceCurve(categoryId, trendPeriods, categoryRows, powerSegments);
+  drawTechnologyPenetration(categoryId, trendPeriods, categoryRows);
+  drawPowerStructureTrend(categoryId, trendPeriods, categoryRows, powerSegments);
+  drawPowerPortHeatmap("structurePowerPortHeatmap", selectedRows, powerSegments, portSegments, "Units");
+  drawPricePowerStructure(categoryId, selectedRows, powerSegments);
+  drawScenarioDonut(categoryId, selectedRows);
+}
+
+function drawHighPowerMigration(categoryId, periods, rows) {
+  const thresholds = categoryId === "power_cable" ? [60, 100, 200] : [65, 100, 140];
+  const traces = thresholds.map((threshold, idx) => ({
+    x: periods,
+    y: periods.map((period) => {
+      const bucket = rows.filter((row) => periodKey(row.date, state.granularity) === period);
+      const total = bucket.reduce((sum, row) => sum + row.unitsNet, 0);
+      const high = bucket.filter((row) => productPower(indexes.products.get(row.modelId)) >= threshold).reduce((sum, row) => sum + row.unitsNet, 0);
+      return total ? (high / total) * 100 : 0;
+    }),
+    name: `${threshold}W+`,
+    type: "scatter",
+    mode: "lines+markers",
+    line: { color: redScale[idx + 1] || palette[idx], width: 2.8 },
+  }));
+  drawPlot("industryHighPowerPlot", traces, { yaxis: { title: "占比 %", ticksuffix: "%" } });
+}
+
+function drawPortUpgradeTrend(categoryId, periods, rows) {
+  const ports = getCategoryPortSegments(categoryId);
+  const traces = ports.map((port, idx) => ({
+    x: periods,
+    y: periods.map((period) => {
+      const bucket = rows.filter((row) => periodKey(row.date, state.granularity) === period);
+      const total = bucket.reduce((sum, row) => sum + row.unitsNet, 0);
+      const subtotal = bucket.filter((row) => productPortSegment(indexes.products.get(row.modelId)) === port).reduce((sum, row) => sum + row.unitsNet, 0);
+      return total ? (subtotal / total) * 100 : 0;
+    }),
+    name: port,
+    type: "scatter",
+    mode: "lines",
+    stackgroup: "one",
+    groupnorm: "percent",
+    line: { color: redScale[idx] || palette[idx], width: 1.5 },
+  }));
+  drawPlot("industryPortsPlot", traces, { yaxis: { title: "样本占比 %", ticksuffix: "%", range: [0, 100] } });
+}
+
+function drawSamePowerPriceCurve(categoryId, periods, rows, powerSegments) {
+  const traces = powerSegments.map((segment, idx) => ({
+    x: periods,
+    y: periods.map((period) => {
+      const bucket = rows.filter((row) => periodKey(row.date, state.granularity) === period && productPowerSegment(indexes.products.get(row.modelId)) === segment);
+      return summarizeProductRows(bucket).aur;
+    }),
+    name: segment,
+    type: "scatter",
+    mode: "lines+markers",
+    line: { color: redScale[idx] || palette[idx], width: 2.4 },
+  }));
+  drawPlot("industryPriceCurvePlot", traces, { yaxis: { title: "平均价格", tickprefix: "$" } });
+}
+
+function drawTechnologyPenetration(categoryId, periods, rows) {
+  const techs = getTechnologySignals(categoryId);
+  const traces = techs.map((tech, idx) => ({
+    x: periods,
+    y: periods.map((period) => {
+      const bucket = rows.filter((row) => periodKey(row.date, state.granularity) === period);
+      const total = bucket.reduce((sum, row) => sum + row.unitsNet, 0);
+      const subtotal = bucket.filter((row) => productHasTech(indexes.products.get(row.modelId), tech)).reduce((sum, row) => sum + row.unitsNet, 0);
+      return total ? (subtotal / total) * 100 : 0;
+    }),
+    name: tech,
+    type: "scatter",
+    mode: "lines+markers",
+    line: { color: redScale[idx] || palette[idx], width: 2.4 },
+  }));
+  drawPlot("industryTechPlot", traces, { yaxis: { title: "采用率 %", ticksuffix: "%", range: [0, 100] } });
+}
+
+function drawPowerStructureTrend(categoryId, periods, rows, powerSegments) {
+  const traces = powerSegments.map((segment, idx) => ({
+    x: periods,
+    y: periods.map((period) => {
+      const bucket = rows.filter((row) => periodKey(row.date, state.granularity) === period);
+      const total = bucket.reduce((sum, row) => sum + row.unitsNet, 0);
+      const subtotal = bucket.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + row.unitsNet, 0);
+      return total ? (subtotal / total) * 100 : 0;
+    }),
+    name: segment,
+    type: "scatter",
+    mode: "lines",
+    stackgroup: "one",
+    groupnorm: "percent",
+    line: { color: redScale[idx] || palette[idx], width: 1.5 },
+  }));
+  drawPlot("structurePowerTrendPlot", traces, { yaxis: { title: "样本占比 %", ticksuffix: "%", range: [0, 100] } });
+}
+
+function drawPowerPortHeatmap(id, rows, powerSegments, portSegments, title = "Units") {
+  const z = powerSegments.map((power) =>
+    portSegments.map((port) =>
+      rows
+        .filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === power && productPortSegment(indexes.products.get(row.modelId)) === port)
+        .reduce((sum, row) => sum + row.unitsNet, 0),
+    ),
+  );
   drawPlot(
-    "marketSharePlot",
+    id,
     [
       {
-        labels: latestBrands.map((row) => row.brand),
-        values: latestBrands.map((row) => row.marketShare),
+        z,
+        x: portSegments,
+        y: powerSegments,
+        type: "heatmap",
+        colorscale: [
+          [0, "#fff5f2"],
+          [0.35, "#efb0aa"],
+          [0.7, "#d7301f"],
+          [1, "#7f231c"],
+        ],
+        colorbar: { title },
+      },
+    ],
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+  );
+}
+
+function drawPricePowerStructure(categoryId, rows, powerSegments, id = "structurePricePowerPlot") {
+  const traces = powerSegments.map((segment, idx) => ({
+    x: priceBands,
+    y: priceBands.map((band) => {
+      const bucket = rows.filter((row) => priceBandForProduct(indexes.products.get(row.modelId)) === band);
+      const total = bucket.reduce((sum, row) => sum + row.unitsNet, 0);
+      const subtotal = bucket.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + row.unitsNet, 0);
+      return total ? (subtotal / total) * 100 : 0;
+    }),
+    name: segment,
+    type: "bar",
+    marker: { color: redScale[idx] || palette[idx] },
+  }));
+  drawPlot(id, traces, { barmode: "stack", yaxis: { title: "样本占比 %", ticksuffix: "%", range: [0, 100] } });
+}
+
+function drawScenarioDonut(categoryId, rows) {
+  const buckets = new Map();
+  for (const row of rows) {
+    const product = indexes.products.get(row.modelId);
+    const scenarios = product?.attributes.scenarios || ["daily carry"];
+    for (const scenario of scenarios) buckets.set(scenario, (buckets.get(scenario) || 0) + row.unitsNet / scenarios.length);
+  }
+  const entries = [...buckets.entries()].sort((a, b) => b[1] - a[1]);
+  drawPlot(
+    "structureScenarioPlot",
+    [
+      {
+        labels: entries.map(([label]) => label),
+        values: entries.map(([, value]) => value),
         type: "pie",
-        hole: 0.52,
+        hole: 0.5,
         textinfo: "label+percent",
-        marker: { colors: latestBrands.map((row, idx) => (row.brand === "Lenovo" ? indexes.categories.get(categoryId).accent : palette[idx % palette.length])) },
+        marker: { colors: entries.map((_, idx) => redScale[idx] || palette[idx]) },
       },
     ],
-    { showlegend: false, margin: { l: 12, r: 12, t: 8, b: 8 } },
+    { showlegend: false, margin: { l: 10, r: 10, t: 8, b: 8 } },
   );
-
-  const shipmentTraces = brands.map((brand, idx) => {
-    const byPeriod = aggregateBrandRows(
-      brandRows.filter((row) => row.brand === brand),
-      (row) => periodKey(row.date, state.granularity),
-    );
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.brandUnits || 0),
-      name: brand,
-      type: "scatter",
-      mode: "lines+markers",
-      line: { color: brand === "Lenovo" ? indexes.categories.get(categoryId).accent : palette[idx % palette.length], width: brand === "Lenovo" ? 3 : 2 },
-    };
-  });
-  drawPlot("brandShipmentsPlot", shipmentTraces, { yaxis: { title: "Shipments" } });
-
-  const categoryByPeriod = aggregateBrandRows(brandRows, (row) => periodKey(row.date, state.granularity));
-  drawPlot(
-    "categoryDemandPlot",
-    [
-      {
-        x: periods,
-        y: periods.map((period) => categoryByPeriod.get(period)?.brandUnits || 0),
-        name: "Total Market Units",
-        type: "bar",
-        marker: { color: "#c2410c" },
-      },
-      {
-        x: periods,
-        y: periods.map((period) => (categoryByPeriod.get(period)?.lenovoShare || 0) * 100),
-        name: "Lenovo Share",
-        type: "scatter",
-        mode: "lines+markers",
-        yaxis: "y2",
-        line: { color: "#0f766e", width: 2.5 },
-      },
-    ],
-    {
-      yaxis: { title: "Units" },
-      yaxis2: { title: "Share %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
-    },
-  );
-
-  const latestDemand = data.marketMetrics
-    .filter((row) => row.categoryId === categoryId && row.date === latest)
-    .slice()
-    .sort((a, b) => b.searchIndex - a.searchIndex)
-    .slice(0, 5);
-  const demandTraces = latestDemand.map((latestRow, idx) => {
-    const product = indexes.products.get(latestRow.modelId);
-    const rows = data.marketMetrics.filter((row) => row.modelId === latestRow.modelId);
-    const byPeriod = aggregateMarketRows(rows, (row) => periodKey(row.date, state.granularity));
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.searchIndex || 0),
-      name: product?.shortName || latestRow.modelId,
-      type: "scatter",
-      mode: "lines+markers",
-      line: { color: palette[idx % palette.length], width: 2.4 },
-    };
-  });
-  drawPlot("modelDemandPlot", demandTraces, { yaxis: { title: "Search Index" } });
 }
 
 function drawCompetitiveAnalysis(categoryId) {
-  const latest = data.catalog.periods.at(-1);
   const rows = data.brandMarket.filter((row) => row.categoryId === categoryId && !row.isLenovo);
-  const latestRows = rows.filter((row) => row.date === latest).sort((a, b) => b.marketShare - a.marketShare);
-  const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.granularity))));
+  const selectedRows = brandRowsForSelectedPeriod(categoryId, false).sort((a, b) => b.marketShare - a.marketShare);
+  const periods = periodsThroughSelected(state.granularity, selectedPeriod());
   const brands = unique(rows.map((row) => row.brand));
+  const powerSegments = getCategoryPowerSegments(categoryId);
 
-  drawPlot(
-    "competitorSharePlot",
-    [
-      {
-        x: latestRows.map((row) => row.brand),
-        y: latestRows.map((row) => row.marketShare * 100),
-        type: "bar",
-        marker: { color: latestRows.map((_, idx) => palette[idx % palette.length]) },
-        name: "Market Share",
-      },
-    ],
-    { yaxis: { title: "Share %", ticksuffix: "%" } },
-  );
+  drawCompetitorDemandByPower(categoryId, selectedRows, brands, powerSegments);
 
-  const shipmentTraces = brands.map((brand, idx) => {
+  const salesTraces = brands.map((brand, idx) => {
     const byPeriod = aggregateBrandRows(
-      rows.filter((row) => row.brand === brand),
+      rows.filter((row) => row.brand === brand && periods.includes(periodKey(row.date, state.granularity))),
       (row) => periodKey(row.date, state.granularity),
     );
     return {
       x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.brandUnits || 0),
+      y: periods.map((period) => byPeriod.get(period)?.brandRevenue || 0),
       name: brand,
       type: "scatter",
       mode: "lines+markers",
       line: { color: palette[idx % palette.length], width: 2.4 },
     };
   });
-  drawPlot("competitorShipmentsPlot", shipmentTraces, { yaxis: { title: "Shipments" } });
+  drawPlot("competitorSalesPlot", salesTraces, { yaxis: { title: "Sales", tickprefix: "$" } });
 
+  drawCompetitorPricePower(categoryId, selectedRows, powerSegments);
   drawPlot(
     "competitorBubblePlot",
     [
       {
-        x: latestRows.map((row) => row.avgAUR),
-        y: latestRows.map((row) => row.marketShare * 100),
-        text: latestRows.map((row) => `${row.brand}<br>${row.starProduct}`),
+        x: selectedRows.map((row) => row.avgAUR),
+        y: selectedRows.map((row) => competitorAveragePower(categoryId, row.brand)),
+        text: selectedRows.map((row) => row.brand),
         mode: "markers+text",
         type: "scatter",
-        textposition: "middle center",
+        textposition: "top center",
         marker: {
-          size: latestRows.map((row) => Math.max(28, Math.sqrt(row.brandUnits) * 0.12)),
-          color: latestRows.map((_, idx) => palette[idx % palette.length]),
+          size: selectedRows.map((row) => Math.max(28, Math.sqrt(row.brandRevenue) * 0.02)),
+          color: selectedRows.map((_, idx) => palette[idx % palette.length]),
           opacity: 0.42,
           line: { color: "#1f2328", width: 1.5 },
         },
       },
     ],
-    { xaxis: { title: "AUR" }, yaxis: { title: "Market Share %", ticksuffix: "%" } },
+    { xaxis: { title: "Weighted Price", tickprefix: "$" }, yaxis: { title: "Weighted Power W" } },
   );
+}
+
+function drawCompetitorDemandByPower(categoryId, brandRows, brands, powerSegments) {
+  const traces = powerSegments.map((segment, idx) => ({
+    x: brands,
+    y: brands.map((brand) => {
+      const brandRow = brandRows.find((row) => row.brand === brand);
+      return brandRow ? brandRow.brandRevenue * competitorPowerWeight(categoryId, brand, segment) : 0;
+    }),
+    name: segment,
+    type: "bar",
+    marker: { color: redScale[idx] || palette[idx] },
+  }));
+  drawPlot("competitorDemandByPowerPlot", traces, { barmode: "stack", yaxis: { title: "Sales", tickprefix: "$" } });
+}
+
+function drawCompetitorPricePower(categoryId, brandRows, powerSegments) {
+  const brand = state.competitorBrand[categoryId] || brandRows[0]?.brand;
+  const row = brandRows.find((item) => item.brand === brand) || brandRows[0];
+  const traces = powerSegments.map((segment, idx) => ({
+    x: priceBands,
+    y: priceBands.map((band) => {
+      const base = row ? row.brandRevenue : 0;
+      return base * competitorPowerWeight(categoryId, brand, segment) * competitorPriceBandWeight(brand, band);
+    }),
+    name: segment,
+    type: "bar",
+    marker: { color: redScale[idx] || palette[idx] },
+  }));
+  const totals = priceBands.map((_, col) => traces.reduce((sum, trace) => sum + trace.y[col], 0));
+  for (const trace of traces) {
+    trace.y = trace.y.map((value, idx) => (totals[idx] ? (value / totals[idx]) * 100 : 0));
+  }
+  drawPlot("competitorPricePowerPlot", traces, { barmode: "stack", yaxis: { title: "占比 %", ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
@@ -903,6 +1128,336 @@ function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
     ],
     { xaxis: { title: "List Price" }, yaxis: { title: "Gross Margin %", ticksuffix: "%" } },
   );
+
+  drawResourceContribution(categoryId, productIds);
+  drawPortSalesStructure(categoryId, productIds);
+}
+
+function drawResourceContribution(categoryId, productIds) {
+  const products = productIds.map((id) => indexes.products.get(id)).filter(Boolean);
+  const rows = data.productMetrics.filter((row) => productIds.includes(row.modelId) && rowInSelectedPeriod(row));
+  const segments = getCategoryPowerSegments(categoryId);
+  const totalSkus = products.length || 1;
+  const totalUnits = rows.reduce((sum, row) => sum + row.unitsNet, 0) || 1;
+  const totalRevenue = rows.reduce((sum, row) => sum + row.revenueNet, 0) || 1;
+  drawPlot(
+    "resourceContributionPlot",
+    [
+      {
+        x: segments,
+        y: segments.map((segment) => (products.filter((product) => productPowerSegment(product) === segment).length / totalSkus) * 100),
+        name: "SKU占比",
+        type: "bar",
+        marker: { color: "#f4c7c3" },
+      },
+      {
+        x: segments,
+        y: segments.map((segment) => (rows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + row.unitsNet, 0) / totalUnits) * 100),
+        name: "销量占比",
+        type: "bar",
+        marker: { color: "#d7301f" },
+      },
+      {
+        x: segments,
+        y: segments.map((segment) => (rows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + row.revenueNet, 0) / totalRevenue) * 100),
+        name: "收入占比",
+        type: "bar",
+        marker: { color: "#111827" },
+      },
+    ],
+    { barmode: "group", yaxis: { title: "占比 %", ticksuffix: "%" } },
+  );
+}
+
+function drawPortSalesStructure(categoryId, productIds) {
+  const rows = data.productMetrics.filter((row) => productIds.includes(row.modelId) && rowInSelectedPeriod(row));
+  const ports = getCategoryPortSegments(categoryId);
+  const powers = getCategoryPowerSegments(categoryId);
+  const traces = powers.map((power, idx) => ({
+    x: ports,
+    y: ports.map((port) =>
+      rows
+        .filter((row) => productPortSegment(indexes.products.get(row.modelId)) === port && productPowerSegment(indexes.products.get(row.modelId)) === power)
+        .reduce((sum, row) => sum + row.unitsNet, 0),
+    ),
+    name: power,
+    type: "bar",
+    marker: { color: redScale[idx] || palette[idx] },
+  }));
+  drawPlot("portSalesStructurePlot", traces, { barmode: "stack", yaxis: { title: "Sales Volume" } });
+}
+
+function drawFeedbackModule(categoryId, selectedIds) {
+  const productIds = selectedIds.length ? selectedIds : data.catalog.products.filter((product) => product.categoryId === categoryId).map((product) => product.id);
+  const reviewRows = data.consumerInsights.filter((row) => productIds.includes(row.modelId) && rowInSelectedPeriod(row));
+  const metricRows = data.productMetrics.filter((row) => productIds.includes(row.modelId) && rowInSelectedPeriod(row));
+  const powers = getCategoryPowerSegments(categoryId);
+  const ports = getCategoryPortSegments(categoryId);
+
+  renderFeedbackWordCloud(reviewRows);
+  drawPainPowerRelationship(reviewRows, powers);
+  drawRatingMatrix(reviewRows, powers, ports);
+  drawReturnReasons(metricRows, reviewRows);
+  drawReturnRiskMatrix(metricRows, powers, ports);
+  drawRatingReturnRisk(productIds, reviewRows, metricRows);
+}
+
+function renderFeedbackWordCloud(reviewRows) {
+  const node = document.getElementById("feedbackWordCloud");
+  if (!node) return;
+  const byKeyword = new Map();
+  for (const row of reviewRows) byKeyword.set(row.keyword, (byKeyword.get(row.keyword) || 0) + row.frequency);
+  const entries = [...byKeyword.entries()].sort((a, b) => b[1] - a[1]).slice(0, 24);
+  const max = Math.max(...entries.map(([, value]) => value), 1);
+  node.innerHTML = entries
+    .map(([word, value], idx) => {
+      const size = 16 + (value / max) * 30;
+      return `<span style="font-size:${size}px;color:${redScale[idx % redScale.length]}">${escapeHtml(word)}</span>`;
+    })
+    .join("");
+}
+
+function drawPainPowerRelationship(reviewRows, powers) {
+  const painRows = reviewRows.filter((row) => row.sentiment !== "Positive");
+  const painKeys = unique(painRows.map((row) => row.keyword)).slice(0, 6);
+  const traces = painKeys.map((keyword, idx) => ({
+    x: powers,
+    y: powers.map((power) => {
+      const bucket = painRows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === power);
+      const total = bucket.reduce((sum, row) => sum + row.frequency, 0);
+      const subtotal = bucket.filter((row) => row.keyword === keyword).reduce((sum, row) => sum + row.frequency, 0);
+      return total ? (subtotal / total) * 100 : 0;
+    }),
+    name: keyword,
+    type: "bar",
+    marker: { color: redScale[idx] || palette[idx] },
+  }));
+  drawPlot("feedbackPainPowerPlot", traces, { barmode: "stack", yaxis: { title: "痛点占比 %", ticksuffix: "%" } });
+}
+
+function drawRatingMatrix(reviewRows, powers, ports) {
+  const z = powers.map((power) =>
+    ports.map((port) => {
+      const bucket = reviewRows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === power && productPortSegment(indexes.products.get(row.modelId)) === port);
+      return weightedAvg(bucket, (row) => row.avgRating, (row) => row.frequency) || null;
+    }),
+  );
+  drawPlot(
+    "feedbackRatingMatrix",
+    [
+      {
+        z,
+        x: ports,
+        y: powers,
+        type: "heatmap",
+        colorscale: [
+          [0, "#fff5f2"],
+          [0.45, "#efb0aa"],
+          [1, "#a62a22"],
+        ],
+        zmin: 3.6,
+        zmax: 4.8,
+        colorbar: { title: "评分" },
+      },
+    ],
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+  );
+}
+
+function drawReturnReasons(metricRows, reviewRows) {
+  const negative = reviewRows.filter((row) => row.sentiment !== "Positive");
+  const totalReturns = metricRows.reduce((sum, row) => sum + row.unitsReturned, 0);
+  const byKeyword = new Map();
+  const totalNeg = negative.reduce((sum, row) => sum + row.frequency, 0) || 1;
+  for (const row of negative) byKeyword.set(row.keyword, (byKeyword.get(row.keyword) || 0) + row.frequency);
+  const entries = [...byKeyword.entries()]
+    .map(([keyword, value]) => [keyword, Math.round((value / totalNeg) * totalReturns)])
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 7);
+  drawPlot(
+    "feedbackReturnReasonsPlot",
+    [
+      {
+        x: entries.map(([, value]) => value),
+        y: entries.map(([keyword]) => keyword),
+        type: "bar",
+        orientation: "h",
+        marker: { color: "#d7301f" },
+      },
+    ],
+    { margin: { l: 120, r: 20, t: 8, b: 42 }, xaxis: { title: "退货样本数" } },
+  );
+}
+
+function drawReturnRiskMatrix(metricRows, powers, ports) {
+  const z = powers.map((power) =>
+    ports.map((port) => {
+      const bucket = metricRows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === power && productPortSegment(indexes.products.get(row.modelId)) === port);
+      const summary = summarizeProductRows(bucket);
+      const serviceRisk = summary.returnRate + summary.stockoutDays * 0.002 + (Number(String(port).match(/\d+/)?.[0] || 1) - 1) * 0.006;
+      return serviceRisk * 100;
+    }),
+  );
+  drawPlot(
+    "feedbackReturnRiskMatrix",
+    [
+      {
+        z,
+        x: ports,
+        y: powers,
+        type: "heatmap",
+        colorscale: [
+          [0, "#fff5f2"],
+          [0.5, "#de6f62"],
+          [1, "#7f231c"],
+        ],
+        colorbar: { title: "售后率 %" },
+      },
+    ],
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+  );
+}
+
+function drawRatingReturnRisk(productIds, reviewRows, metricRows) {
+  const items = productIds.map((id) => {
+    const product = indexes.products.get(id);
+    const reviews = reviewRows.filter((row) => row.modelId === id);
+    const metrics = summarizeProductRows(metricRows.filter((row) => row.modelId === id));
+    return {
+      product,
+      rating: weightedAvg(reviews, (row) => row.avgRating, (row) => row.frequency),
+      returnRate: metrics.returnRate * 100,
+      units: metrics.unitsNet,
+      power: productPowerSegment(product),
+    };
+  });
+  drawPlot(
+    "feedbackRatingReturnPlot",
+    [
+      {
+        x: items.map((item) => item.rating),
+        y: items.map((item) => item.returnRate),
+        text: items.map((item) => item.product.shortName),
+        mode: "markers+text",
+        type: "scatter",
+        textposition: "top center",
+        marker: {
+          size: items.map((item) => Math.max(18, Math.sqrt(item.units) * 0.7)),
+          color: items.map((item, idx) => redScale[getCategoryPowerSegments(item.product.categoryId).indexOf(item.power)] || palette[idx]),
+          opacity: 0.48,
+          line: { color: "#7f231c", width: 1 },
+        },
+      },
+    ],
+    { xaxis: { title: "销量加权评分", range: [3.8, 4.9] }, yaxis: { title: "退货率 %", ticksuffix: "%" } },
+  );
+}
+
+function renderDecisionCards(categoryId, selectedIds) {
+  const productIds = selectedIds.length ? selectedIds : data.catalog.products.filter((product) => product.categoryId === categoryId).map((product) => product.id);
+  const items = getDecisionItems(categoryId, productIds);
+  const top = items.slice().sort((a, b) => b.growth + b.margin - (a.growth + a.margin))[0];
+  const harvest = items.slice().sort((a, b) => b.share - a.share)[0];
+  const risk = items.slice().sort((a, b) => b.returnRate - a.returnRate)[0];
+  return `
+    <div class="chart-title"><strong>策略机会与决策</strong><span>${escapeHtml(selectedPeriod())}</span></div>
+    <div class="news-list">
+      ${renderDecisionItem("加码机会", top, "增长和利润同时较强，适合增加资源投入。")}
+      ${renderDecisionItem("收割主力", harvest, "份额贡献最高，适合保持供给和价格纪律。")}
+      ${renderDecisionItem("风险观察", risk, "退货或售后风险较高，需要优先复盘体验问题。")}
+    </div>
+  `;
+}
+
+function renderDecisionItem(title, item, body) {
+  if (!item) return "";
+  return `
+    <article class="news-item">
+      <strong>${escapeHtml(title)} · ${escapeHtml(item.segment)}</strong>
+      <p>${escapeHtml(body)} Growth ${fmtPercent(item.growth)}, share ${fmtPercent(item.share)}, margin ${fmtPercent(item.margin)}.</p>
+    </article>
+  `;
+}
+
+function drawDecisionModule(categoryId, selectedIds) {
+  const productIds = selectedIds.length ? selectedIds : data.catalog.products.filter((product) => product.categoryId === categoryId).map((product) => product.id);
+  const items = getDecisionItems(categoryId, productIds);
+  drawPlot(
+    "decisionOpportunityPlot",
+    [
+      {
+        x: items.map((item) => item.growth * 100),
+        y: items.map((item) => item.share * 100),
+        text: items.map((item) => item.segment),
+        mode: "markers+text",
+        type: "scatter",
+        textposition: "top center",
+        marker: {
+          size: items.map((item) => Math.max(26, Math.sqrt(item.units) * 0.9)),
+          color: items.map((item) => item.margin * 100),
+          colorscale: [
+            [0, "#f4c7c3"],
+            [1, "#7f231c"],
+          ],
+          colorbar: { title: "Margin %" },
+          opacity: 0.48,
+          line: { color: "#1f2328", width: 1 },
+        },
+      },
+    ],
+    { xaxis: { title: "Market Growth Proxy %", ticksuffix: "%" }, yaxis: { title: "Lenovo Share Proxy %", ticksuffix: "%" } },
+  );
+
+  const powers = getCategoryPowerSegments(categoryId);
+  const ports = getCategoryPortSegments(categoryId);
+  const rows = data.productMetrics.filter((row) => productIds.includes(row.modelId) && rowInSelectedPeriod(row));
+  const z = powers.map((power) =>
+    ports.map((port) => {
+      const products = productIds.map((id) => indexes.products.get(id)).filter((product) => productPowerSegment(product) === power && productPortSegment(product) === port);
+      const units = rows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === power && productPortSegment(indexes.products.get(row.modelId)) === port).reduce((sum, row) => sum + row.unitsNet, 0);
+      return products.length ? units / products.length / 1000 : units / 1000;
+    }),
+  );
+  drawPlot(
+    "decisionGapPlot",
+    [
+      {
+        z,
+        x: ports,
+        y: powers,
+        type: "heatmap",
+        colorscale: [
+          [0, "#fff5f2"],
+          [0.45, "#efb0aa"],
+          [1, "#a62a22"],
+        ],
+        colorbar: { title: "Gap Score" },
+      },
+    ],
+    { margin: { l: 90, r: 40, t: 8, b: 56 }, xaxis: { title: "接口数" }, yaxis: { title: "功率段" } },
+  );
+}
+
+function getDecisionItems(categoryId, productIds) {
+  const firstPeriod = getPeriodOptions(state.granularity)[0];
+  const current = selectedPeriod();
+  const rows = data.productMetrics.filter((row) => productIds.includes(row.modelId));
+  const segments = getCategoryPowerSegments(categoryId);
+  const totalCurrent = rows.filter((row) => periodKey(row.date, state.granularity) === current).reduce((sum, row) => sum + row.unitsNet, 0) || 1;
+  return segments.map((segment) => {
+    const currentRows = rows.filter((row) => periodKey(row.date, state.granularity) === current && productPowerSegment(indexes.products.get(row.modelId)) === segment);
+    const firstRows = rows.filter((row) => periodKey(row.date, state.granularity) === firstPeriod && productPowerSegment(indexes.products.get(row.modelId)) === segment);
+    const currentSummary = summarizeProductRows(currentRows);
+    const firstSummary = summarizeProductRows(firstRows);
+    return {
+      segment,
+      units: currentSummary.unitsNet,
+      share: currentSummary.unitsNet / totalCurrent,
+      growth: (currentSummary.unitsNet - firstSummary.unitsNet) / Math.max(1, firstSummary.unitsNet),
+      margin: currentSummary.margin,
+      returnRate: currentSummary.returnRate,
+    };
+  });
 }
 
 function renderLaunchTable(categoryId) {
@@ -1023,7 +1578,7 @@ function renderSpecItems(product) {
 function renderDetailKpis(product, selectedVariant) {
   if (state.dimension === "market") {
     const rows = data.marketMetrics.filter((row) => row.modelId === product.id);
-    const latest = rows.filter((row) => row.date === data.catalog.periods.at(-1)).at(0) || {};
+    const latest = rows.filter((row) => rowInSelectedPeriod(row, "detail")).at(0) || {};
     return [
       renderKpi("Model Share", fmtPercent(latest.modelMarketShare || 0), "Total category market"),
       renderKpi("Lenovo Share", fmtPercent(latest.lenovoCategoryShare || 0), "Category share"),
@@ -1033,7 +1588,7 @@ function renderDetailKpis(product, selectedVariant) {
   }
   if (state.dimension === "supply") {
     const rows = getSupplyRowsForProduct(product);
-    const latestRows = rows.filter((row) => row.date === data.catalog.periods.at(-1));
+    const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail"));
     const avgPrice = avg(latestRows.map((row) => row.priceIndex));
     const avgLead = avg(latestRows.map((row) => row.leadTimeDays));
     const maxImpact = Math.max(...latestRows.map((row) => row.impactLevel), 0);
@@ -1042,12 +1597,12 @@ function renderDetailKpis(product, selectedVariant) {
       renderKpi("Price Index", avgPrice.toFixed(1), "Related components"),
       renderKpi("Lead Time", `${avgLead.toFixed(0)} days`, "Average"),
       renderKpi("Impact Level", `${maxImpact}/5`, "Latest period"),
-      renderKpi("Launch Signal", escapeHtml(launch), formatPeriod(data.catalog.periods.at(-1), "month")),
+      renderKpi("Launch Signal", escapeHtml(launch), selectedPeriod("detail")),
     ].join("");
   }
   if (state.dimension === "reviews") {
     const rows = data.consumerInsights.filter((row) => row.modelId === product.id);
-    const latestRows = rows.filter((row) => row.date === data.catalog.periods.at(-1));
+    const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail"));
     const totalReviews = Math.max(...latestRows.map((row) => row.totalReviews), 0);
     const rating = avg(latestRows.map((row) => row.avgRating));
     const positive = latestRows.filter((row) => row.sentiment === "Positive").reduce((sum, row) => sum + row.frequency, 0);
@@ -1065,7 +1620,7 @@ function renderDetailKpis(product, selectedVariant) {
     if (row.modelId !== product.id) return false;
     return selectedVariant === "all" || row.variantId === selectedVariant;
   });
-  const latestRows = rows.filter((row) => row.date === data.catalog.periods.at(-1));
+  const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail"));
   const summary = summarizeProductRows(latestRows);
   return [
     renderKpi("Units", fmtCompact(summary.unitsNet), "Latest period"),
@@ -1313,7 +1868,7 @@ function drawReviewDetail(product) {
   });
   drawPlot("detailPlotA", traces, { barmode: "stack", yaxis: { title: "Frequency" } });
 
-  const latestRows = rows.filter((row) => row.date === data.catalog.periods.at(-1)).sort((a, b) => b.frequency - a.frequency);
+  const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail")).sort((a, b) => b.frequency - a.frequency);
   drawPlot(
     "detailPlotB",
     [
@@ -1348,12 +1903,12 @@ function drawReviewDetail(product) {
 
 function renderSupplyNews(product) {
   const latestRows = getSupplyRowsForProduct(product)
-    .filter((row) => row.date === data.catalog.periods.at(-1))
+    .filter((row) => rowInSelectedPeriod(row, "detail"))
     .sort((a, b) => b.impactLevel - a.impactLevel);
   return `
     <div class="chart-title">
       <strong>供应链信息</strong>
-      <span>${formatPeriod(data.catalog.periods.at(-1), "month")}</span>
+      <span>${escapeHtml(selectedPeriod("detail"))}</span>
     </div>
     <div class="news-list">
       ${latestRows
@@ -1427,13 +1982,52 @@ function drawPlot(id, traces, layout = {}) {
 }
 
 function renderGranularityButtons(active, scope) {
+  const selected = ensureSelectedPeriod(scope, active);
+  const options = getPeriodOptions(active);
   return `
-    <div class="segmented" aria-label="${scope} time granularity">
-      ${Object.entries(granularityLabels)
-        .map(([key, label]) => `<button type="button" class="${active === key ? "is-active" : ""}" data-action="granularity" data-scope="${scope}" data-granularity="${key}">${label}</button>`)
-        .join("")}
+    <div class="time-control">
+      <div class="segmented" aria-label="${scope} time granularity">
+        ${Object.entries(granularityLabels)
+          .map(([key, label]) => `<button type="button" class="${active === key ? "is-active" : ""}" data-action="granularity" data-scope="${scope}" data-granularity="${key}">${label}</button>`)
+          .join("")}
+      </div>
+      <select class="period-select" data-action="period-select" data-scope="${scope}" aria-label="${scope} period">
+        ${options.map((period) => `<option value="${escapeAttr(period)}" ${period === selected ? "selected" : ""}>${escapeHtml(period)}</option>`).join("")}
+      </select>
     </div>
   `;
+}
+
+function getPeriodOptions(granularity) {
+  return sortedPeriods(unique(data.catalog.periods.map((date) => periodKey(date, granularity))));
+}
+
+function ensureSelectedPeriod(scope, granularity) {
+  const options = getPeriodOptions(granularity);
+  if (!state.selectedPeriod[scope] || !options.includes(state.selectedPeriod[scope])) {
+    state.selectedPeriod[scope] = options.at(-1);
+  }
+  return state.selectedPeriod[scope];
+}
+
+function selectedPeriod(scope = "category") {
+  const granularity = scope === "detail" ? state.detailGranularity : state.granularity;
+  return ensureSelectedPeriod(scope, granularity);
+}
+
+function selectedDates(scope = "category") {
+  const granularity = scope === "detail" ? state.detailGranularity : state.granularity;
+  const period = selectedPeriod(scope);
+  return data.catalog.periods.filter((date) => periodKey(date, granularity) === period);
+}
+
+function rowInSelectedPeriod(row, scope = "category") {
+  const granularity = scope === "detail" ? state.detailGranularity : state.granularity;
+  return periodKey(row.date, granularity) === selectedPeriod(scope);
+}
+
+function periodsThroughSelected(granularity, period) {
+  return getPeriodOptions(granularity).filter((item) => periodSortValue(item) <= periodSortValue(period));
 }
 
 function ensureCategoryFilterState(categoryId) {
@@ -1490,8 +2084,10 @@ function handleClick(event) {
     state.categoryView = button.dataset.view;
     render();
   } else if (action === "granularity") {
-    if (button.dataset.scope === "detail") state.detailGranularity = button.dataset.granularity;
+    const scope = button.dataset.scope;
+    if (scope === "detail") state.detailGranularity = button.dataset.granularity;
     else state.granularity = button.dataset.granularity;
+    state.selectedPeriod[scope] = getPeriodOptions(button.dataset.granularity).at(-1);
     render();
   } else if (action === "reset-category-filters") {
     state.filters[state.categoryId] = {};
@@ -1518,6 +2114,16 @@ function handleClick(event) {
 
 function handleChange(event) {
   const target = event.target;
+  if (target.dataset.action === "period-select") {
+    state.selectedPeriod[target.dataset.scope] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "competitor-brand") {
+    state.competitorBrand[state.categoryId] = target.value;
+    render();
+    return;
+  }
   if (target.dataset.action === "category-filter") {
     ensureCategoryFilterState(state.categoryId);
     state.filters[state.categoryId][target.dataset.filterId] = target.value;
@@ -1643,6 +2249,26 @@ function aggregateBrandRows(rows, keyFn) {
   );
 }
 
+function brandRowsForSelectedPeriod(categoryId, includeLenovo = true) {
+  const allRows = data.brandMarket.filter((row) => row.categoryId === categoryId && rowInSelectedPeriod(row));
+  const rows = allRows.filter((row) => includeLenovo || !row.isLenovo);
+  const totalUnits = allRows.reduce((sum, row) => sum + row.brandUnits, 0) || 1;
+  const grouped = new Map();
+  for (const row of rows) {
+    const bucket = grouped.get(row.brand) || { ...row, brandUnits: 0, brandRevenue: 0, launches: [] };
+    bucket.brandUnits += row.brandUnits;
+    bucket.brandRevenue += row.brandRevenue;
+    if (row.newProductLaunch) bucket.launches.push(row.newProductLaunch);
+    bucket.newProductLaunch ||= row.newProductLaunch;
+    grouped.set(row.brand, bucket);
+  }
+  return [...grouped.values()].map((row) => ({
+    ...row,
+    marketShare: row.brandUnits / totalUnits,
+    avgAUR: row.brandRevenue / Math.max(1, row.brandUnits),
+  }));
+}
+
 function aggregateSupplyRows(rows, keyFn) {
   const buckets = new Map();
   for (const row of rows) {
@@ -1683,6 +2309,133 @@ function aggregateReviewRows(rows, keyFn) {
       },
     ]),
   );
+}
+
+function productPower(product) {
+  const attrs = product?.attributes || {};
+  return attrs.wattage || attrs.outputW || attrs.powerW || 0;
+}
+
+function productPowerSegment(product) {
+  const attrs = product?.attributes || {};
+  if (attrs.wattageBand) return attrs.wattageBand;
+  if (attrs.outputBand) return attrs.outputBand;
+  if (attrs.powerBand) return attrs.powerBand;
+  const power = productPower(product);
+  if (power <= 60) return "60W and below";
+  if (power < 100) return "45W to 99W";
+  if (power < 200) return "100W to 199W";
+  return "200W and above";
+}
+
+function productPortCount(product) {
+  const attrs = product?.attributes || {};
+  if (attrs.ports) return attrs.ports;
+  if (attrs.connectors) return Math.max(1, attrs.connectors.length);
+  if (attrs.features?.includes("multi-device") || attrs.features?.includes("built-in cable")) return 2;
+  return 1;
+}
+
+function productPortSegment(product) {
+  const count = productPortCount(product);
+  if (count >= 4) return "4 ports";
+  if (count >= 3) return "3+ ports";
+  if (count === 2) return "2 ports";
+  return "1 port";
+}
+
+function getCategoryPowerSegments(categoryId) {
+  const values = data.catalog.products
+    .filter((product) => product.categoryId === categoryId)
+    .map((product) => productPowerSegment(product));
+  return unique(values).sort((a, b) => {
+    const ai = powerOrder.indexOf(a);
+    const bi = powerOrder.indexOf(b);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+}
+
+function getCategoryPortSegments(categoryId) {
+  const values = data.catalog.products
+    .filter((product) => product.categoryId === categoryId)
+    .map((product) => productPortSegment(product));
+  const order = ["1 port", "2 ports", "3+ ports", "4 ports"];
+  return unique(values).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+}
+
+function priceBandForProduct(product) {
+  const price = product?.listPrice || 0;
+  if (price < 25) return "<$25";
+  if (price < 45) return "$25-45";
+  if (price < 65) return "$45-65";
+  return "$65+";
+}
+
+function getTechnologySignals(categoryId) {
+  if (categoryId === "adapter") return ["GaN", "PD/PPS", "Wireless", "2-in-1"];
+  if (categoryId === "power_bank") return ["High Capacity", "High Wattage", "Magnetic", "Built-in Cable"];
+  return ["USB-C", "High Wattage", "E-marker", "Bundle"];
+}
+
+function productHasTech(product, tech) {
+  const attrs = product?.attributes || {};
+  const haystack = [...(attrs.features || []), ...(attrs.interfaceProtocols || []), ...(attrs.connectors || [])].join(" ").toLowerCase();
+  const tests = {
+    "GaN": () => haystack.includes("gan"),
+    "PD/PPS": () => haystack.includes("pd") || haystack.includes("pps"),
+    "Wireless": () => haystack.includes("wireless") || haystack.includes("qi"),
+    "2-in-1": () => Boolean(attrs.isTwoInOne),
+    "High Capacity": () => (attrs.capacityMah || 0) >= 20000,
+    "High Wattage": () => productPower(product) >= 100 || haystack.includes("high wattage"),
+    "Magnetic": () => haystack.includes("magnetic"),
+    "Built-in Cable": () => haystack.includes("built-in cable"),
+    "USB-C": () => haystack.includes("usb-c"),
+    "E-marker": () => haystack.includes("e-marker"),
+    "Bundle": () => haystack.includes("bundle"),
+  };
+  return tests[tech]?.() || false;
+}
+
+function competitorPowerWeight(categoryId, brand, segment) {
+  const segments = getCategoryPowerSegments(categoryId);
+  const idx = Math.max(0, segments.indexOf(segment));
+  const brandBias = {
+    Anker: 1.35,
+    Ugreen: 1.18,
+    Baseus: 1.12,
+    Belkin: 0.96,
+    Apple: 0.82,
+    Samsung: 0.78,
+    "Amazon Basics": 0.58,
+  }[brand] || 1;
+  const weights = segments.map((_, i) => Math.pow(1.32, i) * (i >= segments.length - 2 ? brandBias : 1 / brandBias));
+  const total = weights.reduce((sum, value) => sum + value, 0);
+  return weights[idx] / total;
+}
+
+function competitorPriceBandWeight(brand, band) {
+  const premium = ["Anker", "Apple", "Belkin"].includes(brand);
+  const value = ["Ugreen", "Amazon Basics", "Baseus"].includes(brand);
+  const map = premium ? [0.08, 0.18, 0.34, 0.4] : value ? [0.24, 0.34, 0.26, 0.16] : [0.16, 0.28, 0.3, 0.26];
+  return map[Math.max(0, priceBands.indexOf(band))] || 0;
+}
+
+function competitorAveragePower(categoryId, brand) {
+  const segments = getCategoryPowerSegments(categoryId);
+  const midpoint = (segment) => {
+    if (segment.includes("45W and below") || segment.includes("60W")) return 45;
+    if (segment.includes("45W to 99W") || segment.includes("65W")) return 65;
+    if (segment.includes("100W")) return 120;
+    if (segment.includes("200W")) return 220;
+    return 90;
+  };
+  return segments.reduce((sum, segment) => sum + midpoint(segment) * competitorPowerWeight(categoryId, brand, segment), 0);
+}
+
+function weightedAvg(rows, valueFn, weightFn) {
+  const totalWeight = rows.reduce((sum, row) => sum + (weightFn(row) || 0), 0);
+  if (!totalWeight) return 0;
+  return rows.reduce((sum, row) => sum + (valueFn(row) || 0) * (weightFn(row) || 0), 0) / totalWeight;
 }
 
 function periodKey(dateString, granularity) {

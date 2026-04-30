@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T08:43:37Z",
+  "generatedAt": "2026-04-30T11:15:16Z",
   "periods": [
     "2025-03-01",
     "2025-04-01",
@@ -53,6 +53,11 @@
       {
         "id": "powerMode",
         "label": "Wired / Wireless",
+        "match": "scalar"
+      },
+      {
+        "id": "portCountBand",
+        "label": "Ports",
         "match": "scalar"
       },
       {
@@ -138,6 +143,11 @@
         "Wired",
         "Wireless"
       ],
+      "portCountBand": [
+        "1 port",
+        "2 ports",
+        "3+ ports"
+      ],
       "interfaceProtocols": [
         "USB-C PD",
         "PPS",
@@ -217,6 +227,77 @@
       ]
     }
   },
+  "policyReports": {
+    "adapter": [
+      {
+        "title": "EU Common Charger Directive",
+        "region": "European Union",
+        "effectiveDate": "2026-04-28",
+        "source": "European Commission",
+        "sourceUrl": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro",
+        "summary": "Laptops enter the EU common-charger scope from 28 April 2026; USB-C and harmonised fast charging are central requirements.",
+        "impact": "Raises demand for USB-C PD adapters, high-wattage cables, and clear charger-in-box labeling."
+      },
+      {
+        "title": "External Power Supplies Standards",
+        "region": "United States",
+        "effectiveDate": "2025-05-16",
+        "source": "U.S. Department of Energy",
+        "sourceUrl": "https://www.energy.gov/eere/buildings/external-power-supplies",
+        "summary": "DOE maintains energy conservation standards and test procedures for consumer external power supplies under 10 CFR 430.",
+        "impact": "Keeps efficiency, no-load power, certification, and compliance reporting central to adapter portfolio planning."
+      },
+      {
+        "title": "California Title 20 Appliance Efficiency",
+        "region": "California",
+        "effectiveDate": "Current",
+        "source": "California Energy Commission",
+        "sourceUrl": "https://www.energy.ca.gov/programs-and-topics/topics/energy-efficiency",
+        "summary": "California appliance efficiency rules continue to shape external power supply compliance and channel acceptance.",
+        "impact": "Retail-ready SKUs need efficiency documentation and region-specific compliance readiness."
+      }
+    ],
+    "power_bank": [
+      {
+        "title": "Battery Charger Energy Conservation Standards",
+        "region": "United States",
+        "effectiveDate": "2024-08-28",
+        "source": "U.S. Department of Energy",
+        "sourceUrl": "https://www.energy.gov/nepa/articles/cx-031678-energy-conservation-standards-battery-chargers",
+        "summary": "DOE adopted new and amended standards for battery chargers, including active charge, standby, and off-mode power metrics.",
+        "impact": "Power bank designs should emphasize charging efficiency, standby performance, and test-procedure traceability."
+      },
+      {
+        "title": "EU Common Charger Directive",
+        "region": "European Union",
+        "effectiveDate": "2024-12-28",
+        "source": "European Commission",
+        "sourceUrl": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro",
+        "summary": "Portable electronics use USB-C as the common charging solution, with fast-charging harmonisation and charger unbundling.",
+        "impact": "Supports USB-C-first power banks and multi-device travel charging use cases."
+      }
+    ],
+    "power_cable": [
+      {
+        "title": "EU Common Charger Directive",
+        "region": "European Union",
+        "effectiveDate": "2026-04-28",
+        "source": "European Commission",
+        "sourceUrl": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro",
+        "summary": "USB-C charging and fast-charging interoperability increase the importance of certified cables for laptops and portable devices.",
+        "impact": "Creates pull for 100W and 240W USB-C cables with clear power labeling and E-marker support."
+      },
+      {
+        "title": "USB-C Packaging and Charging Disclosure",
+        "region": "European Union",
+        "effectiveDate": "2024-12-28",
+        "source": "European Parliament",
+        "sourceUrl": "https://www.europarl.europa.eu/pdfs/news/expert/2024/12/press_release/20241218IPR26026/20241218IPR26026_en.pdf",
+        "summary": "Manufacturers must provide clearer information on charging characteristics and whether a charger is included.",
+        "impact": "Cable SKUs benefit from stronger power-rating, PD, and compatibility claims at shelf and ecommerce touchpoints."
+      }
+    ]
+  },
   "products": [
     {
       "id": "adapter_45w_mini",
@@ -233,6 +314,7 @@
         ],
         "powerMode": "Wired",
         "ports": 1,
+        "portCountBand": "1 port",
         "interfaceProtocols": [
           "USB-C PD"
         ],
@@ -268,6 +350,7 @@
         ],
         "powerMode": "Wired",
         "ports": 1,
+        "portCountBand": "1 port",
         "interfaceProtocols": [
           "USB-C PD",
           "PPS"
@@ -305,6 +388,7 @@
         ],
         "powerMode": "Wired",
         "ports": 2,
+        "portCountBand": "2 ports",
         "interfaceProtocols": [
           "USB-C PD",
           "PPS"
@@ -341,6 +425,7 @@
         ],
         "powerMode": "Wired",
         "ports": 1,
+        "portCountBand": "1 port",
         "interfaceProtocols": [
           "USB-C PD 3.1",
           "PPS"
@@ -377,6 +462,7 @@
         ],
         "powerMode": "Wired",
         "ports": 4,
+        "portCountBand": "3+ ports",
         "interfaceProtocols": [
           "USB-C PD 3.1",
           "USB-A QC"
@@ -413,6 +499,7 @@
         ],
         "powerMode": "Wireless",
         "ports": 2,
+        "portCountBand": "2 ports",
         "interfaceProtocols": [
           "Qi2",
           "USB-C PD"
@@ -450,6 +537,7 @@
         ],
         "powerMode": "Wired",
         "ports": 2,
+        "portCountBand": "2 ports",
         "interfaceProtocols": [
           "USB-C PD",
           "PPS"

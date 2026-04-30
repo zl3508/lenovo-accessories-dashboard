@@ -385,6 +385,26 @@ h3 {
   flex-wrap: wrap;
 }
 
+.time-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.period-select,
+.inline-select {
+  min-height: 38px;
+  width: auto;
+  min-width: 128px;
+}
+
+.module-block {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+}
+
 .category-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -494,6 +514,11 @@ input[type="search"] {
   color: var(--ink);
 }
 
+.period-select,
+.inline-select {
+  width: auto;
+}
+
 .filter-chip {
   padding: 7px 10px;
   color: var(--muted);
@@ -563,22 +588,43 @@ input[type="search"] {
 }
 
 .competitor-grid,
-.matrix-card-grid {
+.matrix-card-grid,
+.policy-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
 .competitor-card,
-.matrix-highlight {
+.matrix-highlight,
+.policy-card {
   min-height: 190px;
   padding: 18px;
 }
 
 .competitor-card p,
-.matrix-highlight p {
+.matrix-highlight p,
+.policy-card p {
   margin-bottom: 14px;
   color: var(--muted);
+}
+
+.policy-card {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.policy-card strong {
+  display: block;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.policy-card a {
+  color: var(--accent, var(--red));
+  font-weight: 800;
+  text-decoration: none;
 }
 
 .mini-metrics {
@@ -606,6 +652,23 @@ input[type="search"] {
   gap: 14px;
 }
 
+.word-cloud {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  min-height: 330px;
+  padding: 24px;
+  border: 1px dashed color-mix(in srgb, var(--accent, var(--red)) 35%, white);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  text-align: center;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
 .chart-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -615,6 +678,7 @@ input[type="search"] {
 .chart-shell {
   min-height: 392px;
   padding: 14px;
+  border-top: 6px solid var(--accent, var(--red));
 }
 
 .chart-shell.is-wide {
@@ -1001,6 +1065,7 @@ input[type="search"] {
   .category-grid,
   .competitor-grid,
   .matrix-card-grid,
+  .policy-grid,
   .product-card-grid,
   .kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1035,6 +1100,7 @@ input[type="search"] {
   .category-metrics,
   .competitor-grid,
   .matrix-card-grid,
+  .policy-grid,
   .product-card-grid,
   .filter-grid,
   .kpi-grid,
