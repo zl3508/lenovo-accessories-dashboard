@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T13:19:39Z",
+  "generatedAt": "2026-05-01T10:24:32Z",
   "periods": [
     "2025-03-01",
     "2025-04-01",
@@ -1518,12 +1518,7 @@
   ],
   "source": {
     "sourceFile": "/Users/albert/Desktop/zhenqi_li homework 2/lenovo_wearables_final.xlsx",
-    "sourceMode": "sample_fitted",
-    "sourceNotes": "Accessories data is fitted from the provided wearable workbook's monthly rhythm and metric schema.",
-    "sourceDateRange": [
-      "2025-03-01",
-      "2026-03-01"
-    ],
-    "sourceRows": 416
+    "sourceMode": "modeled",
+    "sourceNotes": "Modeled accessories data fitted to the workbook's monthly structure."
   }
 }
