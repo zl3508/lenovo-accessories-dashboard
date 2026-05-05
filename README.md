@@ -28,6 +28,10 @@
 - `consumer_insights.json`：评价关键词、情绪、频率、评分
 - `metadata.json`：生成时间、记录数、源数据说明
 
+详细字段需求、数据粒度、来源建议和质量规则见：
+
+- [`docs/data_requirements.md`](docs/data_requirements.md)
+
 ## 本地运行
 
 ```bash
