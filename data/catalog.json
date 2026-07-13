@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T09:26:56Z",
+  "generatedAt": "2026-07-13T09:37:42Z",
   "periods": [
     "2024-04-01",
     "2024-07-01",
@@ -313,6 +313,7 @@
       "categoryId": "adapter",
       "name": "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
       "shortName": "150W Laptop GaN",
+      "image": "assets/products/adapter-multi-port-150w-gan.webp",
       "listPrice": 119,
       "attributes": {
         "wattage": 150,
@@ -356,6 +357,7 @@
       "categoryId": "adapter",
       "name": "Lenovo Multi-port USB-C 100W GaN Charger",
       "shortName": "100W Multi-port",
+      "image": "assets/products/adapter-multi-port-100w-gan.avif",
       "listPrice": 79,
       "attributes": {
         "wattage": 100,
@@ -407,6 +409,7 @@
       "categoryId": "adapter",
       "name": "Lenovo 65W Mini USB-C GaN Charger",
       "shortName": "65W Mini GaN",
+      "image": "assets/products/adapter-65w-mini-gan.avif",
       "listPrice": 39,
       "attributes": {
         "wattage": 65,
@@ -453,6 +456,7 @@
       "categoryId": "adapter",
       "name": "Lenovo GaN Nano 65W Adapter",
       "shortName": "65W GaN Nano",
+      "image": "assets/products/adapter-gan-nano-65w.avif",
       "listPrice": 39,
       "attributes": {
         "wattage": 65,
@@ -520,6 +524,7 @@
       "categoryId": "power_bank",
       "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
       "shortName": "Hybrid 140W 10.2K",
+      "image": "assets/products/bank-hybrid-2in1-140w-10200.png",
       "listPrice": 99,
       "attributes": {
         "capacityMah": 10200,
@@ -556,6 +561,7 @@
       "categoryId": "power_bank",
       "name": "Lenovo 140W Smart Laptop Power Bank",
       "shortName": "140W Smart Power Bank",
+      "image": "assets/products/bank-140w-smart-laptop.png",
       "listPrice": 119,
       "attributes": {
         "capacityMah": 20000,
@@ -594,6 +600,7 @@
       "categoryId": "power_cable",
       "name": "Lenovo 240W USB-C Retractable Cable",
       "shortName": "240W Retractable Cable",
+      "image": "assets/products/cable-240w-usb-c-retractable.avif",
       "listPrice": 24,
       "attributes": {
         "connectors": [

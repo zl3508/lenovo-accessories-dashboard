@@ -653,7 +653,8 @@ function renderProductCard(product) {
   return `
     <article class="product-card">
       <button class="product-card-hit" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">
-        <div class="product-visual product-visual-${product.categoryId}">
+        <div class="product-visual product-visual-${product.categoryId} ${product.image ? "has-image" : ""}">
+          ${product.image ? `<img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />` : ""}
           <span>${escapeHtml(primarySpec)}</span>
         </div>
         <div class="product-card-body">

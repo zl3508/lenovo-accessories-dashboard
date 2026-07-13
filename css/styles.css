@@ -860,13 +860,13 @@ input[type="search"] {
 }
 
 .product-card {
-  min-height: 380px;
+  min-height: 420px;
   overflow: hidden;
 }
 
 .product-card-hit {
   display: grid;
-  grid-template-rows: 180px 1fr;
+  grid-template-rows: 220px 1fr;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -880,12 +880,20 @@ input[type="search"] {
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 180px;
+  min-height: 220px;
   border-bottom: 1px solid var(--line);
   background:
     linear-gradient(135deg, rgba(31, 35, 40, 0.06), rgba(226, 35, 26, 0.07)),
     var(--surface-soft);
   overflow: hidden;
+}
+
+.product-visual.has-image {
+  padding: 16px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(226, 35, 26, 0.09), transparent 52%),
+    linear-gradient(135deg, rgba(31, 35, 40, 0.04), rgba(226, 35, 26, 0.05)),
+    var(--surface-soft);
 }
 
 .product-visual::before {
@@ -897,6 +905,19 @@ input[type="search"] {
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.68);
   box-shadow: 18px 22px 0 rgba(31, 35, 40, 0.08);
+}
+
+.product-visual.has-image::before {
+  display: none;
+}
+
+.product-visual img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 176px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 18px rgba(31, 35, 40, 0.14));
 }
 
 .product-visual-power_bank::before {
@@ -913,8 +934,10 @@ input[type="search"] {
 }
 
 .product-visual span {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 2;
   padding: 7px 10px;
   border: 1px solid var(--line);
   border-radius: 999px;

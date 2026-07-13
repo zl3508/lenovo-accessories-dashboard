@@ -1144,6 +1144,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo Multi-port USB-C 150W Laptop GaN Charger.xlsx",
         "name": "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
         "shortName": "150W Laptop GaN",
+        "image": "assets/products/adapter-multi-port-150w-gan.webp",
         "listPrice": 119,
         "costRatio": 0.52,
         "attributes": {
@@ -1165,6 +1166,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo Multi-port USB-C 100W GaN Charger.xlsx",
         "name": "Lenovo Multi-port USB-C 100W GaN Charger",
         "shortName": "100W Multi-port",
+        "image": "assets/products/adapter-multi-port-100w-gan.avif",
         "listPrice": 79,
         "costRatio": 0.50,
         "attributes": {
@@ -1186,6 +1188,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo 65W Mini USB-C GaN Charger.xlsx",
         "name": "Lenovo 65W Mini USB-C GaN Charger",
         "shortName": "65W Mini GaN",
+        "image": "assets/products/adapter-65w-mini-gan.avif",
         "listPrice": 39,
         "costRatio": 0.46,
         "attributes": {
@@ -1207,6 +1210,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo GaN Nano 65W Adapter.xlsx",
         "name": "Lenovo GaN Nano 65W Adapter",
         "shortName": "65W GaN Nano",
+        "image": "assets/products/adapter-gan-nano-65w.avif",
         "listPrice": 39,
         "costRatio": 0.46,
         "attributes": {
@@ -1228,6 +1232,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
         "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
         "shortName": "Hybrid 140W 10.2K",
+        "image": "assets/products/bank-hybrid-2in1-140w-10200.png",
         "listPrice": 99,
         "costRatio": 0.58,
         "attributes": {
@@ -1248,6 +1253,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo 140W Smart Laptop Power Bank.xlsx",
         "name": "Lenovo 140W Smart Laptop Power Bank",
         "shortName": "140W Smart Power Bank",
+        "image": "assets/products/bank-140w-smart-laptop.png",
         "listPrice": 119,
         "costRatio": 0.56,
         "attributes": {
@@ -1268,6 +1274,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo 240W USB-C Retractable Cable.xlsx",
         "name": "Lenovo 240W USB-C Retractable Cable",
         "shortName": "240W Retractable Cable",
+        "image": "assets/products/cable-240w-usb-c-retractable.avif",
         "listPrice": 24,
         "costRatio": 0.42,
         "attributes": {
