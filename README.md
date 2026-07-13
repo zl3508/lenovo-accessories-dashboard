@@ -41,6 +41,7 @@ The dashboard reads:
 
 - `catalog.json`: categories, products, PN variants, filters, fiscal periods, and policy reports
 - `product_metrics.json`: order revenue, ship revenue, backlog revenue, order quantity, ship quantity, backlog quantity, cost, margin, segment, and PN
+- `geo_metrics.json`: Excel-sourced Geo and country split for order, ship, and backlog metrics
 - `market_metrics.json`: category market size, Lenovo share, product share, search index, and price index
 - `brand_market_metrics.json`: Lenovo and competitor brand sales, share, new launches, and star products
 - `supply_chain.json`: component, supplier, price index, lead time, capacity, and supply news

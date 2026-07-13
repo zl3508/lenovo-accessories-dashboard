@@ -1,6 +1,7 @@
 const DATA_FILES = {
   catalog: "data/catalog.json",
   productMetrics: "data/product_metrics.json",
+  geoMetrics: "data/geo_metrics.json",
   marketMetrics: "data/market_metrics.json",
   brandMarket: "data/brand_market_metrics.json",
   supplyChain: "data/supply_chain.json",
@@ -503,6 +504,7 @@ function renderCategoryOverview(categoryId) {
           ${chartShell("categoryProfitPlot", "Profit Comparison", "Gross profit")}
           ${chartShell("categoryRevenuePlot", "Revenue Trend", "Net revenue")}
           ${chartShell("categoryMarginPlot", "Margin / Return Rate", "Selected period")}
+          ${chartShell("categoryGeoPlot", "Geo Revenue by Product", selectedPeriod(), true)}
         </section>
         <section class="product-browser product-browser-full">
           <section class="product-list product-list-full">
@@ -863,6 +865,44 @@ function drawCategoryCharts(categoryId, selectedIds) {
       yaxis2: { title: "Return %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
     },
   );
+  drawCategoryGeoChart(categoryId, selectedIds);
+}
+
+function geoMetricRows({ categoryId = null, modelId = null, partNumber = null, segment = null, scope = "category", selectedIds = null } = {}) {
+  return (data.geoMetrics || []).filter((row) => {
+    if (categoryId && row.categoryId !== categoryId) return false;
+    if (modelId && row.modelId !== modelId) return false;
+    if (selectedIds && !selectedIds.includes(row.modelId)) return false;
+    if (partNumber && partNumber !== "all" && row.partNumber !== partNumber) return false;
+    if (segment && segment !== "all" && row.segment !== segment) return false;
+    return rowInSelectedPeriod(row, scope);
+  });
+}
+
+function sumGeoRows(rows, field) {
+  return rows.reduce((sum, row) => sum + (row[field] || 0), 0);
+}
+
+function topGeoNames(rows, limit = 6) {
+  return unique(rows.map((row) => row.geo || "Unassigned"))
+    .map((geo) => ({ geo, value: sumGeoRows(rows.filter((row) => (row.geo || "Unassigned") === geo), "orderRevenue") }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, limit)
+    .map((item) => item.geo);
+}
+
+function drawCategoryGeoChart(categoryId, selectedIds) {
+  const rows = geoMetricRows({ categoryId, selectedIds });
+  const geos = topGeoNames(rows);
+  const products = selectedIds.map((id) => indexes.products.get(id)).filter(Boolean);
+  const traces = products.map((product, idx) => ({
+    x: geos,
+    y: geos.map((geo) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.geo || "Unassigned") === geo), "orderRevenue")),
+    name: product.shortName,
+    type: "bar",
+    marker: { color: palette[idx % palette.length] },
+  }));
+  drawPlot("categoryGeoPlot", traces, { barmode: "stack", yaxis: { title: "Order Revenue", tickprefix: "$" } });
 }
 
 function drawMarketAnalysis(categoryId) {
@@ -1724,14 +1764,18 @@ function renderDetailCharts(product, selectedPartNumber) {
     target.innerHTML = `
       ${chartShell("detailPlotA", "PN Revenue Trend", selectedPartNumber === "all" ? "all part numbers" : selectedPartNumber)}
       ${chartShell("detailPlotB", "PN Quantity & AUR", "order quantity / average revenue")}
+      ${chartShell("detailGeoPlot", "Geo Revenue Comparison", selectedPeriod("detail"), true)}
     `;
     drawPartNumberDetail(product, selectedPartNumber);
+    drawProductGeoDetail(product, { partNumber: selectedPartNumber });
   } else {
     target.innerHTML = `
       ${chartShell("detailPlotA", "Revenue by Segment", state.segmentFilter === "all" ? "Commercial vs Consumer" : state.segmentFilter)}
       ${chartShell("detailPlotB", "Order Quantity by Segment", `${granularityLabels[state.detailGranularity]} trend`)}
+      ${chartShell("detailGeoPlot", "Geo Revenue Comparison", selectedPeriod("detail"), true)}
     `;
     drawSegmentDetail(product);
+    drawProductGeoDetail(product, { segment: state.segmentFilter });
   }
 }
 
@@ -1829,6 +1873,35 @@ function drawPartNumberDetail(product, selectedPartNumber) {
       yaxis2: { title: "AUR", overlaying: "y", side: "right", tickprefix: "$", showgrid: false },
     },
   );
+}
+
+function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } = {}) {
+  const rows = geoMetricRows({ modelId: product.id, partNumber, segment, scope: "detail" });
+  const geos = topGeoNames(rows);
+  const splitValues =
+    state.dimension === "product"
+      ? partNumber === "all"
+        ? unique(rows.map((row) => row.partNumber)).slice(0, 8)
+        : [partNumber]
+      : segment === "all"
+        ? ["Commercial", "Consumer"]
+        : [segment];
+  const traces = splitValues.map((value, idx) => ({
+    x: geos,
+    y: geos.map((geo) =>
+      sumGeoRows(
+        rows.filter((row) => {
+          const splitMatch = state.dimension === "product" ? row.partNumber === value : row.segment === value;
+          return splitMatch && (row.geo || "Unassigned") === geo;
+        }),
+        "orderRevenue",
+      ),
+    ),
+    name: value,
+    type: "bar",
+    marker: { color: palette[idx % palette.length] },
+  }));
+  drawPlot("detailGeoPlot", traces, { barmode: "stack", yaxis: { title: "Order Revenue", tickprefix: "$" } });
 }
 
 function drawMarketDetail(product) {

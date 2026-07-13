@@ -10,6 +10,7 @@ Dashboard 目前需要 7 类 JSON 数据：
 | --- | --- | --- |
 | `data/catalog.json` | 品类、产品、PN variant、筛选器、财政期间、政策报告、静态元数据 | Shared master data |
 | `data/product_metrics.json` | 单品、PN、segment 的订单、出货、backlog、成本、利润 | Product |
+| `data/geo_metrics.json` | 单品、PN、segment、Geo、country 的订单、出货、backlog 拆分 | Product / Geo |
 | `data/market_metrics.json` | 单品在市场和 Lenovo 内部的份额、需求、价格指数 | Market |
 | `data/brand_market_metrics.json` | Lenovo 和竞品品牌层面的销售、份额、新品、明星产品 | Market / Competitor |
 | `data/supply_chain.json` | 组件、供应商、价格指数、交付周期、产能、供应链新闻 | Supply Chain |
@@ -22,6 +23,7 @@ Recommended grain:
 | --- | --- | --- |
 | Catalog | one row per category / product / PN variant | `categoryId`, `modelId`, `variantId`, `partNumber` |
 | Product metrics | fiscal quarter, product, PN, segment | `date`, `fiscalYear`, `fiscalQuarter`, `categoryId`, `modelId`, `partNumber`, `segment` |
+| Geo metrics | fiscal quarter, product, PN, segment, Geo, country | `date`, `categoryId`, `modelId`, `partNumber`, `segment`, `geo`, `country` |
 | Market metrics | fiscal quarter, product | `date`, `fiscalYear`, `fiscalQuarter`, `categoryId`, `modelId` |
 | Brand market metrics | fiscal quarter, category, brand | `date`, `fiscalYear`, `fiscalQuarter`, `categoryId`, `brand` |
 | Supply chain | fiscal quarter, category, component / supplier | `date`, `categoryId`, `componentType`, `supplier` |
@@ -485,6 +487,7 @@ These are the current files the frontend expects:
 ```text
 data/catalog.json
 data/product_metrics.json
+data/geo_metrics.json
 data/market_metrics.json
 data/brand_market_metrics.json
 data/supply_chain.json

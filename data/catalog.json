@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T09:37:42Z",
+  "generatedAt": "2026-07-13T10:03:22Z",
   "periods": [
     "2024-04-01",
     "2024-07-01",
@@ -524,7 +524,7 @@
       "categoryId": "power_bank",
       "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
       "shortName": "Hybrid 140W 10.2K",
-      "image": "assets/products/bank-hybrid-2in1-140w-10200.png",
+      "image": "assets/products/bank-hybrid-2in1-140w-10200.avif",
       "listPrice": 99,
       "attributes": {
         "capacityMah": 10200,

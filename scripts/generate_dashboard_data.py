@@ -1232,7 +1232,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
         "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
         "shortName": "Hybrid 140W 10.2K",
-        "image": "assets/products/bank-hybrid-2in1-140w-10200.png",
+        "image": "assets/products/bank-hybrid-2in1-140w-10200.avif",
         "listPrice": 99,
         "costRatio": 0.58,
         "attributes": {
@@ -1311,6 +1311,13 @@ def fiscal_sort_value(fiscal_year: str, fiscal_quarter: str) -> int:
     return int(str(fiscal_year).replace("FY", "")) * 10 + int(str(fiscal_quarter).replace("Q", ""))
 
 
+def clean_cell(value: Any) -> str:
+    if pd is not None and pd.isna(value):
+        return ""
+    text = str(value or "").strip()
+    return "" if text.lower() == "nan" else text
+
+
 def real_source_available(source_dir: Path) -> bool:
     if pd is None or not source_dir.exists():
         return False
@@ -1340,11 +1347,11 @@ def read_real_sales(source_dir: Path) -> tuple[list[dict[str, Any]], dict[str, A
                     "fiscalQuarter": fiscal_quarter,
                     "modelId": spec["id"],
                     "categoryId": spec["categoryId"],
-                    "partNumber": str(record["Part Number"]),
-                    "sourceModel": str(record.get("Model") or spec["name"]),
-                    "segment": str(record.get("Segment") or "Consumer").title(),
-                    "geo": str(record.get("Geo") or ""),
-                    "country": str(record.get("Country") or ""),
+                    "partNumber": clean_cell(record["Part Number"]),
+                    "sourceModel": clean_cell(record.get("Model")) or spec["name"],
+                    "segment": (clean_cell(record.get("Segment")) or "Consumer").title(),
+                    "geo": clean_cell(record.get("Geo")),
+                    "country": clean_cell(record.get("Country")),
                     "orderRevenue": float(record["Order_Rev"]),
                     "shipRevenue": float(record["Ship_Rev"]),
                     "backlogRevenue": float(record["Bklg_Rev"]),
@@ -1549,6 +1556,91 @@ def build_real_product_metrics(sales_rows: list[dict[str, Any]], periods: list[s
     return rows
 
 
+def build_real_geo_metrics(sales_rows: list[dict[str, Any]], products: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    product_lookup_local = {product["id"]: product for product in products}
+    grouped: dict[tuple[str, str, str, str, str, str], dict[str, Any]] = {}
+    for row in sales_rows:
+        geo = row["geo"] or "Unassigned"
+        key = (row["date"], row["modelId"], row["partNumber"], row["segment"], geo, row["country"])
+        bucket = grouped.setdefault(
+            key,
+            {
+                "orderRevenue": 0.0,
+                "shipRevenue": 0.0,
+                "backlogRevenue": 0.0,
+                "orderQty": 0.0,
+                "shipQty": 0.0,
+                "backlogQty": 0.0,
+                "fiscalYear": row["fiscalYear"],
+                "fiscalQuarter": row["fiscalQuarter"],
+            },
+        )
+        bucket["orderRevenue"] += row["orderRevenue"]
+        bucket["shipRevenue"] += row["shipRevenue"]
+        bucket["backlogRevenue"] += row["backlogRevenue"]
+        bucket["orderQty"] += row["orderQty"]
+        bucket["shipQty"] += row["shipQty"]
+        bucket["backlogQty"] += row["backlogQty"]
+
+    rows = []
+    for (date, model_id, part_number, segment, geo, country), bucket in grouped.items():
+        product = product_lookup_local[model_id]
+        rows.append(
+            {
+                "date": date,
+                "year": int(date[:4]),
+                "month": int(date[5:7]),
+                "fiscalYear": bucket["fiscalYear"],
+                "fiscalQuarter": bucket["fiscalQuarter"],
+                "categoryId": product["categoryId"],
+                "modelId": model_id,
+                "partNumber": part_number,
+                "segment": segment,
+                "geo": geo,
+                "country": country,
+                "orderRevenue": round(bucket["orderRevenue"], 2),
+                "shipRevenue": round(bucket["shipRevenue"], 2),
+                "backlogRevenue": round(bucket["backlogRevenue"], 2),
+                "orderQty": int(round(bucket["orderQty"])),
+                "shipQty": int(round(bucket["shipQty"])),
+                "backlogQty": int(round(bucket["backlogQty"])),
+                "dataConfidence": "observed",
+            }
+        )
+    return sorted(rows, key=lambda row: (row["date"], row["categoryId"], row["modelId"], row["geo"], row["partNumber"], row["segment"], row["country"]))
+
+
+def build_modeled_geo_metrics(product_metrics: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    geos = ["AP", "EUROPE", "LA", "META"]
+    rows = []
+    for row in product_metrics:
+        weights = [0.31, 0.34, 0.18, 0.17]
+        for geo, weight in zip(geos, weights):
+            rows.append(
+                {
+                    "date": row["date"],
+                    "year": row["year"],
+                    "month": row["month"],
+                    "fiscalYear": row.get("fiscalYear"),
+                    "fiscalQuarter": row.get("fiscalQuarter"),
+                    "categoryId": row["categoryId"],
+                    "modelId": row["modelId"],
+                    "partNumber": row.get("partNumber") or row.get("variantName"),
+                    "segment": row.get("segment") or "Consumer",
+                    "geo": geo,
+                    "country": "",
+                    "orderRevenue": round((row.get("orderRevenue") or row.get("revenueNet") or 0) * weight, 2),
+                    "shipRevenue": round((row.get("shipRevenue") or row.get("revenueNet") or 0) * weight, 2),
+                    "backlogRevenue": round((row.get("backlogRevenue") or 0) * weight, 2),
+                    "orderQty": int(round((row.get("orderQty") or row.get("unitsNet") or 0) * weight)),
+                    "shipQty": int(round((row.get("shipQty") or row.get("unitsNet") or 0) * weight)),
+                    "backlogQty": int(round((row.get("backlogQty") or 0) * weight)),
+                    "dataConfidence": "modeled",
+                }
+            )
+    return rows
+
+
 def seasonality_from_real_metrics(product_metrics: list[dict[str, Any]], periods: list[str]) -> list[float]:
     totals = [sum(row["unitsNet"] for row in product_metrics if row["date"] == period) for period in periods]
     mean_units = sum(totals) / len(totals) if totals else 1
@@ -1562,6 +1654,7 @@ def build_real_dashboard(source_dir: Path, output_dir: Path) -> dict[str, Any]:
     products, variants = build_real_products_and_variants(sales_rows)
     PRODUCTS = products
     product_metrics = build_real_product_metrics(sales_rows, periods, products, variants)
+    geo_metrics = build_real_geo_metrics(sales_rows, products)
     seasonality = seasonality_from_real_metrics(product_metrics, periods)
     catalog = build_real_catalog(periods, period_meta, source_meta, products, variants)
     market_metrics = build_market_metrics(product_metrics, periods)
@@ -1574,6 +1667,7 @@ def build_real_dashboard(source_dir: Path, output_dir: Path) -> dict[str, Any]:
             "catalogProducts": len(catalog["products"]),
             "variants": len(catalog["variants"]),
             "productMetrics": len(product_metrics),
+            "geoMetrics": len(geo_metrics),
             "marketMetrics": len(market_metrics),
             "brandMarketMetrics": len(brand_market_metrics),
             "supplyChain": len(supply_chain),
@@ -1584,6 +1678,7 @@ def build_real_dashboard(source_dir: Path, output_dir: Path) -> dict[str, Any]:
     }
     write_json(output_dir, "catalog.json", catalog)
     write_json(output_dir, "product_metrics.json", product_metrics)
+    write_json(output_dir, "geo_metrics.json", geo_metrics)
     write_json(output_dir, "market_metrics.json", market_metrics)
     write_json(output_dir, "brand_market_metrics.json", brand_market_metrics)
     write_json(output_dir, "supply_chain.json", supply_chain)
@@ -1709,6 +1804,7 @@ def main() -> None:
 
     catalog = build_catalog(months, source_meta)
     product_metrics = build_product_metrics(months, seasonality)
+    geo_metrics = build_modeled_geo_metrics(product_metrics)
     market_metrics = build_market_metrics(product_metrics, months)
     brand_market_metrics = build_brand_market_metrics(product_metrics, market_metrics, months)
     supply_chain = build_supply_chain(months, seasonality)
@@ -1719,6 +1815,7 @@ def main() -> None:
             "catalogProducts": len(catalog["products"]),
             "variants": len(catalog["variants"]),
             "productMetrics": len(product_metrics),
+            "geoMetrics": len(geo_metrics),
             "marketMetrics": len(market_metrics),
             "brandMarketMetrics": len(brand_market_metrics),
             "supplyChain": len(supply_chain),
@@ -1730,6 +1827,7 @@ def main() -> None:
 
     write_json(output_dir, "catalog.json", catalog)
     write_json(output_dir, "product_metrics.json", product_metrics)
+    write_json(output_dir, "geo_metrics.json", geo_metrics)
     write_json(output_dir, "market_metrics.json", market_metrics)
     write_json(output_dir, "brand_market_metrics.json", brand_market_metrics)
     write_json(output_dir, "supply_chain.json", supply_chain)

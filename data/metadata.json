@@ -1,9 +1,10 @@
 {
-  "generatedAt": "2026-07-13T09:37:42Z",
+  "generatedAt": "2026-07-13T10:03:22Z",
   "records": {
     "catalogProducts": 7,
     "variants": 34,
     "productMetrics": 680,
+    "geoMetrics": 788,
     "marketMetrics": 70,
     "brandMarketMetrics": 180,
     "supplyChain": 120,
