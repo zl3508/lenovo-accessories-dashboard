@@ -14,10 +14,12 @@ const state = {
   categoryView: "market",
   marketModule: "policy",
   overviewModule: "summary",
-  granularity: "month",
-  detailGranularity: "month",
+  granularity: "quarter",
+  detailGranularity: "quarter",
   selectedPeriod: { category: null, detail: null },
-  dimension: "market",
+  dimension: "segment",
+  segmentFilter: "all",
+  partNumber: "all",
   filters: {},
   search: "",
   selectedModels: {},
@@ -39,7 +41,6 @@ const homeButton = document.querySelector("#homeButton");
 const sourceStatus = document.querySelector("#sourceStatus");
 
 const granularityLabels = {
-  month: "Month",
   quarter: "Quarter",
   year: "Year",
 };
@@ -65,10 +66,8 @@ const overviewModules = {
 };
 
 const dimensionLabels = {
-  market: "Market",
-  competitor: "Competitor",
+  segment: "Segment",
   product: "Product",
-  supply: "Supply",
   user: "User",
 };
 
@@ -164,7 +163,12 @@ function render() {
 function renderSourceStatus() {
   const source = data.metadata?.source;
   if (!source) return;
-  const range = source.sourceDateRange ? `${source.sourceDateRange[0].slice(0, 7)} to ${source.sourceDateRange[1].slice(0, 7)}` : "modeled";
+  const periodMeta = data.catalog?.periodMeta || [];
+  const range = periodMeta.length
+    ? `${periodMeta[0].quarterLabel || periodMeta[0].date} to ${periodMeta.at(-1).quarterLabel || periodMeta.at(-1).date}`
+    : source.sourceDateRange
+      ? `${source.sourceDateRange[0].slice(0, 7)} to ${source.sourceDateRange[1].slice(0, 7)}`
+      : "modeled";
   sourceStatus.textContent = `${range} · ${source.sourceMode || "static JSON"}`;
 }
 
@@ -197,7 +201,7 @@ function renderHome() {
           <div class="stat-tile">
             <span>Latest Revenue</span>
             <strong>${fmtCurrency(totalSummary.revenueNet)}</strong>
-            <small>${formatPeriod(latest, "month")}</small>
+            <small>${formatPeriod(latest, "quarter")}</small>
           </div>
           <div class="stat-tile">
             <span>Latest Units</span>
@@ -217,7 +221,7 @@ function renderHome() {
           <p class="eyebrow">Product Categories</p>
           <h2>Select a Category</h2>
         </div>
-        <p>Each category includes filters, model comparison, product detail views, and month / quarter / year aggregation.</p>
+        <p>Each category includes filters, model comparison, product detail views, and fiscal quarter / fiscal year aggregation.</p>
       </section>
 
       <section class="category-grid">
@@ -1523,7 +1527,7 @@ function renderLaunchTable(categoryId) {
   const rows = data.brandMarket
     .filter((row) => row.categoryId === categoryId && !row.isLenovo && row.newProductLaunch)
     .slice()
-    .sort((a, b) => periodSortValue(periodKey(b.date, "month")) - periodSortValue(periodKey(a.date, "month")))
+    .sort((a, b) => periodSortValue(periodKey(b.date, "quarter")) - periodSortValue(periodKey(a.date, "quarter")))
     .slice(0, 8);
   return `
     <div class="chart-title">
@@ -1539,7 +1543,7 @@ function renderLaunchTable(categoryId) {
           .map(
             (row) => `
           <tr>
-            <td>${escapeHtml(row.date.slice(0, 7))}</td>
+            <td>${escapeHtml(periodKey(row.date, "quarter"))}</td>
             <td>${escapeHtml(row.brand)}</td>
             <td>${escapeHtml(row.newProductLaunch)}</td>
             <td>${escapeHtml(row.starProduct)}</td>
@@ -1556,9 +1560,11 @@ function renderProductDetail(productId) {
   const product = indexes.products.get(productId);
   const category = indexes.categories.get(product.categoryId);
   const variants = data.catalog.variants.filter((variant) => variant.modelId === productId);
-  const selectedVariant = state.variantId === "all" || variants.some((variant) => variant.id === state.variantId) ? state.variantId : "all";
-  state.variantId = selectedVariant;
-  const detailKpis = renderDetailKpis(product, selectedVariant);
+  const partNumbers = product.partNumbers || variants.map((variant) => variant.partNumber || variant.name);
+  const selectedPartNumber = state.partNumber === "all" || partNumbers.includes(state.partNumber) ? state.partNumber : "all";
+  state.partNumber = selectedPartNumber;
+  if (!["segment", "product", "user"].includes(state.dimension)) state.dimension = "segment";
+  const detailKpis = renderDetailKpis(product, selectedPartNumber);
 
   app.innerHTML = `
     <div class="detail-shell" style="--accent:${category.accent}">
@@ -1566,7 +1572,7 @@ function renderProductDetail(productId) {
         <div>
           <p class="eyebrow">${escapeHtml(category.label)} · Product Detail</p>
           <h1>${escapeHtml(product.name)}</h1>
-          <p>${escapeHtml((product.attributes.features || []).join(" / "))}</p>
+          <p>${escapeHtml(productDetailSubtitle(product))}</p>
         </div>
         <div class="toolbar-group">
           <button class="ghost-button" type="button" data-route-category="${category.id}">← ${escapeHtml(category.label)}</button>
@@ -1595,15 +1601,7 @@ function renderProductDetail(productId) {
                 .join("")}
             </div>
           </div>
-          <div class="variant-chips">
-            <button class="filter-chip ${selectedVariant === "all" ? "is-active" : ""}" type="button" data-action="variant" data-variant-id="all">All variants</button>
-            ${variants
-              .map(
-                (variant) =>
-                  `<button class="filter-chip ${selectedVariant === variant.id ? "is-active" : ""}" type="button" data-action="variant" data-variant-id="${variant.id}">${escapeHtml(variant.name)}</button>`,
-              )
-              .join("")}
-          </div>
+          ${renderDetailSelector(product, partNumbers, selectedPartNumber)}
         </div>
       </section>
 
@@ -1615,7 +1613,38 @@ function renderProductDetail(productId) {
     </div>
   `;
 
-  renderDetailCharts(product, selectedVariant);
+  renderDetailCharts(product, selectedPartNumber);
+}
+
+function productDetailSubtitle(product) {
+  const attrs = product.attributes;
+  if (product.categoryId === "adapter") return `${attrs.wattage}W · ${attrs.compatibility} · ${attrs.portCountBand}`;
+  if (product.categoryId === "power_bank") return `${attrs.outputW}W · ${attrs.capacityBand} · cable ${attrs.hasCable}`;
+  return `${attrs.powerW}W · ${attrs.lengthBand} · retractable ${attrs.retractable}`;
+}
+
+function renderDetailSelector(product, partNumbers, selectedPartNumber) {
+  if (state.dimension === "segment") {
+    const segments = [
+      ["all", "All"],
+      ["Commercial", "Commercial"],
+      ["Consumer", "Consumer"],
+    ];
+    return `
+      <div class="variant-chips">
+        ${segments.map(([value, label]) => `<button class="filter-chip ${state.segmentFilter === value ? "is-active" : ""}" type="button" data-action="segment-filter" data-segment="${escapeAttr(value)}">${escapeHtml(label)}</button>`).join("")}
+      </div>
+    `;
+  }
+  if (state.dimension === "product") {
+    return `
+      <div class="variant-chips">
+        <button class="filter-chip ${selectedPartNumber === "all" ? "is-active" : ""}" type="button" data-action="part-number" data-part-number="all">All PN</button>
+        ${partNumbers.map((pn) => `<button class="filter-chip ${selectedPartNumber === pn ? "is-active" : ""}" type="button" data-action="part-number" data-part-number="${escapeAttr(pn)}">${escapeHtml(pn)}</button>`).join("")}
+      </div>
+    `;
+  }
+  return `<p class="product-meta">Product-level user overview. Segment and PN filters are intentionally disabled for this view.</p>`;
 }
 
 function renderSpecItems(product) {
@@ -1625,51 +1654,30 @@ function renderSpecItems(product) {
     ["List Price", fmtCurrency(product.listPrice)],
   ];
   if (product.categoryId === "adapter") {
-    base.push(["Wattage", `${attrs.wattage}W · ${attrs.wattageBand}`], ["Ports", `${attrs.ports} · ${attrs.powerMode}`], ["Protocol", attrs.interfaceProtocols.join(" / ")], ["Scenario", attrs.scenarios.join(" / ")]);
+    base.push(["Wattage", `${attrs.wattage}W · ${attrs.wattageBand}`], ["Compatibility", attrs.compatibility], ["Ports", `${attrs.ports} · ${attrs.portCountBand}`], ["Power Mode", attrs.powerMode]);
   } else if (product.categoryId === "power_bank") {
-    base.push(["Capacity", attrs.capacityBand], ["Output", `${attrs.outputW}W · ${attrs.outputBand}`], ["Scenario", attrs.scenarios.join(" / ")], ["2-in-1", attrs.isTwoInOne ? "Yes" : "No"]);
+    base.push(["Capacity", attrs.capacityBand], ["Output", `${attrs.outputW}W · ${attrs.outputBand}`], ["Compatibility", attrs.compatibility], ["Cable", attrs.hasCable]);
   } else {
-    base.push(["Connector", attrs.connectors.join(" / ")], ["Length", attrs.lengthBand], ["Power", attrs.powerBand], ["Scenario", attrs.scenarios.join(" / ")]);
+    base.push(["Connector", attrs.connectors.join(" / ")], ["Length", attrs.lengthBand], ["Power", attrs.powerBand], ["Retractable", attrs.retractable]);
   }
   return base.map(([label, value]) => `<div class="spec-item"><span>${escapeHtml(label)}</span><strong>${escapeHtml(String(value))}</strong></div>`);
 }
 
-function renderDetailKpis(product, selectedVariant) {
-  if (state.dimension === "market") {
-    const rows = data.marketMetrics.filter((row) => row.modelId === product.id);
-    const latest = aggregateMarketRows(rows, (row) => periodKey(row.date, state.detailGranularity)).get(selectedPeriod("detail")) || {};
-    return [
-      renderKpi("Model Share", fmtPercent(latest.modelMarketShare || 0), "Total category market"),
-      renderKpi("Lenovo Mix", fmtPercent(latest.modelRevenueShareWithinLenovo || 0), "Sales within Lenovo"),
-      renderKpi("Market Rank", latest.marketRankInLenovo ? `#${latest.marketRankInLenovo}` : "—", "Within Lenovo models"),
-      renderKpi("Search Index", latest.searchIndex ? latest.searchIndex.toFixed(1) : "—", "Modeled demand signal"),
-    ].join("");
-  }
-  if (state.dimension === "supply") {
-    const rows = getSupplyRowsForProduct(product);
-    const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail"));
-    const avgPrice = avg(latestRows.map((row) => row.priceIndex));
-    const avgLead = avg(latestRows.map((row) => row.leadTimeDays));
-    const maxImpact = Math.max(...latestRows.map((row) => row.impactLevel), 0);
-    const launch = latestRows.find((row) => row.newProductLaunch)?.newProductLaunch || "No launch";
-    return [
-      renderKpi("Price Index", avgPrice.toFixed(1), "Related components"),
-      renderKpi("Lead Time", `${avgLead.toFixed(0)} days`, "Average"),
-      renderKpi("Impact Level", `${maxImpact}/5`, "Latest period"),
-      renderKpi("Launch Signal", escapeHtml(launch), selectedPeriod("detail")),
-    ].join("");
-  }
-  if (state.dimension === "competitor") {
-    const rows = getComparableBrandRows(product);
-    const lenovo = rows.find((row) => row.brand === "Lenovo") || {};
-    const top = rows.filter((row) => row.brand !== "Lenovo").sort((a, b) => b.marketShare - a.marketShare)[0] || {};
-    return [
-      renderKpi("Comparable Set", `${rows.length} brands`, `${productPower(product)}W · ${productPortSegment(product)}`),
-      renderKpi("Lenovo Share", fmtPercent(lenovo.marketShare || 0), "selected period"),
-      renderKpi("Top Rival", escapeHtml(top.brand || "—"), escapeHtml(top.starProduct || "—")),
-      renderKpi("Lenovo Price", fmtCurrency(lenovo.avgAUR || product.listPrice), "AUR proxy"),
-    ].join("");
-  }
+function detailProductRows(product, { selectedOnly = true, segment = null, partNumber = null } = {}) {
+  return data.productMetrics.filter((row) => {
+    if (row.modelId !== product.id) return false;
+    if (selectedOnly && !rowInSelectedPeriod(row, "detail")) return false;
+    if (segment && segment !== "all" && row.segment !== segment) return false;
+    if (partNumber && partNumber !== "all" && row.partNumber !== partNumber) return false;
+    return true;
+  });
+}
+
+function sumRows(rows, field) {
+  return rows.reduce((sum, row) => sum + (row[field] || 0), 0);
+}
+
+function renderDetailKpis(product, selectedPartNumber) {
   if (state.dimension === "user") {
     const rows = data.consumerInsights.filter((row) => row.modelId === product.id);
     const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail"));
@@ -1686,43 +1694,21 @@ function renderDetailKpis(product, selectedVariant) {
     ].join("");
   }
 
-  const rows = data.productMetrics.filter((row) => {
-    if (row.modelId !== product.id) return false;
-    return selectedVariant === "all" || row.variantId === selectedVariant;
-  });
-  const latestRows = rows.filter((row) => rowInSelectedPeriod(row, "detail"));
-  const summary = summarizeProductRows(latestRows);
+  const rows = state.dimension === "segment" ? detailProductRows(product, { segment: state.segmentFilter }) : detailProductRows(product, { partNumber: selectedPartNumber });
+  const summary = summarizeProductRows(rows);
+  const pnCount = unique(rows.filter((row) => (row.orderQty || row.revenueNet || row.backlogRevenue)).map((row) => row.partNumber)).length || product.partNumbers?.length || 0;
   return [
-    renderKpi("Units", fmtCompact(summary.unitsNet), "Latest period"),
-    renderKpi("Revenue", fmtCurrency(summary.revenueNet), selectedVariant === "all" ? "All variants" : "Selected variant"),
-    renderKpi("Gross Profit", fmtCurrency(summary.grossProfit), "Latest period"),
-    renderKpi("Margin", fmtPercent(summary.margin), "Weighted"),
+    renderKpi("Order Revenue", fmtCurrency(sumRows(rows, "orderRevenue") || summary.revenueNet), selectedPeriod("detail")),
+    renderKpi("Ship Revenue", fmtCurrency(sumRows(rows, "shipRevenue")), state.dimension === "product" ? `${selectedPartNumber === "all" ? pnCount : 1} PN` : state.segmentFilter === "all" ? "All segments" : state.segmentFilter),
+    renderKpi("Backlog Revenue", fmtCurrency(sumRows(rows, "backlogRevenue")), "Open backlog"),
+    renderKpi("Order Qty", fmtCompact(sumRows(rows, "orderQty") || summary.unitsNet), "Real product Excel"),
   ].join("");
 }
 
-function renderDetailCharts(product, selectedVariant) {
+function renderDetailCharts(product, selectedPartNumber) {
   const target = document.querySelector("#detailCharts");
   if (!target) return;
-  if (state.dimension === "market") {
-    target.innerHTML = `
-      ${chartShell("detailPlotA", "Market Share & Lenovo Mix", `${granularityLabels[state.detailGranularity]} trend`)}
-      ${chartShell("detailPlotB", "Market Demand", "category units / search index")}
-    `;
-    drawMarketDetail(product);
-  } else if (state.dimension === "competitor") {
-    target.innerHTML = `
-      ${chartShell("detailPlotA", "Comparable Brand Share", `${productPower(product)}W · ${productPortSegment(product)}`)}
-      ${chartShell("detailPlotB", "Price & Selling Point", "AUR proxy / value proposition")}
-    `;
-    drawCompetitorDetail(product);
-  } else if (state.dimension === "supply") {
-    target.innerHTML = `
-      ${chartShell("detailPlotA", "Component Price Index", "related components")}
-      ${chartShell("detailPlotB", "Lead Time & Capacity", "delivery / utilization")}
-      <div class="detail-panel">${renderSupplyNews(product)}</div>
-    `;
-    drawSupplyDetail(product);
-  } else if (state.dimension === "user") {
+  if (state.dimension === "user") {
     target.innerHTML = `
       <div class="chart-shell">
         <div class="chart-title"><strong>Keyword Cloud</strong><span>${escapeHtml(selectedPeriod("detail"))}</span></div>
@@ -1733,13 +1719,115 @@ function renderDetailCharts(product, selectedVariant) {
       ${chartShell("detailPlotB", "Rating / Return / Service Trend", "combined user health", true)}
     `;
     drawReviewDetail(product);
+  } else if (state.dimension === "product") {
+    target.innerHTML = `
+      ${chartShell("detailPlotA", "PN Revenue Trend", selectedPartNumber === "all" ? "all part numbers" : selectedPartNumber)}
+      ${chartShell("detailPlotB", "PN Quantity & AUR", "order quantity / average revenue")}
+    `;
+    drawPartNumberDetail(product, selectedPartNumber);
   } else {
     target.innerHTML = `
-      ${chartShell("detailPlotA", "Sales & Revenue Trend", `${granularityLabels[state.detailGranularity]} comparison`)}
-      ${chartShell("detailPlotB", "Cost & Gross Margin Trend", "product economics")}
+      ${chartShell("detailPlotA", "Revenue by Segment", state.segmentFilter === "all" ? "Commercial vs Consumer" : state.segmentFilter)}
+      ${chartShell("detailPlotB", "Order Quantity by Segment", `${granularityLabels[state.detailGranularity]} trend`)}
     `;
-    drawProductDetail(product, selectedVariant);
+    drawSegmentDetail(product);
   }
+}
+
+function drawSegmentDetail(product) {
+  const rows = detailProductRows(product, { selectedOnly: false, segment: state.segmentFilter });
+  const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.detailGranularity))));
+  const segments = state.segmentFilter === "all" ? ["Commercial", "Consumer"] : [state.segmentFilter];
+  const revenueTraces = segments.map((segment, idx) => {
+    const byPeriod = aggregateProductRows(
+      rows.filter((row) => row.segment === segment),
+      (row) => periodKey(row.date, state.detailGranularity),
+    );
+    return {
+      x: periods,
+      y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
+      name: segment,
+      type: "bar",
+      marker: { color: palette[idx % palette.length] },
+    };
+  });
+  drawPlot("detailPlotA", revenueTraces, { barmode: "stack", yaxis: { title: "Order Revenue", tickprefix: "$" } });
+
+  const quantityTraces = segments.map((segment, idx) => {
+    const byPeriod = aggregateProductRows(
+      rows.filter((row) => row.segment === segment),
+      (row) => periodKey(row.date, state.detailGranularity),
+    );
+    return {
+      x: periods,
+      y: periods.map((period) => byPeriod.get(period)?.orderQty || byPeriod.get(period)?.unitsNet || 0),
+      name: segment,
+      type: "scatter",
+      mode: "lines+markers",
+      line: { color: palette[idx % palette.length], width: 2.6 },
+    };
+  });
+  drawPlot("detailPlotB", quantityTraces, { yaxis: { title: "Order Quantity" } });
+}
+
+function drawPartNumberDetail(product, selectedPartNumber) {
+  const rows = detailProductRows(product, { selectedOnly: false, partNumber: selectedPartNumber });
+  const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.detailGranularity))));
+  const partNumbers =
+    selectedPartNumber === "all"
+      ? unique(rows.map((row) => row.partNumber))
+          .map((partNumber) => ({
+            partNumber,
+            revenue: sumRows(rows.filter((row) => row.partNumber === partNumber), "orderRevenue"),
+          }))
+          .sort((a, b) => b.revenue - a.revenue)
+          .slice(0, 8)
+          .map((item) => item.partNumber)
+      : [selectedPartNumber];
+
+  const revenueTraces = partNumbers.map((partNumber, idx) => {
+    const byPeriod = aggregateProductRows(
+      rows.filter((row) => row.partNumber === partNumber),
+      (row) => periodKey(row.date, state.detailGranularity),
+    );
+    return {
+      x: periods,
+      y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
+      name: partNumber,
+      type: selectedPartNumber === "all" ? "bar" : "scatter",
+      mode: selectedPartNumber === "all" ? undefined : "lines+markers",
+      marker: { color: palette[idx % palette.length] },
+      line: { color: palette[idx % palette.length], width: 2.6 },
+    };
+  });
+  drawPlot("detailPlotA", revenueTraces, { barmode: "stack", yaxis: { title: "Order Revenue", tickprefix: "$" } });
+
+  const byPeriod = aggregateProductRows(rows, (row) => periodKey(row.date, state.detailGranularity));
+  drawPlot(
+    "detailPlotB",
+    [
+      {
+        x: periods,
+        y: periods.map((period) => byPeriod.get(period)?.orderQty || byPeriod.get(period)?.unitsNet || 0),
+        name: "Order Qty",
+        type: "bar",
+        marker: { color: "#e2231a" },
+      },
+      {
+        x: periods,
+        y: periods.map((period) => byPeriod.get(period)?.aur || 0),
+        name: "AUR",
+        type: "scatter",
+        mode: "lines+markers",
+        yaxis: "y2",
+        line: { color: "#1f2328", width: 2.6 },
+      },
+    ],
+    {
+      yaxis: { title: "Order Quantity" },
+      yaxis2: { title: "AUR", overlaying: "y", side: "right", tickprefix: "$", showgrid: false },
+    },
+  );
 }
 
 function drawMarketDetail(product) {
@@ -2289,8 +2377,11 @@ function handleClick(event) {
   } else if (action === "dimension") {
     state.dimension = button.dataset.dimension;
     render();
-  } else if (action === "variant") {
-    state.variantId = button.dataset.variantId;
+  } else if (action === "segment-filter") {
+    state.segmentFilter = button.dataset.segment;
+    render();
+  } else if (action === "part-number") {
+    state.partNumber = button.dataset.partNumber;
     render();
   }
 }
@@ -2341,6 +2432,12 @@ function handleInput(event) {
 function summarizeProductRows(rows) {
   const summary = rows.reduce(
     (acc, row) => {
+      acc.orderRevenue += row.orderRevenue || 0;
+      acc.shipRevenue += row.shipRevenue || 0;
+      acc.backlogRevenue += row.backlogRevenue || 0;
+      acc.orderQty += row.orderQty || 0;
+      acc.shipQty += row.shipQty || 0;
+      acc.backlogQty += row.backlogQty || 0;
       acc.unitsGross += row.unitsGross || 0;
       acc.unitsReturned += row.unitsReturned || 0;
       acc.unitsNet += row.unitsNet || 0;
@@ -2354,6 +2451,12 @@ function summarizeProductRows(rows) {
       return acc;
     },
     {
+      orderRevenue: 0,
+      shipRevenue: 0,
+      backlogRevenue: 0,
+      orderQty: 0,
+      shipQty: 0,
+      backlogQty: 0,
       unitsGross: 0,
       unitsReturned: 0,
       unitsNet: 0,
@@ -2368,7 +2471,7 @@ function summarizeProductRows(rows) {
   );
   summary.margin = summary.revenueNet ? summary.grossProfit / summary.revenueNet : 0;
   summary.returnRate = summary.unitsGross ? summary.unitsReturned / summary.unitsGross : 0;
-  summary.aur = summary.unitsNet ? summary.revenueNet / summary.unitsNet : 0;
+  summary.aur = summary.orderQty ? summary.orderRevenue / summary.orderQty : summary.unitsNet ? summary.revenueNet / summary.unitsNet : 0;
   summary.inventorySellThrough = summary.count ? summary.inventorySellThrough / summary.count : 0;
   summary.conversionRate = summary.count ? summary.conversionRate / summary.count : 0;
   return summary;
@@ -2627,6 +2730,11 @@ function weightedAvg(rows, valueFn, weightFn) {
 }
 
 function periodKey(dateString, granularity) {
+  const fiscal = fiscalMetaForDate(dateString);
+  if (fiscal) {
+    if (granularity === "year") return fiscal.yearLabel || fiscal.fiscalYear;
+    if (granularity === "quarter") return fiscal.quarterLabel || `${fiscal.fiscalYear} ${fiscal.fiscalQuarter}`;
+  }
   const year = Number(dateString.slice(0, 4));
   const month = Number(dateString.slice(5, 7));
   if (granularity === "year") return String(year);
@@ -2634,11 +2742,17 @@ function periodKey(dateString, granularity) {
   return dateString.slice(0, 7);
 }
 
+function fiscalMetaForDate(dateString) {
+  return data.catalog?.periodMeta?.find((period) => period.date === dateString);
+}
+
 function sortedPeriods(periods) {
   return periods.slice().sort((a, b) => periodSortValue(a) - periodSortValue(b));
 }
 
 function periodSortValue(period) {
+  const fiscalMatch = String(period).match(/^FY(\d{4})(?:\s+Q(\d))?$/);
+  if (fiscalMatch) return Number(fiscalMatch[1]) * 10 + Number(fiscalMatch[2] || 9);
   if (period.includes("Q")) {
     const [year, quarter] = period.split(" Q").map(Number);
     return year * 10 + quarter;

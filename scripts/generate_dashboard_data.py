@@ -22,6 +22,7 @@ except Exception:  # pragma: no cover - used only when pandas is unavailable
 
 
 DEFAULT_SOURCE = "/Users/albert/Desktop/zhenqi_li homework 2/lenovo_wearables_final.xlsx"
+DEFAULT_REAL_SOURCE_DIR = "/Users/albert/Desktop/2026.7.13"
 
 CATEGORIES = [
     {
@@ -50,27 +51,42 @@ CATEGORIES = [
 FILTERS = {
     "adapter": [
         {"id": "wattageBand", "label": "Wattage", "match": "scalar"},
-        {"id": "features", "label": "Feature", "match": "array"},
+        {"id": "compatibility", "label": "Compatibility", "match": "scalar"},
         {"id": "powerMode", "label": "Wired / Wireless", "match": "scalar"},
         {"id": "portCountBand", "label": "Ports", "match": "scalar"},
-        {"id": "interfaceProtocols", "label": "Interface Protocol", "match": "array"},
     ],
     "power_bank": [
-        {"id": "features", "label": "Feature", "match": "array"},
         {"id": "capacityBand", "label": "Capacity", "match": "scalar"},
         {"id": "outputBand", "label": "Output Power", "match": "scalar"},
-        {"id": "scenarios", "label": "Scenario", "match": "array"},
+        {"id": "compatibility", "label": "Compatibility", "match": "scalar"},
+        {"id": "hasCable", "label": "Cable", "match": "scalar"},
     ],
     "power_cable": [
-        {"id": "features", "label": "Feature", "match": "array"},
         {"id": "lengthBand", "label": "Length", "match": "scalar"},
         {"id": "powerBand", "label": "Power", "match": "scalar"},
-        {"id": "scenarios", "label": "Scenario", "match": "array"},
+        {"id": "retractable", "label": "Retractable", "match": "scalar"},
     ],
 }
 
 FILTER_VALUE_EXCLUSIONS = {
     "features": {"wireless", "dual port"},
+}
+
+FILTER_VALUE_ORDER = {
+    "adapter": {
+        "compatibility": ["mobile", "multi", "laptop"],
+    },
+    "power_bank": {
+        "capacityBand": ["Below 10000mAh", "10000-20000mAh", "20000mAh and above"],
+        "outputBand": ["65W and below", "65W-100W", "100W and above"],
+        "compatibility": ["mobile", "multi", "laptop"],
+        "hasCable": ["Yes", "No"],
+    },
+    "power_cable": {
+        "lengthBand": ["Below 1m", "1m to 2m", "Above 2m"],
+        "powerBand": ["100W-200W", "200W and above"],
+        "retractable": ["Yes", "No"],
+    },
 }
 
 PRODUCTS = [
@@ -961,7 +977,7 @@ def build_market_metrics(product_metrics: list[dict[str, Any]], months: list[str
             }
             lenovo_units = sum(product_units.values())
             share = base_share[category_id] + stable_wave(category_id, month_idx, 0.01) + 0.004 * (month_idx / max(1, len(months) - 1))
-            total_market_units = int(round(lenovo_units / max(0.03, share)))
+            total_market_units = max(1, int(round(lenovo_units / max(0.03, share))))
             ranked = sorted(product_units.items(), key=lambda item: item[1], reverse=True)
             ranks = {model_id: rank + 1 for rank, (model_id, _) in enumerate(ranked)}
             for model_id, units in product_units.items():
@@ -982,7 +998,7 @@ def build_market_metrics(product_metrics: list[dict[str, Any]], months: list[str
                         "modelRevenueShareWithinLenovo": round(values["revenue"] / max(1, sum(v["revenue"] for (d, c, _), v in grouped.items() if d == month and c == category_id)), 4),
                         "marketRankInLenovo": ranks[model_id],
                         "categoryAUR": round(category_aur * (0.94 + stable_wave(category_id + model_id, month_idx, 0.025)), 2),
-                        "searchIndex": round(50 + 28 * units / max(product_units.values()) + stable_wave(model_id, month_idx, 4), 1),
+                        "searchIndex": round(50 + 28 * units / max(1, max(product_units.values())) + stable_wave(model_id, month_idx, 4), 1),
                         "competitivePriceIndex": round((category_aur / product["listPrice"]) * 100, 1),
                         "dataConfidence": "modeled",
                     }
@@ -1007,12 +1023,11 @@ def build_brand_market_metrics(
         market_lookup.setdefault((row["date"], row["categoryId"]), row)
 
     lenovo_launches = {
-        ("adapter", 5): "Lenovo 140W USB-C Desktop Charger",
-        ("adapter", 8): "Lenovo 65W Adapter + Power Bank 2-in-1",
-        ("power_bank", 6): "Lenovo 27000mAh 100W Travel Power Bank",
-        ("power_bank", 9): "Lenovo 10000mAh Magnetic Power Bank",
-        ("power_cable", 7): "Lenovo USB-C Cable Bundle 2-Pack",
-        ("power_cable", 10): "Lenovo USB-C to USB-C 240W Cable 2m",
+        ("adapter", 0): "Lenovo GaN Nano 65W Adapter",
+        ("adapter", 1): "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
+        ("power_bank", 0): "Lenovo 140W Smart Laptop Power Bank",
+        ("power_bank", 1): "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
+        ("power_cable", 0): "Lenovo 240W USB-C Retractable Cable",
     }
 
     for category in CATEGORIES:
@@ -1122,6 +1137,454 @@ def related_models(category_id: str, component: str) -> list[str]:
     return related
 
 
+REAL_PRODUCT_SPECS = [
+    {
+        "id": "adapter_multi_port_150w_gan",
+        "categoryId": "adapter",
+        "sourceFile": "Lenovo Multi-port USB-C 150W Laptop GaN Charger.xlsx",
+        "name": "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
+        "shortName": "150W Laptop GaN",
+        "listPrice": 119,
+        "costRatio": 0.52,
+        "attributes": {
+            "wattage": 150,
+            "wattageBand": "100W and above",
+            "features": ["GaN", "multi-port", "laptop"],
+            "compatibility": "laptop",
+            "powerMode": "Wired",
+            "ports": 4,
+            "portCountBand": "3+ ports",
+            "interfaceProtocols": ["USB-C PD 3.1"],
+            "scenarios": ["laptop", "commercial"],
+            "isTwoInOne": False,
+        },
+    },
+    {
+        "id": "adapter_multi_port_100w_gan",
+        "categoryId": "adapter",
+        "sourceFile": "Lenovo Multi-port USB-C 100W GaN Charger.xlsx",
+        "name": "Lenovo Multi-port USB-C 100W GaN Charger",
+        "shortName": "100W Multi-port",
+        "listPrice": 79,
+        "costRatio": 0.50,
+        "attributes": {
+            "wattage": 100,
+            "wattageBand": "100W and above",
+            "features": ["GaN", "multi-port"],
+            "compatibility": "multi",
+            "powerMode": "Wired",
+            "ports": 4,
+            "portCountBand": "3+ ports",
+            "interfaceProtocols": ["USB-C PD 3.1", "PPS"],
+            "scenarios": ["multi-device", "consumer"],
+            "isTwoInOne": False,
+        },
+    },
+    {
+        "id": "adapter_65w_mini_gan",
+        "categoryId": "adapter",
+        "sourceFile": "Lenovo 65W Mini USB-C GaN Charger.xlsx",
+        "name": "Lenovo 65W Mini USB-C GaN Charger",
+        "shortName": "65W Mini GaN",
+        "listPrice": 39,
+        "costRatio": 0.46,
+        "attributes": {
+            "wattage": 65,
+            "wattageBand": "45W to 99W",
+            "features": ["GaN", "mini", "USB-C"],
+            "compatibility": "mobile",
+            "powerMode": "Wired",
+            "ports": 1,
+            "portCountBand": "1 port",
+            "interfaceProtocols": ["USB-C PD", "PPS"],
+            "scenarios": ["mobile", "travel"],
+            "isTwoInOne": False,
+        },
+    },
+    {
+        "id": "adapter_gan_nano_65w",
+        "categoryId": "adapter",
+        "sourceFile": "Lenovo GaN Nano 65W Adapter.xlsx",
+        "name": "Lenovo GaN Nano 65W Adapter",
+        "shortName": "65W GaN Nano",
+        "listPrice": 39,
+        "costRatio": 0.46,
+        "attributes": {
+            "wattage": 65,
+            "wattageBand": "45W to 99W",
+            "features": ["GaN", "nano", "laptop"],
+            "compatibility": "laptop",
+            "powerMode": "Wired",
+            "ports": 1,
+            "portCountBand": "1 port",
+            "interfaceProtocols": ["USB-C PD"],
+            "scenarios": ["laptop", "commercial"],
+            "isTwoInOne": False,
+        },
+    },
+    {
+        "id": "bank_hybrid_2in1_140w_10200",
+        "categoryId": "power_bank",
+        "sourceFile": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
+        "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
+        "shortName": "Hybrid 140W 10.2K",
+        "listPrice": 99,
+        "costRatio": 0.58,
+        "attributes": {
+            "capacityMah": 10200,
+            "capacityBand": "10000-20000mAh",
+            "outputW": 140,
+            "outputBand": "100W and above",
+            "features": ["2-in-1", "hybrid", "high wattage"],
+            "compatibility": "laptop",
+            "hasCable": "No",
+            "scenarios": ["laptop", "travel"],
+            "isTwoInOne": True,
+        },
+    },
+    {
+        "id": "bank_140w_smart_laptop",
+        "categoryId": "power_bank",
+        "sourceFile": "Lenovo 140W Smart Laptop Power Bank.xlsx",
+        "name": "Lenovo 140W Smart Laptop Power Bank",
+        "shortName": "140W Smart Power Bank",
+        "listPrice": 119,
+        "costRatio": 0.56,
+        "attributes": {
+            "capacityMah": 20000,
+            "capacityBand": "20000mAh and above",
+            "outputW": 140,
+            "outputBand": "100W and above",
+            "features": ["smart display", "high wattage", "laptop"],
+            "compatibility": "laptop",
+            "hasCable": "No",
+            "scenarios": ["laptop", "travel"],
+            "isTwoInOne": False,
+        },
+    },
+    {
+        "id": "cable_240w_usb_c_retractable",
+        "categoryId": "power_cable",
+        "sourceFile": "Lenovo 240W USB-C Retractable Cable.xlsx",
+        "name": "Lenovo 240W USB-C Retractable Cable",
+        "shortName": "240W Retractable Cable",
+        "listPrice": 24,
+        "costRatio": 0.42,
+        "attributes": {
+            "connectors": ["USB-C"],
+            "lengthM": 1.0,
+            "lengthBand": "1m to 2m",
+            "powerW": 240,
+            "powerBand": "200W and above",
+            "features": ["USB-C", "retractable", "240W"],
+            "retractable": "Yes",
+            "scenarios": ["travel", "laptop"],
+        },
+    },
+]
+
+
+def safe_id(value: str) -> str:
+    return "".join(ch.lower() if ch.isalnum() else "_" for ch in str(value)).strip("_")
+
+
+def fiscal_date(fiscal_year: str, fiscal_quarter: str) -> str:
+    start_year = 2000 + int(str(fiscal_year)[2:4])
+    quarter = int(str(fiscal_quarter).replace("Q", ""))
+    if quarter == 1:
+        return f"{start_year}-04-01"
+    if quarter == 2:
+        return f"{start_year}-07-01"
+    if quarter == 3:
+        return f"{start_year}-10-01"
+    return f"{start_year + 1}-01-01"
+
+
+def fiscal_sort_value(fiscal_year: str, fiscal_quarter: str) -> int:
+    return int(str(fiscal_year).replace("FY", "")) * 10 + int(str(fiscal_quarter).replace("Q", ""))
+
+
+def real_source_available(source_dir: Path) -> bool:
+    if pd is None or not source_dir.exists():
+        return False
+    return all((source_dir / spec["sourceFile"]).exists() for spec in REAL_PRODUCT_SPECS)
+
+
+def read_real_sales(source_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    files_read = []
+    numeric_fields = ["Order_Rev", "Ship_Rev", "Bklg_Rev", "Order_Qty", "Ship_Qty", "Bklg_Qty", "Ship_AUR"]
+    for spec in REAL_PRODUCT_SPECS:
+        path = source_dir / spec["sourceFile"]
+        df = pd.read_excel(path, sheet_name="Export", engine="openpyxl")
+        df = df[df["Fiscal Year"].astype(str).str.startswith("FY", na=False)].copy()
+        for field in numeric_fields:
+            if field not in df:
+                df[field] = 0
+            df[field] = pd.to_numeric(df[field], errors="coerce").fillna(0)
+        files_read.append(path.name)
+        for record in df.to_dict(orient="records"):
+            fiscal_year = str(record["Fiscal Year"])
+            fiscal_quarter = str(record["Fiscal Quarter"])
+            rows.append(
+                {
+                    "date": fiscal_date(fiscal_year, fiscal_quarter),
+                    "fiscalYear": fiscal_year,
+                    "fiscalQuarter": fiscal_quarter,
+                    "modelId": spec["id"],
+                    "categoryId": spec["categoryId"],
+                    "partNumber": str(record["Part Number"]),
+                    "sourceModel": str(record.get("Model") or spec["name"]),
+                    "segment": str(record.get("Segment") or "Consumer").title(),
+                    "geo": str(record.get("Geo") or ""),
+                    "country": str(record.get("Country") or ""),
+                    "orderRevenue": float(record["Order_Rev"]),
+                    "shipRevenue": float(record["Ship_Rev"]),
+                    "backlogRevenue": float(record["Bklg_Rev"]),
+                    "orderQty": float(record["Order_Qty"]),
+                    "shipQty": float(record["Ship_Qty"]),
+                    "backlogQty": float(record["Bklg_Qty"]),
+                    "shipAUR": float(record["Ship_AUR"]),
+                }
+            )
+    meta = {
+        "sourceDir": str(source_dir),
+        "sourceFiles": files_read,
+        "sourceMode": "real_product_excel",
+        "sourceRows": len(rows),
+        "sourceNotes": "Real product sell-in/order data loaded from Lenovo accessory product workbooks.",
+    }
+    return rows, meta
+
+
+def build_real_periods(sales_rows: list[dict[str, Any]]) -> tuple[list[str], list[dict[str, Any]]]:
+    period_map = {}
+    for row in sales_rows:
+        key = (row["fiscalYear"], row["fiscalQuarter"])
+        period_map[key] = row["date"]
+    ordered = sorted(period_map.items(), key=lambda item: fiscal_sort_value(item[0][0], item[0][1]))
+    periods = [date for (_, date) in ordered]
+    period_meta = [
+        {
+            "date": date,
+            "fiscalYear": fy,
+            "fiscalQuarter": fq,
+            "quarterLabel": f"{fy} {fq}",
+            "yearLabel": fy,
+            "sortIndex": fiscal_sort_value(fy, fq),
+        }
+        for (fy, fq), date in ordered
+    ]
+    return periods, period_meta
+
+
+def build_real_products_and_variants(sales_rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    variants_by_model: dict[str, list[str]] = {}
+    for row in sales_rows:
+        variants_by_model.setdefault(row["modelId"], [])
+        if row["partNumber"] not in variants_by_model[row["modelId"]]:
+            variants_by_model[row["modelId"]].append(row["partNumber"])
+
+    products = []
+    variants = []
+    for spec in REAL_PRODUCT_SPECS:
+        part_numbers = sorted(variants_by_model.get(spec["id"], []))
+        variant_ids = []
+        for pn in part_numbers:
+            variant_id = f"{spec['id']}_{safe_id(pn)}"
+            variant_ids.append(variant_id)
+            variants.append(
+                {
+                    "id": variant_id,
+                    "modelId": spec["id"],
+                    "categoryId": spec["categoryId"],
+                    "name": pn,
+                    "partNumber": pn,
+                    "share": 0,
+                    "priceMultiplier": 1,
+                    "costMultiplier": 1,
+                }
+            )
+        product = {k: v for k, v in spec.items() if k not in {"sourceFile", "costRatio"}}
+        product["variants"] = variant_ids
+        product["partNumbers"] = part_numbers
+        product["tags"] = [product["attributes"].get("compatibility") or product["attributes"].get("retractable"), *product["attributes"].get("features", [])][:3]
+        products.append(product)
+    return products, variants
+
+
+def build_real_catalog(periods: list[str], period_meta: list[dict[str, Any]], source_meta: dict[str, Any], products: list[dict[str, Any]], variants: list[dict[str, Any]]) -> dict[str, Any]:
+    filter_values: dict[str, dict[str, list[Any]]] = {}
+    for category in CATEGORIES:
+        category_id = category["id"]
+        filter_values[category_id] = {}
+        category_products = [p for p in products if p["categoryId"] == category_id]
+        for config in FILTERS[category_id]:
+            values = []
+            for product in category_products:
+                raw = product["attributes"].get(config["id"])
+                if isinstance(raw, list):
+                    values.extend(raw)
+                elif raw is not None:
+                    values.append(raw)
+            explicit_values = FILTER_VALUE_ORDER.get(category_id, {}).get(config["id"])
+            filter_values[category_id][config["id"]] = explicit_values or list(dict.fromkeys(values))
+
+    return {
+        "generatedAt": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "periods": periods,
+        "periodMeta": period_meta,
+        "categories": CATEGORIES,
+        "filters": FILTERS,
+        "filterValues": filter_values,
+        "policyReports": POLICY_REPORTS,
+        "products": products,
+        "variants": variants,
+        "futureCategorySlots": ["Docking", "Wireless Charger", "Smart Accessories"],
+        "source": source_meta,
+    }
+
+
+def build_real_product_metrics(sales_rows: list[dict[str, Any]], periods: list[str], products: list[dict[str, Any]], variants: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    for row in sales_rows:
+        key = (row["date"], row["modelId"], row["partNumber"], row["segment"])
+        bucket = grouped.setdefault(
+            key,
+            {
+                "orderRevenue": 0.0,
+                "shipRevenue": 0.0,
+                "backlogRevenue": 0.0,
+                "orderQty": 0.0,
+                "shipQty": 0.0,
+                "backlogQty": 0.0,
+                "countries": set(),
+                "geos": set(),
+                "fiscalYear": row["fiscalYear"],
+                "fiscalQuarter": row["fiscalQuarter"],
+            },
+        )
+        bucket["orderRevenue"] += row["orderRevenue"]
+        bucket["shipRevenue"] += row["shipRevenue"]
+        bucket["backlogRevenue"] += row["backlogRevenue"]
+        bucket["orderQty"] += row["orderQty"]
+        bucket["shipQty"] += row["shipQty"]
+        bucket["backlogQty"] += row["backlogQty"]
+        if row["country"]:
+            bucket["countries"].add(row["country"])
+        if row["geo"]:
+            bucket["geos"].add(row["geo"])
+
+    product_lookup_local = {product["id"]: product for product in products}
+    cost_ratio = {spec["id"]: spec["costRatio"] for spec in REAL_PRODUCT_SPECS}
+    variant_lookup_local = {variant["id"]: variant for variant in variants}
+    variant_by_model_pn = {(variant["modelId"], variant["partNumber"]): variant for variant in variants}
+    period_meta_by_date = {date: next((row for row in sales_rows if row["date"] == date), None) for date in periods}
+
+    rows = []
+    for product in products:
+        for pn in product["partNumbers"]:
+            variant = variant_by_model_pn[(product["id"], pn)]
+            for date in periods:
+                fiscal_source = period_meta_by_date.get(date)
+                if not fiscal_source:
+                    continue
+                for segment in ["Commercial", "Consumer"]:
+                    bucket = grouped.get((date, product["id"], pn, segment), {})
+                    order_qty = int(round(bucket.get("orderQty", 0)))
+                    ship_qty = int(round(bucket.get("shipQty", 0)))
+                    backlog_qty = int(round(bucket.get("backlogQty", 0)))
+                    order_revenue = float(bucket.get("orderRevenue", 0))
+                    ship_revenue = float(bucket.get("shipRevenue", 0))
+                    backlog_revenue = float(bucket.get("backlogRevenue", 0))
+                    aur = order_revenue / order_qty if order_qty else product["listPrice"]
+                    unit_cost = aur * cost_ratio[product["id"]]
+                    gross_profit = order_revenue - order_qty * unit_cost
+                    rows.append(
+                        {
+                            "date": date,
+                            "year": int(date[:4]),
+                            "month": int(date[5:7]),
+                            "fiscalYear": fiscal_source["fiscalYear"],
+                            "fiscalQuarter": fiscal_source["fiscalQuarter"],
+                            "categoryId": product["categoryId"],
+                            "modelId": product["id"],
+                            "variantId": variant["id"],
+                            "variantName": variant_lookup_local[variant["id"]]["name"],
+                            "partNumber": pn,
+                            "segment": segment,
+                            "geo": ", ".join(sorted(bucket.get("geos", []))),
+                            "countryCount": len(bucket.get("countries", [])),
+                            "unitsGross": order_qty,
+                            "unitsReturned": 0,
+                            "unitsNet": order_qty,
+                            "returnRate": 0,
+                            "revenueGross": round(order_revenue, 2),
+                            "refundAmount": 0,
+                            "revenueNet": round(order_revenue, 2),
+                            "orderRevenue": round(order_revenue, 2),
+                            "shipRevenue": round(ship_revenue, 2),
+                            "backlogRevenue": round(backlog_revenue, 2),
+                            "orderQty": order_qty,
+                            "shipQty": ship_qty,
+                            "backlogQty": backlog_qty,
+                            "aur": round(aur, 2),
+                            "unitCost": round(unit_cost, 2),
+                            "returnCost": 0,
+                            "grossProfit": round(gross_profit, 2),
+                            "margin": round(gross_profit / order_revenue if order_revenue else 0, 4),
+                            "inventorySellThrough": round(ship_qty / order_qty if order_qty else 0, 4),
+                            "conversionRate": 0,
+                            "stockoutDays": 1 if backlog_qty or backlog_revenue else 0,
+                            "dataConfidence": "observed",
+                        }
+                    )
+    return rows
+
+
+def seasonality_from_real_metrics(product_metrics: list[dict[str, Any]], periods: list[str]) -> list[float]:
+    totals = [sum(row["unitsNet"] for row in product_metrics if row["date"] == period) for period in periods]
+    mean_units = sum(totals) / len(totals) if totals else 1
+    return [max(0.65, min(1.35, total / mean_units if mean_units else 1)) for total in totals]
+
+
+def build_real_dashboard(source_dir: Path, output_dir: Path) -> dict[str, Any]:
+    global PRODUCTS
+    sales_rows, source_meta = read_real_sales(source_dir)
+    periods, period_meta = build_real_periods(sales_rows)
+    products, variants = build_real_products_and_variants(sales_rows)
+    PRODUCTS = products
+    product_metrics = build_real_product_metrics(sales_rows, periods, products, variants)
+    seasonality = seasonality_from_real_metrics(product_metrics, periods)
+    catalog = build_real_catalog(periods, period_meta, source_meta, products, variants)
+    market_metrics = build_market_metrics(product_metrics, periods)
+    brand_market_metrics = build_brand_market_metrics(product_metrics, market_metrics, periods)
+    supply_chain = build_supply_chain(periods, seasonality)
+    consumer_insights = build_consumer_insights(product_metrics, periods)
+    metadata = {
+        "generatedAt": catalog["generatedAt"],
+        "records": {
+            "catalogProducts": len(catalog["products"]),
+            "variants": len(catalog["variants"]),
+            "productMetrics": len(product_metrics),
+            "marketMetrics": len(market_metrics),
+            "brandMarketMetrics": len(brand_market_metrics),
+            "supplyChain": len(supply_chain),
+            "consumerInsights": len(consumer_insights),
+        },
+        "source": source_meta,
+        "updatePattern": "Static JSON generated by Python from real product Excel files; GitHub Pages serves HTML/CSS/JS only.",
+    }
+    write_json(output_dir, "catalog.json", catalog)
+    write_json(output_dir, "product_metrics.json", product_metrics)
+    write_json(output_dir, "market_metrics.json", market_metrics)
+    write_json(output_dir, "brand_market_metrics.json", brand_market_metrics)
+    write_json(output_dir, "supply_chain.json", supply_chain)
+    write_json(output_dir, "consumer_insights.json", consumer_insights)
+    write_json(output_dir, "metadata.json", metadata)
+    return metadata
+
+
 def build_supply_chain(months: list[str], seasonality: list[float]) -> list[dict[str, Any]]:
     rows = []
     previous_index: dict[tuple[str, str], float] = {}
@@ -1178,7 +1641,7 @@ def build_consumer_insights(product_metrics: list[dict[str, Any]], months: list[
     for product in PRODUCTS:
         keywords = CONSUMER_KEYWORDS[product["categoryId"]]
         for month_idx, month in enumerate(months):
-            units = model_month_units[(month, product["id"])]
+            units = model_month_units.get((month, product["id"]), 0)
             total_reviews = max(60, int(round(units * (0.055 + stable_wave(product["id"], month_idx, 0.007)))))
             rating_base = 4.28
             if product["categoryId"] == "power_cable":
@@ -1222,11 +1685,19 @@ def write_json(output_dir: Path, name: str, payload: Any) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-xlsx", default=DEFAULT_SOURCE, help="Optional sample workbook used for month cadence.")
+    parser.add_argument("--source-dir", default=DEFAULT_REAL_SOURCE_DIR, help="Directory containing real product Excel exports.")
     parser.add_argument("--output-dir", default="data", help="Directory for static JSON outputs.")
     args = parser.parse_args()
 
     source = Path(args.source_xlsx).expanduser() if args.source_xlsx else None
+    source_dir = Path(args.source_dir).expanduser() if args.source_dir else None
     output_dir = Path(args.output_dir)
+
+    if source_dir and real_source_available(source_dir):
+        metadata = build_real_dashboard(source_dir, output_dir)
+        print(json.dumps(metadata, ensure_ascii=False, indent=2))
+        return
+
     months, seasonality, source_meta = month_sequence_from_source(source)
 
     catalog = build_catalog(months, source_meta)

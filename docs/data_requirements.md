@@ -1,6 +1,6 @@
 # Lenovo Accessories Dashboard Data Requirements
 
-本文档说明 Lenovo accessories dashboard 需要准备的数据。数据按四个业务层次拆分：Market、Product、Supply Chain、User。当前前端是零后端结构，只读取 `data/*.json`，所以后续自动化 Python 抓取、清洗或人工补数时，应尽量保持这些字段合同稳定。
+本文档说明 Lenovo accessories dashboard 需要准备的数据。当前前端是零后端结构，只读取 `data/*.json`，所以后续自动化 Python 抓取、清洗或人工补数时，应尽量保持这些字段合同稳定。当前真实产品版本以 fiscal year、fiscal quarter、segment 和 PN 为核心维度。
 
 ## 1. Overall Data Architecture
 
@@ -8,8 +8,8 @@ Dashboard 目前需要 7 类 JSON 数据：
 
 | File | Purpose | Main Business Layer |
 | --- | --- | --- |
-| `data/catalog.json` | 品类、产品、variant、筛选器、政策报告、静态元数据 | Shared master data |
-| `data/product_metrics.json` | 单品和 variant 的销量、收入、成本、利润、退货 | Product |
+| `data/catalog.json` | 品类、产品、PN variant、筛选器、财政期间、政策报告、静态元数据 | Shared master data |
+| `data/product_metrics.json` | 单品、PN、segment 的订单、出货、backlog、成本、利润 | Product |
 | `data/market_metrics.json` | 单品在市场和 Lenovo 内部的份额、需求、价格指数 | Market |
 | `data/brand_market_metrics.json` | Lenovo 和竞品品牌层面的销售、份额、新品、明星产品 | Market / Competitor |
 | `data/supply_chain.json` | 组件、供应商、价格指数、交付周期、产能、供应链新闻 | Supply Chain |
@@ -20,22 +20,24 @@ Recommended grain:
 
 | Layer | Recommended Grain | Required Keys |
 | --- | --- | --- |
-| Catalog | one row per category / product / variant | `categoryId`, `modelId`, `variantId` |
-| Product metrics | monthly, product, variant | `date`, `categoryId`, `modelId`, `variantId` |
-| Market metrics | monthly, product | `date`, `categoryId`, `modelId` |
-| Brand market metrics | monthly, category, brand | `date`, `categoryId`, `brand` |
-| Supply chain | monthly, category, component / supplier | `date`, `categoryId`, `componentType`, `supplier` |
-| User insights | monthly, product, keyword | `date`, `categoryId`, `modelId`, `keyword` |
+| Catalog | one row per category / product / PN variant | `categoryId`, `modelId`, `variantId`, `partNumber` |
+| Product metrics | fiscal quarter, product, PN, segment | `date`, `fiscalYear`, `fiscalQuarter`, `categoryId`, `modelId`, `partNumber`, `segment` |
+| Market metrics | fiscal quarter, product | `date`, `fiscalYear`, `fiscalQuarter`, `categoryId`, `modelId` |
+| Brand market metrics | fiscal quarter, category, brand | `date`, `fiscalYear`, `fiscalQuarter`, `categoryId`, `brand` |
+| Supply chain | fiscal quarter, category, component / supplier | `date`, `categoryId`, `componentType`, `supplier` |
+| User insights | fiscal quarter, product, keyword | `date`, `categoryId`, `modelId`, `keyword` |
 
 Minimum time columns:
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `date` | string, `YYYY-MM-01` | Monthly source date. Quarter and year are derived in the frontend. |
-| `year` | number | Calendar year. |
-| `month` | number | 1-12. |
+| `date` | string, `YYYY-MM-01` | Synthetic period start date used for browser sorting. Fiscal labels come from `periodMeta`. |
+| `fiscalYear` | string | `FY2425`, `FY2526`, `FY2627`. |
+| `fiscalQuarter` | string | `Q1`, `Q2`, `Q3`, `Q4`. |
+| `year` | number | Calendar year derived from `date`; kept for backward compatibility. |
+| `month` | number | Calendar month derived from `date`; kept for backward compatibility. |
 
-The current dashboard supports month, quarter, and year filters. Monthly data is the base layer; quarter and year views are aggregated in the browser.
+The current dashboard supports fiscal quarter and fiscal year filters only. Quarter labels are formatted as `FY2627 Q1`; year labels are formatted as `FY2627`.
 
 ## 2. Shared Master Data
 
@@ -65,7 +67,8 @@ Common product fields:
 | `shortName` | string | yes | `65W GaN` | Chart legend and card label. |
 | `listPrice` | number | yes | `49` | Current list price or latest MSRP, USD by default. |
 | `attributes` | object | yes | see below | Category-specific attributes used for filters and matrices. |
-| `variants` | string[] | yes | `adapter_65w_gan_graphite` | Related variant IDs. |
+| `variants` | string[] | yes | `adapter_65w_gan_40aw65wbeu` | Related PN variant IDs. |
+| `partNumbers` | string[] | yes | `["40AW65WBEU", "40AW65WBUK"]` | Product-level PN selector in the Product detail dimension. |
 | `tags` | string[] | optional | `["GaN", "compact"]` | Product list pills. |
 
 Adapter attributes:
@@ -74,11 +77,12 @@ Adapter attributes:
 | --- | --- | --- | --- |
 | `wattage` | number | `65` | Power segment, same-spec competitor comparison. |
 | `wattageBand` | string | `45W to 99W` | Adapter wattage filter. |
-| `features` | string[] | `["GaN", "compact", "travel"]` | Feature filter and tag display. `2-in-1` belongs here. |
+| `features` | string[] | `["GaN", "compact", "travel"]` | Tag display and derived analysis; not used as an Adapter filter in the current UI. |
+| `compatibility` | string | `mobile`, `multi`, `laptop` | Adapter compatibility filter. |
 | `powerMode` | string | `Wired` / `Wireless` | Wired / wireless filter. |
 | `ports` | number | `2` | Port count calculation. |
 | `portCountBand` | string | `1 port`, `2 ports`, `3+ ports` | Port filter. |
-| `interfaceProtocols` | string[] | `["USB-C PD", "PPS"]` | Protocol filter. |
+| `interfaceProtocols` | string[] | `["USB-C PD", "PPS"]` | Optional protocol metadata; not used as a current Adapter filter. |
 | `scenarios` | string[] | `["daily carry", "travel"]` | Use case analysis. |
 | `isTwoInOne` | boolean | `false` | Internal boolean; frontend filter uses `features: ["2-in-1"]`. |
 
@@ -87,11 +91,13 @@ Power bank attributes:
 | Field | Type | Example | Use |
 | --- | --- | --- | --- |
 | `capacityMah` | number | `10000` | Capacity comparison. |
-| `capacityBand` | string | `10000mAh` | Capacity filter. |
+| `capacityBand` | string | `Below 10000mAh`, `10000-20000mAh`, `20000mAh and above` | Capacity filter. |
 | `outputW` | number | `65` | Output power comparison. |
-| `outputBand` | string | `45W to 99W` | Output power filter. |
-| `features` | string[] | `["magnetic", "daily carry"]` | Feature filter. |
-| `scenarios` | string[] | `["travel", "outdoor"]` | Use case analysis. |
+| `outputBand` | string | `65W and below`, `65W-100W`, `100W and above` | Output power filter. |
+| `features` | string[] | `["2-in-1", "high wattage"]` | Tag display and derived analysis; not used as a current Power Bank filter. |
+| `compatibility` | string | `mobile`, `multi`, `laptop` | Power Bank compatibility filter. |
+| `hasCable` | string | `Yes`, `No` | Built-in / included cable filter. |
+| `scenarios` | string[] | `["travel", "outdoor"]` | Optional use case analysis. |
 | `isTwoInOne` | boolean | `true` | Internal boolean; use `2-in-1` in `features` for filtering. |
 
 Power cable attributes:
@@ -102,23 +108,25 @@ Power cable attributes:
 | `lengthM` or `lengthMeters` | number | `1.8` | Length comparison. |
 | `lengthBand` | string | `1m to 2m` | Length filter. |
 | `powerW` | number | `100` | Power support comparison. |
-| `powerBand` | string | `100W to 199W` | Power filter. |
-| `features` | string[] | `["USB-C", "E-marker"]` | Feature filter. |
-| `scenarios` | string[] | `["travel", "workstation"]` | Use case analysis. |
+| `powerBand` | string | `100W-200W`, `200W and above` | Power filter. |
+| `features` | string[] | `["USB-C", "E-marker"]` | Tag display and derived analysis; not used as a current Cable filter. |
+| `retractable` | string | `Yes`, `No` | Retractable filter. |
+| `scenarios` | string[] | `["travel", "workstation"]` | Optional use case analysis. |
 
-### 2.3 Variant Master
+### 2.3 PN Variant Master
 
 Stored in `catalog.json > variants`.
 
 | Field | Type | Required | Example | Notes |
 | --- | --- | --- | --- | --- |
-| `id` | string | yes | `adapter_65w_gan_graphite` | Stable variant key. |
+| `id` | string | yes | `adapter_65w_gan_40aw65wbeu` | Stable PN variant key. |
 | `modelId` | string | yes | `adapter_65w_gan` | Parent product. |
 | `categoryId` | string | yes | `adapter` | Category. |
-| `name` | string | yes | `Graphite Black` | Variant label. |
-| `share` | number | optional | `0.45` | Estimated sales allocation if source only has model-level totals. |
-| `priceMultiplier` | number | optional | `1.0` | Variant price index vs base model. |
-| `costMultiplier` | number | optional | `1.0` | Variant cost index vs base model. |
+| `name` | string | yes | `40AW65WBEU` | PN label. |
+| `partNumber` | string | yes | `40AW65WBEU` | Source Excel `Part Number`. |
+| `share` | number | optional | `0.45` | Estimated allocation if future source only has model-level totals. |
+| `priceMultiplier` | number | optional | `1.0` | PN price index vs base model. |
+| `costMultiplier` | number | optional | `1.0` | PN cost index vs base model. |
 
 ### 2.4 Filter Values
 
@@ -128,9 +136,9 @@ Required filters by category:
 
 | Category | Filters |
 | --- | --- |
-| Adapter | `wattageBand`, `features`, `powerMode`, `portCountBand`, `interfaceProtocols` |
-| Power Bank | `features`, `capacityBand`, `outputBand`, `scenarios` |
-| Power Cable | `features`, `lengthBand`, `powerBand`, `scenarios` |
+| Adapter | `wattageBand`, `compatibility`, `powerMode`, `portCountBand` |
+| Power Bank | `capacityBand`, `outputBand`, `compatibility`, `hasCable` |
+| Power Cable | `lengthBand`, `powerBand`, `retractable` |
 
 Important filter rules:
 
@@ -140,19 +148,19 @@ Important filter rules:
 
 ## 3. Market Layer
 
-Market data supports Market Analysis, Competitor Analysis, category structure charts, and product-level market detail pages.
+Market data supports Market Analysis, Competitor Analysis, and category structure charts.
 
 ### 3.1 Product-Level Market Metrics
 
 Stored in `market_metrics.json`.
 
-Grain: one row per month, category, product.
+Grain: one row per fiscal quarter, category, and product.
 
 | Field | Type | Required | Example | Used For |
 | --- | --- | --- | --- | --- |
-| `date` | string | yes | `2026-03-01` | Time filter. |
-| `year` | number | yes | `2026` | Year aggregation. |
-| `month` | number | yes | `3` | Month filter. |
+| `date` | string | yes | `2026-07-01` | Synthetic period start date for sorting. |
+| `year` | number | yes | `2026` | Calendar year derived from `date`. |
+| `month` | number | yes | `7` | Calendar month derived from `date`; compatibility field. |
 | `categoryId` | string | yes | `adapter` | Category filter. |
 | `modelId` | string | yes | `adapter_65w_gan` | Product detail. |
 | `totalMarketUnits` | number | yes | `420000` | Total category demand volume. |
@@ -177,13 +185,13 @@ Recommended sources:
 
 Stored in `brand_market_metrics.json`.
 
-Grain: one row per month, category, brand.
+Grain: one row per fiscal quarter, category, and brand.
 
 | Field | Type | Required | Example | Used For |
 | --- | --- | --- | --- | --- |
-| `date` | string | yes | `2026-03-01` | Time filter. |
-| `year` | number | yes | `2026` | Year aggregation. |
-| `month` | number | yes | `3` | Month filter. |
+| `date` | string | yes | `2026-07-01` | Synthetic period start date for sorting. |
+| `year` | number | yes | `2026` | Calendar year derived from `date`. |
+| `month` | number | yes | `7` | Calendar month derived from `date`; compatibility field. |
 | `categoryId` | string | yes | `adapter` | Category. |
 | `brand` | string | yes | `Anker` | Brand comparison. |
 | `brandUnits` | number | yes | `92130` | Brand shipment / sell-out units. |
@@ -235,25 +243,35 @@ Product data supports Category Overview, Data Filters, Product List, and Product
 
 Stored in `product_metrics.json`.
 
-Grain: one row per month, category, product, variant.
+Grain: one row per fiscal quarter, category, product, PN, and segment.
 
 | Field | Type | Required | Formula / Example | Used For |
 | --- | --- | --- | --- | --- |
-| `date` | string | yes | `2026-03-01` | Time filter. |
-| `year` | number | yes | `2026` | Year aggregation. |
-| `month` | number | yes | `3` | Month filter. |
+| `date` | string | yes | `2026-07-01` | Synthetic period start date for sorting. |
+| `fiscalYear` | string | yes | `FY2627` | Fiscal year filter. |
+| `fiscalQuarter` | string | yes | `Q2` | Fiscal quarter filter. |
+| `year` | number | yes | `2026` | Calendar year derived from `date`. |
+| `month` | number | yes | `7` | Calendar month derived from `date`. |
 | `categoryId` | string | yes | `adapter` | Category. |
 | `modelId` | string | yes | `adapter_65w_gan` | Product. |
-| `variantId` | string | yes | `adapter_65w_gan_graphite` | Variant filter. |
-| `variantName` | string | yes | `Graphite Black` | Variant label. |
-| `unitsGross` | number | yes | source units before returns | Sales volume before returns. |
-| `unitsReturned` | number | yes | returned units | Return volume. |
-| `unitsNet` | number | yes | `unitsGross - unitsReturned` | Net units in charts. |
+| `variantId` | string | yes | `adapter_65w_gan_40aw65wbeu` | PN variant key. |
+| `variantName` | string | yes | `40AW65WBEU` | PN label. |
+| `partNumber` | string | yes | `40AW65WBEU` | Product detail PN selector. |
+| `segment` | string | yes | `Commercial`, `Consumer` | Product detail segment selector. |
+| `orderRevenue` | number | yes | source `Order_Rev` | Main revenue KPI from real Excel. |
+| `shipRevenue` | number | yes | source `Ship_Rev` | Shipped revenue KPI. |
+| `backlogRevenue` | number | yes | source `Bklg_Rev` | Backlog revenue KPI. |
+| `orderQty` | number | yes | source `Order_Qty` | Main quantity KPI from real Excel. |
+| `shipQty` | number | yes | source `Ship_Qty` | Shipped quantity. |
+| `backlogQty` | number | yes | source `Bklg_Qty` | Backlog quantity. |
+| `unitsGross` | number | yes | `orderQty` | Backward-compatible chart field. |
+| `unitsReturned` | number | yes | `0` or returned units | Return volume when available. |
+| `unitsNet` | number | yes | `orderQty` | Backward-compatible net units in charts. |
 | `returnRate` | number | yes | `unitsReturned / unitsGross` | User / quality risk. |
-| `revenueGross` | number | yes | gross sales | Gross revenue. |
+| `revenueGross` | number | yes | `orderRevenue` | Backward-compatible gross revenue. |
 | `refundAmount` | number | yes | refunded revenue | Refund drag. |
-| `revenueNet` | number | yes | `revenueGross - refundAmount` | Net revenue. |
-| `aur` | number | yes | `revenueNet / unitsNet` | Average unit revenue. |
+| `revenueNet` | number | yes | `orderRevenue - refundAmount` | Backward-compatible net revenue. |
+| `aur` | number | yes | `orderRevenue / orderQty` | Average unit revenue. |
 | `unitCost` | number | yes | per-unit cost | Cost trend. |
 | `returnCost` | number | recommended | handling / write-off cost | Return economics. |
 | `grossProfit` | number | yes | `revenueNet - unitCost * unitsNet - returnCost` | Profit charts. |
@@ -299,17 +317,17 @@ The Product detail page needs these minimum fields:
 
 ## 5. Supply Chain Layer
 
-Supply Chain data supports component risk analysis and product-level supply pages.
+Supply Chain data supports component risk analysis and category-level supply signals.
 
 Stored in `supply_chain.json`.
 
-Grain: one row per month, category, component type, supplier.
+Grain: one row per fiscal quarter, category, component type, and supplier.
 
 | Field | Type | Required | Example | Used For |
 | --- | --- | --- | --- | --- |
-| `date` | string | yes | `2026-03-01` | Time filter. |
-| `year` | number | yes | `2026` | Year aggregation. |
-| `month` | number | yes | `3` | Month filter. |
+| `date` | string | yes | `2026-07-01` | Synthetic period start date for sorting. |
+| `year` | number | yes | `2026` | Calendar year derived from `date`. |
+| `month` | number | yes | `7` | Calendar month derived from `date`; compatibility field. |
 | `categoryId` | string | yes | `adapter` | Category. |
 | `componentType` | string | yes | `GaN power IC` | Component grouping. |
 | `supplier` | string | yes | `Navitas` | Supplier. |
@@ -348,13 +366,13 @@ User data supports User Feedback module and product-level User page.
 
 Stored in `consumer_insights.json`.
 
-Grain: one row per month, category, product, keyword.
+Grain: one row per fiscal quarter, category, product, and keyword.
 
 | Field | Type | Required | Example | Used For |
 | --- | --- | --- | --- | --- |
-| `date` | string | yes | `2026-03-01` | Time filter. |
-| `year` | number | yes | `2026` | Year aggregation. |
-| `month` | number | yes | `3` | Month filter. |
+| `date` | string | yes | `2026-07-01` | Synthetic period start date for sorting. |
+| `year` | number | yes | `2026` | Calendar year derived from `date`. |
+| `month` | number | yes | `7` | Calendar month derived from `date`; compatibility field. |
 | `categoryId` | string | yes | `adapter` | Category. |
 | `modelId` | string | yes | `adapter_65w_gan` | Product. |
 | `keyword` | string | yes | `charging speed` | Word cloud and keyword frequency. |
@@ -434,8 +452,8 @@ Use consistent values:
 ## 8. Recommended Update Pipeline
 
 1. Extract raw data from internal systems, public reports, web scraping, or manual sheets.
-2. Normalize IDs into the master catalog: `categoryId`, `modelId`, `variantId`, `brand`.
-3. Convert all base metrics to monthly rows.
+2. Normalize IDs into the master catalog: `categoryId`, `modelId`, `variantId`, `partNumber`, `segment`, `brand`.
+3. Convert all base metrics to fiscal quarter rows.
 4. Calculate derived metrics: net units, net revenue, AUR, margin, shares, return rate.
 5. Validate referential integrity and numeric formulas.
 6. Export the seven JSON files under `data/`.
@@ -445,7 +463,7 @@ Current command:
 
 ```bash
 python3 scripts/generate_dashboard_data.py \
-  --source-xlsx "/Users/albert/Desktop/zhenqi_li homework 2/lenovo_wearables_final.xlsx" \
+  --source-dir "/Users/albert/Desktop/2026.7.13" \
   --output-dir data
 ```
 
@@ -453,8 +471,8 @@ python3 scripts/generate_dashboard_data.py \
 
 If data collection must be phased, use this priority order:
 
-1. Product master and variant master: without this, filters and product pages cannot work.
-2. Product metrics: units, revenue, cost, profit, margin, returns.
+1. Product master and PN variant master: without this, filters and product pages cannot work.
+2. Product metrics: order revenue, ship revenue, backlog revenue, order quantity, ship quantity, backlog quantity, cost, profit, margin, segment, and PN.
 3. Market and brand metrics: category demand, Lenovo share, competitor share, brand sales.
 4. User review metrics: keyword, sentiment, frequency, rating, return reasons.
 5. Supply chain metrics: component price index, lead time, capacity, supplier news.
@@ -474,4 +492,4 @@ data/consumer_insights.json
 data/metadata.json
 ```
 
-When future automation replaces the current fitted sample data, keep these file names and field names stable unless the frontend is updated at the same time.
+When future automation replaces the current Excel-based generation, keep these file names and field names stable unless the frontend is updated at the same time.

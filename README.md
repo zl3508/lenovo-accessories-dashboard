@@ -1,67 +1,84 @@
 # Lenovo Accessories Dashboard
 
-静态 Lenovo 产品数据可视化 dashboard，面向 GitHub Pages 部署：
+Static Lenovo accessories dashboard for GitHub Pages.
 
-- 原生 HTML + CSS + JavaScript
-- Plotly.js 前端渲染图表
-- 零后端，页面只读取 `data/*.json`
-- Python 脚本负责把源数据或拟合数据更新成静态 JSON
+- Native HTML, CSS, and JavaScript
+- Plotly.js chart rendering in the browser
+- No backend; the page reads only `data/*.json`
+- Python data generation from product Excel exports or fallback modeled data
 
-## 页面结构
+## Page Structure
 
-- 主界面：选择 `Adapter`、`Power Bank`、`Power Cable`
-- 品类界面：包含市场分析、竞品分析、品类总览、产品列表四个平行页面
-- 品类总览：按 model 对比销量、收入、利润、margin、return rate，并包含产品矩阵
-- 单品界面：按 `Market`、`Product`、`Supply Chain`、`User Reviews` 四个维度查看详情
-- 时间粒度：月、季度、年
-- 单品版型：支持 All variants 和单一 variant 对比
+- Home: select `Adapter`, `Power Bank`, or `Power Cable`
+- Category pages: `Market Analysis`, `Competitor Analysis`, `Category Overview`, and `Product List`
+- Category Overview: product summary, data filters, user feedback, and product decision modules
+- Product detail pages: `Segment`, `Product`, and `User` dimensions
+- Time filters: fiscal quarter and fiscal year, using labels such as `FY2627 Q1`
+- Product dimension: all PN or a single part number
+- Segment dimension: all, commercial, or consumer
 
-## 数据结构
+## Current Real Products
 
-`data/` 目录拆分为：
+Adapters:
 
-- `catalog.json`：品类、产品、variant、筛选项
-- `product_metrics.json`：销量、退货、收入、利润、成本、margin
-- `market_metrics.json`：市场份额、市场规模、搜索指数、价格指数
-- `brand_market_metrics.json`：Lenovo 与竞品品牌的份额、出货、新品和明星产品
-- `supply_chain.json`：组件、供应商、价格指数、交付周期、产能利用率
-- `consumer_insights.json`：评价关键词、情绪、频率、评分
-- `metadata.json`：生成时间、记录数、源数据说明
+- Lenovo Multi-port USB-C 150W Laptop GaN Charger
+- Lenovo Multi-port USB-C 100W GaN Charger
+- Lenovo 65W Mini USB-C GaN Charger
+- Lenovo GaN Nano 65W Adapter
 
-详细字段需求、数据粒度、来源建议和质量规则见：
+Power banks:
 
-- [`docs/data_requirements.md`](docs/data_requirements.md)
+- Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)
+- Lenovo 140W Smart Laptop Power Bank
 
-## 本地运行
+Cable:
+
+- Lenovo 240W USB-C Retractable Cable
+
+## Data Files
+
+The dashboard reads:
+
+- `catalog.json`: categories, products, PN variants, filters, fiscal periods, and policy reports
+- `product_metrics.json`: order revenue, ship revenue, backlog revenue, order quantity, ship quantity, backlog quantity, cost, margin, segment, and PN
+- `market_metrics.json`: category market size, Lenovo share, product share, search index, and price index
+- `brand_market_metrics.json`: Lenovo and competitor brand sales, share, new launches, and star products
+- `supply_chain.json`: component, supplier, price index, lead time, capacity, and supply news
+- `consumer_insights.json`: review keywords, sentiment, frequency, and rating
+- `metadata.json`: generation time, record counts, source files, and update mode
+
+Detailed field requirements are in [`docs/data_requirements.md`](docs/data_requirements.md).
+
+## Local Run
 
 ```bash
 python3 -m http.server 8000
 ```
 
-然后打开：
+Open:
 
 ```text
 http://localhost:8000
 ```
 
-## 更新数据
+## Update Data
 
-当前数据使用提供的 workbook 时间节奏和字段结构进行拟合：
+Use the real product Excel exports:
 
 ```bash
 python3 scripts/generate_dashboard_data.py \
-  --source-xlsx "/Users/albert/Desktop/zhenqi_li homework 2/lenovo_wearables_final.xlsx" \
+  --source-dir "/Users/albert/Desktop/2026.7.13" \
   --output-dir data
 ```
 
-后续接入真实爬虫或 API 时，保持 `data/*.json` 字段合同不变，页面不用重写。
+If the real source directory is missing, the script falls back to modeled data from the sample workbook path.
 
 ## GitHub Pages
 
-把仓库部署到 GitHub Pages 后，入口文件是：
+The GitHub Pages entry point is:
 
 ```text
 index.html
 ```
 
-`.github/workflows/update-dashboard-data.yml` 提供了每日定时更新模板。
+`.github/workflows/update-dashboard-data.yml` contains a daily update template.
