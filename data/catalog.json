@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T01:04:45Z",
+  "generatedAt": "2026-07-14T07:09:48Z",
   "periods": [
     "2024-04-01",
     "2024-07-01",
@@ -195,8 +195,9 @@
         "Wired"
       ],
       "portCountBand": [
-        "3+ ports",
-        "1 port"
+        "1 port",
+        "2 ports",
+        "3+ ports"
       ]
     },
     "power_bank": {
@@ -314,7 +315,7 @@
       "name": "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
       "shortName": "150W Laptop GaN",
       "image": "assets/products/adapter-multi-port-150w-gan.webp",
-      "listPrice": 119,
+      "listPrice": 89.99,
       "attributes": {
         "wattage": 150,
         "wattageBand": "100W and above",
@@ -325,7 +326,7 @@
         ],
         "compatibility": "laptop",
         "powerMode": "Wired",
-        "ports": 4,
+        "ports": 3,
         "portCountBand": "3+ ports",
         "interfaceProtocols": [
           "USB-C PD 3.1"
@@ -358,7 +359,7 @@
       "name": "Lenovo Multi-port USB-C 100W GaN Charger",
       "shortName": "100W Multi-port",
       "image": "assets/products/adapter-multi-port-100w-gan.avif",
-      "listPrice": 79,
+      "listPrice": 74.99,
       "attributes": {
         "wattage": 100,
         "wattageBand": "100W and above",
@@ -368,7 +369,7 @@
         ],
         "compatibility": "multi",
         "powerMode": "Wired",
-        "ports": 4,
+        "ports": 3,
         "portCountBand": "3+ ports",
         "interfaceProtocols": [
           "USB-C PD 3.1",
@@ -410,7 +411,7 @@
       "name": "Lenovo 65W Mini USB-C GaN Charger",
       "shortName": "65W Mini GaN",
       "image": "assets/products/adapter-65w-mini-gan.avif",
-      "listPrice": 39,
+      "listPrice": 34.99,
       "attributes": {
         "wattage": 65,
         "wattageBand": "45W to 99W",
@@ -457,7 +458,7 @@
       "name": "Lenovo GaN Nano 65W Adapter",
       "shortName": "65W GaN Nano",
       "image": "assets/products/adapter-gan-nano-65w.avif",
-      "listPrice": 39,
+      "listPrice": 49.99,
       "attributes": {
         "wattage": 65,
         "wattageBand": "45W to 99W",
@@ -517,6 +518,63 @@
         "laptop",
         "GaN",
         "nano"
+      ]
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "Lenovo Dual USB-C 65W GaN Charger",
+      "shortName": "65W Dual USB-C",
+      "image": "assets/products/adapter-dual-usbc-65w-gan.avif",
+      "listPrice": 59.99,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "GaN",
+          "dual USB-C",
+          "multi-port"
+        ],
+        "compatibility": "multi",
+        "powerMode": "Wired",
+        "ports": 2,
+        "portCountBand": "2 ports",
+        "interfaceProtocols": [
+          "USB-C PD",
+          "PPS"
+        ],
+        "scenarios": [
+          "multi-device",
+          "consumer"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_dual_usbc_65w_gan_40aw065beu",
+        "adapter_dual_usbc_65w_gan_40aw065buk",
+        "adapter_dual_usbc_65w_gan_40aw065bus",
+        "adapter_dual_usbc_65w_gan_g0a6065beu",
+        "adapter_dual_usbc_65w_gan_g0a6065buk",
+        "adapter_dual_usbc_65w_gan_g0a6065bus",
+        "adapter_dual_usbc_65w_gan_g0a6065weu",
+        "adapter_dual_usbc_65w_gan_g0a6065wuk",
+        "adapter_dual_usbc_65w_gan_g0a6065wus"
+      ],
+      "partNumbers": [
+        "40AW065BEU",
+        "40AW065BUK",
+        "40AW065BUS",
+        "G0A6065BEU",
+        "G0A6065BUK",
+        "G0A6065BUS",
+        "G0A6065WEU",
+        "G0A6065WUK",
+        "G0A6065WUS"
+      ],
+      "tags": [
+        "multi",
+        "GaN",
+        "dual USB-C"
       ]
     },
     {
@@ -928,6 +986,96 @@
       "costMultiplier": 1
     },
     {
+      "id": "adapter_dual_usbc_65w_gan_40aw065beu",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "40AW065BEU",
+      "partNumber": "40AW065BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_40aw065buk",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "40AW065BUK",
+      "partNumber": "40AW065BUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_40aw065bus",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "40AW065BUS",
+      "partNumber": "40AW065BUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065beu",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065BEU",
+      "partNumber": "G0A6065BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065buk",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065BUK",
+      "partNumber": "G0A6065BUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065bus",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065BUS",
+      "partNumber": "G0A6065BUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065weu",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065WEU",
+      "partNumber": "G0A6065WEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065wuk",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065WUK",
+      "partNumber": "G0A6065WUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065wus",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065WUS",
+      "partNumber": "G0A6065WUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
       "id": "bank_hybrid_2in1_140w_10200_g0a3140wna",
       "modelId": "bank_hybrid_2in1_140w_10200",
       "categoryId": "power_bank",
@@ -990,12 +1138,13 @@
       "Lenovo Multi-port USB-C 100W GaN Charger.xlsx",
       "Lenovo 65W Mini USB-C GaN Charger.xlsx",
       "Lenovo GaN Nano 65W Adapter.xlsx",
+      "Lenovo Dual USB-C 65W GaN Charger.xlsx",
       "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
       "Lenovo 140W Smart Laptop Power Bank.xlsx",
       "Lenovo 240W USB-C Retractable Cable.xlsx"
     ],
     "sourceMode": "real_product_excel",
-    "sourceRows": 788,
+    "sourceRows": 1170,
     "sourceNotes": "Real product sell-in/order data loaded from Lenovo accessory product workbooks."
   }
 }
