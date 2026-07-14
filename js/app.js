@@ -79,6 +79,10 @@ const priceBands = ["<$25", "$25-45", "$45-65", "$65+"];
 
 init();
 
+function modeledText(label) {
+  return `${label}*`;
+}
+
 async function init() {
   try {
     const entries = await Promise.all(
@@ -170,7 +174,7 @@ function renderSourceStatus() {
     : source.sourceDateRange
       ? `${source.sourceDateRange[0].slice(0, 7)} to ${source.sourceDateRange[1].slice(0, 7)}`
       : "modeled";
-  sourceStatus.textContent = `${range} · ${source.sourceMode || "static JSON"}`;
+  sourceStatus.textContent = `${range} · ${source.sourceMode || "static JSON"} · * modeled/non-Excel data`;
 }
 
 function renderTopNav() {
@@ -210,9 +214,9 @@ function renderHome() {
             <small>Net shipped units</small>
           </div>
           <div class="stat-tile">
-            <span>Gross Margin</span>
+            <span>${modeledText("Gross Margin")}</span>
             <strong>${fmtPercent(totalSummary.margin)}</strong>
-            <small>Modeled from the provided workbook cadence.</small>
+            <small>Modeled from cost assumptions.</small>
           </div>
         </div>
       </section>
@@ -253,7 +257,7 @@ function renderCategoryCard(category, latest) {
       <div class="category-metrics">
         <div><span>Units</span><strong>${fmtCompact(summary.unitsNet)}</strong></div>
         <div><span>Revenue</span><strong>${fmtCurrency(summary.revenueNet)}</strong></div>
-        <div><span>Profit</span><strong>${fmtCurrency(summary.grossProfit)}</strong></div>
+        <div><span>${modeledText("Profit")}</span><strong>${fmtCurrency(summary.grossProfit)}</strong></div>
       </div>
     </button>
   `;
@@ -338,7 +342,7 @@ function renderMarketAnalysis(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Market Module</span>
-          <h2>Policy Insights</h2>
+          <h2>${modeledText("Policy Insights")}</h2>
           <p>Policy reports, sources, and portfolio implications.</p>
         </div>
         <div class="policy-grid">
@@ -350,13 +354,13 @@ function renderMarketAnalysis(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Market Module</span>
-          <h2>Industry Trends</h2>
+          <h2>${modeledText("Industry Trends")}</h2>
         </div>
         <div class="chart-grid">
-          ${chartShell("industryHighPowerPlot", "High Power Migration", "share of demand")}
-          ${chartShell("industryPortsPlot", "Port Upgrade Trend", "sample share")}
-          ${chartShell("industryPriceCurvePlot", "Price Decline by Power", "AUR by period")}
-          ${chartShell("industryTechPlot", "Technology Penetration", "feature adoption")}
+          ${chartShell("industryHighPowerPlot", modeledText("High Power Migration"), "share of demand")}
+          ${chartShell("industryPortsPlot", modeledText("Port Upgrade Trend"), "sample share")}
+          ${chartShell("industryPriceCurvePlot", modeledText("Price Decline by Power"), "AUR by period")}
+          ${chartShell("industryTechPlot", modeledText("Technology Penetration"), "feature adoption")}
         </div>
       </section>
     `,
@@ -364,21 +368,21 @@ function renderMarketAnalysis(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Market Module</span>
-          <h2>Market Structure</h2>
+          <h2>${modeledText("Market Structure")}</h2>
         </div>
         <div class="chart-grid">
-          ${chartShell("structurePowerTrendPlot", "Power Segment Structure", "stacked share")}
-          ${chartShell("structurePowerPortHeatmap", "Power × Port Distribution", period)}
+          ${chartShell("structurePowerTrendPlot", modeledText("Power Segment Structure"), "stacked share")}
+          ${chartShell("structurePowerPortHeatmap", modeledText("Power × Port Distribution"), period)}
           <div class="chart-shell">
             <div class="chart-title">
-              <strong>Price Band × Power Structure</strong>
+              <strong>${escapeHtml(modeledText("Price Band × Power Structure"))}</strong>
               <select class="inline-select" data-action="structure-brand">
                 ${structureBrands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.structureBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
               </select>
             </div>
             <div id="structurePricePowerPlot" class="plot"></div>
           </div>
-          ${chartShell("structureScenarioPlot", "Use Case Split", period)}
+          ${chartShell("structureScenarioPlot", modeledText("Use Case Split"), period)}
         </div>
       </section>
     `,
@@ -389,13 +393,13 @@ function renderMarketAnalysis(categoryId) {
       <section class="analysis-hero">
         <div>
           <p class="eyebrow">Market Analysis</p>
-          <h2>${escapeHtml(category.label)} Market Analysis</h2>
+          <h2>${escapeHtml(category.label)} ${escapeHtml(modeledText("Market Analysis"))}</h2>
           <p>Use the module buttons above to switch between policy, trend, and structure analysis. Current period: ${escapeHtml(period)}.</p>
         </div>
         <div class="insight-list">
-          <div><span>Market Units</span><strong>${fmtCompact(totalUnits)}</strong></div>
-          <div><span>Lenovo Share</span><strong>${fmtPercent(lenovo.marketShare || 0)}</strong></div>
-          <div><span>Policy Reports</span><strong>${reports.length}</strong></div>
+          <div><span>${modeledText("Market Units")}</span><strong>${fmtCompact(totalUnits)}</strong></div>
+          <div><span>${modeledText("Lenovo Share")}</span><strong>${fmtPercent(lenovo.marketShare || 0)}</strong></div>
+          <div><span>${modeledText("Policy Reports")}</span><strong>${reports.length}</strong></div>
           <div><span>Selected Period</span><strong>${escapeHtml(period)}</strong></div>
         </div>
       </section>
@@ -408,9 +412,9 @@ function renderPolicyCard(report) {
   return `
     <article class="policy-card">
       <span class="tag">${escapeHtml(report.region)} · ${escapeHtml(report.effectiveDate)}</span>
-      <h3>${escapeHtml(report.title)}</h3>
+      <h3>${escapeHtml(modeledText(report.title))}</h3>
       <p>${escapeHtml(report.summary)}</p>
-      <strong>${escapeHtml(report.impact)}</strong>
+      <strong>${escapeHtml(modeledText(report.impact))}</strong>
       <a href="${escapeAttr(report.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(report.source)}</a>
     </article>
   `;
@@ -430,30 +434,30 @@ function renderCompetitiveAnalysis(categoryId) {
       <section class="analysis-hero">
         <div>
           <p class="eyebrow">Competitive Analysis</p>
-          <h2>Competitor Analysis</h2>
+          <h2>${modeledText("Competitor Analysis")}</h2>
           <p>Compare competitor sales, power mix, pricing, launch signals, and positioning.</p>
         </div>
         <div class="insight-list">
-          <div><span>Top Competitor</span><strong>${escapeHtml(top.brand || "—")}</strong></div>
-          <div><span>Competitor Share</span><strong>${fmtPercent(avgCompetitorShare)}</strong></div>
-          <div><span>Latest Star Product</span><strong>${escapeHtml(top.starProduct || "—")}</strong></div>
-          <div><span>Launch Signals</span><strong>${launches.length}</strong></div>
+          <div><span>${modeledText("Top Competitor")}</span><strong>${escapeHtml(top.brand || "—")}</strong></div>
+          <div><span>${modeledText("Competitor Share")}</span><strong>${fmtPercent(avgCompetitorShare)}</strong></div>
+          <div><span>${modeledText("Latest Star Product")}</span><strong>${escapeHtml(top.starProduct || "—")}</strong></div>
+          <div><span>${modeledText("Launch Signals")}</span><strong>${launches.length}</strong></div>
         </div>
       </section>
 
       <section class="chart-grid">
-        ${chartShell("competitorDemandByPowerPlot", "Brand Demand by Power", period)}
-        ${chartShell("competitorSalesPlot", "Competitor Sales Trend", `${granularityLabels[state.granularity]} revenue trend`)}
+        ${chartShell("competitorDemandByPowerPlot", modeledText("Brand Demand by Power"), period)}
+        ${chartShell("competitorSalesPlot", modeledText("Competitor Sales Trend"), `${granularityLabels[state.granularity]} revenue trend`)}
         <div class="chart-shell">
           <div class="chart-title">
-            <strong>Price Band × Power Mix by Brand</strong>
+            <strong>${escapeHtml(modeledText("Price Band × Power Mix by Brand"))}</strong>
             <select class="inline-select" data-action="competitor-brand">
               ${brands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.competitorBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
             </select>
           </div>
           <div id="competitorPricePowerPlot" class="plot"></div>
         </div>
-        ${chartShell("competitorBubblePlot", "Brand Positioning Matrix", "price × weighted power")}
+        ${chartShell("competitorBubblePlot", modeledText("Brand Positioning Matrix"), "price × weighted power")}
         <div class="detail-panel">${renderLaunchTable(categoryId)}</div>
       </section>
     </div>
@@ -467,9 +471,9 @@ function renderCompetitorCard(row) {
       <h3>${escapeHtml(row.brand)}</h3>
       <p>${escapeHtml(row.starProduct)}</p>
       <div class="mini-metrics">
-        <div><span>Share</span><strong>${fmtPercent(row.marketShare)}</strong></div>
-        <div><span>Units</span><strong>${fmtCompact(row.brandUnits)}</strong></div>
-        <div><span>AUR</span><strong>${fmtCurrency(row.avgAUR)}</strong></div>
+        <div><span>${modeledText("Share")}</span><strong>${fmtPercent(row.marketShare)}</strong></div>
+        <div><span>${modeledText("Units")}</span><strong>${fmtCompact(row.brandUnits)}</strong></div>
+        <div><span>${modeledText("AUR")}</span><strong>${fmtCurrency(row.avgAUR)}</strong></div>
       </div>
     </article>
   `;
@@ -486,7 +490,7 @@ function renderCategoryOverview(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
-          <h2>Product Summary</h2>
+          <h2>${modeledText("Product Summary")}</h2>
         </div>
         ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
       </section>
@@ -501,9 +505,9 @@ function renderCategoryOverview(categoryId) {
         ${renderCategoryFilters(categoryId)}
         <section class="chart-grid">
           ${chartShell("categorySalesPlot", "Sales Comparison", `${granularityLabels[state.granularity]} · selected models`)}
-          ${chartShell("categoryProfitPlot", "Profit Comparison", "Gross profit")}
-          ${chartShell("categoryRevenuePlot", "Revenue Trend", "Net revenue")}
-          ${chartShell("categoryMarginPlot", "Margin / Return Rate", "Selected period")}
+          ${chartShell("categoryProfitPlot", modeledText("Profit Comparison"), "Gross profit")}
+          ${chartShell("categoryRevenuePlot", modeledText("Revenue Trend"), "Net revenue + modeled profit")}
+          ${chartShell("categoryMarginPlot", modeledText("Margin / Return Rate"), "Selected period")}
           ${chartShell("categoryGeoPlot", "Geo Revenue by Product", selectedPeriod(), true)}
         </section>
         <section class="product-browser product-browser-full">
@@ -530,18 +534,18 @@ function renderCategoryOverview(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
-          <h2>User Feedback</h2>
+          <h2>${modeledText("User Feedback")}</h2>
         </div>
         <div class="chart-grid">
           <div class="chart-shell">
-            <div class="chart-title"><strong>Keyword Cloud</strong><span>${escapeHtml(selectedPeriod())}</span></div>
+            <div class="chart-title"><strong>${escapeHtml(modeledText("Keyword Cloud"))}</strong><span>${escapeHtml(selectedPeriod())}</span></div>
             <div id="feedbackWordCloud" class="word-cloud"></div>
           </div>
-          ${chartShell("feedbackPainPowerPlot", "Pain Point × Power", "stacked share")}
-          ${chartShell("feedbackRatingMatrix", "Rating Matrix", "power × ports")}
-          ${chartShell("feedbackReturnReasonsPlot", "Return Reasons", selectedPeriod())}
-          ${chartShell("feedbackReturnRiskMatrix", "Return / Service Risk", "risk heatmap")}
-          ${chartShell("feedbackRatingReturnPlot", "Rating × Return Risk", "bubble = sales")}
+          ${chartShell("feedbackPainPowerPlot", modeledText("Pain Point × Power"), "stacked share")}
+          ${chartShell("feedbackRatingMatrix", modeledText("Rating Matrix"), "power × ports")}
+          ${chartShell("feedbackReturnReasonsPlot", modeledText("Return Reasons"), selectedPeriod())}
+          ${chartShell("feedbackReturnRiskMatrix", modeledText("Return / Service Risk"), "risk heatmap")}
+          ${chartShell("feedbackRatingReturnPlot", modeledText("Rating × Return Risk"), "bubble = sales")}
         </div>
       </section>
     `,
@@ -549,11 +553,11 @@ function renderCategoryOverview(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
-          <h2>Product Decision</h2>
+          <h2>${modeledText("Product Decision")}</h2>
         </div>
         <div class="chart-grid">
-          ${chartShell("decisionOpportunityPlot", "Opportunity Matrix", "growth × share × margin")}
-          ${chartShell("decisionGapPlot", "Portfolio Gap Map", selectedPeriod())}
+          ${chartShell("decisionOpportunityPlot", modeledText("Opportunity Matrix"), "growth × share × margin")}
+          ${chartShell("decisionGapPlot", modeledText("Portfolio Gap Map"), selectedPeriod())}
           <div class="detail-panel">${renderDecisionCards(categoryId, selectedIds)}</div>
         </div>
       </section>
@@ -586,17 +590,17 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
       <div class="kpi-grid">
         ${renderKpi("Latest Units", fmtCompact(latestSummary.unitsNet), "Net shipped")}
         ${renderKpi("Latest Revenue", fmtCurrency(latestSummary.revenueNet), selectedPeriod())}
-        ${renderKpi("Gross Profit", fmtCurrency(latestSummary.grossProfit), "Selected models")}
-        ${renderKpi("Gross Margin", fmtPercent(latestSummary.margin), "Weighted by revenue")}
+        ${renderKpi(modeledText("Gross Profit"), fmtCurrency(latestSummary.grossProfit), "Selected models")}
+        ${renderKpi(modeledText("Gross Margin"), fmtPercent(latestSummary.margin), "Weighted by revenue")}
       </div>
       <div class="matrix-card-grid">
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
       </div>
       <div class="chart-grid">
-        ${chartShell("matrixContributionPlot", "Revenue Contribution", "latest period")}
-        ${chartShell("matrixBubblePlot", "Price × Gross Margin Matrix", "circle size = sales volume")}
-        ${chartShell("resourceContributionPlot", "Power Resource vs Sales Contribution", "SKU / units / revenue share")}
-        ${chartShell("portSalesStructurePlot", "Port Count × Sales Structure", "stacked by power segment")}
+        ${chartShell("matrixContributionPlot", modeledText("Revenue Contribution"), "latest period")}
+        ${chartShell("matrixBubblePlot", modeledText("Price × Gross Margin Matrix"), "circle size = sales volume")}
+        ${chartShell("resourceContributionPlot", modeledText("Power Resource vs Sales Contribution"), "SKU / units / revenue share")}
+        ${chartShell("portSalesStructurePlot", modeledText("Port Count × Sales Structure"), "stacked by power segment")}
       </div>
     </section>
   `;
@@ -614,8 +618,8 @@ function renderMatrixHighlightCard(badge, item, note) {
       <p>${escapeHtml(subtitle)}</p>
       <div class="mini-metrics">
         <div><span>Revenue</span><strong>${fmtCurrency(item.summary.revenueNet)}</strong></div>
-        <div><span>Margin</span><strong>${fmtPercent(item.summary.margin)}</strong></div>
-        <div><span>Signal</span><strong>${escapeHtml(note)}</strong></div>
+        <div><span>${modeledText("Margin")}</span><strong>${fmtPercent(item.summary.margin)}</strong></div>
+        <div><span>${modeledText("Signal")}</span><strong>${escapeHtml(modeledText(note))}</strong></div>
       </div>
     </article>
   `;
@@ -666,7 +670,7 @@ function renderProductCard(product) {
           <div class="mini-metrics">
             <div><span>Units</span><strong>${fmtCompact(summary.unitsNet)}</strong></div>
             <div><span>Revenue</span><strong>${fmtCurrency(summary.revenueNet)}</strong></div>
-            <div><span>Margin</span><strong>${fmtPercent(summary.margin)}</strong></div>
+            <div><span>${modeledText("Margin")}</span><strong>${fmtPercent(summary.margin)}</strong></div>
           </div>
         </div>
       </button>
@@ -759,7 +763,7 @@ function renderProductRow(product, selectedIds) {
         <strong>${fmtCompact(summary.unitsNet)}</strong>
       </div>
       <div>
-        <span class="metric-label">Margin</span>
+        <span class="metric-label">${modeledText("Margin")}</span>
         <strong>${fmtPercent(summary.margin)}</strong>
       </div>
       <button class="ghost-button" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">Details</button>
@@ -808,7 +812,7 @@ function drawCategoryCharts(categoryId, selectedIds) {
       marker: { color: palette[idx % palette.length] },
     };
   });
-  drawPlot("categoryProfitPlot", profitTraces, { barmode: "group", yaxis: { title: "Gross Profit" } });
+  drawPlot("categoryProfitPlot", profitTraces, { barmode: "group", yaxis: { title: modeledText("Gross Profit") } });
 
   const revenueByPeriod = aggregateProductRows(categoryRows, (row) => periodKey(row.date, state.granularity));
   drawPlot(
@@ -826,7 +830,7 @@ function drawCategoryCharts(categoryId, selectedIds) {
       {
         x: periods,
         y: periods.map((period) => revenueByPeriod.get(period)?.grossProfit || 0),
-        name: "Gross Profit",
+        name: modeledText("Gross Profit"),
         type: "scatter",
         mode: "lines",
         line: { color: "#0f766e", width: 2 },
@@ -846,14 +850,14 @@ function drawCategoryCharts(categoryId, selectedIds) {
       {
         x: latestByModel.map((item) => item.product.shortName),
         y: latestByModel.map((item) => item.summary.margin * 100),
-        name: "Margin",
+        name: modeledText("Margin"),
         type: "bar",
         marker: { color: indexes.categories.get(categoryId).accent },
       },
       {
         x: latestByModel.map((item) => item.product.shortName),
         y: latestByModel.map((item) => item.summary.returnRate * 100),
-        name: "Return Rate",
+        name: modeledText("Return Rate"),
         type: "scatter",
         mode: "lines+markers",
         yaxis: "y2",
@@ -861,8 +865,8 @@ function drawCategoryCharts(categoryId, selectedIds) {
       },
     ],
     {
-      yaxis: { title: "Margin %", ticksuffix: "%" },
-      yaxis2: { title: "Return %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
+      yaxis: { title: modeledText("Margin %"), ticksuffix: "%" },
+      yaxis2: { title: modeledText("Return %"), overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
     },
   );
   drawCategoryGeoChart(categoryId, selectedIds);
@@ -1204,7 +1208,7 @@ function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
       {
         x: summaries.map((item) => item.product.shortName),
         y: summaries.map((item) => item.summary.grossProfit),
-        name: "Gross Profit",
+        name: modeledText("Gross Profit"),
         type: "bar",
         marker: { color: "#111827" },
       },
@@ -1230,7 +1234,7 @@ function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
         },
       },
     ],
-    { xaxis: { title: "List Price" }, yaxis: { title: "Gross Margin %", ticksuffix: "%" } },
+    { xaxis: { title: modeledText("List Price") }, yaxis: { title: modeledText("Gross Margin %"), ticksuffix: "%" } },
   );
 
   drawResourceContribution(categoryId, productIds);
@@ -1453,7 +1457,7 @@ function drawRatingReturnRisk(productIds, reviewRows, metricRows) {
         },
       },
     ],
-    { xaxis: { title: "Sales Weighted Rating", range: [3.8, 4.9] }, yaxis: { title: "Return Rate %", ticksuffix: "%" } },
+    { xaxis: { title: modeledText("Sales Weighted Rating"), range: [3.8, 4.9] }, yaxis: { title: modeledText("Return Rate %"), ticksuffix: "%" } },
   );
 }
 
@@ -1464,7 +1468,7 @@ function renderDecisionCards(categoryId, selectedIds) {
   const harvest = items.slice().sort((a, b) => b.share - a.share)[0];
   const risk = items.slice().sort((a, b) => b.returnRate - a.returnRate)[0];
   return `
-    <div class="chart-title"><strong>Strategy Opportunities</strong><span>${escapeHtml(selectedPeriod())}</span></div>
+    <div class="chart-title"><strong>${escapeHtml(modeledText("Strategy Opportunities"))}</strong><span>${escapeHtml(selectedPeriod())}</span></div>
     <div class="news-list">
       ${renderDecisionItem("Scale Opportunity", top, "Growth and margin are both strong; allocate more product and channel resources.")}
       ${renderDecisionItem("Core Harvest", harvest, "Share contribution is highest; keep supply and pricing discipline stable.")}
@@ -1477,8 +1481,8 @@ function renderDecisionItem(title, item, body) {
   if (!item) return "";
   return `
     <article class="news-item">
-      <strong>${escapeHtml(title)} · ${escapeHtml(item.segment)}</strong>
-      <p>${escapeHtml(body)} Growth ${fmtPercent(item.growth)}, share ${fmtPercent(item.share)}, margin ${fmtPercent(item.margin)}.</p>
+      <strong>${escapeHtml(modeledText(title))} · ${escapeHtml(item.segment)}</strong>
+      <p>${escapeHtml(body)} Growth* ${fmtPercent(item.growth)}, share* ${fmtPercent(item.share)}, margin* ${fmtPercent(item.margin)}.</p>
     </article>
   `;
 }
@@ -1503,7 +1507,7 @@ function drawDecisionModule(categoryId, selectedIds) {
             [0, "#f4c7c3"],
             [1, "#7f231c"],
           ],
-          colorbar: { title: "Margin %" },
+          colorbar: { title: modeledText("Margin %") },
           opacity: 0.48,
           line: { color: "#1f2328", width: 1 },
         },
@@ -1572,8 +1576,8 @@ function renderLaunchTable(categoryId) {
     .slice(0, 8);
   return `
     <div class="chart-title">
-      <strong>Competitor Launch Signals</strong>
-      <span>modeled launch signals</span>
+      <strong>${escapeHtml(modeledText("Competitor Launch Signals"))}</strong>
+      <span>modeled launch signals*</span>
     </div>
     <table class="data-table">
       <thead>
@@ -1692,7 +1696,7 @@ function renderSpecItems(product) {
   const attrs = product.attributes;
   const base = [
     ["Category", indexes.categories.get(product.categoryId).label],
-    ["List Price", fmtCurrency(product.listPrice)],
+    [modeledText("List Price"), fmtCurrency(product.listPrice)],
   ];
   if (product.categoryId === "adapter") {
     base.push(["Wattage", `${attrs.wattage}W · ${attrs.wattageBand}`], ["Compatibility", attrs.compatibility], ["Ports", `${attrs.ports} · ${attrs.portCountBand}`], ["Power Mode", attrs.powerMode]);
@@ -1728,10 +1732,10 @@ function renderDetailKpis(product, selectedPartNumber) {
     const all = latestRows.reduce((sum, row) => sum + row.frequency, 0);
     const top = latestRows.slice().sort((a, b) => b.frequency - a.frequency)[0]?.keyword || "—";
     return [
-      renderKpi("Reviews", fmtCompact(totalReviews), "Latest period"),
-      renderKpi("Rating", rating.toFixed(2), "Average score"),
-      renderKpi("Positive Mix", fmtPercent(positive / Math.max(1, all)), "Keyword frequency"),
-      renderKpi("Top Keyword", escapeHtml(top), "Latest period"),
+      renderKpi(modeledText("Reviews"), fmtCompact(totalReviews), "Latest period"),
+      renderKpi(modeledText("Rating"), rating.toFixed(2), "Average score"),
+      renderKpi(modeledText("Positive Mix"), fmtPercent(positive / Math.max(1, all)), "Keyword frequency"),
+      renderKpi(modeledText("Top Keyword"), escapeHtml(top), "Latest period"),
     ].join("");
   }
 
@@ -1752,12 +1756,12 @@ function renderDetailCharts(product, selectedPartNumber) {
   if (state.dimension === "user") {
     target.innerHTML = `
       <div class="chart-shell">
-        <div class="chart-title"><strong>Keyword Cloud</strong><span>${escapeHtml(selectedPeriod("detail"))}</span></div>
+        <div class="chart-title"><strong>${escapeHtml(modeledText("Keyword Cloud"))}</strong><span>${escapeHtml(selectedPeriod("detail"))}</span></div>
         <div id="detailUserWordCloud" class="word-cloud compact"></div>
       </div>
-      ${chartShell("detailUserSentimentPlot", "Sentiment Trend", `${granularityLabels[state.detailGranularity]} aggregation`)}
-      ${chartShell("detailUserKeywordPlot", "Keyword Frequency", "latest period")}
-      ${chartShell("detailPlotB", "Rating / Return / Service Trend", "combined user health", true)}
+      ${chartShell("detailUserSentimentPlot", modeledText("Sentiment Trend"), `${granularityLabels[state.detailGranularity]} aggregation`)}
+      ${chartShell("detailUserKeywordPlot", modeledText("Keyword Frequency"), "latest period")}
+      ${chartShell("detailPlotB", modeledText("Rating / Return / Service Trend"), "combined user health", true)}
     `;
     drawReviewDetail(product);
   } else if (state.dimension === "product") {
@@ -1936,14 +1940,14 @@ function drawMarketDetail(product) {
       {
         x: periods,
         y: periods.map((period) => byPeriod.get(period)?.totalMarketUnits || 0),
-        name: "Market Units",
+        name: modeledText("Market Units"),
         type: "bar",
         marker: { color: "#d97706" },
       },
       {
         x: periods,
         y: periods.map((period) => byPeriod.get(period)?.searchIndex || 0),
-        name: "Search Index",
+        name: modeledText("Search Index"),
         type: "scatter",
         mode: "lines+markers",
         yaxis: "y2",
@@ -1998,14 +2002,14 @@ function drawProductDetail(product, selectedVariant) {
           const summary = byPeriod.get(period);
           return summary ? summary.revenueNet - summary.grossProfit : 0;
         }),
-        name: "Cost",
+        name: modeledText("Cost"),
         type: "bar",
         marker: { color: "#6b7280" },
       },
       {
         x: periods,
         y: periods.map((period) => (byPeriod.get(period)?.margin || 0) * 100),
-        name: "Gross Margin",
+        name: modeledText("Gross Margin"),
         type: "scatter",
         mode: "lines+markers",
         yaxis: "y2",
@@ -2013,8 +2017,8 @@ function drawProductDetail(product, selectedVariant) {
       },
     ],
     {
-      yaxis: { title: "Cost", tickprefix: "$" },
-      yaxis2: { title: "Gross Margin %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
+      yaxis: { title: modeledText("Cost"), tickprefix: "$" },
+      yaxis2: { title: modeledText("Gross Margin %"), overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
     },
   );
 }
@@ -2204,7 +2208,7 @@ function drawReviewDetail(product) {
       {
         x: periods,
         y: periods.map((period) => (metricByPeriod.get(period)?.returnRate || 0) * 100),
-        name: "Return Rate",
+        name: modeledText("Return Rate"),
         type: "scatter",
         mode: "lines+markers",
         yaxis: "y2",
@@ -2248,7 +2252,7 @@ function renderSupplyNews(product) {
     .sort((a, b) => b.impactLevel - a.impactLevel);
   return `
     <div class="chart-title">
-      <strong>Supply Signals</strong>
+      <strong>${escapeHtml(modeledText("Supply Signals"))}</strong>
       <span>${escapeHtml(selectedPeriod("detail"))}</span>
     </div>
     <div class="news-list">

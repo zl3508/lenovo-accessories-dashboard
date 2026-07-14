@@ -1318,6 +1318,70 @@ def clean_cell(value: Any) -> str:
     return "" if text.lower() == "nan" else text
 
 
+def infer_geo_from_country(country: str) -> str:
+    normalized = country.strip().lower()
+    if not normalized:
+        return ""
+    north_america = {
+        "canada",
+        "united states",
+        "united states of america",
+        "usa",
+        "us",
+    }
+    latin_america = {
+        "argentina",
+        "brazil",
+        "chile",
+        "colombia",
+        "mexico",
+        "peru",
+    }
+    europe = {
+        "austria",
+        "belgium",
+        "france",
+        "germany",
+        "italy",
+        "netherlands",
+        "poland",
+        "spain",
+        "sweden",
+        "switzerland",
+        "united kingdom",
+    }
+    ap = {
+        "australia",
+        "china",
+        "hong kong",
+        "india",
+        "japan",
+        "korea",
+        "new zealand",
+        "singapore",
+        "taiwan",
+        "thailand",
+    }
+    meta = {
+        "israel",
+        "saudi arabia",
+        "south africa",
+        "turkey",
+        "united arab emirates",
+    }
+    if normalized in north_america:
+        return "NA"
+    if normalized in latin_america:
+        return "LA"
+    if normalized in europe:
+        return "EUROPE"
+    if normalized in ap:
+        return "AP"
+    if normalized in meta:
+        return "META"
+    return ""
+
+
 def real_source_available(source_dir: Path) -> bool:
     if pd is None or not source_dir.exists():
         return False
@@ -1340,6 +1404,8 @@ def read_real_sales(source_dir: Path) -> tuple[list[dict[str, Any]], dict[str, A
         for record in df.to_dict(orient="records"):
             fiscal_year = str(record["Fiscal Year"])
             fiscal_quarter = str(record["Fiscal Quarter"])
+            country = clean_cell(record.get("Country"))
+            geo = clean_cell(record.get("Geo")) or infer_geo_from_country(country)
             rows.append(
                 {
                     "date": fiscal_date(fiscal_year, fiscal_quarter),
@@ -1350,8 +1416,8 @@ def read_real_sales(source_dir: Path) -> tuple[list[dict[str, Any]], dict[str, A
                     "partNumber": clean_cell(record["Part Number"]),
                     "sourceModel": clean_cell(record.get("Model")) or spec["name"],
                     "segment": (clean_cell(record.get("Segment")) or "Consumer").title(),
-                    "geo": clean_cell(record.get("Geo")),
-                    "country": clean_cell(record.get("Country")),
+                    "geo": geo,
+                    "country": country,
                     "orderRevenue": float(record["Order_Rev"]),
                     "shipRevenue": float(record["Ship_Rev"]),
                     "backlogRevenue": float(record["Bklg_Rev"]),
