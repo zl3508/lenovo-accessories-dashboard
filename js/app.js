@@ -489,7 +489,7 @@ function renderCategoryOverview(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
-          <h2>Product Summary</h2>
+          <h2>${modeledText("Product Summary")}</h2>
         </div>
         ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
       </section>
@@ -503,8 +503,8 @@ function renderCategoryOverview(categoryId) {
         </div>
         ${renderCategoryFilters(categoryId)}
         <section class="chart-grid">
-          ${chartShell("categoryRevenuePlot", "Product Revenue & Growth", `${granularityLabels[state.granularity]} · bar = revenue, line = growth`)}
-          ${chartShell("categorySalesPlot", "Product Quantity & Growth", `${granularityLabels[state.granularity]} · bar = quantity, line = growth`)}
+          ${chartShell("categorySalesPlot", "Order Quantity Trend", `${granularityLabels[state.granularity]} · selected models`)}
+          ${chartShell("categoryRevenuePlot", "Order Revenue Trend", `${granularityLabels[state.granularity]} · selected models`)}
           ${chartShell("categoryFulfillmentPlot", "Ship vs Backlog Revenue", selectedPeriod())}
           ${chartShell("categoryRevenueSharePlot", "Product Revenue Contribution", selectedPeriod())}
           ${chartShell("categoryGeoUnitsPlot", "Geo Units by Product", selectedPeriod(), true)}
@@ -587,8 +587,8 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
       <div class="kpi-grid">
         ${renderKpi("Total Units", fmtCompact(latestSummary.orderQty || latestSummary.unitsNet), "Order quantity")}
         ${renderKpi("Total Revenue", fmtCurrency(latestSummary.orderRevenue || latestSummary.revenueNet), selectedPeriod())}
-        ${renderKpi("Ship Revenue", fmtCurrency(latestSummary.shipRevenue), "Ship_Rev total")}
-        ${renderKpi("Backlog Revenue", fmtCurrency(latestSummary.backlogRevenue), "Bklg_Rev total")}
+        ${renderKpi("Ship Revenue", fmtCurrency(latestSummary.shipRevenue), "Excel Ship_Rev")}
+        ${renderKpi("Backlog Revenue", fmtCurrency(latestSummary.backlogRevenue), "Excel Bklg_Rev")}
       </div>
       <div class="matrix-card-grid">
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
@@ -784,33 +784,33 @@ function drawCategoryCharts(categoryId, selectedIds) {
   const periods = sortedPeriods(unique(categoryRows.map((row) => periodKey(row.date, state.granularity))));
   const products = selectedIds.map((id) => indexes.products.get(id)).filter(Boolean);
 
-  const salesTraces = buildProductTrendComboTraces({
-    rows: categoryRows,
-    periods,
-    products,
-    valueField: "orderQty",
-    fallbackField: "unitsNet",
-    valueLabel: "Order Qty",
+  const salesTraces = products.map((product, idx) => {
+    const productRows = categoryRows.filter((row) => row.modelId === product.id);
+    const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
+    return {
+      x: periods,
+      y: periods.map((period) => byPeriod.get(period)?.unitsNet || 0),
+      name: product.shortName,
+      type: "scatter",
+      mode: "lines+markers",
+      line: { color: palette[idx % palette.length], width: 2.4 },
+    };
   });
-  drawPlot("categorySalesPlot", salesTraces, {
-    barmode: "group",
-    yaxis: { title: "Order Quantity" },
-    yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
-  });
+  drawPlot("categorySalesPlot", salesTraces, { yaxis: { title: "Units" } });
 
-  const revenueTraces = buildProductTrendComboTraces({
-    rows: categoryRows,
-    periods,
-    products,
-    valueField: "orderRevenue",
-    fallbackField: "revenueNet",
-    valueLabel: "Order Revenue",
+  const revenueTraces = products.map((product, idx) => {
+    const productRows = categoryRows.filter((row) => row.modelId === product.id);
+    const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
+    return {
+      x: periods,
+      y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
+      name: product.shortName,
+      type: "scatter",
+      mode: "lines+markers",
+      line: { color: palette[idx % palette.length], width: 2.4 },
+    };
   });
-  drawPlot("categoryRevenuePlot", revenueTraces, {
-    barmode: "group",
-    yaxis: { title: "Order Revenue", tickprefix: "$" },
-    yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
-  });
+  drawPlot("categoryRevenuePlot", revenueTraces, { yaxis: { title: "Order Revenue", tickprefix: "$" } });
 
   const latest = selectedPeriod();
   const latestByModel = products.map((product) => ({
@@ -840,40 +840,6 @@ function drawCategoryCharts(categoryId, selectedIds) {
   drawProductSharePie("categoryRevenueSharePlot", latestByModel, "orderRevenue", "Order Revenue");
   drawCategoryGeoUnitsChart("categoryGeoUnitsPlot", categoryId, selectedIds);
   drawCategoryCountryUnitsChart("categoryCountryUnitsPlot", categoryId, selectedIds);
-}
-
-function buildProductTrendComboTraces({ rows, periods, products, valueField, fallbackField, valueLabel }) {
-  const barTraces = products.map((product, idx) => {
-    const productRows = rows.filter((row) => row.modelId === product.id);
-    const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
-    const values = periods.map((period) => byPeriod.get(period)?.[valueField] || byPeriod.get(period)?.[fallbackField] || 0);
-    return {
-      x: periods,
-      y: values,
-      name: `${product.shortName} ${valueLabel}`,
-      type: "bar",
-      marker: { color: palette[idx % palette.length] },
-      legendgroup: product.id,
-    };
-  });
-  const lineTraces = products.map((product, idx) => {
-    const productRows = rows.filter((row) => row.modelId === product.id);
-    const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
-    const values = periods.map((period) => byPeriod.get(period)?.[valueField] || byPeriod.get(period)?.[fallbackField] || 0);
-    return {
-      x: periods,
-      y: growthSeries(values),
-      name: `${product.shortName} Growth %`,
-      type: "scatter",
-      mode: "lines+markers",
-      yaxis: "y2",
-      line: { color: palette[idx % palette.length], width: 2.4, dash: "dot" },
-      marker: { symbol: "circle-open" },
-      legendgroup: product.id,
-      hovertemplate: "%{x}<br>Growth %{y:.1f}%<extra></extra>",
-    };
-  });
-  return [...barTraces, ...lineTraces];
 }
 
 function geoMetricRows({ categoryId = null, modelId = null, partNumber = null, segment = null, scope = "category", selectedIds = null } = {}) {
