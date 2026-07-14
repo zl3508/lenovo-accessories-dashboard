@@ -62,8 +62,6 @@ const marketModules = {
 const overviewModules = {
   summary: "Product Summary",
   filter: "Data Filters",
-  feedback: "User Feedback",
-  decision: "Product Decision",
 };
 
 const dimensionLabels = {
@@ -480,6 +478,7 @@ function renderCompetitorCard(row) {
 }
 
 function renderCategoryOverview(categoryId) {
+  if (!overviewModules[state.overviewModule]) state.overviewModule = "summary";
   const visibleProducts = getFilteredProducts(categoryId);
   const selectedIds = getSelectedModelIds(categoryId, visibleProducts);
   const metricRows = data.productMetrics.filter((row) => row.categoryId === categoryId && selectedIds.includes(row.modelId));
@@ -504,11 +503,12 @@ function renderCategoryOverview(categoryId) {
         </div>
         ${renderCategoryFilters(categoryId)}
         <section class="chart-grid">
-          ${chartShell("categorySalesPlot", "Sales Comparison", `${granularityLabels[state.granularity]} · selected models`)}
-          ${chartShell("categoryProfitPlot", modeledText("Profit Comparison"), "Gross profit")}
-          ${chartShell("categoryRevenuePlot", modeledText("Revenue Trend"), "Net revenue + modeled profit")}
-          ${chartShell("categoryMarginPlot", modeledText("Margin / Return Rate"), "Selected period")}
-          ${chartShell("categoryGeoPlot", "Geo Revenue by Product", selectedPeriod(), true)}
+          ${chartShell("categorySalesPlot", "Order Quantity Trend", `${granularityLabels[state.granularity]} · selected models`)}
+          ${chartShell("categoryRevenuePlot", "Order Revenue Trend", `${granularityLabels[state.granularity]} · selected models`)}
+          ${chartShell("categoryFulfillmentPlot", "Ship vs Backlog Revenue", selectedPeriod())}
+          ${chartShell("categoryRevenueSharePlot", "Product Revenue Contribution", selectedPeriod())}
+          ${chartShell("categoryGeoUnitsPlot", "Geo Units by Product", selectedPeriod(), true)}
+          ${chartShell("categoryCountryUnitsPlot", "Country Units by Product", selectedPeriod(), true)}
         </section>
         <section class="product-browser product-browser-full">
           <section class="product-list product-list-full">
@@ -573,34 +573,31 @@ function renderCategoryOverview(categoryId) {
 
 function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary) {
   const summaries = getProductLatestSummaries(categoryId, selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id));
-  const main = summaries.slice().sort((a, b) => b.summary.revenueNet - a.summary.revenueNet)[0];
-  const profit = summaries
-    .slice()
-    .filter((item) => item.summary.revenueNet > 0)
-    .sort((a, b) => b.summary.margin - a.summary.margin)[0];
-  const watch = summaries.slice().sort((a, b) => a.summary.margin - b.summary.margin)[0];
+  const main = summaries.slice().sort((a, b) => b.summary.orderRevenue - a.summary.orderRevenue)[0];
+  const volume = summaries.slice().sort((a, b) => b.summary.orderQty - a.summary.orderQty)[0];
+  const backlog = summaries.slice().sort((a, b) => b.summary.backlogRevenue - a.summary.backlogRevenue)[0];
   const cards = [
-    ["Core Model", main, "highest revenue"],
-    ["Profit Model", profit, "highest margin"],
-    ["Watch Model", watch, "margin watch"],
+    ["Revenue Leader", main, "highest order revenue"],
+    ["Volume Leader", volume, "highest order quantity"],
+    ["Backlog Watch", backlog, "highest backlog revenue"],
   ];
 
   return `
     <section class="product-matrix">
       <div class="kpi-grid">
-        ${renderKpi("Latest Units", fmtCompact(latestSummary.unitsNet), "Net shipped")}
-        ${renderKpi("Latest Revenue", fmtCurrency(latestSummary.revenueNet), selectedPeriod())}
-        ${renderKpi(modeledText("Gross Profit"), fmtCurrency(latestSummary.grossProfit), "Selected models")}
-        ${renderKpi(modeledText("Gross Margin"), fmtPercent(latestSummary.margin), "Weighted by revenue")}
+        ${renderKpi("Total Units", fmtCompact(latestSummary.orderQty || latestSummary.unitsNet), "Order quantity")}
+        ${renderKpi("Total Revenue", fmtCurrency(latestSummary.orderRevenue || latestSummary.revenueNet), selectedPeriod())}
+        ${renderKpi("Ship Revenue", fmtCurrency(latestSummary.shipRevenue), "Excel Ship_Rev")}
+        ${renderKpi("Backlog Revenue", fmtCurrency(latestSummary.backlogRevenue), "Excel Bklg_Rev")}
       </div>
       <div class="matrix-card-grid">
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
       </div>
       <div class="chart-grid">
-        ${chartShell("matrixContributionPlot", modeledText("Revenue Contribution"), "latest period")}
-        ${chartShell("matrixBubblePlot", modeledText("Price × Gross Margin Matrix"), "circle size = sales volume")}
-        ${chartShell("resourceContributionPlot", modeledText("Power Resource vs Sales Contribution"), "SKU / units / revenue share")}
-        ${chartShell("portSalesStructurePlot", modeledText("Port Count × Sales Structure"), "stacked by power segment")}
+        ${chartShell("matrixRevenueSharePlot", "Product Revenue Contribution", selectedPeriod())}
+        ${chartShell("matrixUnitSharePlot", "Product Unit Contribution", selectedPeriod())}
+        ${chartShell("matrixGeoUnitsPlot", "Geo Units by Product", selectedPeriod(), true)}
+        ${chartShell("matrixCountryUnitsPlot", "Country Units by Product", selectedPeriod(), true)}
       </div>
     </section>
   `;
@@ -617,9 +614,9 @@ function renderMatrixHighlightCard(badge, item, note) {
       <h3>${escapeHtml(product.shortName)}</h3>
       <p>${escapeHtml(subtitle)}</p>
       <div class="mini-metrics">
-        <div><span>Revenue</span><strong>${fmtCurrency(item.summary.revenueNet)}</strong></div>
-        <div><span>${modeledText("Margin")}</span><strong>${fmtPercent(item.summary.margin)}</strong></div>
-        <div><span>${modeledText("Signal")}</span><strong>${escapeHtml(modeledText(note))}</strong></div>
+        <div><span>Revenue</span><strong>${fmtCurrency(item.summary.orderRevenue || item.summary.revenueNet)}</strong></div>
+        <div><span>Units</span><strong>${fmtCompact(item.summary.orderQty || item.summary.unitsNet)}</strong></div>
+        <div><span>Backlog</span><strong>${fmtCurrency(item.summary.backlogRevenue)}</strong></div>
       </div>
     </article>
   `;
@@ -670,7 +667,7 @@ function renderProductCard(product) {
           <div class="mini-metrics">
             <div><span>Units</span><strong>${fmtCompact(summary.unitsNet)}</strong></div>
             <div><span>Revenue</span><strong>${fmtCurrency(summary.revenueNet)}</strong></div>
-            <div><span>${modeledText("Margin")}</span><strong>${fmtPercent(summary.margin)}</strong></div>
+            <div><span>Backlog</span><strong>${fmtCurrency(summary.backlogRevenue)}</strong></div>
           </div>
         </div>
       </button>
@@ -763,8 +760,8 @@ function renderProductRow(product, selectedIds) {
         <strong>${fmtCompact(summary.unitsNet)}</strong>
       </div>
       <div>
-        <span class="metric-label">${modeledText("Margin")}</span>
-        <strong>${fmtPercent(summary.margin)}</strong>
+        <span class="metric-label">Revenue</span>
+        <strong>${fmtCurrency(summary.revenueNet)}</strong>
       </div>
       <button class="ghost-button" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">Details</button>
     </article>
@@ -801,43 +798,19 @@ function drawCategoryCharts(categoryId, selectedIds) {
   });
   drawPlot("categorySalesPlot", salesTraces, { yaxis: { title: "Units" } });
 
-  const profitTraces = products.map((product, idx) => {
+  const revenueTraces = products.map((product, idx) => {
     const productRows = categoryRows.filter((row) => row.modelId === product.id);
     const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
     return {
       x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.grossProfit || 0),
+      y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
       name: product.shortName,
-      type: "bar",
-      marker: { color: palette[idx % palette.length] },
+      type: "scatter",
+      mode: "lines+markers",
+      line: { color: palette[idx % palette.length], width: 2.4 },
     };
   });
-  drawPlot("categoryProfitPlot", profitTraces, { barmode: "group", yaxis: { title: modeledText("Gross Profit") } });
-
-  const revenueByPeriod = aggregateProductRows(categoryRows, (row) => periodKey(row.date, state.granularity));
-  drawPlot(
-    "categoryRevenuePlot",
-    [
-      {
-        x: periods,
-        y: periods.map((period) => revenueByPeriod.get(period)?.revenueNet || 0),
-        name: "Revenue",
-        type: "scatter",
-        mode: "lines",
-        fill: "tozeroy",
-        line: { color: indexes.categories.get(categoryId).accent, width: 3 },
-      },
-      {
-        x: periods,
-        y: periods.map((period) => revenueByPeriod.get(period)?.grossProfit || 0),
-        name: modeledText("Gross Profit"),
-        type: "scatter",
-        mode: "lines",
-        line: { color: "#0f766e", width: 2 },
-      },
-    ],
-    { yaxis: { title: "USD" } },
-  );
+  drawPlot("categoryRevenuePlot", revenueTraces, { yaxis: { title: "Order Revenue", tickprefix: "$" } });
 
   const latest = selectedPeriod();
   const latestByModel = products.map((product) => ({
@@ -845,31 +818,28 @@ function drawCategoryCharts(categoryId, selectedIds) {
     summary: summarizeProductRows(categoryRows.filter((row) => row.modelId === product.id && periodKey(row.date, state.granularity) === latest)),
   }));
   drawPlot(
-    "categoryMarginPlot",
+    "categoryFulfillmentPlot",
     [
       {
         x: latestByModel.map((item) => item.product.shortName),
-        y: latestByModel.map((item) => item.summary.margin * 100),
-        name: modeledText("Margin"),
+        y: latestByModel.map((item) => item.summary.shipRevenue || 0),
+        name: "Ship Revenue",
         type: "bar",
         marker: { color: indexes.categories.get(categoryId).accent },
       },
       {
         x: latestByModel.map((item) => item.product.shortName),
-        y: latestByModel.map((item) => item.summary.returnRate * 100),
-        name: modeledText("Return Rate"),
-        type: "scatter",
-        mode: "lines+markers",
-        yaxis: "y2",
-        line: { color: "#2563eb", width: 2 },
+        y: latestByModel.map((item) => item.summary.backlogRevenue || 0),
+        name: "Backlog Revenue",
+        type: "bar",
+        marker: { color: "#1f2328" },
       },
     ],
-    {
-      yaxis: { title: modeledText("Margin %"), ticksuffix: "%" },
-      yaxis2: { title: modeledText("Return %"), overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
-    },
+    { barmode: "stack", yaxis: { title: "Revenue", tickprefix: "$" } },
   );
-  drawCategoryGeoChart(categoryId, selectedIds);
+  drawProductSharePie("categoryRevenueSharePlot", latestByModel, "orderRevenue", "Order Revenue");
+  drawCategoryGeoUnitsChart("categoryGeoUnitsPlot", categoryId, selectedIds);
+  drawCategoryCountryUnitsChart("categoryCountryUnitsPlot", categoryId, selectedIds);
 }
 
 function geoMetricRows({ categoryId = null, modelId = null, partNumber = null, segment = null, scope = "category", selectedIds = null } = {}) {
@@ -895,6 +865,24 @@ function topGeoNames(rows, limit = 6) {
     .map((item) => item.geo);
 }
 
+function topGeoNamesByUnits(rows, limit = 8) {
+  return unique(rows.map((row) => row.geo || "Unassigned"))
+    .map((geo) => ({ geo, value: sumGeoRows(rows.filter((row) => (row.geo || "Unassigned") === geo), "orderQty") }))
+    .filter((item) => item.value)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, limit)
+    .map((item) => item.geo);
+}
+
+function topCountryNamesByUnits(rows, limit = 8) {
+  return unique(rows.map((row) => row.country || "Unassigned"))
+    .map((country) => ({ country, value: sumGeoRows(rows.filter((row) => (row.country || "Unassigned") === country), "orderQty") }))
+    .filter((item) => item.value)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, limit)
+    .map((item) => item.country);
+}
+
 function drawCategoryGeoChart(categoryId, selectedIds) {
   const rows = geoMetricRows({ categoryId, selectedIds });
   const geos = topGeoNames(rows);
@@ -907,6 +895,34 @@ function drawCategoryGeoChart(categoryId, selectedIds) {
     marker: { color: palette[idx % palette.length] },
   }));
   drawPlot("categoryGeoPlot", traces, { barmode: "stack", yaxis: { title: "Order Revenue", tickprefix: "$" } });
+}
+
+function drawCategoryGeoUnitsChart(id, categoryId, selectedIds) {
+  const rows = geoMetricRows({ categoryId, selectedIds });
+  const geos = topGeoNamesByUnits(rows);
+  const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
+  const traces = products.map((product, idx) => ({
+    x: geos,
+    y: geos.map((geo) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.geo || "Unassigned") === geo), "orderQty")),
+    name: product.shortName,
+    type: "bar",
+    marker: { color: palette[idx % palette.length] },
+  }));
+  drawPlot(id, traces, { barmode: "stack", yaxis: { title: "Order Quantity" } });
+}
+
+function drawCategoryCountryUnitsChart(id, categoryId, selectedIds) {
+  const rows = geoMetricRows({ categoryId, selectedIds });
+  const countries = topCountryNamesByUnits(rows);
+  const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
+  const traces = products.map((product, idx) => ({
+    x: countries,
+    y: countries.map((country) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.country || "Unassigned") === country), "orderQty")),
+    name: product.shortName,
+    type: "bar",
+    marker: { color: palette[idx % palette.length] },
+  }));
+  drawPlot(id, traces, { barmode: "stack", margin: { l: 58, r: 28, t: 8, b: 86 }, yaxis: { title: "Order Quantity" } });
 }
 
 function drawMarketAnalysis(categoryId) {
@@ -1195,50 +1211,37 @@ function drawCompetitorPricePower(categoryId, brandRows, powerSegments) {
 function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
   const productIds = selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id);
   const summaries = getProductLatestSummaries(categoryId, productIds);
-  drawPlot(
-    "matrixContributionPlot",
-    [
-      {
-        x: summaries.map((item) => item.product.shortName),
-        y: summaries.map((item) => item.summary.revenueNet),
-        name: "Revenue",
-        type: "bar",
-        marker: { color: indexes.categories.get(categoryId).accent },
-      },
-      {
-        x: summaries.map((item) => item.product.shortName),
-        y: summaries.map((item) => item.summary.grossProfit),
-        name: modeledText("Gross Profit"),
-        type: "bar",
-        marker: { color: "#111827" },
-      },
-    ],
-    { barmode: "stack", yaxis: { title: "USD" } },
-  );
+  drawProductSharePie("matrixRevenueSharePlot", summaries, "orderRevenue", "Order Revenue");
+  drawProductSharePie("matrixUnitSharePlot", summaries, "orderQty", "Order Quantity");
+  drawCategoryGeoUnitsChart("matrixGeoUnitsPlot", categoryId, productIds);
+  drawCategoryCountryUnitsChart("matrixCountryUnitsPlot", categoryId, productIds);
+}
 
+function drawProductSharePie(id, summaries, field, label) {
+  const rows = summaries
+    .map((item) => ({
+      name: item.product.shortName,
+      value: item.summary[field] || (field === "orderRevenue" ? item.summary.revenueNet : item.summary.unitsNet) || 0,
+    }))
+    .filter((row) => row.value)
+    .sort((a, b) => b.value - a.value);
   drawPlot(
-    "matrixBubblePlot",
-    [
-      {
-        x: summaries.map((item) => item.product.listPrice),
-        y: summaries.map((item) => item.summary.margin * 100),
-        text: summaries.map((item) => item.product.shortName),
-        mode: "markers+text",
-        type: "scatter",
-        textposition: "middle center",
-        marker: {
-          size: summaries.map((item) => Math.max(34, Math.sqrt(item.summary.unitsNet) * 0.8)),
-          color: summaries.map((_, idx) => palette[idx % palette.length]),
-          opacity: 0.32,
-          line: { color: "#1f2328", width: 1.6 },
-        },
-      },
-    ],
-    { xaxis: { title: modeledText("List Price") }, yaxis: { title: modeledText("Gross Margin %"), ticksuffix: "%" } },
+    id,
+    rows.length
+      ? [
+          {
+            labels: rows.map((row) => row.name),
+            values: rows.map((row) => row.value),
+            type: "pie",
+            hole: 0.42,
+            textinfo: "label+percent",
+            hovertemplate: `<b>%{label}</b><br>${label} %{value:,.0f}<br>%{percent}<extra></extra>`,
+            marker: { colors: rows.map((_, idx) => palette[idx % palette.length]) },
+          },
+        ]
+      : [],
+    { margin: { l: 18, r: 18, t: 8, b: 18 }, showlegend: false },
   );
-
-  drawResourceContribution(categoryId, productIds);
-  drawPortSalesStructure(categoryId, productIds);
 }
 
 function drawResourceContribution(categoryId, productIds) {
