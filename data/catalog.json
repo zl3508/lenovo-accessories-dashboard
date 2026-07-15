@@ -1,98 +1,19 @@
 {
-  "generatedAt": "2026-07-15T06:50:59Z",
+  "generatedAt": "2026-07-15T10:52:08Z",
   "periods": [
-    "2024-04-01",
-    "2024-07-01",
-    "2024-10-01",
-    "2025-01-01",
+    "2025-03-01",
     "2025-04-01",
+    "2025-05-01",
+    "2025-06-01",
     "2025-07-01",
+    "2025-08-01",
+    "2025-09-01",
     "2025-10-01",
+    "2025-11-01",
+    "2025-12-01",
     "2026-01-01",
-    "2026-04-01",
-    "2026-07-01"
-  ],
-  "periodMeta": [
-    {
-      "date": "2024-04-01",
-      "fiscalYear": "FY2425",
-      "fiscalQuarter": "Q1",
-      "quarterLabel": "FY2425 Q1",
-      "yearLabel": "FY2425",
-      "sortIndex": 24251
-    },
-    {
-      "date": "2024-07-01",
-      "fiscalYear": "FY2425",
-      "fiscalQuarter": "Q2",
-      "quarterLabel": "FY2425 Q2",
-      "yearLabel": "FY2425",
-      "sortIndex": 24252
-    },
-    {
-      "date": "2024-10-01",
-      "fiscalYear": "FY2425",
-      "fiscalQuarter": "Q3",
-      "quarterLabel": "FY2425 Q3",
-      "yearLabel": "FY2425",
-      "sortIndex": 24253
-    },
-    {
-      "date": "2025-01-01",
-      "fiscalYear": "FY2425",
-      "fiscalQuarter": "Q4",
-      "quarterLabel": "FY2425 Q4",
-      "yearLabel": "FY2425",
-      "sortIndex": 24254
-    },
-    {
-      "date": "2025-04-01",
-      "fiscalYear": "FY2526",
-      "fiscalQuarter": "Q1",
-      "quarterLabel": "FY2526 Q1",
-      "yearLabel": "FY2526",
-      "sortIndex": 25261
-    },
-    {
-      "date": "2025-07-01",
-      "fiscalYear": "FY2526",
-      "fiscalQuarter": "Q2",
-      "quarterLabel": "FY2526 Q2",
-      "yearLabel": "FY2526",
-      "sortIndex": 25262
-    },
-    {
-      "date": "2025-10-01",
-      "fiscalYear": "FY2526",
-      "fiscalQuarter": "Q3",
-      "quarterLabel": "FY2526 Q3",
-      "yearLabel": "FY2526",
-      "sortIndex": 25263
-    },
-    {
-      "date": "2026-01-01",
-      "fiscalYear": "FY2526",
-      "fiscalQuarter": "Q4",
-      "quarterLabel": "FY2526 Q4",
-      "yearLabel": "FY2526",
-      "sortIndex": 25264
-    },
-    {
-      "date": "2026-04-01",
-      "fiscalYear": "FY2627",
-      "fiscalQuarter": "Q1",
-      "quarterLabel": "FY2627 Q1",
-      "yearLabel": "FY2627",
-      "sortIndex": 26271
-    },
-    {
-      "date": "2026-07-01",
-      "fiscalYear": "FY2627",
-      "fiscalQuarter": "Q2",
-      "quarterLabel": "FY2627 Q2",
-      "yearLabel": "FY2627",
-      "sortIndex": 26272
-    }
+    "2026-02-01",
+    "2026-03-01"
   ],
   "categories": [
     {
@@ -183,16 +104,14 @@
   "filterValues": {
     "adapter": {
       "wattageBand": [
-        "100W and above",
-        "45W to 99W"
+        "45W and below",
+        "45W to 99W",
+        "100W and above"
       ],
-      "compatibility": [
-        "mobile",
-        "multi",
-        "laptop"
-      ],
+      "compatibility": [],
       "powerMode": [
-        "Wired"
+        "Wired",
+        "Wireless"
       ],
       "portCountBand": [
         "1 port",
@@ -202,39 +121,31 @@
     },
     "power_bank": {
       "capacityBand": [
-        "Below 10000mAh",
-        "10000-20000mAh",
+        "5000mAh",
+        "10000mAh",
         "20000mAh and above"
       ],
       "outputBand": [
-        "65W and below",
-        "65W-100W",
+        "20W and below",
+        "21W to 64W",
+        "65W to 99W",
         "100W and above"
       ],
-      "compatibility": [
-        "mobile",
-        "multi",
-        "laptop"
-      ],
-      "hasCable": [
-        "Yes",
-        "No"
-      ]
+      "compatibility": [],
+      "hasCable": []
     },
     "power_cable": {
       "lengthBand": [
-        "Below 1m",
-        "1m to 2m",
-        "Above 2m"
+        "1m",
+        "2m and above",
+        "Below 1m"
       ],
       "powerBand": [
-        "100W-200W",
-        "200W and above"
+        "100W to 199W",
+        "200W and above",
+        "60W and below"
       ],
-      "retractable": [
-        "Yes",
-        "No"
-      ]
+      "retractable": []
     }
   },
   "policyReports": {
@@ -310,169 +221,18 @@
   },
   "products": [
     {
-      "id": "adapter_multi_port_150w_gan",
+      "id": "adapter_45w_mini",
       "categoryId": "adapter",
-      "name": "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
-      "shortName": "150W Laptop GaN",
-      "image": "assets/products/adapter-multi-port-150w-gan.webp",
-      "listPrice": 89.99,
+      "name": "Lenovo 45W USB-C Mini Adapter",
+      "shortName": "45W USB-C Mini",
+      "listPrice": 29,
       "attributes": {
-        "wattage": 150,
-        "wattageBand": "100W and above",
+        "wattage": 45,
+        "wattageBand": "45W and below",
         "features": [
-          "GaN",
-          "multi-port",
-          "laptop"
+          "compact",
+          "travel"
         ],
-        "compatibility": "laptop",
-        "powerMode": "Wired",
-        "ports": 3,
-        "portCountBand": "3+ ports",
-        "interfaceProtocols": [
-          "USB-C PD 3.1"
-        ],
-        "scenarios": [
-          "laptop",
-          "commercial"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_multi_port_150w_gan_40aw150beu",
-        "adapter_multi_port_150w_gan_40aw150buk",
-        "adapter_multi_port_150w_gan_40aw150bus"
-      ],
-      "partNumbers": [
-        "40AW150BEU",
-        "40AW150BUK",
-        "40AW150BUS"
-      ],
-      "tags": [
-        "laptop",
-        "GaN",
-        "multi-port"
-      ]
-    },
-    {
-      "id": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "Lenovo Multi-port USB-C 100W GaN Charger",
-      "shortName": "100W Multi-port",
-      "image": "assets/products/adapter-multi-port-100w-gan-black.avif",
-      "images": [
-        {
-          "label": "Black",
-          "src": "assets/products/adapter-multi-port-100w-gan-black.avif"
-        },
-        {
-          "label": "White",
-          "src": "assets/products/adapter-multi-port-100w-gan-white.avif"
-        }
-      ],
-      "listPrice": 74.99,
-      "attributes": {
-        "wattage": 100,
-        "wattageBand": "100W and above",
-        "features": [
-          "GaN",
-          "multi-port"
-        ],
-        "compatibility": "multi",
-        "powerMode": "Wired",
-        "ports": 3,
-        "portCountBand": "3+ ports",
-        "interfaceProtocols": [
-          "USB-C PD 3.1",
-          "PPS"
-        ],
-        "scenarios": [
-          "multi-device",
-          "consumer"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_multi_port_100w_gan_40aw100beu",
-        "adapter_multi_port_100w_gan_40aw100buk",
-        "adapter_multi_port_100w_gan_40aw100bus",
-        "adapter_multi_port_100w_gan_g0a6100beu",
-        "adapter_multi_port_100w_gan_g0a6100buk",
-        "adapter_multi_port_100w_gan_g0a6100seu",
-        "adapter_multi_port_100w_gan_g0a6100suk"
-      ],
-      "partNumbers": [
-        "40AW100BEU",
-        "40AW100BUK",
-        "40AW100BUS",
-        "G0A6100BEU",
-        "G0A6100BUK",
-        "G0A6100SEU",
-        "G0A6100SUK"
-      ],
-      "tags": [
-        "multi",
-        "GaN",
-        "multi-port"
-      ]
-    },
-    {
-      "id": "adapter_65w_usbc_ac_travel",
-      "categoryId": "adapter",
-      "name": "Lenovo 65W USB-C AC Travel Adapter",
-      "shortName": "65W AC Travel",
-      "image": "assets/products/adapter-65w-usbc-ac-travel.avif",
-      "listPrice": 49.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "USB-C",
-          "travel",
-          "AC"
-        ],
-        "compatibility": "laptop",
-        "powerMode": "Wired",
-        "ports": 1,
-        "portCountBand": "1 port",
-        "interfaceProtocols": [
-          "USB-C PD"
-        ],
-        "scenarios": [
-          "travel",
-          "commercial"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_65w_usbc_ac_travel_40aw0065ww",
-        "adapter_65w_usbc_ac_travel_g0a6n065ww"
-      ],
-      "partNumbers": [
-        "40AW0065WW",
-        "G0A6N065WW"
-      ],
-      "tags": [
-        "laptop",
-        "USB-C",
-        "travel"
-      ]
-    },
-    {
-      "id": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "Lenovo 65W USB-C Wall Adapter",
-      "shortName": "65W USB-C Wall",
-      "image": "assets/products/adapter-65w-usbc-wall.avif",
-      "listPrice": 29.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "USB-C",
-          "wall",
-          "compact"
-        ],
-        "compatibility": "mobile",
         "powerMode": "Wired",
         "ports": 1,
         "portCountBand": "1 port",
@@ -481,72 +241,34 @@
         ],
         "scenarios": [
           "daily carry",
-          "consumer"
+          "travel"
         ],
         "isTwoInOne": false
       },
       "variants": [
-        "adapter_65w_usbc_wall_4x21l54608",
-        "adapter_65w_usbc_wall_4x21l54610",
-        "adapter_65w_usbc_wall_4x21l54612",
-        "adapter_65w_usbc_wall_4x21l54614",
-        "adapter_65w_usbc_wall_4x21l54618",
-        "adapter_65w_usbc_wall_4x21l54620",
-        "adapter_65w_usbc_wall_4x21l54622",
-        "adapter_65w_usbc_wall_4x21l83772",
-        "adapter_65w_usbc_wall_4x21l83773",
-        "adapter_65w_usbc_wall_gx21l58554",
-        "adapter_65w_usbc_wall_gx21l58555",
-        "adapter_65w_usbc_wall_gx21l58557",
-        "adapter_65w_usbc_wall_gx21l58559",
-        "adapter_65w_usbc_wall_gx21l58564",
-        "adapter_65w_usbc_wall_gx21l58566",
-        "adapter_65w_usbc_wall_gx21l58568",
-        "adapter_65w_usbc_wall_gx21l83770",
-        "adapter_65w_usbc_wall_gx21l83771"
-      ],
-      "partNumbers": [
-        "4X21L54608",
-        "4X21L54610",
-        "4X21L54612",
-        "4X21L54614",
-        "4X21L54618",
-        "4X21L54620",
-        "4X21L54622",
-        "4X21L83772",
-        "4X21L83773",
-        "GX21L58554",
-        "GX21L58555",
-        "GX21L58557",
-        "GX21L58559",
-        "GX21L58564",
-        "GX21L58566",
-        "GX21L58568",
-        "GX21L83770",
-        "GX21L83771"
+        "adapter_45w_mini_graphite",
+        "adapter_45w_mini_cloud",
+        "adapter_45w_mini_travel"
       ],
       "tags": [
-        "mobile",
-        "USB-C",
-        "wall"
+        "compact",
+        "travel"
       ]
     },
     {
-      "id": "adapter_65w_mini_gan",
+      "id": "adapter_65w_gan",
       "categoryId": "adapter",
-      "name": "Lenovo 65W Mini USB-C GaN Charger",
-      "shortName": "65W Mini GaN",
-      "image": "assets/products/adapter-65w-mini-gan.avif",
-      "listPrice": 34.99,
+      "name": "Lenovo 65W USB-C GaN Adapter",
+      "shortName": "65W GaN",
+      "listPrice": 49,
       "attributes": {
         "wattage": 65,
         "wattageBand": "45W to 99W",
         "features": [
           "GaN",
-          "mini",
-          "USB-C"
+          "compact",
+          "travel"
         ],
-        "compatibility": "mobile",
         "powerMode": "Wired",
         "ports": 1,
         "portCountBand": "1 port",
@@ -555,123 +277,36 @@
           "PPS"
         ],
         "scenarios": [
-          "mobile",
+          "daily carry",
           "travel"
         ],
         "isTwoInOne": false
       },
       "variants": [
-        "adapter_65w_mini_gan_40aw65wbeu",
-        "adapter_65w_mini_gan_40aw65wbuk",
-        "adapter_65w_mini_gan_g0a665wbeu",
-        "adapter_65w_mini_gan_g0a665wbuk"
-      ],
-      "partNumbers": [
-        "40AW65WBEU",
-        "40AW65WBUK",
-        "G0A665WBEU",
-        "G0A665WBUK"
+        "adapter_65w_gan_graphite",
+        "adapter_65w_gan_cloud",
+        "adapter_65w_gan_travel"
       ],
       "tags": [
-        "mobile",
         "GaN",
-        "mini"
+        "compact",
+        "travel"
       ]
     },
     {
-      "id": "adapter_gan_nano_65w",
+      "id": "adapter_65w_dual_travel",
       "categoryId": "adapter",
-      "name": "Lenovo GaN Nano 65W Adapter",
-      "shortName": "65W GaN Nano",
-      "image": "assets/products/adapter-gan-nano-65w.avif",
-      "listPrice": 49.99,
+      "name": "Lenovo 65W Dual-Port Travel Adapter",
+      "shortName": "65W Dual-Port",
+      "listPrice": 59,
       "attributes": {
         "wattage": 65,
         "wattageBand": "45W to 99W",
         "features": [
-          "GaN",
-          "nano",
-          "laptop"
+          "multi-device",
+          "travel",
+          "dual port"
         ],
-        "compatibility": "laptop",
-        "powerMode": "Wired",
-        "ports": 1,
-        "portCountBand": "1 port",
-        "interfaceProtocols": [
-          "USB-C PD"
-        ],
-        "scenarios": [
-          "laptop",
-          "commercial"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_gan_nano_65w_40awgn65ar",
-        "adapter_gan_nano_65w_40awgn65au",
-        "adapter_gan_nano_65w_40awgn65eu",
-        "adapter_gan_nano_65w_40awgn65kr",
-        "adapter_gan_nano_65w_40awgn65th",
-        "adapter_gan_nano_65w_40awgn65uk",
-        "adapter_gan_nano_65w_40awgn65ul",
-        "adapter_gan_nano_65w_40awgn65us",
-        "adapter_gan_nano_65w_g0a6gn65au",
-        "adapter_gan_nano_65w_g0a6gn65eu",
-        "adapter_gan_nano_65w_g0a6gn65kr",
-        "adapter_gan_nano_65w_g0a6gn65th",
-        "adapter_gan_nano_65w_g0a6gn65uk",
-        "adapter_gan_nano_65w_g0a6gn65ul",
-        "adapter_gan_nano_65w_g0a6gn65us"
-      ],
-      "partNumbers": [
-        "40AWGN65AR",
-        "40AWGN65AU",
-        "40AWGN65EU",
-        "40AWGN65KR",
-        "40AWGN65TH",
-        "40AWGN65UK",
-        "40AWGN65UL",
-        "40AWGN65US",
-        "G0A6GN65AU",
-        "G0A6GN65EU",
-        "G0A6GN65KR",
-        "G0A6GN65TH",
-        "G0A6GN65UK",
-        "G0A6GN65UL",
-        "G0A6GN65US"
-      ],
-      "tags": [
-        "laptop",
-        "GaN",
-        "nano"
-      ]
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "Lenovo Dual USB-C 65W GaN Charger",
-      "shortName": "65W Dual USB-C",
-      "image": "assets/products/adapter-dual-usbc-65w-gan-black.avif",
-      "images": [
-        {
-          "label": "Black",
-          "src": "assets/products/adapter-dual-usbc-65w-gan-black.avif"
-        },
-        {
-          "label": "White",
-          "src": "assets/products/adapter-dual-usbc-65w-gan-white.avif"
-        }
-      ],
-      "listPrice": 59.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "GaN",
-          "dual USB-C",
-          "multi-port"
-        ],
-        "compatibility": "multi",
         "powerMode": "Wired",
         "ports": 2,
         "portCountBand": "2 ports",
@@ -680,796 +315,1142 @@
           "PPS"
         ],
         "scenarios": [
-          "multi-device",
-          "consumer"
+          "travel",
+          "workstation"
         ],
         "isTwoInOne": false
       },
       "variants": [
-        "adapter_dual_usbc_65w_gan_40aw065beu",
-        "adapter_dual_usbc_65w_gan_40aw065buk",
-        "adapter_dual_usbc_65w_gan_40aw065bus",
-        "adapter_dual_usbc_65w_gan_g0a6065beu",
-        "adapter_dual_usbc_65w_gan_g0a6065buk",
-        "adapter_dual_usbc_65w_gan_g0a6065bus",
-        "adapter_dual_usbc_65w_gan_g0a6065weu",
-        "adapter_dual_usbc_65w_gan_g0a6065wuk",
-        "adapter_dual_usbc_65w_gan_g0a6065wus"
-      ],
-      "partNumbers": [
-        "40AW065BEU",
-        "40AW065BUK",
-        "40AW065BUS",
-        "G0A6065BEU",
-        "G0A6065BUK",
-        "G0A6065BUS",
-        "G0A6065WEU",
-        "G0A6065WUK",
-        "G0A6065WUS"
+        "adapter_65w_dual_travel_graphite",
+        "adapter_65w_dual_travel_cloud",
+        "adapter_65w_dual_travel_travel"
       ],
       "tags": [
-        "multi",
-        "GaN",
-        "dual USB-C"
+        "multi-device",
+        "travel"
       ]
     },
     {
-      "id": "bank_hybrid_2in1_140w_10200",
-      "categoryId": "power_bank",
-      "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
-      "shortName": "Hybrid 140W 10.2K",
-      "image": "assets/products/bank-hybrid-2in1-140w-10200.avif",
+      "id": "adapter_100w_slim",
+      "categoryId": "adapter",
+      "name": "Lenovo 100W USB-C Slim Adapter",
+      "shortName": "100W Slim",
+      "listPrice": 79,
+      "attributes": {
+        "wattage": 100,
+        "wattageBand": "100W and above",
+        "features": [
+          "high wattage",
+          "compact"
+        ],
+        "powerMode": "Wired",
+        "ports": 1,
+        "portCountBand": "1 port",
+        "interfaceProtocols": [
+          "USB-C PD 3.1",
+          "PPS"
+        ],
+        "scenarios": [
+          "workstation",
+          "travel"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_100w_slim_graphite",
+        "adapter_100w_slim_cloud",
+        "adapter_100w_slim_travel"
+      ],
+      "tags": [
+        "high wattage",
+        "compact"
+      ]
+    },
+    {
+      "id": "adapter_140w_desktop",
+      "categoryId": "adapter",
+      "name": "Lenovo 140W USB-C Desktop Charger",
+      "shortName": "140W Desktop",
       "listPrice": 99,
       "attributes": {
-        "capacityMah": 10200,
-        "capacityBand": "10000-20000mAh",
-        "outputW": 140,
-        "outputBand": "100W and above",
+        "wattage": 140,
+        "wattageBand": "100W and above",
         "features": [
-          "2-in-1",
-          "hybrid",
+          "desktop",
+          "multi-device",
           "high wattage"
         ],
-        "compatibility": "laptop",
-        "hasCable": "No",
-        "scenarios": [
-          "laptop",
-          "travel"
+        "powerMode": "Wired",
+        "ports": 4,
+        "portCountBand": "3+ ports",
+        "interfaceProtocols": [
+          "USB-C PD 3.1",
+          "USB-A QC"
         ],
-        "isTwoInOne": true
-      },
-      "variants": [
-        "bank_hybrid_2in1_140w_10200_g0a3140wna"
-      ],
-      "partNumbers": [
-        "G0A3140WNA"
-      ],
-      "tags": [
-        "laptop",
-        "2-in-1",
-        "hybrid"
-      ]
-    },
-    {
-      "id": "bank_140w_smart_laptop",
-      "categoryId": "power_bank",
-      "name": "Lenovo 140W Smart Laptop Power Bank",
-      "shortName": "140W Smart Power Bank",
-      "image": "assets/products/bank-140w-smart-laptop.png",
-      "listPrice": 119,
-      "attributes": {
-        "capacityMah": 20000,
-        "capacityBand": "20000mAh and above",
-        "outputW": 140,
-        "outputBand": "100W and above",
-        "features": [
-          "smart display",
-          "high wattage",
-          "laptop"
-        ],
-        "compatibility": "laptop",
-        "hasCable": "No",
         "scenarios": [
-          "laptop",
-          "travel"
+          "workstation"
         ],
         "isTwoInOne": false
       },
       "variants": [
-        "bank_140w_smart_laptop_40al140www",
-        "bank_140w_smart_laptop_g0a3140www"
-      ],
-      "partNumbers": [
-        "40AL140WWW",
-        "G0A3140WWW"
+        "adapter_140w_desktop_graphite",
+        "adapter_140w_desktop_cloud",
+        "adapter_140w_desktop_travel"
       ],
       "tags": [
-        "laptop",
-        "smart display",
+        "desktop",
+        "multi-device",
         "high wattage"
       ]
     },
     {
-      "id": "cable_240w_usb_c_retractable",
-      "categoryId": "power_cable",
-      "name": "Lenovo 240W USB-C Retractable Cable",
-      "shortName": "240W Retractable Cable",
-      "image": "assets/products/cable-240w-usb-c-retractable-black.avif",
-      "images": [
-        {
-          "label": "Black",
-          "src": "assets/products/cable-240w-usb-c-retractable-black.avif"
-        },
-        {
-          "label": "White",
-          "src": "assets/products/cable-240w-usb-c-retractable-white.avif"
-        }
+      "id": "adapter_wireless_dock",
+      "categoryId": "adapter",
+      "name": "Lenovo 65W Wireless Dock Adapter",
+      "shortName": "65W Wireless Dock",
+      "listPrice": 89,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "desktop",
+          "wireless",
+          "multi-device"
+        ],
+        "powerMode": "Wireless",
+        "ports": 2,
+        "portCountBand": "2 ports",
+        "interfaceProtocols": [
+          "Qi2",
+          "USB-C PD"
+        ],
+        "scenarios": [
+          "workstation",
+          "daily carry"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_wireless_dock_graphite",
+        "adapter_wireless_dock_cloud",
+        "adapter_wireless_dock_travel"
       ],
+      "tags": [
+        "desktop",
+        "multi-device"
+      ]
+    },
+    {
+      "id": "adapter_bank_2in1",
+      "categoryId": "adapter",
+      "name": "Lenovo 65W Adapter + Power Bank 2-in-1",
+      "shortName": "65W 2-in-1",
+      "listPrice": 119,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "2-in-1",
+          "travel",
+          "multi-device"
+        ],
+        "powerMode": "Wired",
+        "ports": 2,
+        "portCountBand": "2 ports",
+        "interfaceProtocols": [
+          "USB-C PD",
+          "PPS"
+        ],
+        "scenarios": [
+          "travel",
+          "daily carry"
+        ],
+        "isTwoInOne": true
+      },
+      "variants": [
+        "adapter_bank_2in1_graphite",
+        "adapter_bank_2in1_cloud",
+        "adapter_bank_2in1_travel"
+      ],
+      "tags": [
+        "2-in-1",
+        "travel",
+        "multi-device"
+      ]
+    },
+    {
+      "id": "bank_5000_pocket",
+      "categoryId": "power_bank",
+      "name": "Lenovo 5000mAh Pocket Power Bank",
+      "shortName": "5000mAh Pocket",
+      "listPrice": 29,
+      "attributes": {
+        "capacityMah": 5000,
+        "capacityBand": "5000mAh",
+        "outputW": 20,
+        "outputBand": "20W and below",
+        "features": [
+          "compact",
+          "daily carry"
+        ],
+        "scenarios": [
+          "daily carry"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "bank_5000_pocket_storm",
+        "bank_5000_pocket_black",
+        "bank_5000_pocket_cable"
+      ],
+      "tags": [
+        "compact",
+        "daily carry"
+      ]
+    },
+    {
+      "id": "bank_10000_usb_c",
+      "categoryId": "power_bank",
+      "name": "Lenovo Go USB-C 10000mAh Power Bank",
+      "shortName": "10000mAh USB-C",
+      "listPrice": 49,
+      "attributes": {
+        "capacityMah": 10000,
+        "capacityBand": "10000mAh",
+        "outputW": 30,
+        "outputBand": "21W to 64W",
+        "features": [
+          "daily carry",
+          "USB-C"
+        ],
+        "scenarios": [
+          "daily carry",
+          "travel"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "bank_10000_usb_c_storm",
+        "bank_10000_usb_c_black",
+        "bank_10000_usb_c_cable"
+      ],
+      "tags": [
+        "daily carry",
+        "USB-C"
+      ]
+    },
+    {
+      "id": "bank_10000_magnetic",
+      "categoryId": "power_bank",
+      "name": "Lenovo 10000mAh Magnetic Power Bank",
+      "shortName": "10000mAh Magnetic",
+      "listPrice": 59,
+      "attributes": {
+        "capacityMah": 10000,
+        "capacityBand": "10000mAh",
+        "outputW": 20,
+        "outputBand": "20W and below",
+        "features": [
+          "magnetic",
+          "wireless",
+          "daily carry"
+        ],
+        "scenarios": [
+          "daily carry",
+          "travel"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "bank_10000_magnetic_storm",
+        "bank_10000_magnetic_black",
+        "bank_10000_magnetic_cable"
+      ],
+      "tags": [
+        "magnetic",
+        "daily carry"
+      ]
+    },
+    {
+      "id": "bank_20000_laptop",
+      "categoryId": "power_bank",
+      "name": "Lenovo 20000mAh Laptop Power Bank",
+      "shortName": "20000mAh Laptop",
+      "listPrice": 89,
+      "attributes": {
+        "capacityMah": 20000,
+        "capacityBand": "20000mAh and above",
+        "outputW": 65,
+        "outputBand": "65W to 99W",
+        "features": [
+          "high capacity",
+          "high wattage",
+          "USB-C"
+        ],
+        "scenarios": [
+          "travel",
+          "workstation"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "bank_20000_laptop_storm",
+        "bank_20000_laptop_black",
+        "bank_20000_laptop_cable"
+      ],
+      "tags": [
+        "high capacity",
+        "high wattage",
+        "USB-C"
+      ]
+    },
+    {
+      "id": "bank_27000_travel",
+      "categoryId": "power_bank",
+      "name": "Lenovo 27000mAh 100W Travel Power Bank",
+      "shortName": "27000mAh Travel",
+      "listPrice": 129,
+      "attributes": {
+        "capacityMah": 27000,
+        "capacityBand": "20000mAh and above",
+        "outputW": 100,
+        "outputBand": "100W and above",
+        "features": [
+          "high capacity",
+          "high wattage",
+          "travel"
+        ],
+        "scenarios": [
+          "travel",
+          "outdoor"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "bank_27000_travel_storm",
+        "bank_27000_travel_black",
+        "bank_27000_travel_cable"
+      ],
+      "tags": [
+        "high capacity",
+        "high wattage",
+        "travel"
+      ]
+    },
+    {
+      "id": "bank_20000_rugged",
+      "categoryId": "power_bank",
+      "name": "Lenovo 20000mAh Outdoor Rugged Power Bank",
+      "shortName": "20000mAh Rugged",
+      "listPrice": 99,
+      "attributes": {
+        "capacityMah": 20000,
+        "capacityBand": "20000mAh and above",
+        "outputW": 45,
+        "outputBand": "21W to 64W",
+        "features": [
+          "high capacity",
+          "outdoor",
+          "rugged"
+        ],
+        "scenarios": [
+          "outdoor",
+          "travel"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "bank_20000_rugged_storm",
+        "bank_20000_rugged_black",
+        "bank_20000_rugged_cable"
+      ],
+      "tags": [
+        "high capacity",
+        "outdoor",
+        "rugged"
+      ]
+    },
+    {
+      "id": "bank_adapter_2in1",
+      "categoryId": "power_bank",
+      "name": "Lenovo 10000mAh Adapter + Power Bank 2-in-1",
+      "shortName": "10000mAh 2-in-1",
+      "listPrice": 119,
+      "attributes": {
+        "capacityMah": 10000,
+        "capacityBand": "10000mAh",
+        "outputW": 65,
+        "outputBand": "65W to 99W",
+        "features": [
+          "2-in-1",
+          "built-in cable",
+          "travel"
+        ],
+        "scenarios": [
+          "travel",
+          "daily carry"
+        ],
+        "isTwoInOne": true
+      },
+      "variants": [
+        "bank_adapter_2in1_storm",
+        "bank_adapter_2in1_black",
+        "bank_adapter_2in1_cable"
+      ],
+      "tags": [
+        "2-in-1",
+        "built-in cable",
+        "travel"
+      ]
+    },
+    {
+      "id": "cable_c_to_c_100w_1m",
+      "categoryId": "power_cable",
+      "name": "Lenovo USB-C to USB-C 100W Cable 1m",
+      "shortName": "C-C 100W 1m",
+      "listPrice": 19,
+      "attributes": {
+        "connectors": [
+          "USB-C"
+        ],
+        "lengthM": 1,
+        "lengthBand": "1m",
+        "powerW": 100,
+        "powerBand": "100W to 199W",
+        "features": [
+          "USB-C",
+          "fast charge"
+        ],
+        "scenarios": [
+          "daily carry",
+          "workstation"
+        ]
+      },
+      "variants": [
+        "cable_c_to_c_100w_1m_black",
+        "cable_c_to_c_100w_1m_grey",
+        "cable_c_to_c_100w_1m_white"
+      ],
+      "tags": [
+        "USB-C",
+        "fast charge"
+      ]
+    },
+    {
+      "id": "cable_c_to_c_240w_2m",
+      "categoryId": "power_cable",
+      "name": "Lenovo USB-C to USB-C 240W Cable 2m",
+      "shortName": "C-C 240W 2m",
+      "listPrice": 29,
+      "attributes": {
+        "connectors": [
+          "USB-C"
+        ],
+        "lengthM": 2,
+        "lengthBand": "2m and above",
+        "powerW": 240,
+        "powerBand": "200W and above",
+        "features": [
+          "USB-C",
+          "high wattage",
+          "E-marker"
+        ],
+        "scenarios": [
+          "workstation",
+          "travel"
+        ]
+      },
+      "variants": [
+        "cable_c_to_c_240w_2m_black",
+        "cable_c_to_c_240w_2m_grey",
+        "cable_c_to_c_240w_2m_white"
+      ],
+      "tags": [
+        "USB-C",
+        "high wattage",
+        "E-marker"
+      ]
+    },
+    {
+      "id": "cable_a_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "Lenovo USB-A to USB-C Cable 1m",
+      "shortName": "A-C 1m",
+      "listPrice": 12,
+      "attributes": {
+        "connectors": [
+          "USB-A",
+          "USB-C"
+        ],
+        "lengthM": 1,
+        "lengthBand": "1m",
+        "powerW": 18,
+        "powerBand": "60W and below",
+        "features": [
+          "USB-A",
+          "USB-C",
+          "value"
+        ],
+        "scenarios": [
+          "daily carry"
+        ]
+      },
+      "variants": [
+        "cable_a_to_c_1m_black",
+        "cable_a_to_c_1m_grey",
+        "cable_a_to_c_1m_white"
+      ],
+      "tags": [
+        "USB-A",
+        "USB-C",
+        "value"
+      ]
+    },
+    {
+      "id": "cable_lightning_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "Lenovo Lightning to USB-C Cable 1m",
+      "shortName": "Lightning-C 1m",
+      "listPrice": 22,
+      "attributes": {
+        "connectors": [
+          "Lightning",
+          "USB-C"
+        ],
+        "lengthM": 1,
+        "lengthBand": "1m",
+        "powerW": 27,
+        "powerBand": "60W and below",
+        "features": [
+          "Lightning",
+          "USB-C"
+        ],
+        "scenarios": [
+          "daily carry",
+          "travel"
+        ]
+      },
+      "variants": [
+        "cable_lightning_to_c_1m_black",
+        "cable_lightning_to_c_1m_grey",
+        "cable_lightning_to_c_1m_white"
+      ],
+      "tags": [
+        "Lightning",
+        "USB-C"
+      ]
+    },
+    {
+      "id": "cable_c_bundle_2pack",
+      "categoryId": "power_cable",
+      "name": "Lenovo USB-C Cable Bundle 2-Pack",
+      "shortName": "C-C Bundle 2-Pack",
       "listPrice": 24,
       "attributes": {
         "connectors": [
           "USB-C"
         ],
-        "lengthM": 1.0,
-        "lengthBand": "1m to 2m",
-        "powerW": 240,
-        "powerBand": "200W and above",
+        "lengthM": 1,
+        "lengthBand": "1m",
+        "powerW": 100,
+        "powerBand": "100W to 199W",
         "features": [
           "USB-C",
-          "retractable",
-          "240W"
+          "bundle/2-pack",
+          "value"
         ],
-        "retractable": "Yes",
         "scenarios": [
-          "travel",
-          "laptop"
+          "daily carry",
+          "workstation"
         ]
       },
       "variants": [
-        "cable_240w_usb_c_retractable_gx91v57058",
-        "cable_240w_usb_c_retractable_gx91v57059"
-      ],
-      "partNumbers": [
-        "GX91V57058",
-        "GX91V57059"
+        "cable_c_bundle_2pack_black",
+        "cable_c_bundle_2pack_grey",
+        "cable_c_bundle_2pack_white"
       ],
       "tags": [
-        "Yes",
         "USB-C",
-        "retractable"
+        "bundle/2-pack",
+        "value"
+      ]
+    },
+    {
+      "id": "cable_travel_braided_05m",
+      "categoryId": "power_cable",
+      "name": "Lenovo Travel Braided USB-C Cable 0.5m",
+      "shortName": "Braided C-C 0.5m",
+      "listPrice": 16,
+      "attributes": {
+        "connectors": [
+          "USB-C"
+        ],
+        "lengthM": 0.5,
+        "lengthBand": "Below 1m",
+        "powerW": 60,
+        "powerBand": "60W and below",
+        "features": [
+          "USB-C",
+          "braided",
+          "travel"
+        ],
+        "scenarios": [
+          "travel",
+          "daily carry"
+        ]
+      },
+      "variants": [
+        "cable_travel_braided_05m_black",
+        "cable_travel_braided_05m_grey",
+        "cable_travel_braided_05m_white"
+      ],
+      "tags": [
+        "USB-C",
+        "braided",
+        "travel"
       ]
     }
   ],
   "variants": [
     {
-      "id": "adapter_multi_port_150w_gan_40aw150beu",
-      "modelId": "adapter_multi_port_150w_gan",
+      "id": "adapter_45w_mini_graphite",
+      "modelId": "adapter_45w_mini",
       "categoryId": "adapter",
-      "name": "40AW150BEU",
-      "partNumber": "40AW150BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Graphite Black",
+      "share": 0.45,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_multi_port_150w_gan_40aw150buk",
-      "modelId": "adapter_multi_port_150w_gan",
+      "id": "adapter_45w_mini_cloud",
+      "modelId": "adapter_45w_mini",
       "categoryId": "adapter",
-      "name": "40AW150BUK",
-      "partNumber": "40AW150BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Cloud Grey",
+      "share": 0.35,
+      "priceMultiplier": 1.01,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_multi_port_150w_gan_40aw150bus",
-      "modelId": "adapter_multi_port_150w_gan",
+      "id": "adapter_45w_mini_travel",
+      "modelId": "adapter_45w_mini",
       "categoryId": "adapter",
-      "name": "40AW150BUS",
-      "partNumber": "40AW150BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Travel Plug Kit",
+      "share": 0.2,
+      "priceMultiplier": 1.08,
+      "costMultiplier": 1.04
     },
     {
-      "id": "adapter_multi_port_100w_gan_40aw100beu",
-      "modelId": "adapter_multi_port_100w_gan",
+      "id": "adapter_65w_gan_graphite",
+      "modelId": "adapter_65w_gan",
       "categoryId": "adapter",
-      "name": "40AW100BEU",
-      "partNumber": "40AW100BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Graphite Black",
+      "share": 0.45,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_multi_port_100w_gan_40aw100buk",
-      "modelId": "adapter_multi_port_100w_gan",
+      "id": "adapter_65w_gan_cloud",
+      "modelId": "adapter_65w_gan",
       "categoryId": "adapter",
-      "name": "40AW100BUK",
-      "partNumber": "40AW100BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Cloud Grey",
+      "share": 0.35,
+      "priceMultiplier": 1.01,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_multi_port_100w_gan_40aw100bus",
-      "modelId": "adapter_multi_port_100w_gan",
+      "id": "adapter_65w_gan_travel",
+      "modelId": "adapter_65w_gan",
       "categoryId": "adapter",
-      "name": "40AW100BUS",
-      "partNumber": "40AW100BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Travel Plug Kit",
+      "share": 0.2,
+      "priceMultiplier": 1.08,
+      "costMultiplier": 1.04
     },
     {
-      "id": "adapter_multi_port_100w_gan_g0a6100beu",
-      "modelId": "adapter_multi_port_100w_gan",
+      "id": "adapter_65w_dual_travel_graphite",
+      "modelId": "adapter_65w_dual_travel",
       "categoryId": "adapter",
-      "name": "G0A6100BEU",
-      "partNumber": "G0A6100BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Graphite Black",
+      "share": 0.45,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_multi_port_100w_gan_g0a6100buk",
-      "modelId": "adapter_multi_port_100w_gan",
+      "id": "adapter_65w_dual_travel_cloud",
+      "modelId": "adapter_65w_dual_travel",
       "categoryId": "adapter",
-      "name": "G0A6100BUK",
-      "partNumber": "G0A6100BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Cloud Grey",
+      "share": 0.35,
+      "priceMultiplier": 1.01,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_multi_port_100w_gan_g0a6100seu",
-      "modelId": "adapter_multi_port_100w_gan",
+      "id": "adapter_65w_dual_travel_travel",
+      "modelId": "adapter_65w_dual_travel",
       "categoryId": "adapter",
-      "name": "G0A6100SEU",
-      "partNumber": "G0A6100SEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Travel Plug Kit",
+      "share": 0.2,
+      "priceMultiplier": 1.08,
+      "costMultiplier": 1.04
     },
     {
-      "id": "adapter_multi_port_100w_gan_g0a6100suk",
-      "modelId": "adapter_multi_port_100w_gan",
+      "id": "adapter_100w_slim_graphite",
+      "modelId": "adapter_100w_slim",
       "categoryId": "adapter",
-      "name": "G0A6100SUK",
-      "partNumber": "G0A6100SUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Graphite Black",
+      "share": 0.45,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_ac_travel_40aw0065ww",
-      "modelId": "adapter_65w_usbc_ac_travel",
+      "id": "adapter_100w_slim_cloud",
+      "modelId": "adapter_100w_slim",
       "categoryId": "adapter",
-      "name": "40AW0065WW",
-      "partNumber": "40AW0065WW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Cloud Grey",
+      "share": 0.35,
+      "priceMultiplier": 1.01,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_ac_travel_g0a6n065ww",
-      "modelId": "adapter_65w_usbc_ac_travel",
+      "id": "adapter_100w_slim_travel",
+      "modelId": "adapter_100w_slim",
       "categoryId": "adapter",
-      "name": "G0A6N065WW",
-      "partNumber": "G0A6N065WW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Travel Plug Kit",
+      "share": 0.2,
+      "priceMultiplier": 1.08,
+      "costMultiplier": 1.04
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l54608",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_140w_desktop_graphite",
+      "modelId": "adapter_140w_desktop",
       "categoryId": "adapter",
-      "name": "4X21L54608",
-      "partNumber": "4X21L54608",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Graphite Black",
+      "share": 0.45,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l54610",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_140w_desktop_cloud",
+      "modelId": "adapter_140w_desktop",
       "categoryId": "adapter",
-      "name": "4X21L54610",
-      "partNumber": "4X21L54610",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Cloud Grey",
+      "share": 0.35,
+      "priceMultiplier": 1.01,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l54612",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_140w_desktop_travel",
+      "modelId": "adapter_140w_desktop",
       "categoryId": "adapter",
-      "name": "4X21L54612",
-      "partNumber": "4X21L54612",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Travel Plug Kit",
+      "share": 0.2,
+      "priceMultiplier": 1.08,
+      "costMultiplier": 1.04
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l54614",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_wireless_dock_graphite",
+      "modelId": "adapter_wireless_dock",
       "categoryId": "adapter",
-      "name": "4X21L54614",
-      "partNumber": "4X21L54614",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Graphite Black",
+      "share": 0.45,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l54618",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_wireless_dock_cloud",
+      "modelId": "adapter_wireless_dock",
       "categoryId": "adapter",
-      "name": "4X21L54618",
-      "partNumber": "4X21L54618",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Cloud Grey",
+      "share": 0.35,
+      "priceMultiplier": 1.01,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l54620",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_wireless_dock_travel",
+      "modelId": "adapter_wireless_dock",
       "categoryId": "adapter",
-      "name": "4X21L54620",
-      "partNumber": "4X21L54620",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Travel Plug Kit",
+      "share": 0.2,
+      "priceMultiplier": 1.08,
+      "costMultiplier": 1.04
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l54622",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_bank_2in1_graphite",
+      "modelId": "adapter_bank_2in1",
       "categoryId": "adapter",
-      "name": "4X21L54622",
-      "partNumber": "4X21L54622",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Graphite Black",
+      "share": 0.45,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l83772",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_bank_2in1_cloud",
+      "modelId": "adapter_bank_2in1",
       "categoryId": "adapter",
-      "name": "4X21L83772",
-      "partNumber": "4X21L83772",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Cloud Grey",
+      "share": 0.35,
+      "priceMultiplier": 1.01,
+      "costMultiplier": 1.0
     },
     {
-      "id": "adapter_65w_usbc_wall_4x21l83773",
-      "modelId": "adapter_65w_usbc_wall",
+      "id": "adapter_bank_2in1_travel",
+      "modelId": "adapter_bank_2in1",
       "categoryId": "adapter",
-      "name": "4X21L83773",
-      "partNumber": "4X21L83773",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Travel Plug Kit",
+      "share": 0.2,
+      "priceMultiplier": 1.08,
+      "costMultiplier": 1.04
     },
     {
-      "id": "adapter_65w_usbc_wall_gx21l58554",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58554",
-      "partNumber": "GX21L58554",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58555",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58555",
-      "partNumber": "GX21L58555",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58557",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58557",
-      "partNumber": "GX21L58557",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58559",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58559",
-      "partNumber": "GX21L58559",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58564",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58564",
-      "partNumber": "GX21L58564",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58566",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58566",
-      "partNumber": "GX21L58566",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58568",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58568",
-      "partNumber": "GX21L58568",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l83770",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L83770",
-      "partNumber": "GX21L83770",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l83771",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L83771",
-      "partNumber": "GX21L83771",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_40aw65wbeu",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "40AW65WBEU",
-      "partNumber": "40AW65WBEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_40aw65wbuk",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "40AW65WBUK",
-      "partNumber": "40AW65WBUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_g0a665wbeu",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "G0A665WBEU",
-      "partNumber": "G0A665WBEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_g0a665wbuk",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "G0A665WBUK",
-      "partNumber": "G0A665WBUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65ar",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65AR",
-      "partNumber": "40AWGN65AR",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65au",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65AU",
-      "partNumber": "40AWGN65AU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65eu",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65EU",
-      "partNumber": "40AWGN65EU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65kr",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65KR",
-      "partNumber": "40AWGN65KR",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65th",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65TH",
-      "partNumber": "40AWGN65TH",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65uk",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65UK",
-      "partNumber": "40AWGN65UK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65ul",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65UL",
-      "partNumber": "40AWGN65UL",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65us",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65US",
-      "partNumber": "40AWGN65US",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65au",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65AU",
-      "partNumber": "G0A6GN65AU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65eu",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65EU",
-      "partNumber": "G0A6GN65EU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65kr",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65KR",
-      "partNumber": "G0A6GN65KR",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65th",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65TH",
-      "partNumber": "G0A6GN65TH",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65uk",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65UK",
-      "partNumber": "G0A6GN65UK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65ul",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65UL",
-      "partNumber": "G0A6GN65UL",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65us",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65US",
-      "partNumber": "G0A6GN65US",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_40aw065beu",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "40AW065BEU",
-      "partNumber": "40AW065BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_40aw065buk",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "40AW065BUK",
-      "partNumber": "40AW065BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_40aw065bus",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "40AW065BUS",
-      "partNumber": "40AW065BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065beu",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065BEU",
-      "partNumber": "G0A6065BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065buk",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065BUK",
-      "partNumber": "G0A6065BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065bus",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065BUS",
-      "partNumber": "G0A6065BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065weu",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065WEU",
-      "partNumber": "G0A6065WEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065wuk",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065WUK",
-      "partNumber": "G0A6065WUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065wus",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065WUS",
-      "partNumber": "G0A6065WUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "bank_hybrid_2in1_140w_10200_g0a3140wna",
-      "modelId": "bank_hybrid_2in1_140w_10200",
+      "id": "bank_5000_pocket_storm",
+      "modelId": "bank_5000_pocket",
       "categoryId": "power_bank",
-      "name": "G0A3140WNA",
-      "partNumber": "G0A3140WNA",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Storm Grey",
+      "share": 0.42,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "bank_140w_smart_laptop_40al140www",
-      "modelId": "bank_140w_smart_laptop",
+      "id": "bank_5000_pocket_black",
+      "modelId": "bank_5000_pocket",
       "categoryId": "power_bank",
-      "name": "40AL140WWW",
-      "partNumber": "40AL140WWW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Eclipse Black",
+      "share": 0.38,
+      "priceMultiplier": 1.02,
+      "costMultiplier": 1.0
     },
     {
-      "id": "bank_140w_smart_laptop_g0a3140www",
-      "modelId": "bank_140w_smart_laptop",
+      "id": "bank_5000_pocket_cable",
+      "modelId": "bank_5000_pocket",
       "categoryId": "power_bank",
-      "name": "G0A3140WWW",
-      "partNumber": "G0A3140WWW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Built-in Cable Edition",
+      "share": 0.2,
+      "priceMultiplier": 1.1,
+      "costMultiplier": 1.06
     },
     {
-      "id": "cable_240w_usb_c_retractable_gx91v57058",
-      "modelId": "cable_240w_usb_c_retractable",
+      "id": "bank_10000_usb_c_storm",
+      "modelId": "bank_10000_usb_c",
+      "categoryId": "power_bank",
+      "name": "Storm Grey",
+      "share": 0.42,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_10000_usb_c_black",
+      "modelId": "bank_10000_usb_c",
+      "categoryId": "power_bank",
+      "name": "Eclipse Black",
+      "share": 0.38,
+      "priceMultiplier": 1.02,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_10000_usb_c_cable",
+      "modelId": "bank_10000_usb_c",
+      "categoryId": "power_bank",
+      "name": "Built-in Cable Edition",
+      "share": 0.2,
+      "priceMultiplier": 1.1,
+      "costMultiplier": 1.06
+    },
+    {
+      "id": "bank_10000_magnetic_storm",
+      "modelId": "bank_10000_magnetic",
+      "categoryId": "power_bank",
+      "name": "Storm Grey",
+      "share": 0.42,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_10000_magnetic_black",
+      "modelId": "bank_10000_magnetic",
+      "categoryId": "power_bank",
+      "name": "Eclipse Black",
+      "share": 0.38,
+      "priceMultiplier": 1.02,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_10000_magnetic_cable",
+      "modelId": "bank_10000_magnetic",
+      "categoryId": "power_bank",
+      "name": "Built-in Cable Edition",
+      "share": 0.2,
+      "priceMultiplier": 1.1,
+      "costMultiplier": 1.06
+    },
+    {
+      "id": "bank_20000_laptop_storm",
+      "modelId": "bank_20000_laptop",
+      "categoryId": "power_bank",
+      "name": "Storm Grey",
+      "share": 0.42,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_20000_laptop_black",
+      "modelId": "bank_20000_laptop",
+      "categoryId": "power_bank",
+      "name": "Eclipse Black",
+      "share": 0.38,
+      "priceMultiplier": 1.02,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_20000_laptop_cable",
+      "modelId": "bank_20000_laptop",
+      "categoryId": "power_bank",
+      "name": "Built-in Cable Edition",
+      "share": 0.2,
+      "priceMultiplier": 1.1,
+      "costMultiplier": 1.06
+    },
+    {
+      "id": "bank_27000_travel_storm",
+      "modelId": "bank_27000_travel",
+      "categoryId": "power_bank",
+      "name": "Storm Grey",
+      "share": 0.42,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_27000_travel_black",
+      "modelId": "bank_27000_travel",
+      "categoryId": "power_bank",
+      "name": "Eclipse Black",
+      "share": 0.38,
+      "priceMultiplier": 1.02,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_27000_travel_cable",
+      "modelId": "bank_27000_travel",
+      "categoryId": "power_bank",
+      "name": "Built-in Cable Edition",
+      "share": 0.2,
+      "priceMultiplier": 1.1,
+      "costMultiplier": 1.06
+    },
+    {
+      "id": "bank_20000_rugged_storm",
+      "modelId": "bank_20000_rugged",
+      "categoryId": "power_bank",
+      "name": "Storm Grey",
+      "share": 0.42,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_20000_rugged_black",
+      "modelId": "bank_20000_rugged",
+      "categoryId": "power_bank",
+      "name": "Eclipse Black",
+      "share": 0.38,
+      "priceMultiplier": 1.02,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_20000_rugged_cable",
+      "modelId": "bank_20000_rugged",
+      "categoryId": "power_bank",
+      "name": "Built-in Cable Edition",
+      "share": 0.2,
+      "priceMultiplier": 1.1,
+      "costMultiplier": 1.06
+    },
+    {
+      "id": "bank_adapter_2in1_storm",
+      "modelId": "bank_adapter_2in1",
+      "categoryId": "power_bank",
+      "name": "Storm Grey",
+      "share": 0.42,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_adapter_2in1_black",
+      "modelId": "bank_adapter_2in1",
+      "categoryId": "power_bank",
+      "name": "Eclipse Black",
+      "share": 0.38,
+      "priceMultiplier": 1.02,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "bank_adapter_2in1_cable",
+      "modelId": "bank_adapter_2in1",
+      "categoryId": "power_bank",
+      "name": "Built-in Cable Edition",
+      "share": 0.2,
+      "priceMultiplier": 1.1,
+      "costMultiplier": 1.06
+    },
+    {
+      "id": "cable_c_to_c_100w_1m_black",
+      "modelId": "cable_c_to_c_100w_1m",
       "categoryId": "power_cable",
-      "name": "GX91V57058",
-      "partNumber": "GX91V57058",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Black",
+      "share": 0.48,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
     },
     {
-      "id": "cable_240w_usb_c_retractable_gx91v57059",
-      "modelId": "cable_240w_usb_c_retractable",
+      "id": "cable_c_to_c_100w_1m_grey",
+      "modelId": "cable_c_to_c_100w_1m",
       "categoryId": "power_cable",
-      "name": "GX91V57059",
-      "partNumber": "GX91V57059",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
+      "name": "Grey Braided",
+      "share": 0.34,
+      "priceMultiplier": 1.05,
+      "costMultiplier": 1.03
+    },
+    {
+      "id": "cable_c_to_c_100w_1m_white",
+      "modelId": "cable_c_to_c_100w_1m",
+      "categoryId": "power_cable",
+      "name": "White",
+      "share": 0.18,
+      "priceMultiplier": 0.98,
+      "costMultiplier": 0.98
+    },
+    {
+      "id": "cable_c_to_c_240w_2m_black",
+      "modelId": "cable_c_to_c_240w_2m",
+      "categoryId": "power_cable",
+      "name": "Black",
+      "share": 0.48,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "cable_c_to_c_240w_2m_grey",
+      "modelId": "cable_c_to_c_240w_2m",
+      "categoryId": "power_cable",
+      "name": "Grey Braided",
+      "share": 0.34,
+      "priceMultiplier": 1.05,
+      "costMultiplier": 1.03
+    },
+    {
+      "id": "cable_c_to_c_240w_2m_white",
+      "modelId": "cable_c_to_c_240w_2m",
+      "categoryId": "power_cable",
+      "name": "White",
+      "share": 0.18,
+      "priceMultiplier": 0.98,
+      "costMultiplier": 0.98
+    },
+    {
+      "id": "cable_a_to_c_1m_black",
+      "modelId": "cable_a_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "Black",
+      "share": 0.48,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "cable_a_to_c_1m_grey",
+      "modelId": "cable_a_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "Grey Braided",
+      "share": 0.34,
+      "priceMultiplier": 1.05,
+      "costMultiplier": 1.03
+    },
+    {
+      "id": "cable_a_to_c_1m_white",
+      "modelId": "cable_a_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "White",
+      "share": 0.18,
+      "priceMultiplier": 0.98,
+      "costMultiplier": 0.98
+    },
+    {
+      "id": "cable_lightning_to_c_1m_black",
+      "modelId": "cable_lightning_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "Black",
+      "share": 0.48,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "cable_lightning_to_c_1m_grey",
+      "modelId": "cable_lightning_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "Grey Braided",
+      "share": 0.34,
+      "priceMultiplier": 1.05,
+      "costMultiplier": 1.03
+    },
+    {
+      "id": "cable_lightning_to_c_1m_white",
+      "modelId": "cable_lightning_to_c_1m",
+      "categoryId": "power_cable",
+      "name": "White",
+      "share": 0.18,
+      "priceMultiplier": 0.98,
+      "costMultiplier": 0.98
+    },
+    {
+      "id": "cable_c_bundle_2pack_black",
+      "modelId": "cable_c_bundle_2pack",
+      "categoryId": "power_cable",
+      "name": "Black",
+      "share": 0.48,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "cable_c_bundle_2pack_grey",
+      "modelId": "cable_c_bundle_2pack",
+      "categoryId": "power_cable",
+      "name": "Grey Braided",
+      "share": 0.34,
+      "priceMultiplier": 1.05,
+      "costMultiplier": 1.03
+    },
+    {
+      "id": "cable_c_bundle_2pack_white",
+      "modelId": "cable_c_bundle_2pack",
+      "categoryId": "power_cable",
+      "name": "White",
+      "share": 0.18,
+      "priceMultiplier": 0.98,
+      "costMultiplier": 0.98
+    },
+    {
+      "id": "cable_travel_braided_05m_black",
+      "modelId": "cable_travel_braided_05m",
+      "categoryId": "power_cable",
+      "name": "Black",
+      "share": 0.48,
+      "priceMultiplier": 1.0,
+      "costMultiplier": 1.0
+    },
+    {
+      "id": "cable_travel_braided_05m_grey",
+      "modelId": "cable_travel_braided_05m",
+      "categoryId": "power_cable",
+      "name": "Grey Braided",
+      "share": 0.34,
+      "priceMultiplier": 1.05,
+      "costMultiplier": 1.03
+    },
+    {
+      "id": "cable_travel_braided_05m_white",
+      "modelId": "cable_travel_braided_05m",
+      "categoryId": "power_cable",
+      "name": "White",
+      "share": 0.18,
+      "priceMultiplier": 0.98,
+      "costMultiplier": 0.98
     }
   ],
   "futureCategorySlots": [
@@ -1478,21 +1459,8 @@
     "Smart Accessories"
   ],
   "source": {
-    "sourceDir": "/Users/albert/Desktop/2026.7.13",
-    "sourceFiles": [
-      "Lenovo Multi-port USB-C 150W Laptop GaN Charger.xlsx",
-      "Lenovo Multi-port USB-C 100W GaN Charger.xlsx",
-      "Lenovo 65W USB-C AC Travel Adapter.xlsx",
-      "Lenovo 65W USB-C Wall Adapter.xlsx",
-      "Lenovo 65W Mini USB-C GaN Charger.xlsx",
-      "Lenovo GaN Nano 65W Adapter.xlsx",
-      "Lenovo Dual USB-C 65W GaN Charger.xlsx",
-      "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
-      "Lenovo 140W Smart Laptop Power Bank.xlsx",
-      "Lenovo 240W USB-C Retractable Cable.xlsx"
-    ],
-    "sourceMode": "real_product_excel",
-    "sourceRows": 2406,
-    "sourceNotes": "Real product sell-in/order data loaded from Lenovo accessory product workbooks."
+    "sourceFile": "/Users/albert/Desktop/zhenqi_li homework 2/lenovo_wearables_final.xlsx",
+    "sourceMode": "modeled",
+    "sourceNotes": "Modeled accessories data fitted to the workbook's monthly structure."
   }
 }
