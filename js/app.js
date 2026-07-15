@@ -202,8 +202,8 @@ function renderHome() {
             <small>Current model count with room for future categories.</small>
           </div>
           <div class="stat-tile">
-            <span>Latest Revenue</span>
-            <strong>${fmtCurrency(totalSummary.revenueNet)}</strong>
+            <span>Latest Order_Rev</span>
+            <strong>${fmtCurrency(totalSummary.orderRevenue || totalSummary.revenueNet)}</strong>
             <small>${formatPeriod(latest, "quarter")}</small>
           </div>
           <div class="stat-tile">
@@ -254,7 +254,7 @@ function renderCategoryCard(category, latest) {
       <p>${escapeHtml(category.description)}</p>
       <div class="category-metrics">
         <div><span>Units</span><strong>${fmtCompact(summary.unitsNet)}</strong></div>
-        <div><span>Revenue</span><strong>${fmtCurrency(summary.revenueNet)}</strong></div>
+        <div><span>Order_Rev</span><strong>${fmtCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
         <div><span>${modeledText("Profit")}</span><strong>${fmtCurrency(summary.grossProfit)}</strong></div>
       </div>
     </button>
@@ -504,9 +504,9 @@ function renderCategoryOverview(categoryId) {
         ${renderCategoryFilters(categoryId)}
         <section class="chart-grid">
           ${chartShell("categorySalesPlot", "Order Quantity Trend", `${granularityLabels[state.granularity]} · selected models`)}
-          ${chartShell("categoryRevenuePlot", "Order Revenue Trend", `${granularityLabels[state.granularity]} · selected models`)}
-          ${chartShell("categoryFulfillmentPlot", "Ship vs Backlog Revenue", selectedPeriod())}
-          ${chartShell("categoryRevenueSharePlot", "Product Revenue Contribution", selectedPeriod())}
+          ${chartShell("categoryRevenuePlot", "Order_Rev Trend", `${granularityLabels[state.granularity]} · selected models`)}
+          ${chartShell("categoryFulfillmentPlot", "Ship_Rev vs Bklg_Rev", selectedPeriod())}
+          ${chartShell("categoryRevenueSharePlot", "Product Order_Rev Contribution", selectedPeriod())}
           ${chartShell("categoryGeoUnitsPlot", "Geo Units by Product", selectedPeriod(), true)}
           ${chartShell("categoryCountryUnitsPlot", "Country Units by Product", selectedPeriod(), true)}
         </section>
@@ -577,24 +577,24 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
   const volume = summaries.slice().sort((a, b) => b.summary.orderQty - a.summary.orderQty)[0];
   const backlog = summaries.slice().sort((a, b) => b.summary.backlogRevenue - a.summary.backlogRevenue)[0];
   const cards = [
-    ["Revenue Leader", main, "highest order revenue"],
+    ["Order_Rev Leader", main, "highest Order_Rev"],
     ["Volume Leader", volume, "highest order quantity"],
-    ["Backlog Watch", backlog, "highest backlog revenue"],
+    ["Bklg_Rev Watch", backlog, "highest Bklg_Rev"],
   ];
 
   return `
     <section class="product-matrix">
       <div class="kpi-grid">
         ${renderKpi("Total Units", fmtCompact(latestSummary.orderQty || latestSummary.unitsNet), "Order quantity")}
-        ${renderKpi("Total Revenue", fmtCurrency(latestSummary.orderRevenue || latestSummary.revenueNet), selectedPeriod())}
-        ${renderKpi("Ship Revenue", fmtCurrency(latestSummary.shipRevenue), "Excel Ship_Rev")}
-        ${renderKpi("Backlog Revenue", fmtCurrency(latestSummary.backlogRevenue), "Excel Bklg_Rev")}
+        ${renderKpi("Total Order_Rev", fmtCurrency(latestSummary.orderRevenue || latestSummary.revenueNet), selectedPeriod())}
+        ${renderKpi("Total Ship_Rev", fmtCurrency(latestSummary.shipRevenue), "Excel Ship_Rev")}
+        ${renderKpi("Total Bklg_Rev", fmtCurrency(latestSummary.backlogRevenue), "Excel Bklg_Rev")}
       </div>
       <div class="matrix-card-grid">
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
       </div>
       <div class="chart-grid">
-        ${chartShell("matrixRevenueSharePlot", "Product Revenue Contribution", selectedPeriod())}
+        ${chartShell("matrixRevenueSharePlot", "Product Order_Rev Contribution", selectedPeriod())}
         ${chartShell("matrixUnitSharePlot", "Product Unit Contribution", selectedPeriod())}
         ${chartShell("matrixGeoUnitsPlot", "Geo Units by Product", selectedPeriod(), true)}
         ${chartShell("matrixCountryUnitsPlot", "Country Units by Product", selectedPeriod(), true)}
@@ -614,9 +614,9 @@ function renderMatrixHighlightCard(badge, item, note) {
       <h3>${escapeHtml(product.shortName)}</h3>
       <p>${escapeHtml(subtitle)}</p>
       <div class="mini-metrics">
-        <div><span>Revenue</span><strong>${fmtCurrency(item.summary.orderRevenue || item.summary.revenueNet)}</strong></div>
+        <div><span>Order_Rev</span><strong>${fmtCurrency(item.summary.orderRevenue || item.summary.revenueNet)}</strong></div>
         <div><span>Units</span><strong>${fmtCompact(item.summary.orderQty || item.summary.unitsNet)}</strong></div>
-        <div><span>Backlog</span><strong>${fmtCurrency(item.summary.backlogRevenue)}</strong></div>
+        <div><span>Bklg_Rev</span><strong>${fmtCurrency(item.summary.backlogRevenue)}</strong></div>
       </div>
     </article>
   `;
@@ -648,17 +648,38 @@ function renderProductListPage(categoryId) {
   `;
 }
 
+function productImageItems(product) {
+  if (Array.isArray(product.images) && product.images.length) return product.images;
+  return product.image ? [{ label: "", src: product.image }] : [];
+}
+
 function renderProductCard(product) {
   const latestRows = data.productMetrics.filter((row) => row.modelId === product.id && rowInSelectedPeriod(row));
   const summary = summarizeProductRows(latestRows);
   const attrs = product.attributes;
   const primarySpec = attrs.wattage ? `${attrs.wattage}W` : attrs.outputW ? `${attrs.capacityBand} / ${attrs.outputW}W` : `${attrs.lengthBand} / ${attrs.powerBand}`;
+  const images = productImageItems(product);
   return `
     <article class="product-card">
       <button class="product-card-hit" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">
-        <div class="product-visual product-visual-${product.categoryId} ${product.image ? "has-image" : ""}">
-          ${product.image ? `<img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />` : ""}
-          <span>${escapeHtml(primarySpec)}</span>
+        <div class="product-visual product-visual-${product.categoryId} ${images.length ? "has-image" : ""} ${images.length > 1 ? "has-multiple-images" : ""}">
+          ${
+            images.length > 1
+              ? `<div class="product-image-pair">${images
+                  .map(
+                    (image) => `
+                    <figure class="product-image-option">
+                      <img src="${escapeAttr(image.src)}" alt="${escapeAttr(`${product.name} ${image.label}`.trim())}" loading="lazy" />
+                      <figcaption>${escapeHtml(image.label)}</figcaption>
+                    </figure>
+                  `,
+                  )
+                  .join("")}</div>`
+              : images[0]
+                ? `<img src="${escapeAttr(images[0].src)}" alt="${escapeAttr(product.name)}" loading="lazy" />`
+                : ""
+          }
+          <span class="product-spec-badge">${escapeHtml(primarySpec)}</span>
         </div>
         <div class="product-card-body">
           <span class="tag">${escapeHtml(primarySpec)}</span>
@@ -666,8 +687,8 @@ function renderProductCard(product) {
           <p>${escapeHtml((attrs.features || []).join(" / "))}</p>
           <div class="mini-metrics">
             <div><span>Units</span><strong>${fmtCompact(summary.unitsNet)}</strong></div>
-            <div><span>Revenue</span><strong>${fmtCurrency(summary.revenueNet)}</strong></div>
-            <div><span>Backlog</span><strong>${fmtCurrency(summary.backlogRevenue)}</strong></div>
+            <div><span>Order_Rev</span><strong>${fmtCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
+            <div><span>Bklg_Rev</span><strong>${fmtCurrency(summary.backlogRevenue)}</strong></div>
           </div>
         </div>
       </button>
@@ -760,8 +781,8 @@ function renderProductRow(product, selectedIds) {
         <strong>${fmtCompact(summary.unitsNet)}</strong>
       </div>
       <div>
-        <span class="metric-label">Revenue</span>
-        <strong>${fmtCurrency(summary.revenueNet)}</strong>
+        <span class="metric-label">Order_Rev</span>
+        <strong>${fmtCurrency(summary.orderRevenue || summary.revenueNet)}</strong>
       </div>
       <button class="ghost-button" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">Details</button>
     </article>
@@ -810,7 +831,7 @@ function drawCategoryCharts(categoryId, selectedIds) {
       line: { color: palette[idx % palette.length], width: 2.4 },
     };
   });
-  drawPlot("categoryRevenuePlot", revenueTraces, { yaxis: { title: "Order Revenue", tickprefix: "$" } });
+  drawPlot("categoryRevenuePlot", revenueTraces, { yaxis: { title: "Order_Rev", tickprefix: "$" } });
 
   const latest = selectedPeriod();
   const latestByModel = products.map((product) => ({
@@ -823,21 +844,21 @@ function drawCategoryCharts(categoryId, selectedIds) {
       {
         x: latestByModel.map((item) => item.product.shortName),
         y: latestByModel.map((item) => item.summary.shipRevenue || 0),
-        name: "Ship Revenue",
+        name: "Ship_Rev",
         type: "bar",
         marker: { color: indexes.categories.get(categoryId).accent },
       },
       {
         x: latestByModel.map((item) => item.product.shortName),
         y: latestByModel.map((item) => item.summary.backlogRevenue || 0),
-        name: "Backlog Revenue",
+        name: "Bklg_Rev",
         type: "bar",
         marker: { color: "#1f2328" },
       },
     ],
-    { barmode: "stack", yaxis: { title: "Revenue", tickprefix: "$" } },
+    { barmode: "stack", yaxis: { title: "Ship_Rev + Bklg_Rev", tickprefix: "$" } },
   );
-  drawProductSharePie("categoryRevenueSharePlot", latestByModel, "orderRevenue", "Order Revenue");
+  drawProductSharePie("categoryRevenueSharePlot", latestByModel, "orderRevenue", "Order_Rev");
   drawCategoryGeoUnitsChart("categoryGeoUnitsPlot", categoryId, selectedIds);
   drawCategoryCountryUnitsChart("categoryCountryUnitsPlot", categoryId, selectedIds);
 }
@@ -894,7 +915,7 @@ function drawCategoryGeoChart(categoryId, selectedIds) {
     type: "bar",
     marker: { color: palette[idx % palette.length] },
   }));
-  drawPlot("categoryGeoPlot", traces, { barmode: "stack", yaxis: { title: "Order Revenue", tickprefix: "$" } });
+  drawPlot("categoryGeoPlot", traces, { barmode: "stack", yaxis: { title: "Order_Rev", tickprefix: "$" } });
 }
 
 function drawCategoryGeoUnitsChart(id, categoryId, selectedIds) {
@@ -1211,7 +1232,7 @@ function drawCompetitorPricePower(categoryId, brandRows, powerSegments) {
 function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
   const productIds = selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id);
   const summaries = getProductLatestSummaries(categoryId, productIds);
-  drawProductSharePie("matrixRevenueSharePlot", summaries, "orderRevenue", "Order Revenue");
+  drawProductSharePie("matrixRevenueSharePlot", summaries, "orderRevenue", "Order_Rev");
   drawProductSharePie("matrixUnitSharePlot", summaries, "orderQty", "Order Quantity");
   drawCategoryGeoUnitsChart("matrixGeoUnitsPlot", categoryId, productIds);
   drawCategoryCountryUnitsChart("matrixCountryUnitsPlot", categoryId, productIds);
@@ -1250,7 +1271,7 @@ function drawResourceContribution(categoryId, productIds) {
   const segments = getCategoryPowerSegments(categoryId);
   const totalSkus = products.length || 1;
   const totalUnits = rows.reduce((sum, row) => sum + row.unitsNet, 0) || 1;
-  const totalRevenue = rows.reduce((sum, row) => sum + row.revenueNet, 0) || 1;
+  const totalRevenue = rows.reduce((sum, row) => sum + (row.orderRevenue || row.revenueNet || 0), 0) || 1;
   drawPlot(
     "resourceContributionPlot",
     [
@@ -1270,8 +1291,8 @@ function drawResourceContribution(categoryId, productIds) {
       },
       {
         x: segments,
-        y: segments.map((segment) => (rows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + row.revenueNet, 0) / totalRevenue) * 100),
-        name: "Revenue Share",
+        y: segments.map((segment) => (rows.filter((row) => productPowerSegment(indexes.products.get(row.modelId)) === segment).reduce((sum, row) => sum + (row.orderRevenue || row.revenueNet || 0), 0) / totalRevenue) * 100),
+        name: "Order_Rev Share",
         type: "bar",
         marker: { color: "#111827" },
       },
@@ -1746,9 +1767,9 @@ function renderDetailKpis(product, selectedPartNumber) {
   const summary = summarizeProductRows(rows);
   const pnCount = unique(rows.filter((row) => (row.orderQty || row.revenueNet || row.backlogRevenue)).map((row) => row.partNumber)).length || product.partNumbers?.length || 0;
   return [
-    renderKpi("Order Revenue", fmtCurrency(sumRows(rows, "orderRevenue") || summary.revenueNet), selectedPeriod("detail")),
-    renderKpi("Ship Revenue", fmtCurrency(sumRows(rows, "shipRevenue")), state.dimension === "product" ? `${selectedPartNumber === "all" ? pnCount : 1} PN` : state.segmentFilter === "all" ? "All segments" : state.segmentFilter),
-    renderKpi("Backlog Revenue", fmtCurrency(sumRows(rows, "backlogRevenue")), "Open backlog"),
+    renderKpi("Order_Rev", fmtCurrency(sumRows(rows, "orderRevenue") || summary.revenueNet), selectedPeriod("detail")),
+    renderKpi("Ship_Rev", fmtCurrency(sumRows(rows, "shipRevenue")), state.dimension === "product" ? `${selectedPartNumber === "all" ? pnCount : 1} PN` : state.segmentFilter === "all" ? "All segments" : state.segmentFilter),
+    renderKpi("Bklg_Rev", fmtCurrency(sumRows(rows, "backlogRevenue")), "Open backlog"),
     renderKpi("Order Qty", fmtCompact(sumRows(rows, "orderQty") || summary.unitsNet), "Real product Excel"),
   ].join("");
 }
@@ -1769,19 +1790,19 @@ function renderDetailCharts(product, selectedPartNumber) {
     drawReviewDetail(product);
   } else if (state.dimension === "product") {
     target.innerHTML = `
-      ${chartShell("detailPlotA", "PN Revenue & Growth", selectedPartNumber === "all" ? "all part numbers" : selectedPartNumber)}
+      ${chartShell("detailPlotA", "PN Order_Rev & Growth", selectedPartNumber === "all" ? "all part numbers" : selectedPartNumber)}
       ${chartShell("detailPlotB", "PN Order Quantity & Growth", "order quantity + growth rate")}
-      ${chartShell("detailGeoTrendPlot", "Geo Revenue & Growth", `${granularityLabels[state.detailGranularity]} trend`, true)}
-      ${chartShell("detailCountrySharePlot", "Country Revenue Share", selectedPeriod("detail"))}
+      ${chartShell("detailGeoTrendPlot", "Geo Order_Rev & Growth", `${granularityLabels[state.detailGranularity]} trend`, true)}
+      ${chartShell("detailCountrySharePlot", "Country Order_Rev Share", selectedPeriod("detail"))}
     `;
     drawPartNumberDetail(product, selectedPartNumber);
     drawProductGeoDetail(product, { partNumber: selectedPartNumber });
   } else {
     target.innerHTML = `
-      ${chartShell("detailPlotA", "Revenue by Segment & Growth", state.segmentFilter === "all" ? "Commercial vs Consumer" : state.segmentFilter)}
+      ${chartShell("detailPlotA", "Order_Rev by Segment & Growth", state.segmentFilter === "all" ? "Commercial vs Consumer" : state.segmentFilter)}
       ${chartShell("detailPlotB", "Order Quantity by Segment & Growth", `${granularityLabels[state.detailGranularity]} trend`)}
-      ${chartShell("detailGeoTrendPlot", "Geo Revenue & Growth", `${granularityLabels[state.detailGranularity]} trend`, true)}
-      ${chartShell("detailCountrySharePlot", "Country Revenue Share", selectedPeriod("detail"))}
+      ${chartShell("detailGeoTrendPlot", "Geo Order_Rev & Growth", `${granularityLabels[state.detailGranularity]} trend`, true)}
+      ${chartShell("detailCountrySharePlot", "Country Order_Rev Share", selectedPeriod("detail"))}
     `;
     drawSegmentDetail(product);
     drawProductGeoDetail(product, { segment: state.segmentFilter });
@@ -1819,16 +1840,16 @@ function drawSegmentDetail(product) {
   revenueTraces.push({
     x: periods,
     y: growthSeries(revenueValues),
-    name: "Revenue Growth %",
+    name: "Order_Rev Growth %",
     type: "scatter",
     mode: "lines+markers",
     yaxis: "y2",
     line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: "%{x}<br>Revenue Growth %{y:.1f}%<extra></extra>",
+    hovertemplate: "%{x}<br>Order_Rev Growth %{y:.1f}%<extra></extra>",
   });
   drawPlot("detailPlotA", revenueTraces, {
     barmode: "stack",
-    yaxis: { title: "Order Revenue", tickprefix: "$" },
+    yaxis: { title: "Order_Rev", tickprefix: "$" },
     yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
   });
 
@@ -1897,16 +1918,16 @@ function drawPartNumberDetail(product, selectedPartNumber) {
   revenueTraces.push({
     x: periods,
     y: growthSeries(revenueValues),
-    name: "Revenue Growth %",
+    name: "Order_Rev Growth %",
     type: "scatter",
     mode: "lines+markers",
     yaxis: "y2",
     line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: "%{x}<br>Revenue Growth %{y:.1f}%<extra></extra>",
+    hovertemplate: "%{x}<br>Order_Rev Growth %{y:.1f}%<extra></extra>",
   });
   drawPlot("detailPlotA", revenueTraces, {
     barmode: "stack",
-    yaxis: { title: "Order Revenue", tickprefix: "$" },
+    yaxis: { title: "Order_Rev", tickprefix: "$" },
     yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
   });
 
@@ -1959,16 +1980,16 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   traces.push({
     x: periods,
     y: growthSeries(revenueByPeriod),
-    name: "Geo Revenue Growth %",
+    name: "Geo Order_Rev Growth %",
     type: "scatter",
     mode: "lines+markers",
     yaxis: "y2",
     line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: "%{x}<br>Geo Revenue Growth %{y:.1f}%<extra></extra>",
+    hovertemplate: "%{x}<br>Geo Order_Rev Growth %{y:.1f}%<extra></extra>",
   });
   drawPlot("detailGeoTrendPlot", traces, {
     barmode: "stack",
-    yaxis: { title: "Order Revenue", tickprefix: "$" },
+    yaxis: { title: "Order_Rev", tickprefix: "$" },
     yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
   });
 
@@ -1993,7 +2014,7 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
             type: "pie",
             hole: 0.42,
             textinfo: "label+percent",
-            hovertemplate: "<b>%{label}</b><br>Revenue $%{value:,.0f}<br>%{percent}<extra></extra>",
+            hovertemplate: "<b>%{label}</b><br>Order_Rev $%{value:,.0f}<br>%{percent}<extra></extra>",
             marker: { colors: countries.map((_, idx) => palette[idx % palette.length]) },
           },
         ]
@@ -2084,8 +2105,8 @@ function drawProductDetail(product, selectedVariant) {
       },
       {
         x: periods,
-        y: periods.map((period) => byPeriod.get(period)?.revenueNet || 0),
-        name: "Revenue",
+        y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
+        name: "Order_Rev",
         type: "scatter",
         mode: "lines+markers",
         yaxis: "y2",
@@ -2094,7 +2115,7 @@ function drawProductDetail(product, selectedVariant) {
     ],
     {
       yaxis: { title: "Units" },
-      yaxis2: { title: "Revenue", overlaying: "y", side: "right", tickprefix: "$", showgrid: false },
+      yaxis2: { title: "Order_Rev", overlaying: "y", side: "right", tickprefix: "$", showgrid: false },
     },
   );
   drawPlot(
