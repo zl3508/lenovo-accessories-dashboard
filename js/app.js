@@ -26,6 +26,13 @@ const state = {
   selectedModels: {},
   competitorBrand: {},
   structureBrand: {},
+  summaryRevenueMetric: "orderRevenue",
+  summaryQuantityMetric: "orderQty",
+  summaryGeoMetric: "orderQty",
+  summaryCountryMetric: "orderQty",
+  summaryGeoProducts: {},
+  summaryCountryProducts: {},
+  summarySelectedGeo: {},
   variantId: "all",
 };
 
@@ -74,6 +81,17 @@ const palette = ["#e2231a", "#1f2328", "#6b7280", "#b91c1c", "#374151", "#0f766e
 const redScale = ["#f5c7c3", "#e98079", "#e2231a", "#b91c1c", "#7f1d1d"];
 const powerOrder = ["45W and below", "60W and below", "65W", "45W to 99W", "100W to 199W", "100W and above", "200W and above"];
 const priceBands = ["<$25", "$25-45", "$45-65", "$65+"];
+const revenueMetricOptions = [
+  { field: "orderRevenue", label: "Order_Rev", title: "Order_Rev", type: "currency" },
+  { field: "shipRevenue", label: "Ship_Rev", title: "Ship_Rev", type: "currency" },
+  { field: "backlogRevenue", label: "Bklg_Rev", title: "Bklg_Rev", type: "currency" },
+];
+const quantityMetricOptions = [
+  { field: "orderQty", label: "Order_Qty", title: "Order Quantity", type: "number" },
+  { field: "shipQty", label: "Ship_Qty", title: "Ship Quantity", type: "number" },
+  { field: "backlogQty", label: "Bklg_Qty", title: "Bklg Quantity", type: "number" },
+];
+const summaryMetricOptions = [...revenueMetricOptions, ...quantityMetricOptions];
 
 init();
 
@@ -507,8 +525,8 @@ function renderCategoryOverview(categoryId) {
           ${chartShell("categoryRevenuePlot", "Order_Rev Trend", `${granularityLabels[state.granularity]} · selected models`)}
           ${chartShell("categoryFulfillmentPlot", "Ship_Rev vs Bklg_Rev", selectedPeriod())}
           ${chartShell("categoryRevenueSharePlot", "Product Order_Rev Contribution", selectedPeriod())}
-          ${chartShell("categoryGeoUnitsPlot", "Geo Units by Product", selectedPeriod(), true)}
-          ${chartShell("categoryCountryUnitsPlot", "Country Units by Product", selectedPeriod(), true)}
+          ${chartShell("categoryGeoUnitsPlot", "Geo Order_Qty by Product", selectedPeriod(), true)}
+          ${chartShell("categoryCountryUnitsPlot", "Country Order_Qty by Product", selectedPeriod(), true)}
         </section>
         <section class="product-browser product-browser-full">
           <section class="product-list product-list-full">
@@ -572,34 +590,93 @@ function renderCategoryOverview(categoryId) {
 }
 
 function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary) {
-  const summaries = getProductLatestSummaries(categoryId, selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id));
+  const productIds = selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id);
+  const summaries = getProductLatestSummaries(categoryId, productIds);
   const main = summaries.slice().sort((a, b) => b.summary.orderRevenue - a.summary.orderRevenue)[0];
   const volume = summaries.slice().sort((a, b) => b.summary.orderQty - a.summary.orderQty)[0];
   const backlog = summaries.slice().sort((a, b) => b.summary.backlogRevenue - a.summary.backlogRevenue)[0];
   const cards = [
     ["Order_Rev Leader", main, "highest Order_Rev"],
-    ["Volume Leader", volume, "highest order quantity"],
+    ["Order_Qty Leader", volume, "highest Order_Qty"],
     ["Bklg_Rev Watch", backlog, "highest Bklg_Rev"],
   ];
+  const selectedGeo = state.summarySelectedGeo[categoryId];
 
   return `
     <section class="product-matrix">
-      <div class="kpi-grid">
-        ${renderKpi("Total Units", fmtCompact(latestSummary.orderQty || latestSummary.unitsNet), "Order quantity")}
-        ${renderKpi("Total Order_Rev", fmtCurrency(latestSummary.orderRevenue || latestSummary.revenueNet), selectedPeriod())}
-        ${renderKpi("Total Ship_Rev", fmtCurrency(latestSummary.shipRevenue), "Excel Ship_Rev")}
-        ${renderKpi("Total Bklg_Rev", fmtCurrency(latestSummary.backlogRevenue), "Excel Bklg_Rev")}
-      </div>
+      ${renderSummaryKpiGrid(categoryId, productIds, latestSummary)}
       <div class="matrix-card-grid">
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
       </div>
       <div class="chart-grid">
-        ${chartShell("matrixRevenueSharePlot", "Product Order_Rev Contribution", selectedPeriod())}
-        ${chartShell("matrixUnitSharePlot", "Product Unit Contribution", selectedPeriod())}
-        ${chartShell("matrixGeoUnitsPlot", "Geo Units by Product", selectedPeriod(), true)}
-        ${chartShell("matrixCountryUnitsPlot", "Country Units by Product", selectedPeriod(), true)}
+        ${chartShellWithControls(
+          "matrixRevenueSharePlot",
+          "Product Revenue Contribution",
+          selectedPeriod(),
+          renderMetricSelect("summary-revenue-metric", state.summaryRevenueMetric, revenueMetricOptions),
+        )}
+        ${chartShellWithControls(
+          "matrixUnitSharePlot",
+          "Product Quantity Contribution",
+          selectedPeriod(),
+          renderMetricSelect("summary-quantity-metric", state.summaryQuantityMetric, quantityMetricOptions),
+        )}
+        ${chartShellWithControls(
+          "matrixGeoUnitsPlot",
+          `Geo ${metricTitle(state.summaryGeoMetric)} by Product`,
+          "click a geo to filter country chart",
+          `${renderMetricSelect("summary-geo-metric", state.summaryGeoMetric, quantityMetricOptions)}
+          ${renderProductMultiSelect("summary-geo-products", categoryId, visibleProducts, getSummaryProductIds("summaryGeoProducts", categoryId, productIds))}`,
+          true,
+        )}
+        ${chartShellWithControls(
+          "matrixCountryUnitsPlot",
+          `Country ${metricTitle(state.summaryCountryMetric)} by Product`,
+          selectedGeo ? `Geo: ${selectedGeo}` : "all geos",
+          `${renderMetricSelect("summary-country-metric", state.summaryCountryMetric, quantityMetricOptions)}
+          ${renderProductMultiSelect("summary-country-products", categoryId, visibleProducts, getSummaryProductIds("summaryCountryProducts", categoryId, productIds))}
+          ${selectedGeo ? `<button class="ghost-button compact-button" type="button" data-action="clear-summary-geo">All Geo</button>` : ""}`,
+          true,
+        )}
       </div>
     </section>
+  `;
+}
+
+function renderSummaryKpiGrid(categoryId, productIds, latestSummary) {
+  const currentPeriod = selectedPeriod();
+  const previous = previousSelectedPeriod();
+  const previousRows = previous
+    ? data.productMetrics.filter((row) => row.categoryId === categoryId && productIds.includes(row.modelId) && periodKey(row.date, state.granularity) === previous)
+    : [];
+  const previousSummary = summarizeProductRows(previousRows);
+  const metrics = [
+    { field: "orderRevenue", label: "Order_Rev" },
+    { field: "shipRevenue", label: "Ship_Rev" },
+    { field: "orderQty", label: "Order_Qty" },
+    { field: "shipQty", label: "Ship_Qty" },
+  ];
+  return `
+    <div class="kpi-grid summary-kpi-grid">
+      ${metrics.map(({ field, label }) => renderTrendKpi(label, summaryMetricValue(latestSummary, field), summaryMetricValue(previousSummary, field), field, currentPeriod, previous)).join("")}
+    </div>
+  `;
+}
+
+function renderTrendKpi(label, currentValue, previousValue, field, currentPeriod, previousPeriod) {
+  const delta = currentValue - previousValue;
+  const pct = previousValue ? delta / Math.abs(previousValue) : currentValue ? 1 : 0;
+  const isUp = delta >= 0;
+  return `
+    <div class="kpi-tile trend-kpi">
+      <span>${escapeHtml(label)}</span>
+      <strong>${formatMetricValue(field, currentValue)}</strong>
+      <small>${escapeHtml(currentPeriod)}</small>
+      <div class="trend-line ${isUp ? "is-up" : "is-down"}">
+        <span>${isUp ? "&uarr;" : "&darr;"} ${formatSignedPercent(pct)}</span>
+        <em>vs ${escapeHtml(previousPeriod || "previous")}</em>
+      </div>
+    </div>
   `;
 }
 
@@ -613,10 +690,13 @@ function renderMatrixHighlightCard(badge, item, note) {
       <span class="matrix-badge">${escapeHtml(badge)}</span>
       <h3>${escapeHtml(product.shortName)}</h3>
       <p>${escapeHtml(subtitle)}</p>
-      <div class="mini-metrics">
-        <div><span>Order_Rev</span><strong>${fmtCurrency(item.summary.orderRevenue || item.summary.revenueNet)}</strong></div>
-        <div><span>Units</span><strong>${fmtCompact(item.summary.orderQty || item.summary.unitsNet)}</strong></div>
-        <div><span>Bklg_Rev</span><strong>${fmtCurrency(item.summary.backlogRevenue)}</strong></div>
+      <div class="mini-metrics matrix-metrics-two-row">
+        <div><span>Order_Rev</span><strong>${fmtExactCurrency(item.summary.orderRevenue || item.summary.revenueNet)}</strong></div>
+        <div><span>Ship_Rev</span><strong>${fmtExactCurrency(item.summary.shipRevenue)}</strong></div>
+        <div><span>Bklg_Rev</span><strong>${fmtExactCurrency(item.summary.backlogRevenue)}</strong></div>
+        <div><span>Order_Qty</span><strong>${fmtExactNumber(item.summary.orderQty || item.summary.unitsNet)}</strong></div>
+        <div><span>Ship_Qty</span><strong>${fmtExactNumber(item.summary.shipQty)}</strong></div>
+        <div><span>Bklg_Qty</span><strong>${fmtExactNumber(item.summary.backlogQty)}</strong></div>
       </div>
     </article>
   `;
@@ -886,22 +966,30 @@ function topGeoNames(rows, limit = 6) {
     .map((item) => item.geo);
 }
 
-function topGeoNamesByUnits(rows, limit = 8) {
+function topGeoNamesByMetric(rows, field = "orderQty", limit = 8) {
   return unique(rows.map((row) => row.geo || "Unassigned"))
-    .map((geo) => ({ geo, value: sumGeoRows(rows.filter((row) => (row.geo || "Unassigned") === geo), "orderQty") }))
+    .map((geo) => ({ geo, value: sumGeoRows(rows.filter((row) => (row.geo || "Unassigned") === geo), field) }))
     .filter((item) => item.value)
     .sort((a, b) => b.value - a.value)
     .slice(0, limit)
     .map((item) => item.geo);
 }
 
-function topCountryNamesByUnits(rows, limit = 8) {
+function topGeoNamesByUnits(rows, limit = 8) {
+  return topGeoNamesByMetric(rows, "orderQty", limit);
+}
+
+function topCountryNamesByMetric(rows, field = "orderQty", limit = 8) {
   return unique(rows.map((row) => row.country || "Unassigned"))
-    .map((country) => ({ country, value: sumGeoRows(rows.filter((row) => (row.country || "Unassigned") === country), "orderQty") }))
+    .map((country) => ({ country, value: sumGeoRows(rows.filter((row) => (row.country || "Unassigned") === country), field) }))
     .filter((item) => item.value)
     .sort((a, b) => b.value - a.value)
     .slice(0, limit)
     .map((item) => item.country);
+}
+
+function topCountryNamesByUnits(rows, limit = 8) {
+  return topCountryNamesByMetric(rows, "orderQty", limit);
 }
 
 function drawCategoryGeoChart(categoryId, selectedIds) {
@@ -918,32 +1006,41 @@ function drawCategoryGeoChart(categoryId, selectedIds) {
   drawPlot("categoryGeoPlot", traces, { barmode: "stack", yaxis: { title: "Order_Rev", tickprefix: "$" } });
 }
 
-function drawCategoryGeoUnitsChart(id, categoryId, selectedIds) {
+function drawCategoryGeoUnitsChart(id, categoryId, selectedIds, field = "orderQty", { interactive = false } = {}) {
   const rows = geoMetricRows({ categoryId, selectedIds });
-  const geos = topGeoNamesByUnits(rows);
+  const geos = topGeoNamesByMetric(rows, field);
   const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
   const traces = products.map((product, idx) => ({
     x: geos,
-    y: geos.map((geo) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.geo || "Unassigned") === geo), "orderQty")),
+    y: geos.map((geo) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.geo || "Unassigned") === geo), field)),
     name: product.shortName,
     type: "bar",
     marker: { color: palette[idx % palette.length] },
   }));
-  drawPlot(id, traces, { barmode: "stack", yaxis: { title: "Order Quantity" } });
+  const node = drawPlot(id, traces, { barmode: "stack", yaxis: { title: metricTitle(field) } });
+  if (interactive && node?.on) {
+    if (node.removeAllListeners) node.removeAllListeners("plotly_click");
+    node.on("plotly_click", (eventData) => {
+      const geo = eventData?.points?.[0]?.x;
+      if (!geo) return;
+      state.summarySelectedGeo[categoryId] = geo;
+      render();
+    });
+  }
 }
 
-function drawCategoryCountryUnitsChart(id, categoryId, selectedIds) {
-  const rows = geoMetricRows({ categoryId, selectedIds });
-  const countries = topCountryNamesByUnits(rows);
+function drawCategoryCountryUnitsChart(id, categoryId, selectedIds, field = "orderQty", { geo = null } = {}) {
+  const rows = geoMetricRows({ categoryId, selectedIds }).filter((row) => !geo || (row.geo || "Unassigned") === geo);
+  const countries = topCountryNamesByMetric(rows, field);
   const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
   const traces = products.map((product, idx) => ({
     x: countries,
-    y: countries.map((country) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.country || "Unassigned") === country), "orderQty")),
+    y: countries.map((country) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.country || "Unassigned") === country), field)),
     name: product.shortName,
     type: "bar",
     marker: { color: palette[idx % palette.length] },
   }));
-  drawPlot(id, traces, { barmode: "stack", margin: { l: 58, r: 28, t: 8, b: 86 }, yaxis: { title: "Order Quantity" } });
+  drawPlot(id, traces, { barmode: "stack", margin: { l: 58, r: 28, t: 8, b: 86 }, yaxis: { title: metricTitle(field) } });
 }
 
 function drawMarketAnalysis(categoryId) {
@@ -1232,17 +1329,20 @@ function drawCompetitorPricePower(categoryId, brandRows, powerSegments) {
 function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
   const productIds = selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id);
   const summaries = getProductLatestSummaries(categoryId, productIds);
-  drawProductSharePie("matrixRevenueSharePlot", summaries, "orderRevenue", "Order_Rev");
-  drawProductSharePie("matrixUnitSharePlot", summaries, "orderQty", "Order Quantity");
-  drawCategoryGeoUnitsChart("matrixGeoUnitsPlot", categoryId, productIds);
-  drawCategoryCountryUnitsChart("matrixCountryUnitsPlot", categoryId, productIds);
+  drawProductSharePie("matrixRevenueSharePlot", summaries, state.summaryRevenueMetric, metricLabel(state.summaryRevenueMetric));
+  drawProductSharePie("matrixUnitSharePlot", summaries, state.summaryQuantityMetric, metricLabel(state.summaryQuantityMetric));
+  drawCategoryGeoUnitsChart("matrixGeoUnitsPlot", categoryId, getSummaryProductIds("summaryGeoProducts", categoryId, productIds), state.summaryGeoMetric, { interactive: true });
+  drawCategoryCountryUnitsChart("matrixCountryUnitsPlot", categoryId, getSummaryProductIds("summaryCountryProducts", categoryId, productIds), state.summaryCountryMetric, {
+    geo: state.summarySelectedGeo[categoryId],
+  });
 }
 
 function drawProductSharePie(id, summaries, field, label) {
+  const valuePrefix = metricType(field) === "currency" ? "$" : "";
   const rows = summaries
     .map((item) => ({
       name: item.product.shortName,
-      value: item.summary[field] || (field === "orderRevenue" ? item.summary.revenueNet : item.summary.unitsNet) || 0,
+      value: summaryMetricValue(item.summary, field),
     }))
     .filter((row) => row.value)
     .sort((a, b) => b.value - a.value);
@@ -1256,7 +1356,7 @@ function drawProductSharePie(id, summaries, field, label) {
             type: "pie",
             hole: 0.42,
             textinfo: "label+percent",
-            hovertemplate: `<b>%{label}</b><br>${label} %{value:,.0f}<br>%{percent}<extra></extra>`,
+            hovertemplate: `<b>%{label}</b><br>${label} ${valuePrefix}%{value:,.0f}<br>%{percent}<extra></extra>`,
             marker: { colors: rows.map((_, idx) => palette[idx % palette.length]) },
           },
         ]
@@ -2411,6 +2511,43 @@ function renderKpi(label, value, note) {
   `;
 }
 
+function chartShellWithControls(id, title, meta = "", controls = "", wide = false) {
+  return `
+    <div class="chart-shell ${wide ? "is-wide" : ""}">
+      <div class="chart-title chart-title-with-controls">
+        <div>
+          <strong>${escapeHtml(title)}</strong>
+          <span>${escapeHtml(meta)}</span>
+        </div>
+        <div class="chart-controls">${controls}</div>
+      </div>
+      <div id="${id}" class="plot ${wide ? "tall" : ""}"></div>
+    </div>
+  `;
+}
+
+function renderMetricSelect(action, selected, options) {
+  return `
+    <label class="inline-field">
+      <span>Metric</span>
+      <select class="inline-select" data-action="${escapeAttr(action)}">
+        ${options.map((option) => `<option value="${escapeAttr(option.field)}" ${option.field === selected ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
+      </select>
+    </label>
+  `;
+}
+
+function renderProductMultiSelect(action, categoryId, products, selectedIds) {
+  return `
+    <label class="inline-field product-multi-field">
+      <span>Products</span>
+      <select class="inline-select product-multi-select" multiple size="${Math.min(4, Math.max(2, products.length))}" data-action="${escapeAttr(action)}" data-category="${escapeAttr(categoryId)}">
+        ${products.map((product) => `<option value="${escapeAttr(product.id)}" ${selectedIds.includes(product.id) ? "selected" : ""}>${escapeHtml(product.shortName)}</option>`).join("")}
+      </select>
+    </label>
+  `;
+}
+
 function chartShell(id, title, meta = "", wide = false) {
   return `
     <div class="chart-shell ${wide ? "is-wide" : ""}">
@@ -2428,11 +2565,11 @@ function drawPlot(id, traces, layout = {}) {
   if (!node) return;
   if (!window.Plotly) {
     node.innerHTML = `<div class="plot-fallback">Plotly.js not loaded.</div>`;
-    return;
+    return node;
   }
   if (!traces.length) {
     node.innerHTML = `<div class="plot-fallback">No data for current filters.</div>`;
-    return;
+    return node;
   }
   const baseLayout = {
     margin: layout.margin || { l: 54, r: 28, t: 8, b: 42 },
@@ -2449,6 +2586,7 @@ function drawPlot(id, traces, layout = {}) {
     displayModeBar: false,
     responsive: true,
   });
+  return node;
 }
 
 function renderGranularityButtons(active, scope) {
@@ -2483,6 +2621,14 @@ function ensureSelectedPeriod(scope, granularity) {
 function selectedPeriod(scope = "category") {
   const granularity = scope === "detail" ? state.detailGranularity : state.granularity;
   return ensureSelectedPeriod(scope, granularity);
+}
+
+function previousSelectedPeriod(scope = "category") {
+  const granularity = scope === "detail" ? state.detailGranularity : state.granularity;
+  const options = getPeriodOptions(granularity);
+  const current = selectedPeriod(scope);
+  const index = options.indexOf(current);
+  return index > 0 ? options[index - 1] : null;
 }
 
 function selectedDates(scope = "category") {
@@ -2532,6 +2678,21 @@ function getSelectedModelIds(categoryId, visibleProducts) {
   if (!selected || !selected.size) return ids;
   const scoped = ids.filter((id) => selected.has(id));
   return scoped.length ? scoped : ids;
+}
+
+function getSummaryProductIds(stateKey, categoryId, fallbackIds) {
+  const selected = state[stateKey]?.[categoryId];
+  const scoped = Array.isArray(selected) ? selected.filter((id) => fallbackIds.includes(id)) : [];
+  return scoped.length ? scoped : fallbackIds;
+}
+
+function setSummaryProductSelection(stateKey, categoryId, selectedIds) {
+  state[stateKey] ||= {};
+  state[stateKey][categoryId] = selectedIds.length ? selectedIds : null;
+}
+
+function selectedOptionValues(select) {
+  return Array.from(select.selectedOptions || []).map((option) => option.value);
 }
 
 function handleClick(event) {
@@ -2586,6 +2747,9 @@ function handleClick(event) {
   } else if (action === "part-number") {
     state.partNumber = button.dataset.partNumber;
     render();
+  } else if (action === "clear-summary-geo") {
+    delete state.summarySelectedGeo[state.categoryId];
+    render();
   }
 }
 
@@ -2611,6 +2775,37 @@ function handleChange(event) {
     state.filters[state.categoryId][target.dataset.filterId] = target.value;
     state.selectedModels[state.categoryId] = null;
     render();
+    return;
+  }
+  if (target.dataset.action === "summary-revenue-metric") {
+    state.summaryRevenueMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-quantity-metric") {
+    state.summaryQuantityMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-geo-metric") {
+    state.summaryGeoMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-country-metric") {
+    state.summaryCountryMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-geo-products") {
+    setSummaryProductSelection("summaryGeoProducts", state.categoryId, selectedOptionValues(target));
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-country-products") {
+    setSummaryProductSelection("summaryCountryProducts", state.categoryId, selectedOptionValues(target));
+    render();
+    return;
   }
   if (target.dataset.action === "toggle-model") {
     const visible = getFilteredProducts(state.categoryId);
@@ -2620,6 +2815,7 @@ function handleChange(event) {
     else next.delete(target.dataset.modelId);
     state.selectedModels[state.categoryId] = next;
     render();
+    return;
   }
 }
 
@@ -2973,6 +3169,19 @@ function fmtCompact(value) {
   return new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(value || 0);
 }
 
+function fmtExactNumber(value) {
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function fmtExactCurrency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value || 0);
+}
+
 function fmtCurrency(value) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -2984,6 +3193,37 @@ function fmtCurrency(value) {
 
 function fmtPercent(value) {
   return `${((value || 0) * 100).toFixed(1)}%`;
+}
+
+function formatSignedPercent(value) {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${((value || 0) * 100).toFixed(1)}%`;
+}
+
+function metricConfig(field) {
+  return summaryMetricOptions.find((option) => option.field === field) || summaryMetricOptions[0];
+}
+
+function metricLabel(field) {
+  return metricConfig(field).label;
+}
+
+function metricTitle(field) {
+  return metricConfig(field).title;
+}
+
+function metricType(field) {
+  return metricConfig(field).type;
+}
+
+function summaryMetricValue(summary, field) {
+  if (field === "orderRevenue") return summary.orderRevenue || summary.revenueNet || 0;
+  if (field === "orderQty") return summary.orderQty || summary.unitsNet || 0;
+  return summary[field] || 0;
+}
+
+function formatMetricValue(field, value) {
+  return metricType(field) === "currency" ? fmtExactCurrency(value) : fmtExactNumber(value);
 }
 
 function avg(values) {
