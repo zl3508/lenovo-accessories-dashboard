@@ -28,8 +28,8 @@ const state = {
   structureBrand: {},
   summaryRevenueMetric: "orderRevenue",
   summaryQuantityMetric: "orderQty",
-  summaryGeoMetric: "orderQty",
-  summaryCountryMetric: "orderQty",
+  summaryGeoMetric: "order",
+  summaryCountryMetric: "order",
   summaryGeoProducts: {},
   summaryCountryProducts: {},
   summarySelectedGeo: {},
@@ -90,6 +90,11 @@ const quantityMetricOptions = [
   { field: "orderQty", label: "Order_Qty", title: "Order Quantity", type: "number" },
   { field: "shipQty", label: "Ship_Qty", title: "Ship Quantity", type: "number" },
   { field: "backlogQty", label: "Bklg_Qty", title: "Bklg Quantity", type: "number" },
+];
+const flowMetricOptions = [
+  { field: "order", label: "Order", revenueField: "orderRevenue", quantityField: "orderQty", revenueLabel: "Order_Rev", quantityLabel: "Order_Qty" },
+  { field: "ship", label: "Ship", revenueField: "shipRevenue", quantityField: "shipQty", revenueLabel: "Ship_Rev", quantityLabel: "Ship_Qty" },
+  { field: "bklg", label: "Bklg", revenueField: "backlogRevenue", quantityField: "backlogQty", revenueLabel: "Bklg_Rev", quantityLabel: "Bklg_Qty" },
 ];
 const summaryMetricOptions = [...revenueMetricOptions, ...quantityMetricOptions];
 
@@ -623,18 +628,18 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
         )}
         ${chartShellWithControls(
           "matrixGeoUnitsPlot",
-          `Geo ${metricTitle(state.summaryGeoMetric)} by Product`,
+          `Geo ${flowMetricLabel(state.summaryGeoMetric)} Revenue + Quantity by Product`,
           "click a geo to filter country chart",
-          `${renderMetricSelect("summary-geo-metric", state.summaryGeoMetric, quantityMetricOptions)}
-          ${renderProductMultiSelect("summary-geo-products", categoryId, visibleProducts, getSummaryProductIds("summaryGeoProducts", categoryId, productIds))}`,
+          `${renderMetricSelect("summary-geo-metric", state.summaryGeoMetric, flowMetricOptions)}
+          ${renderProductCheckboxList("summary-geo-product-toggle", categoryId, visibleProducts, getSummaryProductIds("summaryGeoProducts", categoryId, productIds))}`,
           true,
         )}
         ${chartShellWithControls(
           "matrixCountryUnitsPlot",
-          `Country ${metricTitle(state.summaryCountryMetric)} by Product`,
+          `Country ${flowMetricLabel(state.summaryCountryMetric)} Revenue + Quantity by Product`,
           selectedGeo ? `Geo: ${selectedGeo}` : "all geos",
-          `${renderMetricSelect("summary-country-metric", state.summaryCountryMetric, quantityMetricOptions)}
-          ${renderProductMultiSelect("summary-country-products", categoryId, visibleProducts, getSummaryProductIds("summaryCountryProducts", categoryId, productIds))}
+          `${renderMetricSelect("summary-country-metric", state.summaryCountryMetric, flowMetricOptions)}
+          ${renderProductCheckboxList("summary-country-product-toggle", categoryId, visibleProducts, getSummaryProductIds("summaryCountryProducts", categoryId, productIds))}
           ${selectedGeo ? `<button class="ghost-button compact-button" type="button" data-action="clear-summary-geo">All Geo</button>` : ""}`,
           true,
         )}
@@ -1007,6 +1012,10 @@ function drawCategoryGeoChart(categoryId, selectedIds) {
 }
 
 function drawCategoryGeoUnitsChart(id, categoryId, selectedIds, field = "orderQty", { interactive = false } = {}) {
+  if (isFlowMetric(field)) {
+    drawCategoryGeoFlowChart(id, categoryId, selectedIds, field, { interactive });
+    return;
+  }
   const rows = geoMetricRows({ categoryId, selectedIds });
   const geos = topGeoNamesByMetric(rows, field);
   const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
@@ -1030,6 +1039,10 @@ function drawCategoryGeoUnitsChart(id, categoryId, selectedIds, field = "orderQt
 }
 
 function drawCategoryCountryUnitsChart(id, categoryId, selectedIds, field = "orderQty", { geo = null } = {}) {
+  if (isFlowMetric(field)) {
+    drawCategoryCountryFlowChart(id, categoryId, selectedIds, field, { geo });
+    return;
+  }
   const rows = geoMetricRows({ categoryId, selectedIds }).filter((row) => !geo || (row.geo || "Unassigned") === geo);
   const countries = topCountryNamesByMetric(rows, field);
   const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
@@ -1041,6 +1054,74 @@ function drawCategoryCountryUnitsChart(id, categoryId, selectedIds, field = "ord
     marker: { color: palette[idx % palette.length] },
   }));
   drawPlot(id, traces, { barmode: "stack", margin: { l: 58, r: 28, t: 8, b: 86 }, yaxis: { title: metricTitle(field) } });
+}
+
+function drawCategoryGeoFlowChart(id, categoryId, selectedIds, flow, { interactive = false } = {}) {
+  const metric = flowMetricConfig(flow);
+  const rows = geoMetricRows({ categoryId, selectedIds });
+  const geos = topGeoNamesByMetric(rows, metric.revenueField);
+  const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
+  const traces = buildDualMetricProductBarTraces(products, geos, rows, "geo", metric);
+  const node = drawPlot(id, traces, dualMetricBarLayout(metric, { barmode: "group" }));
+  if (interactive && node?.on) {
+    if (node.removeAllListeners) node.removeAllListeners("plotly_click");
+    node.on("plotly_click", (eventData) => {
+      const geo = eventData?.points?.[0]?.x;
+      if (!geo) return;
+      state.summarySelectedGeo[categoryId] = geo;
+      render();
+    });
+  }
+}
+
+function drawCategoryCountryFlowChart(id, categoryId, selectedIds, flow, { geo = null } = {}) {
+  const metric = flowMetricConfig(flow);
+  const rows = geoMetricRows({ categoryId, selectedIds }).filter((row) => !geo || (row.geo || "Unassigned") === geo);
+  const countries = topCountryNamesByMetric(rows, metric.revenueField);
+  const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
+  const traces = buildDualMetricProductBarTraces(products, countries, rows, "country", metric);
+  drawPlot(id, traces, dualMetricBarLayout(metric, { margin: { l: 64, r: 64, t: 8, b: 86 }, barmode: "group" }));
+}
+
+function buildDualMetricProductBarTraces(products, groups, rows, groupField, metric) {
+  const groupValue = (row) => (groupField === "geo" ? row.geo || "Unassigned" : row.country || "Unassigned");
+  return products.flatMap((product, idx) => {
+    const color = palette[idx % palette.length];
+    const productRows = rows.filter((row) => row.modelId === product.id);
+    return [
+      {
+        x: groups,
+        y: groups.map((group) => sumGeoRows(productRows.filter((row) => groupValue(row) === group), metric.revenueField)),
+        name: `${product.shortName} ${metric.revenueLabel}`,
+        type: "bar",
+        offsetgroup: `${product.id}-rev`,
+        legendgroup: product.id,
+        marker: { color },
+        hovertemplate: `<b>%{x}</b><br>${product.shortName}<br>${metric.revenueLabel} $%{y:,.0f}<extra></extra>`,
+      },
+      {
+        x: groups,
+        y: groups.map((group) => sumGeoRows(productRows.filter((row) => groupValue(row) === group), metric.quantityField)),
+        name: `${product.shortName} ${metric.quantityLabel}`,
+        type: "bar",
+        yaxis: "y2",
+        offsetgroup: `${product.id}-qty`,
+        legendgroup: product.id,
+        marker: { color, opacity: 0.42, line: { color, width: 1 } },
+        hovertemplate: `<b>%{x}</b><br>${product.shortName}<br>${metric.quantityLabel} %{y:,.0f}<extra></extra>`,
+      },
+    ];
+  });
+}
+
+function dualMetricBarLayout(metric, overrides = {}) {
+  return {
+    barmode: "group",
+    yaxis: { title: metric.revenueLabel, tickprefix: "$" },
+    yaxis2: { title: metric.quantityLabel, overlaying: "y", side: "right", showgrid: false },
+    legend: { orientation: "h", y: -0.22, x: 0 },
+    ...overrides,
+  };
 }
 
 function drawMarketAnalysis(categoryId) {
@@ -2548,6 +2629,26 @@ function renderProductMultiSelect(action, categoryId, products, selectedIds) {
   `;
 }
 
+function renderProductCheckboxList(action, categoryId, products, selectedIds) {
+  return `
+    <div class="inline-field product-check-field" role="group" aria-label="${escapeAttr(categoryId)} products">
+      <span>Products</span>
+      <div class="product-check-list">
+        ${products
+          .map(
+            (product) => `
+            <label class="product-check-option">
+              <input type="checkbox" data-action="${escapeAttr(action)}" data-category="${escapeAttr(categoryId)}" data-model-id="${escapeAttr(product.id)}" ${selectedIds.includes(product.id) ? "checked" : ""} />
+              <span>${escapeHtml(product.shortName)}</span>
+            </label>
+          `,
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
 function chartShell(id, title, meta = "", wide = false) {
   return `
     <div class="chart-shell ${wide ? "is-wide" : ""}">
@@ -2691,6 +2792,15 @@ function setSummaryProductSelection(stateKey, categoryId, selectedIds) {
   state[stateKey][categoryId] = selectedIds.length ? selectedIds : null;
 }
 
+function updateSummaryProductCheckboxSelection(stateKey, modelId, checked) {
+  const visibleProducts = getFilteredProducts(state.categoryId);
+  const fallbackIds = visibleProducts.map((product) => product.id);
+  const current = new Set(getSummaryProductIds(stateKey, state.categoryId, fallbackIds));
+  if (checked) current.add(modelId);
+  else current.delete(modelId);
+  setSummaryProductSelection(stateKey, state.categoryId, fallbackIds.filter((id) => current.has(id)));
+}
+
 function selectedOptionValues(select) {
   return Array.from(select.selectedOptions || []).map((option) => option.value);
 }
@@ -2804,6 +2914,16 @@ function handleChange(event) {
   }
   if (target.dataset.action === "summary-country-products") {
     setSummaryProductSelection("summaryCountryProducts", state.categoryId, selectedOptionValues(target));
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-geo-product-toggle") {
+    updateSummaryProductCheckboxSelection("summaryGeoProducts", target.dataset.modelId, target.checked);
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-country-product-toggle") {
+    updateSummaryProductCheckboxSelection("summaryCountryProducts", target.dataset.modelId, target.checked);
     render();
     return;
   }
@@ -3214,6 +3334,18 @@ function metricTitle(field) {
 
 function metricType(field) {
   return metricConfig(field).type;
+}
+
+function flowMetricConfig(field) {
+  return flowMetricOptions.find((option) => option.field === field) || flowMetricOptions[0];
+}
+
+function isFlowMetric(field) {
+  return flowMetricOptions.some((option) => option.field === field);
+}
+
+function flowMetricLabel(field) {
+  return flowMetricConfig(field).label;
 }
 
 function summaryMetricValue(summary, field) {

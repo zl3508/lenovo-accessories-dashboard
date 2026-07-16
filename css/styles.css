@@ -868,6 +868,44 @@ input[type="search"] {
   min-height: 98px;
 }
 
+.product-check-field {
+  min-width: 230px;
+}
+
+.product-check-list {
+  display: grid;
+  gap: 4px;
+  max-height: 132px;
+  padding: 8px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.product-check-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.product-check-option input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--red);
+  flex: 0 0 auto;
+}
+
+.product-check-option span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .compact-button {
   align-self: end;
   min-height: 38px;
@@ -1352,7 +1390,8 @@ input[type="search"] {
   }
 
   .inline-field,
-  .product-multi-field {
+  .product-multi-field,
+  .product-check-field {
     min-width: 0;
     width: 100%;
   }
