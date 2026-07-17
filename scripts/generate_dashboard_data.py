@@ -1307,7 +1307,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
         "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
         "shortName": "Hybrid 140W 10.2K",
-        "image": "assets/products/bank-hybrid-2in1-140w-10200.avif",
+        "image": "assets/products/bank-hybrid-2in1-140w-10200.png",
         "listPrice": 99,
         "costRatio": 0.58,
         "attributes": {
@@ -1934,6 +1934,7 @@ def main() -> None:
     parser.add_argument("--source-xlsx", default=DEFAULT_SOURCE, help="Optional sample workbook used for month cadence.")
     parser.add_argument("--source-dir", default=DEFAULT_REAL_SOURCE_DIR, help="Directory containing real product Excel exports.")
     parser.add_argument("--output-dir", default="data", help="Directory for static JSON outputs.")
+    parser.add_argument("--allow-modeled-fallback", action="store_true", help="Allow generating the legacy modeled demo dataset when real product Excel files are unavailable.")
     args = parser.parse_args()
 
     source = Path(args.source_xlsx).expanduser() if args.source_xlsx else None
@@ -1944,6 +1945,16 @@ def main() -> None:
         metadata = build_real_dashboard(source_dir, output_dir)
         print(json.dumps(metadata, ensure_ascii=False, indent=2))
         return
+
+    if not args.allow_modeled_fallback:
+        missing = []
+        if source_dir and source_dir.exists():
+            missing = [spec["sourceFile"] for spec in REAL_PRODUCT_SPECS if not (source_dir / spec["sourceFile"]).exists()]
+        reason = f"missing files: {', '.join(missing)}" if missing else f"source directory unavailable: {source_dir}"
+        raise SystemExit(
+            "Real product Excel files were not found, so static JSON was not regenerated. "
+            f"{reason}. Pass --allow-modeled-fallback only when you intentionally want the legacy modeled demo dataset."
+        )
 
     months, seasonality, source_meta = month_sequence_from_source(source)
 

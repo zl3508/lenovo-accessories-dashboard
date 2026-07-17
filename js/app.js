@@ -226,18 +226,8 @@ function renderHome() {
           </div>
           <div class="stat-tile">
             <span>Latest Order_Rev</span>
-            <strong>${fmtCurrency(totalSummary.orderRevenue || totalSummary.revenueNet)}</strong>
+            <strong>${fmtExactCurrency(totalSummary.orderRevenue || totalSummary.revenueNet)}</strong>
             <small>${formatPeriod(latest, "quarter")}</small>
-          </div>
-          <div class="stat-tile">
-            <span>Latest Units</span>
-            <strong>${fmtCompact(totalSummary.unitsNet)}</strong>
-            <small>Net shipped units</small>
-          </div>
-          <div class="stat-tile">
-            <span>${modeledText("Gross Margin")}</span>
-            <strong>${fmtPercent(totalSummary.margin)}</strong>
-            <small>Modeled from cost assumptions.</small>
           </div>
         </div>
       </section>
@@ -251,7 +241,7 @@ function renderHome() {
       </section>
 
       <section class="category-grid">
-        ${data.catalog.categories.map((category) => renderCategoryCard(category, latest)).join("")}
+        ${data.catalog.categories.map((category) => renderCategoryCard(category)).join("")}
       </section>
 
       <section class="future-row" aria-label="Future categories">
@@ -261,8 +251,8 @@ function renderHome() {
   `;
 }
 
-function renderCategoryCard(category, latest) {
-  const rows = data.productMetrics.filter((row) => row.categoryId === category.id && row.date === latest);
+function renderCategoryCard(category) {
+  const rows = data.productMetrics.filter((row) => row.categoryId === category.id);
   const summary = summarizeProductRows(rows);
   const productCount = data.catalog.products.filter((product) => product.categoryId === category.id).length;
   return `
@@ -276,9 +266,9 @@ function renderCategoryCard(category, latest) {
       </header>
       <p>${escapeHtml(category.description)}</p>
       <div class="category-metrics">
-        <div><span>Units</span><strong>${fmtCompact(summary.unitsNet)}</strong></div>
-        <div><span>Order_Rev</span><strong>${fmtCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
-        <div><span>${modeledText("Profit")}</span><strong>${fmtCurrency(summary.grossProfit)}</strong></div>
+        <div><span>Total Order_Qty</span><strong>${fmtExactNumber(summary.orderQty || summary.unitsNet)}</strong></div>
+        <div><span>Total Order_Rev</span><strong>${fmtExactCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
+        <div><span>Avg Ship_AUR</span><strong>${fmtExactCurrency(summary.shipAUR)}</strong></div>
       </div>
     </button>
   `;
@@ -512,7 +502,7 @@ function renderCategoryOverview(categoryId) {
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
-          <h2>${modeledText("Product Summary")}</h2>
+          <h2>Product Summary</h2>
         </div>
         ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
       </section>
@@ -771,7 +761,7 @@ function renderProductCard(product) {
           <h3>${escapeHtml(product.name)}</h3>
           <p>${escapeHtml((attrs.features || []).join(" / "))}</p>
           <div class="mini-metrics">
-            <div><span>Units</span><strong>${fmtCompact(summary.unitsNet)}</strong></div>
+            <div><span>Order_Qty</span><strong>${fmtExactNumber(summary.orderQty || summary.unitsNet)}</strong></div>
             <div><span>Order_Rev</span><strong>${fmtCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
             <div><span>Bklg_Rev</span><strong>${fmtCurrency(summary.backlogRevenue)}</strong></div>
           </div>
@@ -862,8 +852,8 @@ function renderProductRow(product, selectedIds) {
         </span>
       </label>
       <div>
-        <span class="metric-label">Units</span>
-        <strong>${fmtCompact(summary.unitsNet)}</strong>
+        <span class="metric-label">Order_Qty</span>
+        <strong>${fmtExactNumber(summary.orderQty || summary.unitsNet)}</strong>
       </div>
       <div>
         <span class="metric-label">Order_Rev</span>
@@ -902,7 +892,7 @@ function drawCategoryCharts(categoryId, selectedIds) {
       line: { color: palette[idx % palette.length], width: 2.4 },
     };
   });
-  drawPlot("categorySalesPlot", salesTraces, { yaxis: { title: "Units" } });
+  drawPlot("categorySalesPlot", salesTraces, { yaxis: { title: "Order_Qty" } });
 
   const revenueTraces = products.map((product, idx) => {
     const productRows = categoryRows.filter((row) => row.modelId === product.id);
@@ -2991,6 +2981,7 @@ function summarizeProductRows(rows) {
   summary.margin = summary.revenueNet ? summary.grossProfit / summary.revenueNet : 0;
   summary.returnRate = summary.unitsGross ? summary.unitsReturned / summary.unitsGross : 0;
   summary.aur = summary.orderQty ? summary.orderRevenue / summary.orderQty : summary.unitsNet ? summary.revenueNet / summary.unitsNet : 0;
+  summary.shipAUR = summary.shipQty ? summary.shipRevenue / summary.shipQty : 0;
   summary.inventorySellThrough = summary.count ? summary.inventorySellThrough / summary.count : 0;
   summary.conversionRate = summary.count ? summary.conversionRate / summary.count : 0;
   return summary;
