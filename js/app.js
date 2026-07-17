@@ -26,6 +26,7 @@ const state = {
   selectedModels: {},
   competitorBrand: {},
   structureBrand: {},
+  structureMarket: {},
   summaryRevenueMetric: "orderRevenue",
   summaryQuantityMetric: "orderQty",
   summaryGeoMetric: "order",
@@ -340,11 +341,7 @@ function renderModuleTabs(categoryId) {
 }
 
 function renderMarketAnalysis(categoryId) {
-  const category = indexes.categories.get(categoryId);
   const period = selectedPeriod();
-  const latestBrands = brandRowsForSelectedPeriod(categoryId);
-  const lenovo = latestBrands.find((row) => row.brand === "Lenovo") || {};
-  const totalUnits = latestBrands.reduce((sum, row) => sum + row.brandUnits, 0);
   const reports = data.catalog.policyReports?.[categoryId] || [];
   const structureBrands = unique(data.brandMarket.filter((row) => row.categoryId === categoryId).map((row) => row.brand));
   state.structureBrand[categoryId] ||= structureBrands.includes("Lenovo") ? "Lenovo" : structureBrands[0];
@@ -382,19 +379,6 @@ function renderMarketAnalysis(categoryId) {
 
   return `
     <div class="view-stack">
-      <section class="analysis-hero">
-        <div>
-          <p class="eyebrow">Market Analysis</p>
-          <h2>${escapeHtml(category.label)} ${escapeHtml(modeledText("Market Analysis"))}</h2>
-          <p>Use the module buttons above to switch between policy, trend, and structure analysis. Current period: ${escapeHtml(period)}.</p>
-        </div>
-        <div class="insight-list">
-          <div><span>${modeledText("Market Units")}</span><strong>${fmtCompact(totalUnits)}</strong></div>
-          <div><span>${modeledText("Lenovo Share")}</span><strong>${fmtPercent(lenovo.marketShare || 0)}</strong></div>
-          <div><span>${modeledText("Policy Reports")}</span><strong>${reports.length}</strong></div>
-          <div><span>Selected Period</span><strong>${escapeHtml(period)}</strong></div>
-        </div>
-      </section>
       ${moduleMarkup}
     </div>
   `;
@@ -415,24 +399,21 @@ function renderPolicyCard(report) {
 function renderMarketStructureModule(categoryId, structureBrands, period) {
   const report = marketStructureReport(categoryId);
   if (report) {
+    const selected = selectedStructureMarket(categoryId, report);
     return `
       <section class="module-block">
         <div class="module-head">
           <span>Market Module</span>
           <h2>${escapeHtml(report.title)}</h2>
-          <p>Country-level structure from Ipsos user research and Lenovo power category industry analysis.</p>
+          <p>Country-level qualitative analysis from the source reports. Select a market block to read the detailed assessment.</p>
         </div>
         <div class="source-note">${escapeHtml(report.source)}</div>
-        <div class="structure-country-grid">
-          ${report.markets.map((market) => renderMarketCountryCard(market, report)).join("")}
+        <div class="structure-report-layout">
+          <div class="structure-country-grid">
+            ${report.markets.map((market) => renderMarketCountryCard(categoryId, market, report, selected)).join("")}
+          </div>
+          ${renderMarketStructureDetail(selected, report)}
         </div>
-        <div class="chart-grid">
-          ${chartShell("structureSamplePlot", "Report Sample Size by Market", "N by report market group")}
-          ${chartShell("structureSelfPurchasePlot", "Self-Purchased Rate and Mean Purchase Price", "left = %, right = USD")}
-          ${chartShell("structureDemandPlot", "Country Demand Priorities", "percentage of feature-valuing respondents")}
-          ${chartShell("structureChannelPlot", "Purchase Channel Mix by Market", "percentage of buyers")}
-        </div>
-        <div class="detail-panel">${renderIndustryCountryNotes(report)}</div>
       </section>
     `;
   }
@@ -460,35 +441,94 @@ function renderMarketStructureModule(categoryId, structureBrands, period) {
   `;
 }
 
-function renderMarketCountryCard(market, report) {
+function selectedStructureMarket(categoryId, report) {
+  const selectedCode = state.structureMarket[categoryId];
+  return report.markets.find((market) => market.code === selectedCode) || report.markets[0];
+}
+
+function renderMarketCountryCard(categoryId, market, report, selected) {
   const topDemand = topMarketMetric(market, report.demandMetrics);
   const topChannel = topMarketMetric(market, report.channelMetrics);
+  const active = selected?.code === market.code ? "is-active" : "";
   return `
-    <article class="structure-country-card">
+    <button class="structure-country-card ${active}" type="button" data-action="structure-market" data-market-code="${escapeAttr(market.code)}" data-category="${escapeAttr(categoryId)}">
       <span class="tag">${escapeHtml(market.code)}</span>
-      <h3>${escapeHtml(market.label)}</h3>
-      <div class="mini-metrics">
-        <div><span>Sample</span><strong>${fmtExactNumber(market.sample)}</strong></div>
-        <div><span>Self-Purchased</span><strong>${fmtWholePercent(market.selfPurchased)}</strong></div>
-        <div><span>Mean Price</span><strong>${fmtExactCurrency(market.meanPrice)}</strong></div>
-      </div>
-      <p><strong>${escapeHtml(topDemand.label)} ${fmtWholePercent(topDemand.value)}</strong> · ${escapeHtml(topChannel.label)} ${fmtWholePercent(topChannel.value)}</p>
-      <p>${escapeHtml(market.note)}</p>
+      <span class="structure-country-name">${escapeHtml(market.label)}</span>
+      <span class="structure-card-metrics">
+        <span><strong>${fmtExactNumber(market.sample)}</strong><em>Sample</em></span>
+        <span><strong>${fmtWholePercent(market.selfPurchased)}</strong><em>Self-purchased</em></span>
+        <span><strong>${fmtExactCurrency(market.meanPrice)}</strong><em>Mean price</em></span>
+      </span>
+      <span class="structure-card-note">${escapeHtml(topDemand.label)} ${fmtWholePercent(topDemand.value)} · ${escapeHtml(topChannel.label)} ${fmtWholePercent(topChannel.value)}</span>
+    </button>
+  `;
+}
+
+function renderMarketStructureDetail(market, report) {
+  const topDemand = topMarketMetric(market, report.demandMetrics);
+  const secondDemand = rankedMarketMetrics(market, report.demandMetrics)[1] || topDemand;
+  const topChannel = topMarketMetric(market, report.channelMetrics);
+  const industryNotes = relatedIndustryNotes(report, market);
+  return `
+    <article class="structure-report-detail">
+      <header class="structure-report-head">
+        <div>
+          <span class="tag">${escapeHtml(market.code)}</span>
+          <h3>${escapeHtml(market.label)} Market Reading</h3>
+          <p>${escapeHtml(market.note)}</p>
+        </div>
+        <div class="structure-report-kpis">
+          <div><span>Sample</span><strong>${fmtExactNumber(market.sample)}</strong></div>
+          <div><span>Buyer Base</span><strong>${fmtExactNumber(market.buyerBase)}</strong></div>
+          <div><span>Feature Base</span><strong>${fmtExactNumber(market.featureBase)}</strong></div>
+          <div><span>Mean Price</span><strong>${fmtExactCurrency(market.meanPrice)}</strong></div>
+        </div>
+      </header>
+
+      <section class="structure-story-grid">
+        <div>
+          <h4>Market Behavior</h4>
+          <p>${marketBehaviorText(market, topChannel)}</p>
+        </div>
+        <div>
+          <h4>Demand Signal</h4>
+          <p>${marketDemandText(market, topDemand, secondDemand)}</p>
+        </div>
+        <div>
+          <h4>Portfolio Implication</h4>
+          <p>${marketImplicationText(market, report, topDemand, topChannel)}</p>
+        </div>
+      </section>
+
+      <section class="structure-metric-section">
+        <div>
+          <h4>Demand Priorities</h4>
+          ${renderReportMetricRows(market, report.demandMetrics)}
+        </div>
+        <div>
+          <h4>Purchase Channels</h4>
+          ${renderReportMetricRows(market, report.channelMetrics)}
+        </div>
+      </section>
+
+      <section class="structure-industry-notes">
+        <h4>Industry Context</h4>
+        ${industryNotes.length ? industryNotes.map(renderIndustryNote).join("") : `<p>No dedicated country page in the industry report for this market group; use the survey metrics above as the primary structure signal.</p>`}
+      </section>
     </article>
   `;
 }
 
-function renderIndustryCountryNotes(report) {
+function renderReportMetricRows(market, metrics) {
   return `
-    <div class="chart-title"><strong>Industry Country Notes</strong><span>Power category report</span></div>
-    <div class="news-list compact-news-list">
-      ${report.industryCountries
+    <div class="structure-metric-list">
+      ${rankedMarketMetrics(market, metrics)
         .map(
-          (item) => `
-            <article class="news-item">
-              <strong>${escapeHtml(item.country)} · ${escapeHtml(item.headline)}</strong>
-              <p>${escapeHtml(item.metrics)} <span class="muted-inline">${escapeHtml(item.sourcePage)}</span></p>
-            </article>
+          (metric) => `
+            <div class="structure-metric-row" style="--value:${Math.max(0, Math.min(100, metric.value))}%">
+              <div><span>${escapeHtml(metric.label)}</span><strong>${fmtWholePercent(metric.value)}</strong></div>
+              <i></i>
+            </div>
           `,
         )
         .join("")}
@@ -496,14 +536,53 @@ function renderIndustryCountryNotes(report) {
   `;
 }
 
+function renderIndustryNote(item) {
+  return `
+    <article class="structure-note">
+      <strong>${escapeHtml(item.country)} · ${escapeHtml(item.headline)}</strong>
+      <p>${escapeHtml(item.metrics)} <span class="muted-inline">${escapeHtml(item.sourcePage)}</span></p>
+    </article>
+  `;
+}
+
 function marketStructureReport(categoryId) {
   return data.catalog.marketStructureReports?.[categoryId] || null;
 }
 
-function topMarketMetric(market, metrics) {
+function rankedMarketMetrics(market, metrics) {
   return (metrics || [])
     .map((metric) => ({ ...metric, value: market[metric.field] || 0 }))
-    .sort((a, b) => b.value - a.value)[0] || { label: "N/A", value: 0 };
+    .sort((a, b) => b.value - a.value);
+}
+
+function topMarketMetric(market, metrics) {
+  return rankedMarketMetrics(market, metrics)[0] || { label: "N/A", value: 0 };
+}
+
+function relatedIndustryNotes(report, market) {
+  const map = {
+    "US": ["USA"],
+    "JP": ["Japan"],
+    "DE+UK+SE": ["UK"],
+    "IN": ["Indonesia"],
+    "BR+MEX": [],
+    "SA": [],
+  };
+  const targets = map[market.code] || [];
+  return (report.industryCountries || []).filter((item) => targets.includes(item.country));
+}
+
+function marketBehaviorText(market, topChannel) {
+  return `Self-purchased buyers represent ${fmtWholePercent(market.selfPurchased)} of respondents, with a mean purchase price of ${fmtExactCurrency(market.meanPrice)}. The leading channel is ${topChannel.label.toLowerCase()} at ${fmtWholePercent(topChannel.value)}, so channel execution should match local buying behavior instead of using one global route-to-market.`;
+}
+
+function marketDemandText(market, topDemand, secondDemand) {
+  return `${topDemand.label} is the strongest stated feature priority at ${fmtWholePercent(topDemand.value)}, followed by ${secondDemand.label.toLowerCase()} at ${fmtWholePercent(secondDemand.value)}. The report suggests messaging should focus on concrete product utility rather than broad accessory positioning.`;
+}
+
+function marketImplicationText(market, report, topDemand, topChannel) {
+  const categoryPhrase = report.title.toLowerCase().includes("power bank") ? "power bank portfolio" : "adapter portfolio";
+  return `For the ${categoryPhrase}, ${market.label} should be treated as a distinct market block: prioritize ${topDemand.label.toLowerCase()} claims, keep price architecture close to the ${fmtExactCurrency(market.meanPrice)} observed mean, and support the ${topChannel.label.toLowerCase()} path with matching product content.`;
 }
 
 function renderCompetitiveAnalysis(categoryId) {
@@ -1191,7 +1270,6 @@ function dualMetricBarLayout(metric, overrides = {}) {
 
 function drawMarketAnalysis(categoryId) {
   if (state.marketModule === "structure" && marketStructureReport(categoryId)) {
-    drawReportMarketStructure(categoryId);
     return;
   }
   const period = selectedPeriod();
@@ -1209,68 +1287,6 @@ function drawMarketAnalysis(categoryId) {
   drawPowerPortHeatmap("structurePowerPortHeatmap", selectedRows, powerSegments, portSegments, "Units");
   drawPricePowerStructure(categoryId, selectedRows, powerSegments);
   drawScenarioDonut(categoryId, selectedRows);
-}
-
-function drawReportMarketStructure(categoryId) {
-  const report = marketStructureReport(categoryId);
-  if (!report) return;
-  const markets = report.markets || [];
-  const labels = markets.map((market) => market.label);
-  drawPlot(
-    "structureSamplePlot",
-    [
-      {
-        x: labels,
-        y: markets.map((market) => market.sample),
-        type: "bar",
-        marker: { color: "#e2231a" },
-        hovertemplate: "<b>%{x}</b><br>Sample %{y:,.0f}<extra></extra>",
-      },
-    ],
-    { yaxis: { title: "Sample Size" } },
-  );
-  drawPlot(
-    "structureSelfPurchasePlot",
-    [
-      {
-        x: labels,
-        y: markets.map((market) => market.selfPurchased),
-        name: "Self-purchased %",
-        type: "bar",
-        marker: { color: "#e2231a" },
-        hovertemplate: "<b>%{x}</b><br>Self-purchased %{y:.0f}%<extra></extra>",
-      },
-      {
-        x: labels,
-        y: markets.map((market) => market.meanPrice),
-        name: "Mean price",
-        type: "scatter",
-        mode: "lines+markers",
-        yaxis: "y2",
-        line: { color: "#1f2328", width: 2.6 },
-        hovertemplate: "<b>%{x}</b><br>Mean price $%{y:.2f}<extra></extra>",
-      },
-    ],
-    {
-      yaxis: { title: "Self-purchased %", ticksuffix: "%", range: [0, 100] },
-      yaxis2: { title: "Mean Price", overlaying: "y", side: "right", tickprefix: "$", showgrid: false },
-    },
-  );
-  drawMarketMetricBars("structureDemandPlot", report.demandMetrics, markets, "Respondents %");
-  drawMarketMetricBars("structureChannelPlot", report.channelMetrics, markets, "Buyers %");
-}
-
-function drawMarketMetricBars(id, metrics, markets, yTitle) {
-  const labels = markets.map((market) => market.label);
-  const traces = metrics.map((metric, idx) => ({
-    x: labels,
-    y: markets.map((market) => market[metric.field] || 0),
-    name: metric.label,
-    type: "bar",
-    marker: { color: palette[idx % palette.length] },
-    hovertemplate: `<b>%{x}</b><br>${metric.label} %{y:.0f}%<extra></extra>`,
-  }));
-  drawPlot(id, traces, { barmode: "group", yaxis: { title: yTitle, ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawHighPowerMigration(categoryId, periods, rows) {
@@ -2958,6 +2974,9 @@ function handleClick(event) {
   } else if (action === "module-view") {
     if (state.categoryView === "market") state.marketModule = button.dataset.module;
     if (state.categoryView === "overview") state.overviewModule = button.dataset.module;
+    render();
+  } else if (action === "structure-market") {
+    state.structureMarket[button.dataset.category || state.categoryId] = button.dataset.marketCode;
     render();
   } else if (action === "granularity") {
     const scope = button.dataset.scope;

@@ -763,29 +763,219 @@ input[type="search"] {
 
 .structure-country-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-content: start;
 }
 
 .structure-country-card {
   display: grid;
-  gap: 10px;
-  min-height: 230px;
-  padding: 16px;
+  gap: 9px;
+  min-height: 148px;
+  padding: 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
+  color: inherit;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
-.structure-country-card h3,
-.structure-country-card p {
-  margin: 0;
+.structure-country-card:hover,
+.structure-country-card.is-active {
+  border-color: var(--accent, var(--red));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent, var(--red)) 8%, white), rgba(255, 255, 255, 0.96)),
+    var(--surface);
 }
 
-.structure-country-card p {
-  color: var(--muted);
+.structure-country-card.is-active {
+  box-shadow: inset 0 0 0 1px var(--accent, var(--red));
+}
+
+.structure-country-name {
+  font-size: 18px;
+  font-weight: 850;
+}
+
+.structure-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.structure-card-metrics span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.structure-card-metrics strong {
+  overflow-wrap: anywhere;
   font-size: 13px;
-  line-height: 1.45;
+}
+
+.structure-card-metrics em {
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.structure-card-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.structure-report-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.structure-report-detail {
+  display: grid;
+  gap: 18px;
+  min-height: 520px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(251, 250, 247, 0.9)),
+    var(--surface);
+}
+
+.structure-report-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.82fr);
+  gap: 16px;
+  align-items: start;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.structure-report-head h3 {
+  margin: 10px 0 8px;
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.structure-report-head p,
+.structure-story-grid p,
+.structure-industry-notes p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.structure-report-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.structure-report-kpis div {
+  min-height: 72px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.structure-report-kpis span,
+.structure-metric-row span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.structure-report-kpis strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+}
+
+.structure-story-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.structure-story-grid > div,
+.structure-metric-section > div,
+.structure-industry-notes {
+  padding: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.structure-story-grid h4,
+.structure-metric-section h4,
+.structure-industry-notes h4 {
+  margin: 0 0 9px;
+  font-size: 14px;
+}
+
+.structure-metric-section {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.structure-metric-list {
+  display: grid;
+  gap: 10px;
+}
+
+.structure-metric-row {
+  display: grid;
+  gap: 7px;
+}
+
+.structure-metric-row div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.structure-metric-row strong {
+  font-size: 14px;
+}
+
+.structure-metric-row i {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, var(--accent, var(--red)) var(--value), transparent 0),
+    color-mix(in srgb, var(--accent, var(--red)) 10%, white);
+}
+
+.structure-industry-notes {
+  display: grid;
+  gap: 10px;
+}
+
+.structure-note {
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.structure-note strong {
+  display: block;
+  margin-bottom: 6px;
 }
 
 .muted-inline {
@@ -1381,9 +1571,17 @@ input[type="search"] {
   .competitor-grid,
   .matrix-card-grid,
   .policy-grid,
+  .structure-country-grid,
+  .structure-report-head,
+  .structure-story-grid,
+  .structure-metric-section,
   .product-card-grid,
   .kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .structure-report-layout {
+    grid-template-columns: 1fr;
   }
 
   .chart-controls {
@@ -1420,6 +1618,10 @@ input[type="search"] {
   .competitor-grid,
   .matrix-card-grid,
   .policy-grid,
+  .structure-country-grid,
+  .structure-report-head,
+  .structure-story-grid,
+  .structure-metric-section,
   .product-card-grid,
   .filter-grid,
   .kpi-grid,
