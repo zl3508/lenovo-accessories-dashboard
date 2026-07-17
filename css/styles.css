@@ -750,6 +750,50 @@ input[type="search"] {
   text-decoration: none;
 }
 
+.source-note {
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent, var(--red)) 20%, var(--line));
+  border-left: 5px solid var(--accent, var(--red));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent, var(--red)) 6%, white);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.structure-country-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.structure-country-card {
+  display: grid;
+  gap: 10px;
+  min-height: 230px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.structure-country-card h3,
+.structure-country-card p {
+  margin: 0;
+}
+
+.structure-country-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.muted-inline {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .mini-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

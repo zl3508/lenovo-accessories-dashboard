@@ -376,26 +376,7 @@ function renderMarketAnalysis(categoryId) {
       </section>
     `,
     structure: `
-      <section class="module-block">
-        <div class="module-head">
-          <span>Market Module</span>
-          <h2>${modeledText("Market Structure")}</h2>
-        </div>
-        <div class="chart-grid">
-          ${chartShell("structurePowerTrendPlot", modeledText("Power Segment Structure"), "stacked share")}
-          ${chartShell("structurePowerPortHeatmap", modeledText("Power × Port Distribution"), period)}
-          <div class="chart-shell">
-            <div class="chart-title">
-              <strong>${escapeHtml(modeledText("Price Band × Power Structure"))}</strong>
-              <select class="inline-select" data-action="structure-brand">
-                ${structureBrands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.structureBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
-              </select>
-            </div>
-            <div id="structurePricePowerPlot" class="plot"></div>
-          </div>
-          ${chartShell("structureScenarioPlot", modeledText("Use Case Split"), period)}
-        </div>
-      </section>
+      ${renderMarketStructureModule(categoryId, structureBrands, period)}
     `,
   }[state.marketModule];
 
@@ -429,6 +410,100 @@ function renderPolicyCard(report) {
       <a href="${escapeAttr(report.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(report.source)}</a>
     </article>
   `;
+}
+
+function renderMarketStructureModule(categoryId, structureBrands, period) {
+  const report = marketStructureReport(categoryId);
+  if (report) {
+    return `
+      <section class="module-block">
+        <div class="module-head">
+          <span>Market Module</span>
+          <h2>${escapeHtml(report.title)}</h2>
+          <p>Country-level structure from Ipsos user research and Lenovo power category industry analysis.</p>
+        </div>
+        <div class="source-note">${escapeHtml(report.source)}</div>
+        <div class="structure-country-grid">
+          ${report.markets.map((market) => renderMarketCountryCard(market, report)).join("")}
+        </div>
+        <div class="chart-grid">
+          ${chartShell("structureSamplePlot", "Report Sample Size by Market", "N by report market group")}
+          ${chartShell("structureSelfPurchasePlot", "Self-Purchased Rate and Mean Purchase Price", "left = %, right = USD")}
+          ${chartShell("structureDemandPlot", "Country Demand Priorities", "percentage of feature-valuing respondents")}
+          ${chartShell("structureChannelPlot", "Purchase Channel Mix by Market", "percentage of buyers")}
+        </div>
+        <div class="detail-panel">${renderIndustryCountryNotes(report)}</div>
+      </section>
+    `;
+  }
+  return `
+    <section class="module-block">
+      <div class="module-head">
+        <span>Market Module</span>
+        <h2>${modeledText("Market Structure")}</h2>
+      </div>
+      <div class="chart-grid">
+        ${chartShell("structurePowerTrendPlot", modeledText("Power Segment Structure"), "stacked share")}
+        ${chartShell("structurePowerPortHeatmap", modeledText("Power × Port Distribution"), period)}
+        <div class="chart-shell">
+          <div class="chart-title">
+            <strong>${escapeHtml(modeledText("Price Band × Power Structure"))}</strong>
+            <select class="inline-select" data-action="structure-brand">
+              ${structureBrands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.structureBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
+            </select>
+          </div>
+          <div id="structurePricePowerPlot" class="plot"></div>
+        </div>
+        ${chartShell("structureScenarioPlot", modeledText("Use Case Split"), period)}
+      </div>
+    </section>
+  `;
+}
+
+function renderMarketCountryCard(market, report) {
+  const topDemand = topMarketMetric(market, report.demandMetrics);
+  const topChannel = topMarketMetric(market, report.channelMetrics);
+  return `
+    <article class="structure-country-card">
+      <span class="tag">${escapeHtml(market.code)}</span>
+      <h3>${escapeHtml(market.label)}</h3>
+      <div class="mini-metrics">
+        <div><span>Sample</span><strong>${fmtExactNumber(market.sample)}</strong></div>
+        <div><span>Self-Purchased</span><strong>${fmtWholePercent(market.selfPurchased)}</strong></div>
+        <div><span>Mean Price</span><strong>${fmtExactCurrency(market.meanPrice)}</strong></div>
+      </div>
+      <p><strong>${escapeHtml(topDemand.label)} ${fmtWholePercent(topDemand.value)}</strong> · ${escapeHtml(topChannel.label)} ${fmtWholePercent(topChannel.value)}</p>
+      <p>${escapeHtml(market.note)}</p>
+    </article>
+  `;
+}
+
+function renderIndustryCountryNotes(report) {
+  return `
+    <div class="chart-title"><strong>Industry Country Notes</strong><span>Power category report</span></div>
+    <div class="news-list compact-news-list">
+      ${report.industryCountries
+        .map(
+          (item) => `
+            <article class="news-item">
+              <strong>${escapeHtml(item.country)} · ${escapeHtml(item.headline)}</strong>
+              <p>${escapeHtml(item.metrics)} <span class="muted-inline">${escapeHtml(item.sourcePage)}</span></p>
+            </article>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function marketStructureReport(categoryId) {
+  return data.catalog.marketStructureReports?.[categoryId] || null;
+}
+
+function topMarketMetric(market, metrics) {
+  return (metrics || [])
+    .map((metric) => ({ ...metric, value: market[metric.field] || 0 }))
+    .sort((a, b) => b.value - a.value)[0] || { label: "N/A", value: 0 };
 }
 
 function renderCompetitiveAnalysis(categoryId) {
@@ -1115,6 +1190,10 @@ function dualMetricBarLayout(metric, overrides = {}) {
 }
 
 function drawMarketAnalysis(categoryId) {
+  if (state.marketModule === "structure" && marketStructureReport(categoryId)) {
+    drawReportMarketStructure(categoryId);
+    return;
+  }
   const period = selectedPeriod();
   const trendPeriods = periodsThroughSelected(state.granularity, period);
   const categoryRows = data.productMetrics.filter((row) => row.categoryId === categoryId && trendPeriods.includes(periodKey(row.date, state.granularity)));
@@ -1130,6 +1209,68 @@ function drawMarketAnalysis(categoryId) {
   drawPowerPortHeatmap("structurePowerPortHeatmap", selectedRows, powerSegments, portSegments, "Units");
   drawPricePowerStructure(categoryId, selectedRows, powerSegments);
   drawScenarioDonut(categoryId, selectedRows);
+}
+
+function drawReportMarketStructure(categoryId) {
+  const report = marketStructureReport(categoryId);
+  if (!report) return;
+  const markets = report.markets || [];
+  const labels = markets.map((market) => market.label);
+  drawPlot(
+    "structureSamplePlot",
+    [
+      {
+        x: labels,
+        y: markets.map((market) => market.sample),
+        type: "bar",
+        marker: { color: "#e2231a" },
+        hovertemplate: "<b>%{x}</b><br>Sample %{y:,.0f}<extra></extra>",
+      },
+    ],
+    { yaxis: { title: "Sample Size" } },
+  );
+  drawPlot(
+    "structureSelfPurchasePlot",
+    [
+      {
+        x: labels,
+        y: markets.map((market) => market.selfPurchased),
+        name: "Self-purchased %",
+        type: "bar",
+        marker: { color: "#e2231a" },
+        hovertemplate: "<b>%{x}</b><br>Self-purchased %{y:.0f}%<extra></extra>",
+      },
+      {
+        x: labels,
+        y: markets.map((market) => market.meanPrice),
+        name: "Mean price",
+        type: "scatter",
+        mode: "lines+markers",
+        yaxis: "y2",
+        line: { color: "#1f2328", width: 2.6 },
+        hovertemplate: "<b>%{x}</b><br>Mean price $%{y:.2f}<extra></extra>",
+      },
+    ],
+    {
+      yaxis: { title: "Self-purchased %", ticksuffix: "%", range: [0, 100] },
+      yaxis2: { title: "Mean Price", overlaying: "y", side: "right", tickprefix: "$", showgrid: false },
+    },
+  );
+  drawMarketMetricBars("structureDemandPlot", report.demandMetrics, markets, "Respondents %");
+  drawMarketMetricBars("structureChannelPlot", report.channelMetrics, markets, "Buyers %");
+}
+
+function drawMarketMetricBars(id, metrics, markets, yTitle) {
+  const labels = markets.map((market) => market.label);
+  const traces = metrics.map((metric, idx) => ({
+    x: labels,
+    y: markets.map((market) => market[metric.field] || 0),
+    name: metric.label,
+    type: "bar",
+    marker: { color: palette[idx % palette.length] },
+    hovertemplate: `<b>%{x}</b><br>${metric.label} %{y:.0f}%<extra></extra>`,
+  }));
+  drawPlot(id, traces, { barmode: "group", yaxis: { title: yTitle, ticksuffix: "%", range: [0, 100] } });
 }
 
 function drawHighPowerMigration(categoryId, periods, rows) {
@@ -3304,6 +3445,10 @@ function fmtCurrency(value) {
 
 function fmtPercent(value) {
   return `${((value || 0) * 100).toFixed(1)}%`;
+}
+
+function fmtWholePercent(value) {
+  return `${Math.round(value || 0)}%`;
 }
 
 function formatSignedPercent(value) {

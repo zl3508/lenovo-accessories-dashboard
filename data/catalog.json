@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T01:46:09Z",
+  "generatedAt": "2026-07-17T09:37:21Z",
   "periods": [
     "2024-04-01",
     "2024-07-01",
@@ -307,6 +307,386 @@
         "impact": "Cable SKUs benefit from stronger power-rating, PD, and compatibility claims at shelf and ecommerce touchpoints."
       }
     ]
+  },
+  "marketStructureReports": {
+    "adapter": {
+      "title": "Power Adapter Country Market Structure",
+      "source": "Ipsos PC Accessories User Research - Power Adapters, pp.4, 6, 26-32; Lenovo PC Options Industry Analysis - Power Category Report, pp.15, 18, 21, 24, 29-32.",
+      "markets": [
+        {
+          "code": "DE+UK+SE",
+          "label": "DE + UK + SE",
+          "sample": 295,
+          "buyerBase": 135,
+          "featureBase": 130,
+          "selfPurchased": 46,
+          "meanPrice": 77.05,
+          "motivationConvenience": 35,
+          "motivationTravel": 24,
+          "motivationMultiDevice": 27,
+          "motivationFastCharging": 13,
+          "featureFastCharging": 58,
+          "featureMultiPort": 56,
+          "featureProtection": 52,
+          "featureStableOutput": 62,
+          "channelOnline": 32,
+          "channelPhysical": 35,
+          "channelBrandWebsite": 33,
+          "note": "Stable power output is the strongest feature signal at 62%; official brand website reaches 33%."
+        },
+        {
+          "code": "SA",
+          "label": "SA",
+          "sample": 320,
+          "buyerBase": 193,
+          "featureBase": 159,
+          "selfPurchased": 60,
+          "meanPrice": 75.76,
+          "motivationConvenience": 41,
+          "motivationTravel": 43,
+          "motivationMultiDevice": 35,
+          "motivationFastCharging": 35,
+          "featureFastCharging": 56,
+          "featureMultiPort": 68,
+          "featureProtection": 63,
+          "featureStableOutput": 38,
+          "channelOnline": 32,
+          "channelPhysical": 41,
+          "channelBrandWebsite": 26,
+          "note": "Original adapter not supporting fast charging is an important motivation at 35%; physical store is 41%."
+        },
+        {
+          "code": "US",
+          "label": "US",
+          "sample": 354,
+          "buyerBase": 242,
+          "featureBase": 156,
+          "selfPurchased": 68,
+          "meanPrice": 65.18,
+          "motivationConvenience": 34,
+          "motivationTravel": 34,
+          "motivationMultiDevice": 27,
+          "motivationFastCharging": 20,
+          "featureFastCharging": 53,
+          "featureMultiPort": 56,
+          "featureProtection": 53,
+          "featureStableOutput": 51,
+          "channelOnline": 29,
+          "channelPhysical": 41,
+          "channelBrandWebsite": 30,
+          "note": "Highest self-purchased rate in the adapter survey at 68%; physical store is 41%."
+        },
+        {
+          "code": "IN",
+          "label": "IN",
+          "sample": 262,
+          "buyerBase": 159,
+          "featureBase": 183,
+          "selfPurchased": 61,
+          "meanPrice": 41.1,
+          "motivationConvenience": 48,
+          "motivationTravel": 44,
+          "motivationMultiDevice": 45,
+          "motivationFastCharging": 26,
+          "featureFastCharging": 79,
+          "featureMultiPort": 64,
+          "featureProtection": 58,
+          "featureStableOutput": 56,
+          "channelOnline": 53,
+          "channelPhysical": 29,
+          "channelBrandWebsite": 18,
+          "note": "Fast charging is the clearest feature signal at 79%; online e-commerce is 53%."
+        },
+        {
+          "code": "JP",
+          "label": "JP",
+          "sample": 378,
+          "buyerBase": 218,
+          "featureBase": 187,
+          "selfPurchased": 58,
+          "meanPrice": 35.04,
+          "motivationConvenience": 49,
+          "motivationTravel": 42,
+          "motivationMultiDevice": 32,
+          "motivationFastCharging": 24,
+          "featureFastCharging": 49,
+          "featureMultiPort": 52,
+          "featureProtection": 58,
+          "featureStableOutput": 56,
+          "channelOnline": 47,
+          "channelPhysical": 33,
+          "channelBrandWebsite": 20,
+          "note": "Convenient use in different locations is 49%; online e-commerce is 47%."
+        },
+        {
+          "code": "BR+MEX",
+          "label": "BR + MEX",
+          "sample": 223,
+          "buyerBase": 140,
+          "featureBase": 116,
+          "selfPurchased": 63,
+          "meanPrice": 36.45,
+          "motivationConvenience": 38,
+          "motivationTravel": 44,
+          "motivationMultiDevice": 34,
+          "motivationFastCharging": 11,
+          "featureFastCharging": 66,
+          "featureMultiPort": 59,
+          "featureProtection": 60,
+          "featureStableOutput": 47,
+          "channelOnline": 48,
+          "channelPhysical": 31,
+          "channelBrandWebsite": 21,
+          "note": "Travel or mobile work motivation is 44%; fast-charging feature consideration is 66%."
+        }
+      ],
+      "demandMetrics": [
+        {
+          "field": "featureFastCharging",
+          "label": "Fast charging"
+        },
+        {
+          "field": "featureMultiPort",
+          "label": "Multi-port compatibility"
+        },
+        {
+          "field": "featureProtection",
+          "label": "Intelligent protection"
+        }
+      ],
+      "channelMetrics": [
+        {
+          "field": "channelOnline",
+          "label": "Online e-commerce"
+        },
+        {
+          "field": "channelPhysical",
+          "label": "Physical store"
+        },
+        {
+          "field": "channelBrandWebsite",
+          "label": "Official brand website"
+        }
+      ],
+      "industryCountries": [
+        {
+          "country": "USA",
+          "headline": "Adapter category faces PC / phone OEM competition.",
+          "metrics": "Adapter sales revenue 1.5 billion; market share 17-18%; growth 10%; 60-80W accounts for 72%.",
+          "sourcePage": "Industry report p.15"
+        },
+        {
+          "country": "Japan",
+          "headline": "Local brands are strong and price pressure is high.",
+          "metrics": "Adapter sales revenue 0.7 billion; market share 18%; 45-100W is mainstream at 78-80%; 100-240W is 15%.",
+          "sourcePage": "Industry report p.18"
+        },
+        {
+          "country": "Indonesia",
+          "headline": "Power category is highly price sensitive.",
+          "metrics": "Anker Indonesia power category sales revenue is about 1 billion; growth about 40%; market share about 50-60%.",
+          "sourcePage": "Industry report p.21"
+        },
+        {
+          "country": "UK",
+          "headline": "Adapter revenue is smaller than power bank revenue.",
+          "metrics": "Anker adapter revenue in the UK is 30% of UK power bank revenue; report notes slower growth and no separate series yet.",
+          "sourcePage": "Industry report p.24"
+        }
+      ]
+    },
+    "power_bank": {
+      "title": "Power Bank Country Market Structure",
+      "source": "Ipsos PC Accessories User Research - Power Bank, pp.4, 6, 26-33; Lenovo PC Options Industry Analysis - Power Category Report, pp.15, 18, 21, 24, 29-32.",
+      "markets": [
+        {
+          "code": "DE+UK+SE",
+          "label": "DE + UK + SE",
+          "sample": 274,
+          "buyerBase": 120,
+          "featureBase": 143,
+          "selfPurchased": 45,
+          "meanPrice": 101.77,
+          "motivationTravel": 79,
+          "motivationCapacity": 38,
+          "motivationMultiDevice": 38,
+          "motivationFastCharging": 15,
+          "featureBatteryCapacity": 71,
+          "featureFastCharging": 50,
+          "featureMultiPort": 52,
+          "featurePowerRange": 48,
+          "featureStableOutput": 48,
+          "channelOnline": 51,
+          "channelPhysical": 24,
+          "channelBrandWebsite": 25,
+          "note": "Highest mean purchase price at $101.77; official brand website reaches 25%."
+        },
+        {
+          "code": "SA",
+          "label": "SA",
+          "sample": 360,
+          "buyerBase": 181,
+          "featureBase": 213,
+          "selfPurchased": 55,
+          "meanPrice": 80.36,
+          "motivationTravel": 74,
+          "motivationCapacity": 57,
+          "motivationMultiDevice": 61,
+          "motivationFastCharging": 27,
+          "featureBatteryCapacity": 56,
+          "featureFastCharging": 53,
+          "featureMultiPort": 66,
+          "featurePowerRange": 55,
+          "featureStableOutput": 43,
+          "channelOnline": 42,
+          "channelPhysical": 40,
+          "channelBrandWebsite": 18,
+          "note": "Multi-device charging motivation is 61%; physical store is 40%."
+        },
+        {
+          "code": "US",
+          "label": "US",
+          "sample": 257,
+          "buyerBase": 137,
+          "featureBase": 149,
+          "selfPurchased": 56,
+          "meanPrice": 87.28,
+          "motivationTravel": 71,
+          "motivationCapacity": 49,
+          "motivationMultiDevice": 39,
+          "motivationFastCharging": 18,
+          "featureBatteryCapacity": 70,
+          "featureFastCharging": 57,
+          "featureMultiPort": 53,
+          "featurePowerRange": 58,
+          "featureStableOutput": 58,
+          "channelOnline": 40,
+          "channelPhysical": 43,
+          "channelBrandWebsite": 17,
+          "note": "Physical store is the top channel at 43%; mean purchase price is $87.28."
+        },
+        {
+          "code": "IN",
+          "label": "IN",
+          "sample": 362,
+          "buyerBase": 235,
+          "featureBase": 272,
+          "selfPurchased": 66,
+          "meanPrice": 61.39,
+          "motivationTravel": 84,
+          "motivationCapacity": 53,
+          "motivationMultiDevice": 53,
+          "motivationFastCharging": 26,
+          "featureBatteryCapacity": 78,
+          "featureFastCharging": 74,
+          "featureMultiPort": 62,
+          "featurePowerRange": 63,
+          "featureStableOutput": 55,
+          "channelOnline": 64,
+          "channelPhysical": 23,
+          "channelBrandWebsite": 12,
+          "note": "Highest self-purchased rate at 66%; online e-commerce is 64%."
+        },
+        {
+          "code": "JP",
+          "label": "JP",
+          "sample": 242,
+          "buyerBase": 118,
+          "featureBase": 140,
+          "selfPurchased": 48,
+          "meanPrice": 87.44,
+          "motivationTravel": 69,
+          "motivationCapacity": 39,
+          "motivationMultiDevice": 36,
+          "motivationFastCharging": 27,
+          "featureBatteryCapacity": 67,
+          "featureFastCharging": 43,
+          "featureMultiPort": 48,
+          "featurePowerRange": 39,
+          "featureStableOutput": 59,
+          "channelOnline": 56,
+          "channelPhysical": 32,
+          "channelBrandWebsite": 12,
+          "note": "Stable output is 59%; safety certification is a Top 3 factor in the report."
+        },
+        {
+          "code": "BR+MEX",
+          "label": "BR + MEX",
+          "sample": 311,
+          "buyerBase": 177,
+          "featureBase": 196,
+          "selfPurchased": 56,
+          "meanPrice": 57.1,
+          "motivationTravel": 81,
+          "motivationCapacity": 47,
+          "motivationMultiDevice": 50,
+          "motivationFastCharging": 12,
+          "featureBatteryCapacity": 72,
+          "featureFastCharging": 67,
+          "featureMultiPort": 57,
+          "featurePowerRange": 39,
+          "featureStableOutput": 50,
+          "channelOnline": 58,
+          "channelPhysical": 33,
+          "channelBrandWebsite": 9,
+          "note": "Convenient travel / portable charging is 81%; mean purchase price is $57.10."
+        }
+      ],
+      "demandMetrics": [
+        {
+          "field": "featureBatteryCapacity",
+          "label": "Battery capacity"
+        },
+        {
+          "field": "featureFastCharging",
+          "label": "Fast charging"
+        },
+        {
+          "field": "featureMultiPort",
+          "label": "Multiple ports"
+        }
+      ],
+      "channelMetrics": [
+        {
+          "field": "channelOnline",
+          "label": "Online e-commerce"
+        },
+        {
+          "field": "channelPhysical",
+          "label": "Physical store"
+        },
+        {
+          "field": "channelBrandWebsite",
+          "label": "Official brand website"
+        }
+      ],
+      "industryCountries": [
+        {
+          "country": "USA",
+          "headline": "Largest single Anker market with strong power bank layout.",
+          "metrics": "Power bank sales revenue 4.5 billion; market share 30%; growth 15-16%; 5000-12000mAh is 52%.",
+          "sourcePage": "Industry report p.15"
+        },
+        {
+          "country": "Japan",
+          "headline": "Second largest Anker market with fierce local competition.",
+          "metrics": "Power bank sales revenue about 1 billion; market share 27%; growth about 30%; 5000-12000mAh is 50%.",
+          "sourcePage": "Industry report p.18"
+        },
+        {
+          "country": "Indonesia",
+          "headline": "Star growth market focused on middle-high price ranges.",
+          "metrics": "Sales revenue about 1 billion; growth about 40%; market share about 50-60%; $80-200 mid price range contributes 55-60%.",
+          "sourcePage": "Industry report p.21"
+        },
+        {
+          "country": "UK",
+          "headline": "High share market where high-power PC power banks perform well.",
+          "metrics": "Power bank sales revenue 0.3 billion; market share 60%; growth about 10%; UK star products priced GBP69.99 and GBP79.99.",
+          "sourcePage": "Industry report p.24"
+        }
+      ]
+    }
   },
   "products": [
     {
