@@ -688,6 +688,86 @@ MARKET_STRUCTURE_REPORTS = {
 }
 
 
+COMPETITOR_PRODUCTS = [
+    {
+        "id": "anker_150w_max_us_amazon",
+        "categoryId": "adapter",
+        "lenovoProductId": "adapter_multi_port_150w_gan",
+        "countryCode": "US",
+        "country": "United States",
+        "region": "North America",
+        "platform": "Amazon US",
+        "brand": "Anker",
+        "asin": "B09W2PNLX7",
+        "parentAsin": "B0BYVW51MK",
+        "productName": "Anker 150W Max USB C Charger Block",
+        "title": "Anker 150W Max USB C Charger Block, 4-Port Compact Foldable GaN Charger for MacBook Pro/Air, iPhone 17/16 and More Series, Dell and More",
+        "productUrl": "https://www.amazon.com/dp/B09W2PNLX7",
+        "brandUrl": "https://www.amazon.com/stores/Anker/page/D24FDA17-DECF-46BB-AF47-AF4647D2B1F8?lp_asin=B09W2PNLX7&ref_=ast_bln&store_ref=bl_ast_dp_brandlogo_sto",
+        "image": "assets/competitors/anker-150w-max-us.jpg",
+        "sourceImageUrl": "https://images-na.ssl-images-amazon.com/images/I/615zdmA76OL._AC_US600_.jpg",
+        "specs": {
+            "wattageW": 150,
+            "totalPorts": 4,
+            "connectorType": "USB C; USB",
+            "color": "Black",
+            "amperage": "5 Amps",
+            "inputVoltage": "240 Volts",
+            "specialFeature": "Fast Charging, Travel",
+            "includedComponents": "Anker 747 Charger (GaNPrime 150W), silicone stabilizer, welcome guide, 24-month warranty, customer service",
+            "compatibleDevices": "MacBook Pro/Air, Dell XPS, ThinkPad, HP Spectre, Google Pixelbook, Microsoft Surface Book, iPad, iPhone",
+        },
+        "metrics": {
+            "rsp": 99.99,
+            "price": 99.99,
+            "primePrice": None,
+            "aur": 99.99,
+            "monthlyUnits": 369,
+            "unitsMomGrowth": -0.33,
+            "unitsYoyGrowth": -0.8258,
+            "monthlyRevenue": 36896,
+            "childUnits": 100,
+            "childRevenue": 9999,
+            "variantCount": 1,
+            "mainCategory": "Cell Phones & Accessories",
+            "mainBsr": 18999,
+            "mainBsrGrowth": -5552,
+            "mainBsrGrowthRate": -0.41,
+            "subCategory": "Cell Phone Wall Chargers",
+            "subBsr": 986,
+            "qnaCount": 133,
+            "reviewCount": 2272,
+            "monthlyNewReviews": 17,
+            "rating": 4.5,
+            "reviewRate": 0.0461,
+            "fbaFee": 5.03,
+            "grossMargin": 0.87,
+            "lqs": 10.0,
+            "sellerCount": 2,
+            "buyBoxSeller": "AnkerDirect",
+            "buyBoxType": "FBA",
+            "sellerLocation": "US",
+            "launchDate": "2022-06-30",
+            "daysOnMarket": 1480,
+            "deliveryMethod": "FBA",
+            "productWeight": "0.51 pounds / 231.33 g",
+            "productSize": "2.6 x 1.2 x 2.4 inches / 6.60 x 3.05 x 6.10 cm",
+            "packageWeight": "0.84 pounds / 381.02 g",
+            "packageSize": "7.1 x 6.3 x 1.9 inches / 18.03 x 16.00 x 4.83 cm",
+        },
+        "tags": ["4-port", "GaNPrime", "Amazon's Choice", "FBA", "High review count"],
+        "source": {
+            "sourceFile": "Product-US-20260720.xlsx",
+            "sourceSheet": "US-竞品分析(1)",
+            "dataProvider": "SellerSprite",
+            "sourceDate": "2026-07-20",
+            "notes": "Ratings, reviews, Q&A, variants, seller data and recent listing metrics are from the latest update date in SellerSprite export notes.",
+        },
+        "dataConfidence": "observed_marketplace_export",
+    }
+]
+
+
 COMPETITOR_BRANDS = {
     "adapter": [
         {
@@ -1877,6 +1957,7 @@ def build_real_dashboard(source_dir: Path, output_dir: Path) -> dict[str, Any]:
             "geoMetrics": len(geo_metrics),
             "marketMetrics": len(market_metrics),
             "brandMarketMetrics": len(brand_market_metrics),
+            "competitorProducts": len(COMPETITOR_PRODUCTS),
             "supplyChain": len(supply_chain),
             "consumerInsights": len(consumer_insights),
         },
@@ -1888,6 +1969,7 @@ def build_real_dashboard(source_dir: Path, output_dir: Path) -> dict[str, Any]:
     write_json(output_dir, "geo_metrics.json", geo_metrics)
     write_json(output_dir, "market_metrics.json", market_metrics)
     write_json(output_dir, "brand_market_metrics.json", brand_market_metrics)
+    write_json(output_dir, "competitor_products.json", COMPETITOR_PRODUCTS)
     write_json(output_dir, "supply_chain.json", supply_chain)
     write_json(output_dir, "consumer_insights.json", consumer_insights)
     write_json(output_dir, "metadata.json", metadata)
@@ -2036,6 +2118,7 @@ def main() -> None:
             "geoMetrics": len(geo_metrics),
             "marketMetrics": len(market_metrics),
             "brandMarketMetrics": len(brand_market_metrics),
+            "competitorProducts": len(COMPETITOR_PRODUCTS),
             "supplyChain": len(supply_chain),
             "consumerInsights": len(consumer_insights),
         },
@@ -2048,6 +2131,7 @@ def main() -> None:
     write_json(output_dir, "geo_metrics.json", geo_metrics)
     write_json(output_dir, "market_metrics.json", market_metrics)
     write_json(output_dir, "brand_market_metrics.json", brand_market_metrics)
+    write_json(output_dir, "competitor_products.json", COMPETITOR_PRODUCTS)
     write_json(output_dir, "supply_chain.json", supply_chain)
     write_json(output_dir, "consumer_insights.json", consumer_insights)
     write_json(output_dir, "metadata.json", metadata)

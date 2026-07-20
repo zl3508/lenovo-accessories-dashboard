@@ -217,7 +217,11 @@ h3 {
 .kpi-tile,
 .category-card,
 .analysis-hero,
+.competitor-control-panel,
 .competitor-card,
+.competitor-lenovo-context,
+.competitor-kpi,
+.marketplace-competitor-card,
 .matrix-highlight,
 .chart-shell,
 .filter-panel,
@@ -562,6 +566,14 @@ h3 {
   text-transform: uppercase;
 }
 
+.filter-group > span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 select,
 input[type="search"] {
   width: 100%;
@@ -652,6 +664,222 @@ input[type="search"] {
   margin: 10px 0 0;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.competitor-control-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  gap: 18px;
+  align-items: end;
+  padding: 22px;
+  border-left: 4px solid var(--red);
+}
+
+.competitor-control-panel h2 {
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.competitor-control-panel p {
+  max-width: 760px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.competitor-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.competitor-market-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(420px, 0.92fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.competitor-lenovo-context {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+}
+
+.competitor-lenovo-image {
+  display: grid;
+  place-items: center;
+  height: 132px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fff, var(--surface-soft));
+}
+
+.competitor-lenovo-image img {
+  max-width: 100%;
+  max-height: 112px;
+  object-fit: contain;
+}
+
+.competitor-lenovo-context h3 {
+  margin-top: 8px;
+  font-size: 20px;
+}
+
+.competitor-lenovo-context p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.competitor-market-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.competitor-kpi {
+  min-height: 104px;
+  padding: 14px;
+  background: var(--surface);
+}
+
+.competitor-kpi span,
+.competitor-boss-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.competitor-kpi strong,
+.competitor-boss-grid strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+.competitor-kpi small,
+.competitor-boss-grid small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.competitor-results {
+  display: grid;
+  gap: 14px;
+}
+
+.marketplace-competitor-card {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.marketplace-competitor-image {
+  display: grid;
+  place-items: center;
+  min-height: 360px;
+  padding: 24px;
+  border-right: 1px solid var(--line);
+  background:
+    linear-gradient(135deg, rgba(226, 35, 26, 0.06), rgba(17, 24, 39, 0.03)),
+    var(--surface-soft);
+}
+
+.marketplace-competitor-image img {
+  width: min(100%, 240px);
+  max-height: 300px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.marketplace-competitor-body {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding: 18px;
+}
+
+.marketplace-competitor-body header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.marketplace-competitor-body h3 {
+  margin-top: 8px;
+  font-size: 21px;
+}
+
+.marketplace-competitor-body p {
+  max-width: 920px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.competitor-boss-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.competitor-boss-grid div {
+  min-height: 98px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.competitor-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.competitor-detail-grid div {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.competitor-detail-grid h4 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.competitor-detail-grid ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.marketplace-competitor-body footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.competitor-empty-state {
+  min-height: 220px;
 }
 
 .insight-list {
@@ -1558,9 +1786,18 @@ input[type="search"] {
 @media (max-width: 1100px) {
   .hero-band,
   .analysis-hero,
+  .competitor-control-panel,
+  .competitor-market-header,
+  .marketplace-competitor-card,
   .detail-hero,
   .product-browser {
     grid-template-columns: 1fr;
+  }
+
+  .marketplace-competitor-image {
+    min-height: 260px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
   }
 
   .filter-grid {
@@ -1612,7 +1849,13 @@ input[type="search"] {
 
   .hero-stats,
   .category-tabs,
+  .competitor-filters,
+  .competitor-market-kpis,
+  .competitor-boss-grid,
+  .competitor-detail-grid,
+  .competitor-lenovo-context,
   .insight-list,
+  .mini-metrics,
   .category-grid,
   .category-metrics,
   .competitor-grid,

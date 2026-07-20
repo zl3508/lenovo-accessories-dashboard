@@ -4,6 +4,7 @@ const DATA_FILES = {
   geoMetrics: "data/geo_metrics.json",
   marketMetrics: "data/market_metrics.json",
   brandMarket: "data/brand_market_metrics.json",
+  competitorProducts: "data/competitor_products.json",
   supplyChain: "data/supply_chain.json",
   consumerInsights: "data/consumer_insights.json",
   metadata: "data/metadata.json",
@@ -25,6 +26,8 @@ const state = {
   search: "",
   selectedModels: {},
   competitorBrand: {},
+  competitorLenovoProduct: {},
+  competitorCountry: {},
   structureBrand: {},
   structureMarket: {},
   summaryRevenueMetric: "orderRevenue",
@@ -98,6 +101,13 @@ const flowMetricOptions = [
   { field: "bklg", label: "Bklg", revenueField: "backlogRevenue", quantityField: "backlogQty", revenueLabel: "Bklg_Rev", quantityLabel: "Bklg_Qty" },
 ];
 const summaryMetricOptions = [...revenueMetricOptions, ...quantityMetricOptions];
+const competitorCountries = [
+  { code: "US", label: "United States", platforms: "Amazon US" },
+  { code: "JP", label: "Japan", platforms: "Amazon JP / Rakuten" },
+  { code: "UK", label: "United Kingdom", platforms: "Amazon UK / Currys" },
+  { code: "EU", label: "Europe", platforms: "Amazon EU / MediaMarkt" },
+  { code: "AU", label: "Australia", platforms: "Amazon AU / JB Hi-Fi" },
+];
 
 init();
 
@@ -586,61 +596,202 @@ function marketImplicationText(market, report, topDemand, topChannel) {
 }
 
 function renderCompetitiveAnalysis(categoryId) {
-  const period = selectedPeriod();
-  const competitorRows = brandRowsForSelectedPeriod(categoryId, false).sort((a, b) => b.marketShare - a.marketShare);
-  const top = competitorRows[0] || {};
-  const launches = data.brandMarket.filter((row) => row.categoryId === categoryId && !row.isLenovo && row.newProductLaunch);
-  const avgCompetitorShare = competitorRows.reduce((sum, row) => sum + row.marketShare, 0);
-  const brands = unique(data.brandMarket.filter((row) => row.categoryId === categoryId && !row.isLenovo).map((row) => row.brand));
-  state.competitorBrand[categoryId] ||= brands[0];
+  const products = data.catalog.products.filter((product) => product.categoryId === categoryId);
+  const selectedProduct = selectedCompetitorLenovoProduct(categoryId, products);
+  const selectedCountry = selectedCompetitorCountry(categoryId);
+  const rows = competitorRowsForSelection(categoryId, selectedProduct.id, selectedCountry.code);
+  const summary = summarizeCompetitorRows(rows, selectedProduct);
 
   return `
     <div class="view-stack">
-      <section class="analysis-hero">
+      <section class="competitor-control-panel">
         <div>
           <p class="eyebrow">Competitive Analysis</p>
-          <h2>${modeledText("Competitor Analysis")}</h2>
-          <p>Compare competitor sales, power mix, pricing, launch signals, and positioning.</p>
+          <h2>Marketplace Competitor Comparison</h2>
+          <p>Select a Lenovo product and market to review 1-2 mainstream ecommerce competitors with product image, pricing, sales velocity, seller, rating, and spec signals.</p>
         </div>
-        <div class="insight-list">
-          <div><span>${modeledText("Top Competitor")}</span><strong>${escapeHtml(top.brand || "—")}</strong></div>
-          <div><span>${modeledText("Competitor Share")}</span><strong>${fmtPercent(avgCompetitorShare)}</strong></div>
-          <div><span>${modeledText("Latest Star Product")}</span><strong>${escapeHtml(top.starProduct || "—")}</strong></div>
-          <div><span>${modeledText("Launch Signals")}</span><strong>${launches.length}</strong></div>
+        <div class="competitor-filters">
+          <label class="filter-group">
+            <span>Lenovo Product</span>
+            <select data-action="competitor-lenovo-product">
+              ${products.map((product) => `<option value="${escapeAttr(product.id)}" ${product.id === selectedProduct.id ? "selected" : ""}>${escapeHtml(product.name)}</option>`).join("")}
+            </select>
+          </label>
+          <label class="filter-group">
+            <span>Country / Market</span>
+            <select data-action="competitor-country">
+              ${competitorCountries.map((country) => `<option value="${escapeAttr(country.code)}" ${country.code === selectedCountry.code ? "selected" : ""}>${escapeHtml(country.label)}</option>`).join("")}
+            </select>
+          </label>
         </div>
       </section>
 
-      <section class="chart-grid">
-        ${chartShell("competitorDemandByPowerPlot", modeledText("Brand Demand by Power"), period)}
-        ${chartShell("competitorSalesPlot", modeledText("Competitor Sales Trend"), `${granularityLabels[state.granularity]} revenue trend`)}
-        <div class="chart-shell">
-          <div class="chart-title">
-            <strong>${escapeHtml(modeledText("Price Band × Power Mix by Brand"))}</strong>
-            <select class="inline-select" data-action="competitor-brand">
-              ${brands.map((brand) => `<option value="${escapeAttr(brand)}" ${brand === state.competitorBrand[categoryId] ? "selected" : ""}>${escapeHtml(brand)}</option>`).join("")}
-            </select>
-          </div>
-          <div id="competitorPricePowerPlot" class="plot"></div>
+      <section class="competitor-market-header">
+        ${renderCompetitorLenovoContext(selectedProduct)}
+        <div class="competitor-market-kpis">
+          ${renderCompetitorKpi("Loaded Competitors", fmtExactNumber(rows.length), selectedCountry.label)}
+          ${renderCompetitorKpi("Monthly Sales Qty", fmtExactNumber(summary.monthlyUnits), "marketplace export")}
+          ${renderCompetitorKpi("Monthly Sales Revenue", fmtExactCurrency(summary.monthlyRevenue), "marketplace export")}
+          ${renderCompetitorKpi("Weighted AUR", fmtExactCurrency(summary.aur), "revenue / sales qty")}
+          ${renderCompetitorKpi("Avg Rating", summary.rating ? summary.rating.toFixed(1) : "—", "review-weighted")}
+          ${renderCompetitorKpi("Avg Price Index", summary.priceIndex ? `${(summary.priceIndex * 100).toFixed(1)}%` : "—", "vs Lenovo RSP")}
         </div>
-        ${chartShell("competitorBubblePlot", modeledText("Brand Positioning Matrix"), "price × weighted power")}
-        <div class="detail-panel">${renderLaunchTable(categoryId)}</div>
+      </section>
+
+      <section class="competitor-results">
+        ${rows.length ? rows.map((row) => renderMarketplaceCompetitorCard(row, selectedProduct)).join("") : renderCompetitorEmptyState(selectedProduct, selectedCountry)}
       </section>
     </div>
   `;
 }
 
-function renderCompetitorCard(row) {
+function selectedCompetitorLenovoProduct(categoryId, products) {
+  const current = state.competitorLenovoProduct[categoryId];
+  const selected = products.find((product) => product.id === current) || products[0];
+  state.competitorLenovoProduct[categoryId] = selected?.id;
+  return selected;
+}
+
+function selectedCompetitorCountry(categoryId) {
+  const current = state.competitorCountry[categoryId];
+  const selected = competitorCountries.find((country) => country.code === current) || competitorCountries[0];
+  state.competitorCountry[categoryId] = selected.code;
+  return selected;
+}
+
+function competitorRowsForSelection(categoryId, productId, countryCode) {
+  return (data.competitorProducts || [])
+    .filter((row) => row.categoryId === categoryId && row.lenovoProductId === productId && row.countryCode === countryCode)
+    .sort((a, b) => (b.metrics?.monthlyRevenue || 0) - (a.metrics?.monthlyRevenue || 0));
+}
+
+function summarizeCompetitorRows(rows, lenovoProduct) {
+  const monthlyUnits = rows.reduce((sum, row) => sum + (row.metrics?.monthlyUnits || 0), 0);
+  const monthlyRevenue = rows.reduce((sum, row) => sum + (row.metrics?.monthlyRevenue || 0), 0);
+  const reviewWeight = rows.reduce((sum, row) => sum + (row.metrics?.reviewCount || 0), 0);
+  const rating = reviewWeight ? rows.reduce((sum, row) => sum + (row.metrics?.rating || 0) * (row.metrics?.reviewCount || 0), 0) / reviewWeight : 0;
+  const aur = monthlyUnits ? monthlyRevenue / monthlyUnits : 0;
+  const priceIndexRows = rows.filter((row) => row.metrics?.rsp && lenovoProduct?.listPrice);
+  const priceIndex = priceIndexRows.length ? avg(priceIndexRows.map((row) => row.metrics.rsp / lenovoProduct.listPrice)) : 0;
+  return { monthlyUnits, monthlyRevenue, aur, rating, priceIndex };
+}
+
+function renderCompetitorKpi(label, value, note) {
   return `
-    <article class="competitor-card">
-      <span class="tag">${escapeHtml(row.heroFeature)}</span>
-      <h3>${escapeHtml(row.brand)}</h3>
-      <p>${escapeHtml(row.starProduct)}</p>
-      <div class="mini-metrics">
-        <div><span>${modeledText("Share")}</span><strong>${fmtPercent(row.marketShare)}</strong></div>
-        <div><span>${modeledText("Units")}</span><strong>${fmtCompact(row.brandUnits)}</strong></div>
-        <div><span>${modeledText("AUR")}</span><strong>${fmtCurrency(row.avgAUR)}</strong></div>
+    <div class="competitor-kpi">
+      <span>${escapeHtml(label)}</span>
+      <strong>${value}</strong>
+      <small>${escapeHtml(note)}</small>
+    </div>
+  `;
+}
+
+function renderCompetitorLenovoContext(product) {
+  const rows = data.productMetrics.filter((row) => row.modelId === product.id && rowInSelectedPeriod(row));
+  const summary = summarizeProductRows(rows);
+  const attrs = product.attributes || {};
+  const specs = product.categoryId === "adapter"
+    ? [`${attrs.wattage || "—"}W`, `${attrs.ports || "—"} ports`, attrs.compatibility || "—"]
+    : product.categoryId === "power_bank"
+      ? [`${attrs.outputW || "—"}W`, attrs.capacityBand || "—", attrs.compatibility || "—"]
+      : [`${attrs.powerW || "—"}W`, attrs.lengthBand || "—", attrs.retractable || "—"];
+  return `
+    <article class="competitor-lenovo-context">
+      <div class="competitor-lenovo-image">
+        <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />
+      </div>
+      <div>
+        <span class="tag">Lenovo reference product</span>
+        <h3>${escapeHtml(product.name)}</h3>
+        <p>${specs.map(escapeHtml).join(" · ")}</p>
+        <div class="mini-metrics">
+          <div><span>RSP</span><strong>${fmtExactCurrency(product.listPrice)}</strong></div>
+          <div><span>Order_Qty</span><strong>${fmtExactNumber(summary.orderQty || summary.unitsNet)}</strong></div>
+          <div><span>Order_Rev</span><strong>${fmtExactCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
+        </div>
       </div>
     </article>
+  `;
+}
+
+function renderMarketplaceCompetitorCard(row, lenovoProduct) {
+  const metrics = row.metrics || {};
+  const specs = row.specs || {};
+  const priceIndex = metrics.rsp && lenovoProduct?.listPrice ? metrics.rsp / lenovoProduct.listPrice : 0;
+  const portDelta = Number.isFinite(specs.totalPorts - (lenovoProduct.attributes?.ports || 0)) ? specs.totalPorts - (lenovoProduct.attributes?.ports || 0) : null;
+  return `
+    <article class="marketplace-competitor-card">
+      <div class="marketplace-competitor-image">
+        <img src="${escapeAttr(row.image)}" alt="${escapeAttr(row.productName)}" loading="lazy" />
+      </div>
+      <div class="marketplace-competitor-body">
+        <header>
+          <div>
+            <span class="tag">${escapeHtml(row.country)} · ${escapeHtml(row.platform)}</span>
+            <h3>${escapeHtml(row.productName)}</h3>
+            <p>${escapeHtml(row.title)}</p>
+          </div>
+          <a class="ghost-button compact-button" href="${escapeAttr(row.productUrl)}" target="_blank" rel="noreferrer">Source</a>
+        </header>
+
+        <div class="competitor-boss-grid">
+          ${renderBossMetric("Price Index", priceIndex ? `${(priceIndex * 100).toFixed(1)}%` : "—", `Lenovo RSP ${fmtExactCurrency(lenovoProduct.listPrice)}`)}
+          ${renderBossMetric("RSP / AUR", `${fmtExactCurrency(metrics.rsp)} / ${fmtExactCurrency(metrics.aur)}`, "marketplace price")}
+          ${renderBossMetric("Monthly Sales", fmtExactNumber(metrics.monthlyUnits), `${formatSignedPercent(metrics.unitsMomGrowth)} MoM`)}
+          ${renderBossMetric("Monthly Revenue", fmtExactCurrency(metrics.monthlyRevenue), "sales velocity")}
+          ${renderBossMetric("Rating / Reviews", `${Number(metrics.rating || 0).toFixed(1)} / ${fmtExactNumber(metrics.reviewCount)}`, `${fmtExactNumber(metrics.monthlyNewReviews)} new reviews`)}
+          ${renderBossMetric("BSR", fmtExactNumber(metrics.subBsr), metrics.subCategory || "subcategory")}
+        </div>
+
+        <div class="competitor-detail-grid">
+          <div>
+            <h4>Product Parameters</h4>
+            <ul>
+              <li>${fmtExactNumber(specs.wattageW)}W · ${fmtExactNumber(specs.totalPorts)} total ports ${portDelta === null ? "" : `(${portDelta >= 0 ? "+" : ""}${portDelta} vs Lenovo)`}</li>
+              <li>${escapeHtml(specs.connectorType || "—")} · ${escapeHtml(specs.color || "—")}</li>
+              <li>${escapeHtml(specs.specialFeature || "—")}</li>
+              <li>${escapeHtml(metrics.productSize || "—")}</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Channel / Seller</h4>
+            <ul>
+              <li>BuyBox: ${escapeHtml(metrics.buyBoxSeller || "—")} · ${escapeHtml(metrics.buyBoxType || "—")}</li>
+              <li>Sellers: ${fmtExactNumber(metrics.sellerCount)} · FBA fee ${fmtExactCurrency(metrics.fbaFee)}</li>
+              <li>Gross margin: ${fmtPercent(metrics.grossMargin)} · LQS ${Number(metrics.lqs || 0).toFixed(1)}</li>
+              <li>Launch: ${escapeHtml(metrics.launchDate || "—")} · ${fmtExactNumber(metrics.daysOnMarket)} days</li>
+            </ul>
+          </div>
+        </div>
+
+        <footer>
+          ${(row.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
+          <span class="product-meta">${escapeHtml(row.source.dataProvider)} · ${escapeHtml(row.source.sourceDate)} · ${escapeHtml(row.dataConfidence)}</span>
+        </footer>
+      </div>
+    </article>
+  `;
+}
+
+function renderBossMetric(label, value, note) {
+  return `
+    <div>
+      <span>${escapeHtml(label)}</span>
+      <strong>${value}</strong>
+      <small>${escapeHtml(note || "")}</small>
+    </div>
+  `;
+}
+
+function renderCompetitorEmptyState(product, country) {
+  return `
+    <section class="empty-state competitor-empty-state">
+      <div>
+        <h3>No marketplace competitor loaded for ${escapeHtml(product.name)} in ${escapeHtml(country.label)}</h3>
+        <p>The comparison framework is ready for this market. Add 1-2 mainstream ecommerce exports with image, RSP, AUR, monthly sales, revenue, rating, BSR, seller, and product parameters.</p>
+        <p class="product-meta">Target platforms: ${escapeHtml(country.platforms)}</p>
+      </div>
+    </section>
   `;
 }
 
@@ -1473,6 +1624,7 @@ function drawScenarioDonut(categoryId, rows) {
 }
 
 function drawCompetitiveAnalysis(categoryId) {
+  return;
   const rows = data.brandMarket.filter((row) => row.categoryId === categoryId && !row.isLenovo);
   const selectedRows = brandRowsForSelectedPeriod(categoryId, false).sort((a, b) => b.marketShare - a.marketShare);
   const periods = periodsThroughSelected(state.granularity, selectedPeriod());
@@ -3027,6 +3179,16 @@ function handleChange(event) {
   }
   if (target.dataset.action === "structure-brand") {
     state.structureBrand[state.categoryId] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "competitor-lenovo-product") {
+    state.competitorLenovoProduct[state.categoryId] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "competitor-country") {
+    state.competitorCountry[state.categoryId] = target.value;
     render();
     return;
   }
