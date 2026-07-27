@@ -562,6 +562,7 @@ function renderIndustryBrandModule(brand, featured = false) {
         </div>
         ${brand.metrics?.length ? `<div class="industry-metric-strip">${brand.metrics.map(renderIndustryMetric).join("")}</div>` : ""}
       </header>
+      ${brand.products?.length ? renderIndustryProductSection(brand.products) : ""}
       ${brand.strategy?.length ? renderIndustryStorySection("Strategy Signals", brand.strategy) : ""}
       ${brand.portfolio?.length ? renderIndustryStorySection("Portfolio Planning", brand.portfolio) : ""}
       ${brand.pricing?.length ? renderIndustryStorySection("Pricing and Promotion", brand.pricing) : ""}
@@ -591,6 +592,55 @@ function renderIndustryStorySection(title, items) {
   `;
 }
 
+function renderIndustryProductSection(products) {
+  return `
+    <section class="industry-product-section">
+      <h4>Representative Products</h4>
+      <div class="industry-product-grid">
+        ${products.map(renderIndustryProductCard).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderIndustryProductCard(product) {
+  const productHref = product.productUrl || product.amazonUrl || "#";
+  const specs = product.specs || [];
+  return `
+    <article class="industry-product-card">
+      <a class="industry-product-image" href="${escapeAttr(productHref)}" target="_blank" rel="noreferrer" aria-label="${escapeAttr(product.name)}">
+        <img src="${escapeAttr(product.imageUrl || "")}" alt="${escapeAttr(product.name)}" loading="lazy">
+      </a>
+      <div class="industry-product-body">
+        <div class="industry-product-kicker">
+          <span class="tag">${escapeHtml(product.type || "Product")}</span>
+          <strong>${escapeHtml(product.price || "Price varies")}</strong>
+        </div>
+        <h5>${escapeHtml(product.name)}</h5>
+        <p>${escapeHtml(product.positioning || "")}</p>
+        ${specs.length ? `<div class="industry-product-specs">${specs.map((spec) => `<span>${escapeHtml(spec)}</span>`).join("")}</div>` : ""}
+        <div class="industry-product-links">
+          ${product.amazonUrl ? `<a href="${escapeAttr(product.amazonUrl)}" target="_blank" rel="noreferrer">Amazon</a>` : ""}
+          ${product.productUrl ? `<a href="${escapeAttr(product.productUrl)}" target="_blank" rel="noreferrer">Product page</a>` : ""}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderIndustryFlow(steps) {
+  return `
+    <ol class="industry-flow">
+      ${steps.map((step) => `
+        <li>
+          <span>${escapeHtml(step.label || step)}</span>
+          ${step.detail ? `<strong>${escapeHtml(step.detail)}</strong>` : ""}
+        </li>
+      `).join("")}
+    </ol>
+  `;
+}
+
 function renderIndustryCountryCard(country) {
   return `
     <article class="industry-country-card">
@@ -601,6 +651,7 @@ function renderIndustryCountryCard(country) {
       <div class="industry-country-metrics">
         ${(country.metrics || []).map(renderIndustryMetric).join("")}
       </div>
+      ${country.flow?.length ? renderIndustryFlow(country.flow) : ""}
       <div class="industry-country-copy">
         ${(country.strategy || []).map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
       </div>

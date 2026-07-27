@@ -991,6 +991,153 @@ INDUSTRY_BRAND_REPORTS = {
     },
 }
 
+ANKER_COUNTRY_STRATEGY_FLOWS = {
+    "USA": [
+        {"label": "Amazon Core", "detail": "60-70% online"},
+        {"label": "KA Customization", "detail": "packaging / SKU"},
+        {"label": "48h Fulfillment", "detail": "dedicated KA support"},
+        {"label": "Event Lift", "detail": "Prime Day + Black Friday"},
+    ],
+    "Japan": [
+        {"label": "Rakuten + Amazon", "detail": "online duopoly"},
+        {"label": "Offline Build", "detail": "KA + operators"},
+        {"label": "Local Team", "detail": "8 to 13 people"},
+        {"label": "Seasonal Push", "detail": "Prime Day + Obon"},
+    ],
+    "Indonesia": [
+        {"label": "Country Agent", "detail": "fragmented retail"},
+        {"label": "Price Guardrail", "detail": "exit <$30"},
+        {"label": "Value Band", "detail": "$30-80 traffic"},
+        {"label": "TikTok Growth", "detail": "fast ecommerce lift"},
+    ],
+    "UK": [
+        {"label": "Amazon First", "detail": "~70% online"},
+        {"label": "Promo Calendar", "detail": "60% annual revenue"},
+        {"label": "Offline Agents", "detail": "retail + telecom"},
+        {"label": "Scenario Bundle", "detail": "travel + laptop"},
+    ],
+}
+
+ANKER_COUNTRY_COMPACT_COPY = {
+    "USA": [
+        "Direct sales are anchored by Amazon and large KA accounts.",
+        "Demand is activated through Prime Day, Black Friday, customized packaging, and service execution.",
+    ],
+    "Japan": [
+        "Online starts with Rakuten and Amazon, then expands into KA, telecom, and local distributors.",
+        "Pricing is benchmarked against Cheero and Elecom, so compactness, safety, and trust matter.",
+    ],
+    "Indonesia": [
+        "The country-agent model lowers channel cost in a fragmented retail market.",
+        "Anker avoids ultra-low-end products and keeps volume in the $30-80 value band plus $80-200 core revenue band.",
+    ],
+    "UK": [
+        "Amazon leads now; offline growth depends on agents and national retail coverage.",
+        "The product story is broader use coverage: laptop, travel, high power, and multi-device scenarios.",
+    ],
+}
+
+INDUSTRY_PRODUCT_SHOWCASE = {
+    "adapter": {
+        "Anker": [
+            {
+                "name": "Anker 747 Charger (GaNPrime 150W)",
+                "type": "Adapter",
+                "price": "JP list ¥14,990",
+                "positioning": "High-power 4-port GaNPrime charger for laptop and multi-device users.",
+                "imageUrl": "https://www.ankerjapan.com/cdn/shop/products/2341main.jpg?v=1662598573&width=900",
+                "productUrl": "https://www.ankerjapan.com/products/a2340",
+                "amazonUrl": "https://www.amazon.co.jp/dp/B09W9B6H61",
+                "specs": ["150W", "4 ports", "3 USB-C + 1 USB-A", "GaNPrime"],
+            }
+        ],
+        "Baseus": [
+            {
+                "name": "Baseus GaN2 3 Ports Fast Charger 65W",
+                "type": "Adapter",
+                "price": "US list $36.99",
+                "positioning": "Value GaN charger with compact 3-port design and travel-friendly positioning.",
+                "imageUrl": "https://www.baseus.com/cdn/shop/products/Baseus_GaN2_3_Ports_Fast_Charger_65W_Black_1_front_side_1200x.jpg?v=1667904127",
+                "productUrl": "https://www.baseus.com/products/gan2-3-ports-fast-charger-65w",
+                "amazonUrl": "https://www.amazon.com/s?k=Baseus+GaN2+3+Ports+Fast+Charger+65W",
+                "specs": ["65W", "3 ports", "2 USB-C + 1 USB-A", "GaN"],
+            }
+        ],
+        "UGREEN": [
+            {
+                "name": "UGREEN Nexode Pro 160W 5-Port USB-C Charger",
+                "type": "Adapter",
+                "price": "US promo $65 / list $89.99",
+                "positioning": "Premium desktop-style multi-port charger with display and 160W total output.",
+                "imageUrl": "https://us.ugreen.com/cdn/shop/files/ugreen-nexode-pro-160w-5-port-usb-c-charger-2292664.png?v=1782182893&width=1600",
+                "productUrl": "https://us.ugreen.com/products/ugreen-nexode-pro-160w-usb-c-charger",
+                "amazonUrl": "https://www.amazon.com/s?k=UGREEN+Nexode+Pro+160W+5-Port+USB-C+Charger",
+                "specs": ["160W", "5 ports", "touch display", "foldable plug"],
+            }
+        ],
+    },
+    "power_bank": {
+        "Anker": [
+            {
+                "name": "Anker Prime Power Bank (27K, 250W)",
+                "type": "Power Bank",
+                "price": "US MSRP around $179.99",
+                "positioning": "Premium 27,650mAh power bank for multi-device laptop and mobile fast charging.",
+                "imageUrl": "https://cdn.shopify.com/s/files/1/0493/9834/9974/files/Rectangle1_885945a5-b5d8-439f-bc99-54bf72715ff4.png?v=1762766510&width=1600",
+                "productUrl": "https://www.anker.com/products/a1340-250w-power-bank",
+                "amazonUrl": "https://www.amazon.com/dp/B0BYP2F3SG",
+                "specs": ["27,650mAh", "250W max", "2 USB-C + 1 USB-A", "smart app"],
+            }
+        ],
+        "Baseus": [
+            {
+                "name": "Baseus Blade Laptop Power Bank 100W 20000mAh",
+                "type": "Power Bank",
+                "price": "US sale $69.99 / list $129.99",
+                "positioning": "Slim laptop power bank positioned around portability, value, and 100W PD.",
+                "imageUrl": "https://www.baseus.com/cdn/shop/products/Baseus_Blade_Laptop_Power_Bank_100W_20000mAh_1_front_side_1200x.jpg?v=1699274864",
+                "productUrl": "https://www.baseus.com/products/blade-laptop-power-bank-100w-20000mah",
+                "amazonUrl": "https://www.amazon.com/s?k=Baseus+Blade+Laptop+Power+Bank+100W+20000mAh",
+                "specs": ["20,000mAh", "100W PD", "4-device charging", "status display"],
+            }
+        ],
+        "UGREEN": [
+            {
+                "name": "UGREEN 145W 25000mAh 3-Port Power Bank",
+                "type": "Power Bank",
+                "price": "US promo $69.99 / list $109.99",
+                "positioning": "High-capacity laptop power bank with 140W USB-C output and smart display.",
+                "imageUrl": "https://us.ugreen.com/cdn/shop/files/ugreen-145w-25000mah-for-laptop-3-ports-power-bank-421788.png?v=1720669107&width=1600",
+                "productUrl": "https://us.ugreen.com/products/ugreen-145w-power-bank-for-laptop",
+                "amazonUrl": "https://www.amazon.com/s?k=UGREEN+145W+25000mAh+3-Port+Power+Bank",
+                "specs": ["25,000mAh", "145W total", "3 ports", "smart display"],
+            }
+        ],
+    },
+}
+
+
+def enrich_industry_brand_reports(reports: dict[str, Any]) -> dict[str, Any]:
+    for category_id, report in reports.items():
+        showcase_by_brand = INDUSTRY_PRODUCT_SHOWCASE.get(category_id, {})
+        for brand in report.get("brands", []):
+            products = showcase_by_brand.get(brand.get("brand"))
+            if products:
+                brand["products"] = products
+            if brand.get("brand") == "Anker":
+                for country in brand.get("countries", []):
+                    market = country.get("market")
+                    flow = ANKER_COUNTRY_STRATEGY_FLOWS.get(market)
+                    if flow:
+                        country["flow"] = flow
+                    compact_copy = ANKER_COUNTRY_COMPACT_COPY.get(market)
+                    if compact_copy:
+                        country["strategy"] = compact_copy
+    return reports
+
+
+INDUSTRY_BRAND_REPORTS = enrich_industry_brand_reports(INDUSTRY_BRAND_REPORTS)
+
 MARKET_STRUCTURE_REPORTS = {
     "adapter": {
         "title": "Power Adapter Country Market Structure",
