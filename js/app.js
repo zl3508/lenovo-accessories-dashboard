@@ -38,6 +38,7 @@ const state = {
   summaryGeoProducts: {},
   summaryCountryProducts: {},
   summarySelectedGeo: {},
+  industrySlides: {},
   variantId: "all",
 };
 
@@ -592,19 +593,19 @@ function renderIndustryStorySection(title, items) {
 }
 
 function renderIndustryFlowDeck(brandName, deck, index) {
-  const railId = `industry-${idFromText(brandName)}-${idFromText(deck.title || "deck")}-${index}`;
+  const carouselId = `industry-${idFromText(brandName)}-${idFromText(deck.title || "deck")}-${index}`;
+  const cards = deck.cards || [];
+  const activeIndex = selectedIndustrySlide(carouselId, cards.length);
   return `
     <section class="industry-flow-deck">
       <div class="industry-deck-head">
         <div>
-          <span>Flow Module</span>
+          <span>Slide Module</span>
           <h4>${escapeHtml(deck.title || "Flow")}</h4>
         </div>
-        ${renderRailControls(railId)}
+        ${renderCarouselCounter(activeIndex, cards.length)}
       </div>
-      <div class="industry-flow-rail" id="${escapeAttr(railId)}">
-        ${(deck.cards || []).map((card) => renderIndustryFlowCard(card)).join("")}
-      </div>
+      ${renderIndustryCarousel(carouselId, cards, (card) => renderIndustryFlowCard(card, "is-ppt"), activeIndex)}
     </section>
   `;
 }
@@ -650,11 +651,23 @@ function renderIndustryProductCard(product) {
   `;
 }
 
-function renderRailControls(railId) {
+function renderCarouselCounter(index, total) {
+  return `<span class="industry-slide-count">${Math.min(index + 1, total || 1)} / ${total || 1}</span>`;
+}
+
+function renderIndustryCarousel(carouselId, items, renderer, activeIndex = selectedIndustrySlide(carouselId, items.length)) {
+  if (!items.length) return "";
+  const current = items[activeIndex] || items[0];
   return `
-    <div class="industry-rail-controls">
-      <button type="button" data-action="scroll-rail" data-target="${escapeAttr(railId)}" data-direction="previous" aria-label="Scroll previous">&lt;</button>
-      <button type="button" data-action="scroll-rail" data-target="${escapeAttr(railId)}" data-direction="next" aria-label="Scroll next">&gt;</button>
+    <div class="industry-carousel" data-carousel-id="${escapeAttr(carouselId)}">
+      <button class="industry-carousel-nav is-previous" type="button" data-action="industry-slide" data-carousel-id="${escapeAttr(carouselId)}" data-direction="previous" aria-label="Previous slide">&lt;</button>
+      <div class="industry-slide-frame">
+        ${renderer(current, activeIndex)}
+      </div>
+      <button class="industry-carousel-nav is-next" type="button" data-action="industry-slide" data-carousel-id="${escapeAttr(carouselId)}" data-direction="next" aria-label="Next slide">&gt;</button>
+      <div class="industry-slide-dots" aria-hidden="true">
+        ${items.map((_, index) => `<span class="${index === activeIndex ? "is-active" : ""}"></span>`).join("")}
+      </div>
     </div>
   `;
 }
@@ -685,19 +698,19 @@ function renderIndustryFlow(steps) {
 }
 
 function renderIndustryCountryDeck(brand) {
-  const railId = `industry-${idFromText(brand.brand)}-country-strategy`;
+  const carouselId = `industry-${idFromText(brand.brand)}-country-strategy`;
+  const countries = brand.countries || [];
+  const activeIndex = selectedIndustrySlide(carouselId, countries.length);
   return `
     <section class="industry-country-section">
       <div class="industry-deck-head">
         <div>
-          <span>Country Flow</span>
+          <span>Country Slide</span>
           <h4>Country Strategy</h4>
         </div>
-        ${renderRailControls(railId)}
+        ${renderCarouselCounter(activeIndex, countries.length)}
       </div>
-      <div class="industry-country-rail" id="${escapeAttr(railId)}">
-        ${brand.countries.map(renderIndustryCountrySlide).join("")}
-      </div>
+      ${renderIndustryCarousel(carouselId, countries, renderIndustryCountrySlide, activeIndex)}
     </section>
   `;
 }
@@ -3530,8 +3543,8 @@ function handleClick(event) {
   } else if (action === "structure-market") {
     state.structureMarket[button.dataset.category || state.categoryId] = button.dataset.marketCode;
     render();
-  } else if (action === "scroll-rail") {
-    scrollIndustryRail(button.dataset.target, button.dataset.direction);
+  } else if (action === "industry-slide") {
+    updateIndustrySlide(button.dataset.carouselId, button.dataset.direction);
   } else if (action === "granularity") {
     const scope = button.dataset.scope;
     if (scope === "detail") state.detailGranularity = button.dataset.granularity;
@@ -3567,11 +3580,35 @@ function handleClick(event) {
   }
 }
 
-function scrollIndustryRail(targetId, direction) {
-  const rail = document.getElementById(targetId);
-  if (!rail) return;
-  const delta = rail.clientWidth * 0.88 * (direction === "previous" ? -1 : 1);
-  rail.scrollBy({ left: delta, behavior: "smooth" });
+function selectedIndustrySlide(carouselId, total) {
+  if (!total) return 0;
+  const current = state.industrySlides[carouselId] || 0;
+  return Math.max(0, Math.min(total - 1, current));
+}
+
+function updateIndustrySlide(carouselId, direction) {
+  if (!carouselId) return;
+  const total = industrySlideTotal(carouselId);
+  if (!total) return;
+  const current = selectedIndustrySlide(carouselId, total);
+  const step = direction === "previous" ? -1 : 1;
+  state.industrySlides[carouselId] = (current + step + total) % total;
+  render();
+}
+
+function industrySlideTotal(carouselId) {
+  const report = industryBrandReport(state.categoryId);
+  if (!report) return 0;
+  for (const brand of report.brands || []) {
+    const countryId = `industry-${idFromText(brand.brand)}-country-strategy`;
+    if (countryId === carouselId) return (brand.countries || []).length;
+    const decks = brand.flowDecks || [];
+    for (let index = 0; index < decks.length; index += 1) {
+      const deckId = `industry-${idFromText(brand.brand)}-${idFromText(decks[index].title || "deck")}-${index}`;
+      if (deckId === carouselId) return (decks[index].cards || []).length;
+    }
+  }
+  return 0;
 }
 
 function handleChange(event) {
