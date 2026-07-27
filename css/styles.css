@@ -1568,6 +1568,51 @@ input[type="search"] {
   background: rgba(255, 255, 255, 0.78);
 }
 
+.industry-overview-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.industry-flow-card.is-overview {
+  min-height: 0;
+  padding: 14px;
+  border-top-width: 4px;
+  box-shadow: none;
+}
+
+.industry-flow-card.is-overview h5 {
+  font-size: 17px;
+  line-height: 1.12;
+}
+
+.industry-flow-card.is-overview .industry-flow {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.industry-flow-card.is-overview .industry-flow li {
+  min-height: 76px;
+  padding: 36px 10px 10px;
+}
+
+.industry-flow-card.is-overview .industry-flow li:not(:last-child)::after {
+  top: auto;
+  right: 50%;
+  bottom: -9px;
+  content: "v";
+  transform: translateX(50%);
+}
+
+.industry-flow-card.is-overview .industry-flow span {
+  font-size: 12px;
+}
+
+.industry-flow-card.is-overview .industry-flow strong {
+  font-size: 11px;
+}
+
 .industry-ppt-aside .industry-country-metrics {
   grid-template-columns: 1fr;
 }
@@ -1601,10 +1646,6 @@ input[type="search"] {
     linear-gradient(135deg, rgba(255, 255, 255, 0.99), rgba(251, 250, 247, 0.98)),
     var(--surface);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 16px 34px rgba(31, 35, 40, 0.08);
-}
-
-.industry-flow-card.is-ppt {
-  padding-left: 34px;
 }
 
 .industry-flow-card h5 {

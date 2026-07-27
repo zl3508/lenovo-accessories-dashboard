@@ -595,9 +595,7 @@ function renderIndustryStorySection(title, items) {
 function buildIndustryOverviewSlides(brand) {
   const slides = [];
   (brand.flowDecks || []).forEach((deck) => {
-    (deck.cards || []).forEach((card) => {
-      slides.push({ kind: "flow", section: deck.title || "Flow", card });
-    });
+    slides.push({ section: deck.title || "Flow", deck });
   });
   return slides;
 }
@@ -615,25 +613,27 @@ function renderIndustryOverviewDeck(brand, slides) {
         </div>
         ${renderCarouselCounter(activeIndex, slides.length)}
       </div>
-      ${renderIndustryCarousel(carouselId, slides, (slide) => renderIndustryFlowSlide(slide.card, slide.section, brand.brand), activeIndex)}
+      ${renderIndustryCarousel(carouselId, slides, (slide) => renderIndustryOverviewSlide(slide, brand), activeIndex)}
     </section>
   `;
 }
 
-function renderIndustryFlowSlide(card, section, brandName) {
-  const kpis = card.kpis || [];
+function renderIndustryOverviewSlide(slide, brand) {
+  const cards = slide.deck?.cards || [];
   return `
-    <article class="industry-ppt-slide">
+    <article class="industry-ppt-slide is-overview-slide">
       <div class="industry-ppt-aside">
-        <span>${escapeHtml(brandName)}</span>
-        <h5>${escapeHtml(card.heading || section || "")}</h5>
+        <span>${escapeHtml(brand.brand)}</span>
+        <h5>${escapeHtml(slide.section || "Industry Overview")}</h5>
         <div class="industry-ppt-kpis">
-          ${kpis.map((kpi) => `<strong>${escapeHtml(kpi)}</strong>`).join("")}
+          ${(brand.metrics || []).slice(0, 3).map((metric) => `<strong>${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}</strong>`).join("")}
         </div>
       </div>
       <div class="industry-ppt-canvas">
-        <span class="flow-eyebrow">${escapeHtml(card.eyebrow || section || "")}</span>
-        ${card.steps?.length ? renderIndustryFlow(card.steps) : ""}
+        <span class="flow-eyebrow">${escapeHtml(slide.section || "Overview")}</span>
+        <div class="industry-overview-card-grid">
+          ${cards.map((card) => renderIndustryFlowCard(card, "is-overview")).join("")}
+        </div>
       </div>
     </article>
   `;
