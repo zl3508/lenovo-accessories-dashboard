@@ -1998,5 +1998,369 @@
     "sourceMode": "real_product_excel",
     "sourceRows": 2406,
     "sourceNotes": "Real product sell-in/order data loaded from Lenovo accessory product workbooks."
+  },
+  "industryBrandReports": {
+    "adapter": {
+      "title": "Adapter Industry Trends by Brand",
+      "categoryLens": "Brand-led reading for adapter planning. The reports show that adapter competition is more exposed to PC and phone OEMs, while third-party brands win in fast charging, compact form factor, multi-port use, and channel execution.",
+      "source": "Sources: Lenovo PC Options Industry Analysis - Power Category Report, pp.12-26; Ipsos PC Accessories User Research - Power Adapters, pp.20, 22, 39, 43. Industry report figures are estimates from expert interviews and desk research.",
+      "brands": [
+        {
+          "brand": "Anker",
+          "role": "Benchmark Brand",
+          "summary": "Anker uses a mid-to-high-end position, a broad charging portfolio, and localized channels to build a defensible channel moat. In adapter, its advantage is strongest where users value fast charging, compact design, and multi-device compatibility, but OEM accessory brands remain tough competitors.",
+          "metrics": [
+            {
+              "label": "Positioning",
+              "value": "Mid-to-high end"
+            },
+            {
+              "label": "Channel model",
+              "value": "Direct in USA / Japan"
+            },
+            {
+              "label": "US adapter",
+              "value": "17-18% share"
+            }
+          ],
+          "strategy": [
+            "Product planning is organized by series and use case: high-end Prime, convenience-led Nano, entry Zolo, and wireless MagGo. Adapter planning benefits from the same portfolio discipline even when consumers compare by wattage and port count.",
+            "The direct-sale model in the USA and Japan lets Anker manage Amazon, Rakuten, independent sites, and large KA accounts directly; other regions rely more on country agents to expand offline and localized retail coverage.",
+            "Localization teams are treated as a strategic asset. The report highlights Anker's early market entry, consumer demand insight, and deep channel coverage as its main current competitive advantages."
+          ],
+          "portfolio": [
+            "Prime is positioned as high-end and technology-led. It is used to reinforce Anker's premium image and can support higher-power charging scenarios.",
+            "Nano is positioned mid-end and convenience-led, matching demand for compact, reliable, and durable charging products.",
+            "Zolo gives Anker an entry-level lane, while MagGo supports the mid/high-end wireless portfolio and wider multi-device ecosystem."
+          ],
+          "pricing": [
+            "Headquarters sets benchmark prices from market competition and consumer research; local regions adjust prices based on cost, targets, and channel conditions.",
+            "Power-category margins are affected by tariffs and logistics. The report states overall margins are maintained above 30%, and some developed markets can reach 40-50%.",
+            "Promotions are centered on major retail events such as Black Friday, Prime Day, Obon Festival, Bulan puasa, and Double 11, with online discounts and offline gifts or membership-linked promotions."
+          ],
+          "countries": [
+            {
+              "market": "USA",
+              "model": "Direct-sale market",
+              "metrics": [
+                {
+                  "label": "Adapter revenue",
+                  "value": "RMB 1.5B"
+                },
+                {
+                  "label": "Market share",
+                  "value": "17-18%"
+                },
+                {
+                  "label": "Growth",
+                  "value": "10%"
+                }
+              ],
+              "strategy": [
+                "Amazon is the core online channel. The report shows online at 60-70% and offline at 30-40%, with Amazon carrying most online sales.",
+                "Large KA accounts receive customized product or packaging support, dedicated fulfillment, and after-sales support. This helps Anker protect national coverage and service quality."
+              ],
+              "implication": "For Lenovo adapter, the USA battle is less about generic wattage and more about KA-ready SKUs, fast charging proof, compactness, and channel-specific packaging."
+            },
+            {
+              "market": "Japan",
+              "model": "Direct-sale market",
+              "metrics": [
+                {
+                  "label": "Adapter revenue",
+                  "value": "RMB 0.7B"
+                },
+                {
+                  "label": "Market share",
+                  "value": "18%"
+                },
+                {
+                  "label": "Mainstream power",
+                  "value": "45-100W"
+                }
+              ],
+              "strategy": [
+                "Japan is Anker's second-largest market, but local brands are strong. The report notes Cheero and Elecom as important pricing references.",
+                "Anker expands from online into offline through Rakuten, KA cooperation, telecom operators, and local distributors; the Japan local team was planned to grow from 8 people to 13 in 2025."
+              ],
+              "implication": "Japan adapter positioning should stress compact design, trusted safety, and localized retail execution rather than only lower price."
+            },
+            {
+              "market": "Indonesia",
+              "model": "Country agent market",
+              "metrics": [
+                {
+                  "label": "Power category",
+                  "value": "RMB 1.0B"
+                },
+                {
+                  "label": "Growth",
+                  "value": "About 40%"
+                },
+                {
+                  "label": "Share",
+                  "value": "50-60%"
+                }
+              ],
+              "strategy": [
+                "Anker strategically avoids the ultra-low-end segment and focuses on middle/high-end price bands. Country agents control many local retail and ecommerce relationships.",
+                "Offline retail is decentralized, so Anker uses national agents to reduce channel cost and improve local channel coverage."
+              ],
+              "implication": "Adapter offers in Indonesia should avoid pure low-end competition and be framed around reliability, fast charging, and value at selected price points."
+            },
+            {
+              "market": "UK",
+              "model": "Agent-led expansion",
+              "metrics": [
+                {
+                  "label": "Adapter scale",
+                  "value": "30% of UK PB revenue"
+                },
+                {
+                  "label": "Online share",
+                  "value": "70%"
+                },
+                {
+                  "label": "Growth",
+                  "value": "Slower than PB"
+                }
+              ],
+              "strategy": [
+                "The UK is currently Amazon-led online, while future growth depends on offline channels such as independent retail, supermarkets, home appliance chains, cell phone channels, and dealers.",
+                "The report says Anker has no separate adapter series in the UK yet, because consumers prefer products with wider application coverage."
+              ],
+              "implication": "UK adapter planning should connect with laptop, travel, and multi-device scenarios instead of standing alone as a narrow accessory line."
+            }
+          ]
+        },
+        {
+          "brand": "Baseus",
+          "role": "Value Challenger",
+          "summary": "The report mentions Baseus as one of the Chinese charging brands prioritizing Japan, and as part of the low-price competitive set in Indonesia.",
+          "metrics": [
+            {
+              "label": "Japan role",
+              "value": "Core strategic market"
+            },
+            {
+              "label": "Indonesia band",
+              "value": "$30-80"
+            },
+            {
+              "label": "Positioning",
+              "value": "Value and design"
+            }
+          ],
+          "notes": [
+            "In Japan, Baseus is grouped with Anker and UGREEN as global Chinese players expanding presence, while local Japanese brands still hold strong positions.",
+            "In Indonesia, the $30-80 range is described as the core price area for Baseus and UGREEN, attracting users through cost-effectiveness and design innovation."
+          ]
+        },
+        {
+          "brand": "UGREEN",
+          "role": "Value Challenger",
+          "summary": "UGREEN appears in the reports as a Chinese charging accessory player competing in Japan and in Indonesia's value-oriented price bands.",
+          "metrics": [
+            {
+              "label": "Japan role",
+              "value": "Core strategic market"
+            },
+            {
+              "label": "Indonesia band",
+              "value": "$30-80"
+            },
+            {
+              "label": "Adapter survey",
+              "value": "2% total owners"
+            }
+          ],
+          "notes": [
+            "The adapter user research appendix lists UGREEN at 2% total brand ownership among power adapter owners, with a higher 9% signal in SA.",
+            "For Lenovo, UGREEN is most useful as a value-positioning benchmark, especially where price sensitivity and design-led differentiation matter."
+          ]
+        }
+      ]
+    },
+    "power_bank": {
+      "title": "Power Bank Industry Trends by Brand",
+      "categoryLens": "Brand-led reading for power bank planning. The reports show power bank demand is shaped by capacity, fast charging, multi-device use, travel portability, and strong online/offline channel execution.",
+      "source": "Sources: Lenovo PC Options Industry Analysis - Power Category Report, pp.12-26; Ipsos PC Accessories User Research - Power Bank, pp.18, 20, 22, 24, 26-30. Industry report figures are estimates from expert interviews and desk research.",
+      "brands": [
+        {
+          "brand": "Anker",
+          "role": "Benchmark Brand",
+          "summary": "Anker is the clearest benchmark in power bank. It combines a series-based product system, strong direct channels in developed markets, and country-agent expansion elsewhere. The reports repeatedly identify Anker as the most popular power bank brand in user research markets.",
+          "metrics": [
+            {
+              "label": "USA share",
+              "value": "30%"
+            },
+            {
+              "label": "Japan share",
+              "value": "27%"
+            },
+            {
+              "label": "Indonesia share",
+              "value": "50-60%"
+            }
+          ],
+          "strategy": [
+            "Anker plans power banks through distinct product lineages: Prime for high-end technology, Nano for convenient mid-end charging, Zolo for entry coverage, and MagGo for mid/high-end wireless use cases.",
+            "Because power bank volume and price are highly linear, consumers tend to compare by capacity and price band. Anker uses series, capacity, and channel execution together rather than relying on one product story.",
+            "User research identifies travel portability, large capacity, and simultaneous multi-device charging as the core purchase motivations for laptop power banks."
+          ],
+          "portfolio": [
+            "Prime supports premium and high-capacity propositions, especially above 10,000mAh.",
+            "Nano covers convenience-led products up to 20,000mAh and supports compact everyday charging.",
+            "MagGo supports wireless and ecosystem-based scenarios up to 10,000mAh, while laptop-focused power banks create space for high-wattage PC use."
+          ],
+          "pricing": [
+            "The pricing model starts with headquarters benchmark pricing, then adjusts locally for cost, sales targets, competitive benchmarking, and channel conditions.",
+            "In the USA, Anker's power category gross margin is reported around 42%; in Japan, power bank gross margin is reported around 53%; Indonesia is lower at about 30% due to the country-agent model and consumption level.",
+            "Promotion intensity varies by market: Black Friday and Prime Day in the USA, Prime Day and Obon in Japan, Bulan puasa and Double 11 in Indonesia, and a strong promotional calendar in the UK."
+          ],
+          "countries": [
+            {
+              "market": "USA",
+              "model": "Direct-sale market",
+              "metrics": [
+                {
+                  "label": "PB revenue",
+                  "value": "RMB 4.5B"
+                },
+                {
+                  "label": "Market share",
+                  "value": "30%"
+                },
+                {
+                  "label": "Growth",
+                  "value": "15-16%"
+                }
+              ],
+              "strategy": [
+                "The USA is Anker's largest single market. The report shows mainstream power bank capacity at 5,000-12,000mAh with 52% share, while 12,000-20,000mAh accounts for 25%.",
+                "The interface structure is led by Type-C plus Lightning multi-interface designs, with multiple-port and single-port demand both present."
+              ],
+              "implication": "Lenovo power banks should emphasize laptop-ready capacity, fast charging, and multi-port compatibility while staying KA-ready for Amazon and large retailers."
+            },
+            {
+              "market": "Japan",
+              "model": "Direct-sale market",
+              "metrics": [
+                {
+                  "label": "PB revenue",
+                  "value": "About RMB 1.0B"
+                },
+                {
+                  "label": "Market share",
+                  "value": "27%"
+                },
+                {
+                  "label": "Growth",
+                  "value": "About 30%"
+                }
+              ],
+              "strategy": [
+                "Japan is Anker's second-largest market and is still growing quickly, but local brands shape design and pricing expectations.",
+                "The report highlights 5,000-12,000mAh as the mainstream capacity band at 50%, and Type-C plus Lightning multi-interface products at 62%."
+              ],
+              "implication": "Japan power bank offers should localize form factor, safety, and design language while protecting higher-margin capacity bands."
+            },
+            {
+              "market": "Indonesia",
+              "model": "Country agent market",
+              "metrics": [
+                {
+                  "label": "PB/category revenue",
+                  "value": "About RMB 1.0B"
+                },
+                {
+                  "label": "Market share",
+                  "value": "50-60%"
+                },
+                {
+                  "label": "Growth",
+                  "value": "About 40%"
+                }
+              ],
+              "strategy": [
+                "Anker focuses the core revenue market at $80-200 and keeps a presence in the $30-80 volume band, while strategically abandoning ultra-low-end products under $30.",
+                "Shopee, Tokopedia, and TikTok Shop play different ecommerce roles, while local agents help control fragmented offline KA, branded stores, and small retail channels."
+              ],
+              "implication": "A Lenovo power bank launch should separate value-band SKUs from higher-power laptop SKUs, with country-agent channel playbooks and clear promotional timing."
+            },
+            {
+              "market": "UK",
+              "model": "Amazon-led now, offline later",
+              "metrics": [
+                {
+                  "label": "PB revenue",
+                  "value": "RMB 0.3B"
+                },
+                {
+                  "label": "Market share",
+                  "value": "60%"
+                },
+                {
+                  "label": "Growth",
+                  "value": "About 10%"
+                }
+              ],
+              "strategy": [
+                "The UK power bank business is high-value because consumers accept new technologies and pay more for high-power, multi-scenario PC power banks.",
+                "Anker currently focuses online through Amazon, while future expansion depends on agent-managed offline channels such as independent retail, supermarkets, home-appliance chains, and cell-phone channels."
+              ],
+              "implication": "UK power banks should prioritize high-power laptop use, large capacity, wireless or multi-device scenarios, and promotional plans tied to Amazon and retail membership systems."
+            }
+          ]
+        },
+        {
+          "brand": "Baseus",
+          "role": "Value Challenger",
+          "summary": "Baseus is referenced as a Chinese charging brand active in Japan and as a value competitor in Indonesia's $30-80 price band.",
+          "metrics": [
+            {
+              "label": "Japan role",
+              "value": "Core strategic market"
+            },
+            {
+              "label": "Indonesia band",
+              "value": "$30-80"
+            },
+            {
+              "label": "Consumer hook",
+              "value": "Value and design"
+            }
+          ],
+          "notes": [
+            "The industry report groups Baseus with Anker and UGREEN as Chinese players that prioritize Japan, but it also notes strong domestic Japanese competitors.",
+            "In Indonesia, Baseus is tied to the cost-effectiveness and design-innovation competitive set in the low-price range."
+          ]
+        },
+        {
+          "brand": "UGREEN",
+          "role": "Value Challenger",
+          "summary": "UGREEN is positioned in the reports as another Chinese charging accessory brand competing through value-led price bands and Japan expansion.",
+          "metrics": [
+            {
+              "label": "Japan role",
+              "value": "Core strategic market"
+            },
+            {
+              "label": "Indonesia band",
+              "value": "$30-80"
+            },
+            {
+              "label": "Focus",
+              "value": "Value segment"
+            }
+          ],
+          "notes": [
+            "UGREEN is mentioned alongside Baseus in Indonesia's $30-80 power-bank price range.",
+            "For Lenovo, UGREEN is a useful benchmark for price-band pressure, especially in price-sensitive markets where Anker stays away from ultra-low-end competition."
+          ]
+        }
+      ]
+    }
   }
 }

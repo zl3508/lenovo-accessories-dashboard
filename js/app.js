@@ -403,18 +403,7 @@ function renderMarketAnalysis(categoryId) {
       </section>
     `,
     industry: `
-      <section class="module-block">
-        <div class="module-head">
-          <span>Market Module</span>
-          <h2>${modeledText("Industry Trends")}</h2>
-        </div>
-        <div class="chart-grid">
-          ${chartShell("industryHighPowerPlot", modeledText("High Power Migration"), "share of demand")}
-          ${chartShell("industryPortsPlot", modeledText("Port Upgrade Trend"), "sample share")}
-          ${chartShell("industryPriceCurvePlot", modeledText("Price Decline by Power"), "AUR by period")}
-          ${chartShell("industryTechPlot", modeledText("Technology Penetration"), "feature adoption")}
-        </div>
-      </section>
+      ${renderIndustryTrendsModule(categoryId)}
     `,
     structure: `
       ${renderMarketStructureModule(categoryId, structureBrands, period)}
@@ -527,6 +516,101 @@ function renderPolicyEmpty(region, window) {
       <p>Add a sourced ${escapeHtml(region.label)} policy item when it affects ${escapeHtml(window.label.toLowerCase())}.</p>
     </div>
   `;
+}
+
+function renderIndustryTrendsModule(categoryId) {
+  const report = industryBrandReport(categoryId);
+  if (!report) {
+    return `
+      <section class="module-block">
+        <div class="module-head">
+          <span>Market Module</span>
+          <h2>${modeledText("Industry Trends")}</h2>
+        </div>
+        <div class="chart-grid">
+          ${chartShell("industryHighPowerPlot", modeledText("High Power Migration"), "share of demand")}
+          ${chartShell("industryPortsPlot", modeledText("Port Upgrade Trend"), "sample share")}
+          ${chartShell("industryPriceCurvePlot", modeledText("Price Decline by Power"), "AUR by period")}
+          ${chartShell("industryTechPlot", modeledText("Technology Penetration"), "feature adoption")}
+        </div>
+      </section>
+    `;
+  }
+  return `
+    <section class="module-block">
+      <div class="module-head">
+        <span>Market Module</span>
+        <h2>${escapeHtml(report.title)}</h2>
+        <p>${escapeHtml(report.categoryLens)}</p>
+      </div>
+      <div class="source-note">${escapeHtml(report.source)}</div>
+      <div class="industry-brand-grid">
+        ${report.brands.map((brand, index) => renderIndustryBrandModule(brand, index === 0)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderIndustryBrandModule(brand, featured = false) {
+  return `
+    <article class="industry-brand-module ${featured ? "is-featured" : ""}">
+      <header class="industry-brand-head">
+        <div>
+          <span class="tag">${escapeHtml(brand.role)}</span>
+          <h3>${escapeHtml(brand.brand)}</h3>
+          <p>${escapeHtml(brand.summary)}</p>
+        </div>
+        ${brand.metrics?.length ? `<div class="industry-metric-strip">${brand.metrics.map(renderIndustryMetric).join("")}</div>` : ""}
+      </header>
+      ${brand.strategy?.length ? renderIndustryStorySection("Strategy Signals", brand.strategy) : ""}
+      ${brand.portfolio?.length ? renderIndustryStorySection("Portfolio Planning", brand.portfolio) : ""}
+      ${brand.pricing?.length ? renderIndustryStorySection("Pricing and Promotion", brand.pricing) : ""}
+      ${brand.countries?.length ? `<section class="industry-country-section"><h4>Country Strategy</h4><div class="industry-country-grid">${brand.countries.map(renderIndustryCountryCard).join("")}</div></section>` : ""}
+      ${brand.notes?.length ? `<section class="industry-quick-notes">${brand.notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}</section>` : ""}
+    </article>
+  `;
+}
+
+function renderIndustryMetric(metric) {
+  return `
+    <div>
+      <span>${escapeHtml(metric.label)}</span>
+      <strong>${escapeHtml(metric.value)}</strong>
+    </div>
+  `;
+}
+
+function renderIndustryStorySection(title, items) {
+  return `
+    <section class="industry-story-section">
+      <h4>${escapeHtml(title)}</h4>
+      <div class="industry-story-grid">
+        ${items.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderIndustryCountryCard(country) {
+  return `
+    <article class="industry-country-card">
+      <header>
+        <span>${escapeHtml(country.market)}</span>
+        <strong>${escapeHtml(country.model)}</strong>
+      </header>
+      <div class="industry-country-metrics">
+        ${(country.metrics || []).map(renderIndustryMetric).join("")}
+      </div>
+      <div class="industry-country-copy">
+        ${(country.strategy || []).map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
+      </div>
+      ${country.implication ? `<strong class="industry-implication">${escapeHtml(country.implication)}</strong>` : ""}
+    </article>
+  `;
+}
+
+function industryBrandReport(categoryId) {
+  return data.catalog.industryBrandReports?.[categoryId] || null;
 }
 
 function renderMarketStructureModule(categoryId, structureBrands, period) {
@@ -1548,6 +1632,9 @@ function drawMarketAnalysis(categoryId) {
     return;
   }
   if (state.marketModule === "structure" && marketStructureReport(categoryId)) {
+    return;
+  }
+  if (state.marketModule === "industry" && industryBrandReport(categoryId)) {
     return;
   }
   const period = selectedPeriod();
