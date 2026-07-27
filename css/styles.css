@@ -949,10 +949,105 @@ input[type="search"] {
   font-size: 15px;
 }
 
+.policy-region-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.policy-region-card {
+  display: grid;
+  gap: 14px;
+  min-height: 320px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(226, 35, 26, 0.04), rgba(255, 255, 255, 0) 36%),
+    var(--surface);
+  box-shadow: 0 12px 26px rgba(31, 35, 40, 0.05);
+}
+
+.policy-region-card > header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.policy-region-card > header span {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 36px;
+  border-radius: var(--radius);
+  background: var(--red);
+  color: #fff;
+  font-weight: 900;
+}
+
+.policy-region-card > header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.policy-region-card > header small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.policy-impact-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.policy-impact-bucket {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.policy-bucket-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 34px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.policy-bucket-head span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.policy-bucket-head strong {
+  color: var(--red);
+  font-size: 14px;
+}
+
+.policy-card-stack {
+  display: grid;
+  gap: 10px;
+}
+
 .policy-card {
   display: grid;
   gap: 10px;
   align-content: start;
+  min-height: 0;
+  padding: 14px;
   border: 1px solid color-mix(in srgb, var(--accent, var(--red)) 24%, var(--line));
   border-left: 5px solid var(--accent, var(--red));
   border-radius: var(--radius);
@@ -960,6 +1055,11 @@ input[type="search"] {
     linear-gradient(135deg, color-mix(in srgb, var(--accent, var(--red)) 8%, white), rgba(255, 255, 255, 0.94)),
     var(--surface);
   box-shadow: 0 12px 26px rgba(31, 35, 40, 0.06);
+}
+
+.policy-card h3 {
+  margin: 0;
+  font-size: 15px;
 }
 
 .policy-card strong {
@@ -976,6 +1076,29 @@ input[type="search"] {
   color: var(--accent, var(--red));
   font-weight: 800;
   text-decoration: none;
+}
+
+.policy-empty {
+  min-height: 148px;
+  padding: 12px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.policy-empty strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.policy-empty p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .source-note {
@@ -1807,6 +1930,7 @@ input[type="search"] {
   .category-grid,
   .competitor-grid,
   .matrix-card-grid,
+  .policy-region-grid,
   .policy-grid,
   .structure-country-grid,
   .structure-report-head,
@@ -1854,6 +1978,8 @@ input[type="search"] {
   .competitor-boss-grid,
   .competitor-detail-grid,
   .competitor-lenovo-context,
+  .policy-region-grid,
+  .policy-impact-columns,
   .insight-list,
   .mini-metrics,
   .category-grid,

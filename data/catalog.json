@@ -242,6 +242,8 @@
       {
         "title": "EU Common Charger Directive",
         "region": "European Union",
+        "regionGroup": "EMEA",
+        "impactWindow": "current",
         "effectiveDate": "2026-04-28",
         "source": "European Commission",
         "sourceUrl": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro",
@@ -251,6 +253,8 @@
       {
         "title": "External Power Supplies Standards",
         "region": "United States",
+        "regionGroup": "NA",
+        "impactWindow": "current",
         "effectiveDate": "2025-05-16",
         "source": "U.S. Department of Energy",
         "sourceUrl": "https://www.energy.gov/eere/buildings/external-power-supplies",
@@ -260,17 +264,76 @@
       {
         "title": "California Title 20 Appliance Efficiency",
         "region": "California",
+        "regionGroup": "NA",
+        "impactWindow": "current",
         "effectiveDate": "Current",
         "source": "California Energy Commission",
         "sourceUrl": "https://www.energy.ca.gov/programs-and-topics/topics/energy-efficiency",
         "summary": "California appliance efficiency rules continue to shape external power supply compliance and channel acceptance.",
         "impact": "Retail-ready SKUs need efficiency documentation and region-specific compliance readiness."
+      },
+      {
+        "title": "Mexico NOM-029-ENER-2017 External Power Supplies",
+        "region": "Mexico",
+        "regionGroup": "LA",
+        "impactWindow": "current",
+        "effectiveDate": "2018-04-25",
+        "source": "Secretaría de Energía / PLATIICA",
+        "sourceUrl": "https://platiica.economia.gob.mx/normalizacion/nom-029-ener-2017/",
+        "summary": "NOM-029-ENER-2017 covers energy efficiency limits, test methods, marking, and labeling for external power supplies.",
+        "impact": "Adapter SKUs for Mexico need energy-efficiency evidence, label readiness, and test documentation aligned to NOM-029."
+      },
+      {
+        "title": "Brazil Anatel Charger Conformity Act 5155",
+        "region": "Brazil",
+        "regionGroup": "LA",
+        "impactWindow": "current",
+        "effectiveDate": "2024-10-14",
+        "source": "Anatel",
+        "sourceUrl": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155",
+        "summary": "Act 5155 updates technical and test procedures for conformity assessment of chargers used with mobile phones.",
+        "impact": "Brazil adapter launches need local homologation support, mechanical and thermal safety tests, and certification traceability."
+      },
+      {
+        "title": "Japan Electrical Appliances and Materials Safety Act",
+        "region": "Japan",
+        "regionGroup": "AP",
+        "impactWindow": "current",
+        "effectiveDate": "Current",
+        "source": "METI",
+        "sourceUrl": "https://www.meti.go.jp/english/policy/economy/consumer/pse/index.html",
+        "summary": "Japan's PSE framework covers specified electrical appliances, including AC/DC power supply units, with notification, technical compliance, inspection, and labeling obligations.",
+        "impact": "Japan adapter SKUs need PSE labeling readiness, importer responsibility checks, and compliance records before sale."
+      },
+      {
+        "title": "Australia External Power Supply MEPS",
+        "region": "Australia / New Zealand",
+        "regionGroup": "AP",
+        "impactWindow": "current",
+        "effectiveDate": "2014-11-22",
+        "source": "Energy Rating",
+        "sourceUrl": "https://www.energyrating.gov.au/industry-information/products/external-power-supplies",
+        "summary": "Australia regulates covered external power supplies under GEMS requirements, including minimum energy performance standards.",
+        "impact": "Single-output adapter families need MEPS applicability checks, efficiency test support, and region-specific compliance documentation."
+      },
+      {
+        "title": "Australia RCM Marking for Electrical Equipment",
+        "region": "Australia / New Zealand",
+        "regionGroup": "AP",
+        "impactWindow": "future",
+        "effectiveDate": "Current",
+        "source": "Electrical Equipment Safety System",
+        "sourceUrl": "https://www.eess.gov.au/rcm/marking-of-electrical-equipment/",
+        "summary": "Electrical equipment offered by registered responsible suppliers must use the Regulatory Compliance Mark where applicable.",
+        "impact": "Future AP packaging and product artwork should keep RCM placement, responsible supplier records, and label governance in the launch checklist."
       }
     ],
     "power_bank": [
       {
         "title": "Battery Charger Energy Conservation Standards",
         "region": "United States",
+        "regionGroup": "NA",
+        "impactWindow": "current",
         "effectiveDate": "2024-08-28",
         "source": "U.S. Department of Energy",
         "sourceUrl": "https://www.energy.gov/nepa/articles/cx-031678-energy-conservation-standards-battery-chargers",
@@ -280,17 +343,54 @@
       {
         "title": "EU Common Charger Directive",
         "region": "European Union",
+        "regionGroup": "EMEA",
+        "impactWindow": "current",
         "effectiveDate": "2024-12-28",
         "source": "European Commission",
         "sourceUrl": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro",
         "summary": "Portable electronics use USB-C as the common charging solution, with fast-charging harmonisation and charger unbundling.",
         "impact": "Supports USB-C-first power banks and multi-device travel charging use cases."
+      },
+      {
+        "title": "Brazil Anatel Charger Conformity Act 5155",
+        "region": "Brazil",
+        "regionGroup": "LA",
+        "impactWindow": "current",
+        "effectiveDate": "2024-10-14",
+        "source": "Anatel",
+        "sourceUrl": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155",
+        "summary": "The Anatel charger conformity requirements include dedicated USB power interfaces used to supply electronic devices.",
+        "impact": "Power-bank portfolios with phone-charging USB output claims should validate Brazil certification scope and test evidence before launch."
+      },
+      {
+        "title": "Japan Electrical Appliances and Materials Safety Act",
+        "region": "Japan",
+        "regionGroup": "AP",
+        "impactWindow": "current",
+        "effectiveDate": "Current",
+        "source": "METI",
+        "sourceUrl": "https://www.meti.go.jp/english/policy/economy/consumer/pse/index.html",
+        "summary": "The PSE framework covers regulated electrical appliances and secondary batteries, with sale restrictions for products without required labeling.",
+        "impact": "Power-bank launches in Japan need PSE applicability review, importer notification discipline, and battery safety documentation."
+      },
+      {
+        "title": "Australia RCM Marking for Electrical Equipment",
+        "region": "Australia / New Zealand",
+        "regionGroup": "AP",
+        "impactWindow": "future",
+        "effectiveDate": "Current",
+        "source": "Electrical Equipment Safety System",
+        "sourceUrl": "https://www.eess.gov.au/rcm/marking-of-electrical-equipment/",
+        "summary": "The RCM is used to show covered electrical equipment is linked to a responsible supplier.",
+        "impact": "Future AP power-bank packaging should reserve label space and supplier traceability fields early in artwork development."
       }
     ],
     "power_cable": [
       {
         "title": "EU Common Charger Directive",
         "region": "European Union",
+        "regionGroup": "EMEA",
+        "impactWindow": "current",
         "effectiveDate": "2026-04-28",
         "source": "European Commission",
         "sourceUrl": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro",
@@ -300,11 +400,35 @@
       {
         "title": "USB-C Packaging and Charging Disclosure",
         "region": "European Union",
+        "regionGroup": "EMEA",
+        "impactWindow": "current",
         "effectiveDate": "2024-12-28",
         "source": "European Parliament",
         "sourceUrl": "https://www.europarl.europa.eu/pdfs/news/expert/2024/12/press_release/20241218IPR26026/20241218IPR26026_en.pdf",
         "summary": "Manufacturers must provide clearer information on charging characteristics and whether a charger is included.",
         "impact": "Cable SKUs benefit from stronger power-rating, PD, and compatibility claims at shelf and ecommerce touchpoints."
+      },
+      {
+        "title": "Japan Electrical Appliances and Materials Safety Act",
+        "region": "Japan",
+        "regionGroup": "AP",
+        "impactWindow": "future",
+        "effectiveDate": "Current",
+        "source": "METI",
+        "sourceUrl": "https://www.meti.go.jp/english/policy/economy/consumer/pse/index.html",
+        "summary": "Japan's electrical safety framework includes specified categories such as extension power supply cords and sale restrictions tied to required labeling.",
+        "impact": "Future AP cable planning should screen product scope early, especially for power cords, high-power assemblies, and bundled charging kits."
+      },
+      {
+        "title": "Brazil Anatel Charger Conformity Act 5155",
+        "region": "Brazil",
+        "regionGroup": "LA",
+        "impactWindow": "future",
+        "effectiveDate": "2024-10-14",
+        "source": "Anatel",
+        "sourceUrl": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155",
+        "summary": "Anatel charger conformity requirements reference dedicated USB power interfaces and test criteria for mobile charging accessories.",
+        "impact": "Future LA cable bundles should validate whether included charging accessories trigger local homologation evidence or packaging claims review."
       }
     ]
   },

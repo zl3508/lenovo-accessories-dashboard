@@ -70,6 +70,18 @@ const marketModules = {
   structure: "Market Structure",
 };
 
+const policyRegions = [
+  { id: "NA", label: "NA", name: "North America" },
+  { id: "LA", label: "LA", name: "Latin America" },
+  { id: "EMEA", label: "EMEA", name: "Europe, Middle East & Africa" },
+  { id: "AP", label: "AP", name: "Asia Pacific" },
+];
+
+const policyImpactWindows = [
+  { id: "current", label: "Current Quarter Impact" },
+  { id: "future", label: "Future Quarter Impact" },
+];
+
 const overviewModules = {
   summary: "Product Summary",
   filter: "Data Filters",
@@ -363,9 +375,7 @@ function renderMarketAnalysis(categoryId) {
           <h2>${modeledText("Policy Insights")}</h2>
           <p>Policy reports, sources, and portfolio implications.</p>
         </div>
-        <div class="policy-grid">
-          ${reports.map((report) => renderPolicyCard(report)).join("")}
-        </div>
+        ${renderPolicyInsights(reports)}
       </section>
     `,
     industry: `
@@ -394,6 +404,47 @@ function renderMarketAnalysis(categoryId) {
   `;
 }
 
+function renderPolicyInsights(reports) {
+  return `
+    <div class="policy-region-grid">
+      ${policyRegions.map((region) => renderPolicyRegion(region, reports)).join("")}
+    </div>
+  `;
+}
+
+function renderPolicyRegion(region, reports) {
+  const regionReports = reports.filter((report) => report.regionGroup === region.id);
+  return `
+    <article class="policy-region-card">
+      <header>
+        <span>${escapeHtml(region.label)}</span>
+        <h3>${escapeHtml(region.name)}</h3>
+        <small>${fmtExactNumber(regionReports.length)} regulation${regionReports.length === 1 ? "" : "s"} loaded</small>
+      </header>
+      <div class="policy-impact-columns">
+        ${policyImpactWindows.map((window) => renderPolicyImpactBucket(region, window, regionReports)).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function renderPolicyImpactBucket(region, window, reports) {
+  const bucketReports = reports.filter((report) => (report.impactWindow || "current") === window.id);
+  return `
+    <section class="policy-impact-bucket">
+      <div class="policy-bucket-head">
+        <span>${escapeHtml(window.label)}</span>
+        <strong>${fmtExactNumber(bucketReports.length)}</strong>
+      </div>
+      <div class="policy-card-stack">
+        ${bucketReports.length
+          ? bucketReports.map((report) => renderPolicyCard(report)).join("")
+          : renderPolicyEmpty(region, window)}
+      </div>
+    </section>
+  `;
+}
+
 function renderPolicyCard(report) {
   return `
     <article class="policy-card">
@@ -403,6 +454,15 @@ function renderPolicyCard(report) {
       <strong>${escapeHtml(modeledText(report.impact))}</strong>
       <a href="${escapeAttr(report.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(report.source)}</a>
     </article>
+  `;
+}
+
+function renderPolicyEmpty(region, window) {
+  return `
+    <div class="policy-empty">
+      <strong>No confirmed regulation loaded</strong>
+      <p>Add a sourced ${escapeHtml(region.label)} policy item when it affects ${escapeHtml(window.label.toLowerCase())}.</p>
+    </div>
   `;
 }
 
