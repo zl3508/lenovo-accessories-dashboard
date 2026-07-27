@@ -968,9 +968,10 @@ input[type="search"] {
 
 .policy-region-tab {
   display: grid;
-  gap: 8px;
-  min-height: 118px;
-  padding: 14px;
+  grid-template-rows: 118px auto;
+  gap: 10px;
+  min-height: 220px;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -1002,7 +1003,32 @@ input[type="search"] {
     0 16px 32px rgba(31, 35, 40, 0.09);
 }
 
-.policy-region-tab span {
+.policy-map {
+  width: 100%;
+  height: 118px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, #fff, var(--surface-soft));
+  pointer-events: none;
+}
+
+.policy-map-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--muted);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.policy-region-tab-copy {
+  display: grid;
+  gap: 7px;
+}
+
+.policy-region-tab-copy span {
   display: inline-grid;
   place-items: center;
   width: 46px;
@@ -1014,16 +1040,16 @@ input[type="search"] {
   font-weight: 900;
 }
 
-.policy-region-tab.is-active span {
+.policy-region-tab.is-active .policy-region-tab-copy span {
   background: var(--red);
 }
 
-.policy-region-tab strong {
+.policy-region-tab-copy strong {
   font-size: 15px;
   line-height: 1.2;
 }
 
-.policy-region-tab small {
+.policy-region-tab-copy small {
   color: var(--muted);
   font-size: 12px;
   font-weight: 800;

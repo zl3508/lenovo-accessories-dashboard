@@ -78,6 +78,29 @@ const policyRegions = [
   { id: "AP", label: "AP", name: "Asia Pacific" },
 ];
 
+const policyRegionMaps = {
+  NA: {
+    countries: ["USA", "CAN"],
+    labels: ["United States", "Canada"],
+    projection: "natural earth",
+  },
+  LA: {
+    countries: ["MEX", "BRA", "ARG", "CHL", "COL", "PER"],
+    labels: ["Mexico", "Brazil", "Argentina", "Chile", "Colombia", "Peru"],
+    projection: "natural earth",
+  },
+  EMEA: {
+    countries: ["GBR", "DEU", "FRA", "ITA", "ESP", "NLD", "SWE", "ZAF", "ARE", "SAU"],
+    labels: ["United Kingdom", "Germany", "France", "Italy", "Spain", "Netherlands", "Sweden", "South Africa", "United Arab Emirates", "Saudi Arabia"],
+    projection: "natural earth",
+  },
+  AP: {
+    countries: ["JPN", "CHN", "KOR", "IND", "IDN", "SGP", "THA", "AUS", "NZL"],
+    labels: ["Japan", "China", "South Korea", "India", "Indonesia", "Singapore", "Thailand", "Australia", "New Zealand"],
+    projection: "natural earth",
+  },
+};
+
 const policyImpactWindows = [
   { id: "current", label: "Current Quarter Impact" },
   { id: "future", label: "Future Quarter Impact" },
@@ -433,9 +456,12 @@ function renderPolicyRegionTab(region, reports, selectedRegion) {
   const active = region.id === selectedRegion.id;
   return `
     <button class="policy-region-tab ${active ? "is-active" : ""}" type="button" data-action="policy-region" data-region-id="${escapeAttr(region.id)}" aria-pressed="${active}">
-      <span>${escapeHtml(region.label)}</span>
-      <strong>${escapeHtml(region.name)}</strong>
-      <small>${fmtExactNumber(regionReports.length)} regulations · ${fmtExactNumber(currentCount)} current · ${fmtExactNumber(futureCount)} future</small>
+      <div class="policy-map" id="policyMap${escapeAttr(region.id)}" aria-hidden="true"></div>
+      <div class="policy-region-tab-copy">
+        <span>${escapeHtml(region.label)}</span>
+        <strong>${escapeHtml(region.name)}</strong>
+        <small>${fmtExactNumber(regionReports.length)} regulations · ${fmtExactNumber(currentCount)} current · ${fmtExactNumber(futureCount)} future</small>
+      </div>
     </button>
   `;
 }
@@ -1517,6 +1543,10 @@ function dualMetricBarLayout(metric, overrides = {}) {
 }
 
 function drawMarketAnalysis(categoryId) {
+  if (state.marketModule === "policy") {
+    drawPolicyRegionMaps();
+    return;
+  }
   if (state.marketModule === "structure" && marketStructureReport(categoryId)) {
     return;
   }
@@ -1535,6 +1565,65 @@ function drawMarketAnalysis(categoryId) {
   drawPowerPortHeatmap("structurePowerPortHeatmap", selectedRows, powerSegments, portSegments, "Units");
   drawPricePowerStructure(categoryId, selectedRows, powerSegments);
   drawScenarioDonut(categoryId, selectedRows);
+}
+
+function drawPolicyRegionMaps() {
+  if (!window.Plotly) {
+    policyRegions.forEach((region) => {
+      const node = document.getElementById(`policyMap${region.id}`);
+      if (node) node.innerHTML = `<div class="policy-map-fallback">${escapeHtml(region.label)}</div>`;
+    });
+    return;
+  }
+  policyRegions.forEach((region) => {
+    const node = document.getElementById(`policyMap${region.id}`);
+    const map = policyRegionMaps[region.id];
+    if (!node || !map) return;
+    const active = state.policyRegion[state.categoryId] === region.id;
+    Plotly.react(
+      node,
+      [
+        {
+          type: "choropleth",
+          locationmode: "ISO-3",
+          locations: map.countries,
+          z: map.countries.map(() => 1),
+          text: map.labels,
+          hoverinfo: "skip",
+          showscale: false,
+          colorscale: [
+            [0, active ? "#e2231a" : "#6b7280"],
+            [1, active ? "#e2231a" : "#6b7280"],
+          ],
+          marker: { line: { color: "#ffffff", width: 0.6 } },
+        },
+      ],
+      {
+        margin: { l: 0, r: 0, t: 0, b: 0 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        geo: {
+          projection: { type: map.projection },
+          fitbounds: "locations",
+          showframe: false,
+          showcoastlines: false,
+          showcountries: true,
+          countrycolor: "#d8d3ca",
+          countrywidth: 0.5,
+          showland: true,
+          landcolor: "#eeeae2",
+          showocean: true,
+          oceancolor: "#fbfaf7",
+          bgcolor: "rgba(0,0,0,0)",
+        },
+      },
+      {
+        displayModeBar: false,
+        responsive: true,
+        staticPlot: true,
+      },
+    );
+  });
 }
 
 function drawHighPowerMigration(categoryId, periods, rows) {
