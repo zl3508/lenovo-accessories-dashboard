@@ -553,7 +553,7 @@ function renderIndustryTrendsModule(categoryId) {
 }
 
 function renderIndustryBrandModule(brand, featured = false) {
-  const slides = buildIndustryPresentationSlides(brand);
+  const overviewSlides = buildIndustryOverviewSlides(brand);
   return `
     <article class="industry-brand-module ${featured ? "is-featured" : ""}">
       <header class="industry-brand-head">
@@ -564,8 +564,10 @@ function renderIndustryBrandModule(brand, featured = false) {
         </div>
         ${brand.metrics?.length ? `<div class="industry-metric-strip">${brand.metrics.map(renderIndustryMetric).join("")}</div>` : ""}
       </header>
-      ${slides.length ? renderIndustryPresentationDeck(brand, slides) : ""}
+      ${overviewSlides.length ? renderIndustryOverviewDeck(brand, overviewSlides) : ""}
+      ${brand.countries?.length ? renderIndustryCountryBlockSection(brand) : ""}
       ${brand.notes?.length ? `<section class="industry-quick-notes">${brand.notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}</section>` : ""}
+      ${brand.products?.length ? renderIndustryProductSection(brand.products) : ""}
     </article>
   `;
 }
@@ -590,44 +592,32 @@ function renderIndustryStorySection(title, items) {
   `;
 }
 
-function buildIndustryPresentationSlides(brand) {
+function buildIndustryOverviewSlides(brand) {
   const slides = [];
   (brand.flowDecks || []).forEach((deck) => {
     (deck.cards || []).forEach((card) => {
       slides.push({ kind: "flow", section: deck.title || "Flow", card });
     });
   });
-  (brand.countries || []).forEach((country) => {
-    slides.push({ kind: "country", section: "Country Strategy", country });
-  });
-  if (brand.products?.length) {
-    slides.push({ kind: "products", section: "Representative Products", products: brand.products });
-  }
   return slides;
 }
 
-function renderIndustryPresentationDeck(brand, slides) {
-  const carouselId = `industry-${idFromText(brand.brand)}-presentation`;
+function renderIndustryOverviewDeck(brand, slides) {
+  const carouselId = `industry-${idFromText(brand.brand)}-overview`;
   const activeIndex = selectedIndustrySlide(carouselId, slides.length);
   const activeSlide = slides[activeIndex] || slides[0];
   return `
     <section class="industry-ppt-deck">
       <div class="industry-deck-head">
         <div>
-          <span>Presentation Mode</span>
+          <span>Brand Slideshow</span>
           <h4>${escapeHtml(activeSlide.section || "Industry Slide")}</h4>
         </div>
         ${renderCarouselCounter(activeIndex, slides.length)}
       </div>
-      ${renderIndustryCarousel(carouselId, slides, (slide) => renderIndustryPresentationSlide(slide, brand), activeIndex)}
+      ${renderIndustryCarousel(carouselId, slides, (slide) => renderIndustryFlowSlide(slide.card, slide.section, brand.brand), activeIndex)}
     </section>
   `;
-}
-
-function renderIndustryPresentationSlide(slide, brand) {
-  if (slide.kind === "country") return renderIndustryCountrySlide(slide.country, slide.section);
-  if (slide.kind === "products") return renderIndustryProductSlide(slide.products, brand, slide.section);
-  return renderIndustryFlowSlide(slide.card, slide.section, brand.brand);
 }
 
 function renderIndustryFlowSlide(card, section, brandName) {
@@ -649,23 +639,19 @@ function renderIndustryFlowSlide(card, section, brandName) {
   `;
 }
 
-function renderIndustryProductSlide(products, brand, section) {
+function renderIndustryProductSection(products) {
   return `
-    <article class="industry-ppt-slide is-products">
-      <div class="industry-ppt-aside">
-        <span>${escapeHtml(brand.brand)}</span>
-        <h5>${escapeHtml(section || "Representative Products")}</h5>
-        <div class="industry-ppt-kpis">
-          ${(brand.metrics || []).slice(0, 3).map((metric) => `<strong>${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}</strong>`).join("")}
+    <section class="industry-product-section">
+      <div class="industry-deck-head">
+        <div>
+          <span>Official Product Links</span>
+          <h4>Representative Products</h4>
         </div>
       </div>
-      <div class="industry-ppt-canvas">
-        <span class="flow-eyebrow">Official Product Links</span>
-        <div class="industry-product-grid">
-          ${products.map(renderIndustryProductCard).join("")}
-        </div>
+      <div class="industry-product-grid">
+        ${products.map(renderIndustryProductCard).join("")}
       </div>
-    </article>
+    </section>
   `;
 }
 
@@ -698,11 +684,11 @@ function renderCarouselCounter(index, total) {
   return `<span class="industry-slide-count">${Math.min(index + 1, total || 1)} / ${total || 1}</span>`;
 }
 
-function renderIndustryCarousel(carouselId, items, renderer, activeIndex = selectedIndustrySlide(carouselId, items.length)) {
+function renderIndustryCarousel(carouselId, items, renderer, activeIndex = selectedIndustrySlide(carouselId, items.length), className = "") {
   if (!items.length) return "";
   const current = items[activeIndex] || items[0];
   return `
-    <div class="industry-carousel" data-carousel-id="${escapeAttr(carouselId)}">
+    <div class="industry-carousel ${escapeAttr(className)}" data-carousel-id="${escapeAttr(carouselId)}">
       <button class="industry-carousel-nav is-previous" type="button" data-action="industry-slide" data-carousel-id="${escapeAttr(carouselId)}" data-direction="previous" aria-label="Previous slide">&lt;</button>
       <div class="industry-slide-frame">
         ${renderer(current, activeIndex)}
@@ -712,6 +698,54 @@ function renderIndustryCarousel(carouselId, items, renderer, activeIndex = selec
         ${items.map((_, index) => `<span class="${index === activeIndex ? "is-active" : ""}"></span>`).join("")}
       </div>
     </div>
+  `;
+}
+
+function renderIndustryCountryBlockSection(brand) {
+  return `
+    <section class="industry-country-block-section">
+      <div class="industry-deck-head">
+        <div>
+          <span>Country Strategy</span>
+          <h4>Country Strategy Slides</h4>
+        </div>
+      </div>
+      <div class="industry-country-block-grid">
+        ${brand.countries.map((country) => renderIndustryCountryBlock(brand, country)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderIndustryCountryBlock(brand, country) {
+  const sections = country.flowSections?.length
+    ? country.flowSections
+    : [{ eyebrow: "Channel", heading: country.model, steps: country.flow || [] }];
+  const carouselId = `industry-${idFromText(brand.brand)}-country-${idFromText(country.market)}`;
+  const activeIndex = selectedIndustrySlide(carouselId, sections.length);
+  return `
+    <article class="industry-country-block">
+      <header class="industry-country-block-head">
+        <div>
+          <span>${escapeHtml(country.market)}</span>
+          <h5>${escapeHtml(country.model)}</h5>
+        </div>
+        ${renderCarouselCounter(activeIndex, sections.length)}
+      </header>
+      <div class="industry-country-metrics">
+        ${(country.metrics || []).map(renderIndustryMetric).join("")}
+      </div>
+      ${renderIndustryCarousel(carouselId, sections, renderIndustryCountryBlockSlide, activeIndex, "is-country-block")}
+      ${country.implication ? `<strong class="industry-implication">${escapeHtml(country.implication)}</strong>` : ""}
+    </article>
+  `;
+}
+
+function renderIndustryCountryBlockSlide(section) {
+  return `
+    <article class="industry-country-mini-slide">
+      ${renderIndustryFlowCard(section, "is-country")}
+    </article>
   `;
 }
 
@@ -737,30 +771,6 @@ function renderIndustryFlow(steps) {
         </li>
       `).join("")}
     </ol>
-  `;
-}
-
-function renderIndustryCountrySlide(country, section = "Country Strategy") {
-  const flowSections = country.flowSections?.length
-    ? country.flowSections
-    : [{ eyebrow: "Channel", heading: country.model, steps: country.flow || [] }];
-  return `
-    <article class="industry-ppt-slide is-country-slide">
-      <div class="industry-ppt-aside">
-        <span>${escapeHtml(country.market)}</span>
-        <h5>${escapeHtml(country.model)}</h5>
-        <div class="industry-country-metrics">
-          ${(country.metrics || []).map(renderIndustryMetric).join("")}
-        </div>
-      </div>
-      <div class="industry-ppt-canvas">
-        <span class="flow-eyebrow">${escapeHtml(section)}</span>
-        <div class="industry-country-flow-grid">
-          ${flowSections.map((flowSection) => renderIndustryFlowCard(flowSection, "is-country")).join("")}
-        </div>
-        ${country.implication ? `<strong class="industry-implication">${escapeHtml(country.implication)}</strong>` : ""}
-      </div>
-    </article>
   `;
 }
 
@@ -3626,8 +3636,14 @@ function industrySlideTotal(carouselId) {
   const report = industryBrandReport(state.categoryId);
   if (!report) return 0;
   for (const brand of report.brands || []) {
-    const presentationId = `industry-${idFromText(brand.brand)}-presentation`;
-    if (presentationId === carouselId) return buildIndustryPresentationSlides(brand).length;
+    const overviewId = `industry-${idFromText(brand.brand)}-overview`;
+    if (overviewId === carouselId) return buildIndustryOverviewSlides(brand).length;
+    for (const country of brand.countries || []) {
+      const countryId = `industry-${idFromText(brand.brand)}-country-${idFromText(country.market)}`;
+      if (countryId === carouselId) {
+        return country.flowSections?.length ? country.flowSections.length : 1;
+      }
+    }
   }
   return 0;
 }
