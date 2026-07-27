@@ -1348,6 +1348,171 @@ ANKER_COUNTRY_FLOW_SECTIONS = {
     ],
 }
 
+ANKER_REPORT_SLIDES = {
+    "overview": [
+        {
+            "title": "Brand Positioning and Portfolio",
+            "image": "assets/industry/industry-12.png",
+            "sourcePage": "Industry report p.12",
+            "takeaways": [
+                "Anker builds a mid-to-high-end channel moat through a broad product matrix and localized channel coverage.",
+                "Prime, Nano, Zolo, and MagGo separate premium technology, convenience, entry, and wireless ecosystem roles.",
+                "For Lenovo, this is useful as a portfolio architecture reference rather than a single-product benchmark.",
+            ],
+        },
+        {
+            "title": "Global Channel Model",
+            "image": "assets/industry/industry-13.png",
+            "sourcePage": "Industry report p.13",
+            "takeaways": [
+                "USA and Japan use a direct-sale model across online brand stores and large KA accounts.",
+                "Other regions lean on country agents to expand retail coverage and local execution.",
+                "Channel design is as important as product spec in the charging category.",
+            ],
+        },
+        {
+            "title": "Pricing and Promotion Model",
+            "image": "assets/industry/industry-14.png",
+            "sourcePage": "Industry report p.14",
+            "takeaways": [
+                "HQ sets benchmark pricing, then regions adapt by cost, competition, channel terms, and local targets.",
+                "Holiday promotions are the major activation mechanism across online and offline channels.",
+                "Margins are protected through price guardrails, channel rebate design, and event-based promotion windows.",
+            ],
+        },
+    ],
+    "countries": {
+        "USA": [
+            {
+                "title": "USA Market and Product Overview",
+                "image": "assets/industry/industry-15.png",
+                "sourcePage": "Industry report p.15",
+                "takeaways": [
+                    "USA is Anker's largest single market, with stronger power bank performance than adapter.",
+                    "Power bank demand centers on 5,000-12,000mAh; adapter demand centers on 60-80W.",
+                    "Adapter competition is tougher because phone and PC OEMs remain strong.",
+                ],
+            },
+            {
+                "title": "USA Channel Strategy",
+                "image": "assets/industry/industry-16.png",
+                "sourcePage": "Industry report p.16",
+                "takeaways": [
+                    "Amazon anchors the online market, while large KA accounts support national offline coverage.",
+                    "Anker supports KA accounts through customized models, packaging, 48-hour fulfillment, and after-sales support.",
+                    "TikTok and emerging ecommerce are incremental rather than core channels at this stage.",
+                ],
+            },
+            {
+                "title": "USA Pricing and Promotion",
+                "image": "assets/industry/industry-17.png",
+                "sourcePage": "Industry report p.17",
+                "takeaways": [
+                    "Direct KA agreements simplify price control in North America.",
+                    "Black Friday and Prime Day are the main sales acceleration windows.",
+                    "Promotion strategy differs by product life cycle: core SKUs protect price, circulation SKUs discount more.",
+                ],
+            },
+        ],
+        "Japan": [
+            {
+                "title": "Japan Market and Product Overview",
+                "image": "assets/industry/industry-18.png",
+                "sourcePage": "Industry report p.18",
+                "takeaways": [
+                    "Japan is Anker's second-largest market, but local brands create strong pricing and design pressure.",
+                    "Power bank mainstream capacity is 5,000-12,000mAh; adapter mainstream power is 45-100W.",
+                    "Localization matters because consumers respond to local aesthetics, quality, and channel trust.",
+                ],
+            },
+            {
+                "title": "Japan Channel Strategy",
+                "image": "assets/industry/industry-19.png",
+                "sourcePage": "Industry report p.19",
+                "takeaways": [
+                    "Japan follows the USA-style direct KA model, with online split around Rakuten and Amazon.",
+                    "Future growth shifts from online to offline through Rakuten offline stores, carriers, agents, and distributors.",
+                    "The local team expansion is part of the channel strategy, not just sales support.",
+                ],
+            },
+            {
+                "title": "Japan Pricing and Promotion",
+                "image": "assets/industry/industry-20.png",
+                "sourcePage": "Industry report p.20",
+                "takeaways": [
+                    "Pricing is strongly influenced by Cheero, Elecom, and other local competitors.",
+                    "Prime Day, Obon, timed promotions, and offline KA launches create many promotion windows.",
+                    "Small-scale price tests in major channels help tune purchase conversion.",
+                ],
+            },
+        ],
+        "Indonesia": [
+            {
+                "title": "Indonesia Market and Product Overview",
+                "image": "assets/industry/industry-21.png",
+                "sourcePage": "Industry report p.21",
+                "takeaways": [
+                    "Indonesia is a star growth market, but the market is highly price sensitive.",
+                    "Anker focuses on the $80-200 core revenue band and selectively participates in $30-80 value traffic.",
+                    "The ultra-low-end band under $30 is strategically abandoned to protect positioning.",
+                ],
+            },
+            {
+                "title": "Indonesia Channel Strategy",
+                "image": "assets/industry/industry-22.png",
+                "sourcePage": "Industry report p.22",
+                "takeaways": [
+                    "The country-agent model helps reduce channel cost and reach fragmented offline retail.",
+                    "Shopee is the main online channel; TikTok Shop is the fast-growth live-commerce opportunity.",
+                    "Offline expansion depends on local KA, branded stores, and smaller retail channels.",
+                ],
+            },
+            {
+                "title": "Indonesia Pricing and Promotion",
+                "image": "assets/industry/industry-23.png",
+                "sourcePage": "Industry report p.23",
+                "takeaways": [
+                    "Gross margin is lower because agents and distributors control part of local rebate execution.",
+                    "Bulan puasa and Double 11 are the key large-scale promotion windows.",
+                    "Online discounts can be aggressive; offline tends to maintain price and use gifts.",
+                ],
+            },
+        ],
+        "UK": [
+            {
+                "title": "UK Market and Product Overview",
+                "image": "assets/industry/industry-24.png",
+                "sourcePage": "Industry report p.24",
+                "takeaways": [
+                    "The UK is power-bank led, especially high-power PC-applicable products.",
+                    "Adapter revenue is much smaller and has no separate series yet because consumers prefer wider-use products.",
+                    "Laptop power bank and MagGo wireless lines are the clearer market references.",
+                ],
+            },
+            {
+                "title": "UK Channel Strategy",
+                "image": "assets/industry/industry-25.png",
+                "sourcePage": "Industry report p.25",
+                "takeaways": [
+                    "Amazon is the core online channel, while future expansion depends on offline agents.",
+                    "Offline channels include independent retail, supermarkets/home appliances, and cell phone dealers.",
+                    "Membership systems and points promotions help avoid broad price cuts across all channels.",
+                ],
+            },
+            {
+                "title": "UK Pricing and Promotion",
+                "image": "assets/industry/industry-26.png",
+                "sourcePage": "Industry report p.26",
+                "takeaways": [
+                    "Promotion phases account for a large share of annual revenue.",
+                    "Black Friday is the deepest discount window, with Prime Day, summer, and New Year promotions also important.",
+                    "The strategy reinforces safety, range, and charging speed while using channel membership subsidies.",
+                ],
+            },
+        ],
+    },
+}
+
 INDUSTRY_PRODUCT_SHOWCASE = {
     "adapter": {
         "Anker": [
@@ -1437,8 +1602,12 @@ def enrich_industry_brand_reports(reports: dict[str, Any]) -> dict[str, Any]:
                 brand["products"] = products
             if brand.get("brand") == "Anker":
                 brand["flowDecks"] = ANKER_BRAND_FLOW_DECKS
+                brand["reportSlides"] = ANKER_REPORT_SLIDES["overview"]
                 for country in brand.get("countries", []):
                     market = country.get("market")
+                    report_slides = ANKER_REPORT_SLIDES["countries"].get(market)
+                    if report_slides:
+                        country["reportSlides"] = report_slides
                     flow = ANKER_COUNTRY_STRATEGY_FLOWS.get(market)
                     if flow:
                         country["flow"] = flow

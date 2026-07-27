@@ -593,6 +593,9 @@ function renderIndustryStorySection(title, items) {
 }
 
 function buildIndustryOverviewSlides(brand) {
+  if (brand.reportSlides?.length) {
+    return brand.reportSlides.map((slide) => ({ kind: "report", section: slide.title, slide }));
+  }
   const slides = [];
   (brand.flowDecks || []).forEach((deck) => {
     slides.push({ section: deck.title || "Flow", deck });
@@ -608,7 +611,7 @@ function renderIndustryOverviewDeck(brand, slides) {
     <section class="industry-ppt-deck">
       <div class="industry-deck-head">
         <div>
-          <span>Brand Slideshow</span>
+          <span>Report Slideshow</span>
           <h4>${escapeHtml(activeSlide.section || "Industry Slide")}</h4>
         </div>
         ${renderCarouselCounter(activeIndex, slides.length)}
@@ -619,6 +622,7 @@ function renderIndustryOverviewDeck(brand, slides) {
 }
 
 function renderIndustryOverviewSlide(slide, brand) {
+  if (slide.kind === "report") return renderIndustryReportSlide(slide.slide, brand.brand);
   const cards = slide.deck?.cards || [];
   return `
     <article class="industry-ppt-slide is-overview-slide">
@@ -635,6 +639,26 @@ function renderIndustryOverviewSlide(slide, brand) {
           ${cards.map((card) => renderIndustryFlowCard(card, "is-overview")).join("")}
         </div>
       </div>
+    </article>
+  `;
+}
+
+function renderIndustryReportSlide(slide, label) {
+  return `
+    <article class="industry-report-slide">
+      <figure class="industry-report-image">
+        <a href="${escapeAttr(slide.image)}" target="_blank" rel="noreferrer">
+          <img src="${escapeAttr(slide.image)}" alt="${escapeAttr(slide.title)}" loading="lazy">
+        </a>
+      </figure>
+      <aside class="industry-report-summary">
+        <span>${escapeHtml(label || slide.sourcePage || "Report")}</span>
+        <h5>${escapeHtml(slide.title)}</h5>
+        <ul>
+          ${(slide.takeaways || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ul>
+        ${slide.sourcePage ? `<small>${escapeHtml(slide.sourcePage)}</small>` : ""}
+      </aside>
     </article>
   `;
 }
@@ -718,7 +742,9 @@ function renderIndustryCountryBlockSection(brand) {
 }
 
 function renderIndustryCountryBlock(brand, country) {
-  const sections = country.flowSections?.length
+  const sections = country.reportSlides?.length
+    ? country.reportSlides.map((slide) => ({ kind: "report", slide }))
+    : country.flowSections?.length
     ? country.flowSections
     : [{ eyebrow: "Channel", heading: country.model, steps: country.flow || [] }];
   const carouselId = `industry-${idFromText(brand.brand)}-country-${idFromText(country.market)}`;
@@ -742,6 +768,9 @@ function renderIndustryCountryBlock(brand, country) {
 }
 
 function renderIndustryCountryBlockSlide(section) {
+  if (section.kind === "report") {
+    return renderIndustryReportSlide(section.slide, "Country Report");
+  }
   return `
     <article class="industry-country-mini-slide">
       ${renderIndustryFlowCard(section, "is-country")}
@@ -3641,6 +3670,7 @@ function industrySlideTotal(carouselId) {
     for (const country of brand.countries || []) {
       const countryId = `industry-${idFromText(brand.brand)}-country-${idFromText(country.market)}`;
       if (countryId === carouselId) {
+        if (country.reportSlides?.length) return country.reportSlides.length;
         return country.flowSections?.length ? country.flowSections.length : 1;
       }
     }
