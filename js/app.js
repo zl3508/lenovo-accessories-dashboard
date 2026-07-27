@@ -622,7 +622,7 @@ function renderIndustryOverviewDeck(brand, slides) {
 }
 
 function renderIndustryOverviewSlide(slide, brand) {
-  if (slide.kind === "report") return renderIndustryReportSlide(slide.slide, brand.brand);
+  if (slide.kind === "report") return renderIndustryReportSlide(slide.slide);
   const cards = slide.deck?.cards || [];
   return `
     <article class="industry-ppt-slide is-overview-slide">
@@ -643,7 +643,7 @@ function renderIndustryOverviewSlide(slide, brand) {
   `;
 }
 
-function renderIndustryReportSlide(slide, label) {
+function renderIndustryReportSlide(slide) {
   return `
     <article class="industry-report-slide">
       <figure class="industry-report-image">
@@ -651,14 +651,6 @@ function renderIndustryReportSlide(slide, label) {
           <img src="${escapeAttr(slide.image)}" alt="${escapeAttr(slide.title)}" loading="lazy">
         </a>
       </figure>
-      <aside class="industry-report-summary">
-        <span>${escapeHtml(label || slide.sourcePage || "Report")}</span>
-        <h5>${escapeHtml(slide.title)}</h5>
-        <ul>
-          ${(slide.takeaways || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-        </ul>
-        ${slide.sourcePage ? `<small>${escapeHtml(slide.sourcePage)}</small>` : ""}
-      </aside>
     </article>
   `;
 }
@@ -769,7 +761,7 @@ function renderIndustryCountryBlock(brand, country) {
 
 function renderIndustryCountryBlockSlide(section) {
   if (section.kind === "report") {
-    return renderIndustryReportSlide(section.slide, "Country Report");
+    return renderIndustryReportSlide(section.slide);
   }
   return `
     <article class="industry-country-mini-slide">
