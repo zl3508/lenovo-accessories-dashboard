@@ -1037,6 +1037,317 @@ ANKER_COUNTRY_COMPACT_COPY = {
     ],
 }
 
+ANKER_BRAND_FLOW_DECKS = [
+    {
+        "title": "Strategy Signals",
+        "cards": [
+            {
+                "eyebrow": "Brand Positioning",
+                "heading": "Mid-to-high-end moat",
+                "kpis": ["Early entry", "Demand insight", "Channel depth"],
+                "steps": [
+                    {"label": "Mid-high end", "detail": "premium trust"},
+                    {"label": "Rich matrix", "detail": "multi-scenario"},
+                    {"label": "Localization", "detail": "local teams"},
+                    {"label": "Channel moat", "detail": "full coverage"},
+                ],
+            },
+            {
+                "eyebrow": "Channel Model",
+                "heading": "Direct in USA / Japan",
+                "kpis": ["Amazon", "Rakuten", "Large KA"],
+                "steps": [
+                    {"label": "Brand stores", "detail": "Amazon / Rakuten"},
+                    {"label": "Independent site", "detail": "direct sales"},
+                    {"label": "Offline KA", "detail": "direct supply"},
+                    {"label": "Small agents", "detail": "sinking market"},
+                ],
+            },
+            {
+                "eyebrow": "Expansion Model",
+                "heading": "Agents for other regions",
+                "kpis": ["1 agent / country", "Distributors", "Retail stores"],
+                "steps": [
+                    {"label": "Country agent", "detail": "annual mandate"},
+                    {"label": "Distributor", "detail": "large channels"},
+                    {"label": "Retail stores", "detail": "local reach"},
+                    {"label": "Holiday activity", "detail": "local execution"},
+                ],
+            },
+        ],
+    },
+    {
+        "title": "Portfolio Planning",
+        "cards": [
+            {
+                "eyebrow": "Prime Series",
+                "heading": "High-end technology",
+                "kpis": [">10,000mAh PB", "premium charging", "innovation proof"],
+                "steps": [
+                    {"label": "Top tech", "detail": "Anker innovation"},
+                    {"label": "High capacity", "detail": ">10,000mAh"},
+                    {"label": "Quality", "detail": "premium experience"},
+                ],
+            },
+            {
+                "eyebrow": "Nano Series",
+                "heading": "Mid-end convenience",
+                "kpis": ["compact", "reliable", "up to 20,000mAh PB"],
+                "steps": [
+                    {"label": "Convenience", "detail": "portable form"},
+                    {"label": "Durability", "detail": "reliable charge"},
+                    {"label": "Everyday use", "detail": "mid-end users"},
+                ],
+            },
+            {
+                "eyebrow": "Zolo + MagGo",
+                "heading": "Entry + wireless lanes",
+                "kpis": ["entry coverage", "wireless", "ecosystem"],
+                "steps": [
+                    {"label": "Zolo", "detail": "entry level"},
+                    {"label": "MagGo", "detail": "mid/high wireless"},
+                    {"label": "Scenario fit", "detail": "phone + laptop"},
+                ],
+            },
+        ],
+    },
+    {
+        "title": "Pricing and Promotion",
+        "cards": [
+            {
+                "eyebrow": "Pricing Model",
+                "heading": "HQ benchmark to local price",
+                "kpis": ["cost", "competition", "sales target"],
+                "steps": [
+                    {"label": "HQ benchmark", "detail": "market + research"},
+                    {"label": "Region adjust", "detail": "cost + target"},
+                    {"label": "Channel terms", "detail": "KA / agent"},
+                    {"label": "Dynamic promo", "detail": "holiday events"},
+                ],
+            },
+            {
+                "eyebrow": "Margin Guardrail",
+                "heading": "30%+ overall margin",
+                "kpis": ["developed markets 40-50%", "tariff / logistics impact"],
+                "steps": [
+                    {"label": "IC / PCB", "detail": "core cost"},
+                    {"label": "Production", "detail": "allocation"},
+                    {"label": "R&D / logistics", "detail": "regional gap"},
+                    {"label": "Gross margin", "detail": "30%+"},
+                ],
+            },
+            {
+                "eyebrow": "Promotion Calendar",
+                "heading": "Events by country",
+                "kpis": ["Black Friday", "Prime Day", "Bulan puasa / Double 11"],
+                "steps": [
+                    {"label": "Online", "detail": "direct discount"},
+                    {"label": "Offline", "detail": "gifts / member points"},
+                    {"label": "Life cycle", "detail": "core vs circulation SKU"},
+                ],
+            },
+        ],
+    },
+]
+
+BRAND_SIGNAL_FLOW_DECKS = {
+    "Baseus": [
+        {
+            "title": "Market Signals",
+            "cards": [
+                {
+                    "eyebrow": "Japan",
+                    "heading": "Core strategic market",
+                    "kpis": ["global Chinese player", "local brands strong"],
+                    "steps": [
+                        {"label": "Enter Japan", "detail": "priority market"},
+                        {"label": "Compete locally", "detail": "Cheero / Elecom context"},
+                        {"label": "Win on value", "detail": "design + price"},
+                    ],
+                },
+                {
+                    "eyebrow": "Indonesia",
+                    "heading": "$30-80 value band",
+                    "kpis": ["cost-effective", "design innovation"],
+                    "steps": [
+                        {"label": "Value traffic", "detail": "$30-80"},
+                        {"label": "Design hook", "detail": "visual differentiation"},
+                        {"label": "Price pressure", "detail": "Anker avoids ultra-low"},
+                    ],
+                },
+            ],
+        }
+    ],
+    "UGREEN": [
+        {
+            "title": "Market Signals",
+            "cards": [
+                {
+                    "eyebrow": "Japan",
+                    "heading": "Core strategic market",
+                    "kpis": ["Chinese accessory player", "local competition"],
+                    "steps": [
+                        {"label": "Japan push", "detail": "priority market"},
+                        {"label": "Value position", "detail": "price-performance"},
+                        {"label": "Accessory range", "detail": "charging portfolio"},
+                    ],
+                },
+                {
+                    "eyebrow": "Indonesia",
+                    "heading": "$30-80 pressure band",
+                    "kpis": ["value segment", "cost-effective"],
+                    "steps": [
+                        {"label": "Value range", "detail": "$30-80"},
+                        {"label": "Design + utility", "detail": "traffic driver"},
+                        {"label": "Lenovo benchmark", "detail": "price pressure"},
+                    ],
+                },
+            ],
+        }
+    ],
+}
+
+ANKER_COUNTRY_FLOW_SECTIONS = {
+    "USA": [
+        {
+            "eyebrow": "Market and Product",
+            "heading": "Largest single market",
+            "kpis": ["PB RMB 4.5B / 30%", "Adapter RMB 1.5B / 17-18%", "60-80W adapter 72%"],
+            "steps": [
+                {"label": "Power bank", "detail": "personalized demand"},
+                {"label": "Adapter", "detail": "OEM competition"},
+                {"label": "Mainstream", "detail": "5K-12K mAh / 60-80W"},
+            ],
+        },
+        {
+            "eyebrow": "Channel",
+            "heading": "Amazon + large KA",
+            "kpis": ["60-70% online", "30-40% offline", "Amazon core"],
+            "steps": [
+                {"label": "Amazon", "detail": "core online"},
+                {"label": "Walmart / KA", "detail": "offline coverage"},
+                {"label": "Custom SKU", "detail": "models / packaging"},
+                {"label": "48h fulfillment", "detail": "KA support"},
+            ],
+        },
+        {
+            "eyebrow": "Pricing and Promo",
+            "heading": "Holiday-cycle activation",
+            "kpis": ["GM about 42%", "Black Friday 2 weeks", "Prime Day 1 week"],
+            "steps": [
+                {"label": "KA agreement", "detail": "price norms"},
+                {"label": "Black Friday", "detail": "+28% sales lift"},
+                {"label": "Prime Day", "detail": "average lift"},
+                {"label": "Other events", "detail": "1 week"},
+            ],
+        },
+    ],
+    "Japan": [
+        {
+            "eyebrow": "Market and Product",
+            "heading": "Second-largest market",
+            "kpis": ["PB about RMB 1B / 27%", "Adapter RMB 0.7B / 18%", "45-100W mainstream"],
+            "steps": [
+                {"label": "Local brands", "detail": "Cheero / CIO / SONY"},
+                {"label": "PB capacity", "detail": "5K-12K mAh 50%"},
+                {"label": "Adapter power", "detail": "45-100W 78-80%"},
+            ],
+        },
+        {
+            "eyebrow": "Channel",
+            "heading": "Online to offline path",
+            "kpis": ["60% online", "40% offline", "team 8 to 13"],
+            "steps": [
+                {"label": "Rakuten + Amazon", "detail": "duopoly"},
+                {"label": "Rakuten offline", "detail": "traffic diversion"},
+                {"label": "Telecom", "detail": "operator channel"},
+                {"label": "Distributors", "detail": "sinking market"},
+            ],
+        },
+        {
+            "eyebrow": "Pricing and Promo",
+            "heading": "Compete with local brands",
+            "kpis": ["GM about 45%", "PB GM about 53%", "35-40 promo days"],
+            "steps": [
+                {"label": "Price test", "detail": "711 / KA"},
+                {"label": "Prime Day", "detail": "core week"},
+                {"label": "Obon", "detail": "core week"},
+                {"label": "New launch", "detail": "711 / JUSCO"},
+            ],
+        },
+    ],
+    "Indonesia": [
+        {
+            "eyebrow": "Market and Product",
+            "heading": "Star growth market",
+            "kpis": ["Revenue about RMB 1B", "Growth about 40%", "Share 50-60%"],
+            "steps": [
+                {"label": "$200+", "detail": "Apple high-end users"},
+                {"label": "$80-200", "detail": "55-60% core revenue"},
+                {"label": "$30-80", "detail": "value traffic"},
+                {"label": "<$30", "detail": "strategic exit"},
+            ],
+        },
+        {
+            "eyebrow": "Channel",
+            "heading": "Country agent model",
+            "kpis": ["60% online", "40% offline", "local KA fragmented"],
+            "steps": [
+                {"label": "Country agent", "detail": "cost reduction"},
+                {"label": "Shopee", "detail": "main channel"},
+                {"label": "Tokopedia", "detail": "support channel"},
+                {"label": "TikTok", "detail": "100-200% growth"},
+            ],
+        },
+        {
+            "eyebrow": "Pricing and Promo",
+            "heading": "Agent-led rebate control",
+            "kpis": ["GM about 30%", "Bulan puasa 1 month", "Double 11 1 month"],
+            "steps": [
+                {"label": "Agent rebate", "detail": "local discretion"},
+                {"label": "Online", "detail": "10-20% discount"},
+                {"label": "Flash deal", "detail": "up to 50% MSRP"},
+                {"label": "Offline", "detail": "stable price + gifts"},
+            ],
+        },
+    ],
+    "UK": [
+        {
+            "eyebrow": "Market and Product",
+            "heading": "Power bank-led market",
+            "kpis": ["PB RMB 0.3B / 60%", "Growth about 10%", "Adapter 30% of PB revenue"],
+            "steps": [
+                {"label": "Laptop PB", "detail": "PC scenario"},
+                {"label": "MagGo", "detail": "wireless line"},
+                {"label": "25K / 165W", "detail": "high-end product"},
+                {"label": "No adapter series", "detail": "broader use preferred"},
+            ],
+        },
+        {
+            "eyebrow": "Channel",
+            "heading": "Amazon now, offline later",
+            "kpis": ["70% online", "30% offline", "offline via agents"],
+            "steps": [
+                {"label": "Amazon", "detail": "core revenue"},
+                {"label": "Independent retail", "detail": "Argos / Currys"},
+                {"label": "Supermarket", "detail": "Tesco / Sainsbury's"},
+                {"label": "Telecom", "detail": "Vodafone / dealers"},
+            ],
+        },
+        {
+            "eyebrow": "Pricing and Promo",
+            "heading": "Promotion drives revenue",
+            "kpis": ["GM about 50%", "60% annual revenue from promo", "Black Friday up to 50% off"],
+            "steps": [
+                {"label": "Membership", "detail": "points promotion"},
+                {"label": "Black Friday", "detail": "biggest discount"},
+                {"label": "Prime Day", "detail": "Amazon node"},
+                {"label": "Summer / New Year", "detail": "event activity"},
+            ],
+        },
+    ],
+}
+
 INDUSTRY_PRODUCT_SHOWCASE = {
     "adapter": {
         "Anker": [
@@ -1125,14 +1436,21 @@ def enrich_industry_brand_reports(reports: dict[str, Any]) -> dict[str, Any]:
             if products:
                 brand["products"] = products
             if brand.get("brand") == "Anker":
+                brand["flowDecks"] = ANKER_BRAND_FLOW_DECKS
                 for country in brand.get("countries", []):
                     market = country.get("market")
                     flow = ANKER_COUNTRY_STRATEGY_FLOWS.get(market)
                     if flow:
                         country["flow"] = flow
+                    flow_sections = ANKER_COUNTRY_FLOW_SECTIONS.get(market)
+                    if flow_sections:
+                        country["flowSections"] = flow_sections
                     compact_copy = ANKER_COUNTRY_COMPACT_COPY.get(market)
                     if compact_copy:
                         country["strategy"] = compact_copy
+            elif brand.get("brand") in BRAND_SIGNAL_FLOW_DECKS:
+                brand["flowDecks"] = BRAND_SIGNAL_FLOW_DECKS[brand["brand"]]
+                brand["notes"] = []
     return reports
 
 

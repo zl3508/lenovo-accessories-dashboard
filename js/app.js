@@ -552,6 +552,7 @@ function renderIndustryTrendsModule(categoryId) {
 }
 
 function renderIndustryBrandModule(brand, featured = false) {
+  const flowDecks = brand.flowDecks || [];
   return `
     <article class="industry-brand-module ${featured ? "is-featured" : ""}">
       <header class="industry-brand-head">
@@ -562,12 +563,10 @@ function renderIndustryBrandModule(brand, featured = false) {
         </div>
         ${brand.metrics?.length ? `<div class="industry-metric-strip">${brand.metrics.map(renderIndustryMetric).join("")}</div>` : ""}
       </header>
-      ${brand.products?.length ? renderIndustryProductSection(brand.products) : ""}
-      ${brand.strategy?.length ? renderIndustryStorySection("Strategy Signals", brand.strategy) : ""}
-      ${brand.portfolio?.length ? renderIndustryStorySection("Portfolio Planning", brand.portfolio) : ""}
-      ${brand.pricing?.length ? renderIndustryStorySection("Pricing and Promotion", brand.pricing) : ""}
-      ${brand.countries?.length ? `<section class="industry-country-section"><h4>Country Strategy</h4><div class="industry-country-grid">${brand.countries.map(renderIndustryCountryCard).join("")}</div></section>` : ""}
+      ${flowDecks.map((deck, index) => renderIndustryFlowDeck(brand.brand, deck, index)).join("")}
+      ${brand.countries?.length ? renderIndustryCountryDeck(brand) : ""}
       ${brand.notes?.length ? `<section class="industry-quick-notes">${brand.notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}</section>` : ""}
+      ${brand.products?.length ? renderIndustryProductSection(brand.products) : ""}
     </article>
   `;
 }
@@ -592,10 +591,33 @@ function renderIndustryStorySection(title, items) {
   `;
 }
 
+function renderIndustryFlowDeck(brandName, deck, index) {
+  const railId = `industry-${idFromText(brandName)}-${idFromText(deck.title || "deck")}-${index}`;
+  return `
+    <section class="industry-flow-deck">
+      <div class="industry-deck-head">
+        <div>
+          <span>Flow Module</span>
+          <h4>${escapeHtml(deck.title || "Flow")}</h4>
+        </div>
+        ${renderRailControls(railId)}
+      </div>
+      <div class="industry-flow-rail" id="${escapeAttr(railId)}">
+        ${(deck.cards || []).map((card) => renderIndustryFlowCard(card)).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderIndustryProductSection(products) {
   return `
     <section class="industry-product-section">
-      <h4>Representative Products</h4>
+      <div class="industry-deck-head">
+        <div>
+          <span>Official Product Links</span>
+          <h4>Representative Products</h4>
+        </div>
+      </div>
       <div class="industry-product-grid">
         ${products.map(renderIndustryProductCard).join("")}
       </div>
@@ -620,10 +642,31 @@ function renderIndustryProductCard(product) {
         <p>${escapeHtml(product.positioning || "")}</p>
         ${specs.length ? `<div class="industry-product-specs">${specs.map((spec) => `<span>${escapeHtml(spec)}</span>`).join("")}</div>` : ""}
         <div class="industry-product-links">
+          ${product.productUrl ? `<a class="primary-link" href="${escapeAttr(product.productUrl)}" target="_blank" rel="noreferrer">Official site</a>` : ""}
           ${product.amazonUrl ? `<a href="${escapeAttr(product.amazonUrl)}" target="_blank" rel="noreferrer">Amazon</a>` : ""}
-          ${product.productUrl ? `<a href="${escapeAttr(product.productUrl)}" target="_blank" rel="noreferrer">Product page</a>` : ""}
         </div>
       </div>
+    </article>
+  `;
+}
+
+function renderRailControls(railId) {
+  return `
+    <div class="industry-rail-controls">
+      <button type="button" data-action="scroll-rail" data-target="${escapeAttr(railId)}" data-direction="previous" aria-label="Scroll previous">&lt;</button>
+      <button type="button" data-action="scroll-rail" data-target="${escapeAttr(railId)}" data-direction="next" aria-label="Scroll next">&gt;</button>
+    </div>
+  `;
+}
+
+function renderIndustryFlowCard(card, className = "") {
+  const kpis = card.kpis || [];
+  return `
+    <article class="industry-flow-card ${escapeAttr(className)}">
+      <span class="flow-eyebrow">${escapeHtml(card.eyebrow || "")}</span>
+      <h5>${escapeHtml(card.heading || "")}</h5>
+      ${kpis.length ? `<div class="industry-flow-kpis">${kpis.map((kpi) => `<span>${escapeHtml(kpi)}</span>`).join("")}</div>` : ""}
+      ${card.steps?.length ? renderIndustryFlow(card.steps) : ""}
     </article>
   `;
 }
@@ -641,19 +684,41 @@ function renderIndustryFlow(steps) {
   `;
 }
 
-function renderIndustryCountryCard(country) {
+function renderIndustryCountryDeck(brand) {
+  const railId = `industry-${idFromText(brand.brand)}-country-strategy`;
   return `
-    <article class="industry-country-card">
-      <header>
-        <span>${escapeHtml(country.market)}</span>
-        <strong>${escapeHtml(country.model)}</strong>
-      </header>
-      <div class="industry-country-metrics">
-        ${(country.metrics || []).map(renderIndustryMetric).join("")}
+    <section class="industry-country-section">
+      <div class="industry-deck-head">
+        <div>
+          <span>Country Flow</span>
+          <h4>Country Strategy</h4>
+        </div>
+        ${renderRailControls(railId)}
       </div>
-      ${country.flow?.length ? renderIndustryFlow(country.flow) : ""}
-      <div class="industry-country-copy">
-        ${(country.strategy || []).map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
+      <div class="industry-country-rail" id="${escapeAttr(railId)}">
+        ${brand.countries.map(renderIndustryCountrySlide).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderIndustryCountrySlide(country) {
+  const flowSections = country.flowSections?.length
+    ? country.flowSections
+    : [{ eyebrow: "Channel", heading: country.model, steps: country.flow || [] }];
+  return `
+    <article class="industry-country-slide">
+      <div class="industry-country-slide-head">
+        <div>
+          <span>${escapeHtml(country.market)}</span>
+          <h5>${escapeHtml(country.model)}</h5>
+        </div>
+        <div class="industry-country-metrics">
+          ${(country.metrics || []).map(renderIndustryMetric).join("")}
+        </div>
+      </div>
+      <div class="industry-country-flow-grid">
+        ${flowSections.map((section) => renderIndustryFlowCard(section, "is-country")).join("")}
       </div>
       ${country.implication ? `<strong class="industry-implication">${escapeHtml(country.implication)}</strong>` : ""}
     </article>
@@ -662,6 +727,14 @@ function renderIndustryCountryCard(country) {
 
 function industryBrandReport(categoryId) {
   return data.catalog.industryBrandReports?.[categoryId] || null;
+}
+
+function idFromText(value) {
+  const fallback = "section";
+  return String(value || fallback)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || fallback;
 }
 
 function renderMarketStructureModule(categoryId, structureBrands, period) {
@@ -3457,6 +3530,8 @@ function handleClick(event) {
   } else if (action === "structure-market") {
     state.structureMarket[button.dataset.category || state.categoryId] = button.dataset.marketCode;
     render();
+  } else if (action === "scroll-rail") {
+    scrollIndustryRail(button.dataset.target, button.dataset.direction);
   } else if (action === "granularity") {
     const scope = button.dataset.scope;
     if (scope === "detail") state.detailGranularity = button.dataset.granularity;
@@ -3490,6 +3565,13 @@ function handleClick(event) {
     delete state.summarySelectedGeo[state.categoryId];
     render();
   }
+}
+
+function scrollIndustryRail(targetId, direction) {
+  const rail = document.getElementById(targetId);
+  if (!rail) return;
+  const delta = rail.clientWidth * 0.88 * (direction === "previous" ? -1 : 1);
+  rail.scrollBy({ left: delta, behavior: "smooth" });
 }
 
 function handleChange(event) {
