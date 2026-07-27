@@ -28,6 +28,7 @@ const state = {
   competitorBrand: {},
   competitorLenovoProduct: {},
   competitorCountry: {},
+  policyRegion: {},
   structureBrand: {},
   structureMarket: {},
   summaryRevenueMetric: "orderRevenue",
@@ -375,7 +376,7 @@ function renderMarketAnalysis(categoryId) {
           <h2>${modeledText("Policy Insights")}</h2>
           <p>Policy reports, sources, and portfolio implications.</p>
         </div>
-        ${renderPolicyInsights(reports)}
+        ${renderPolicyInsights(categoryId, reports)}
       </section>
     `,
     industry: `
@@ -404,22 +405,58 @@ function renderMarketAnalysis(categoryId) {
   `;
 }
 
-function renderPolicyInsights(reports) {
+function renderPolicyInsights(categoryId, reports) {
+  const selectedRegion = selectedPolicyRegion(categoryId, reports);
   return `
-    <div class="policy-region-grid">
-      ${policyRegions.map((region) => renderPolicyRegion(region, reports)).join("")}
+    <div class="policy-workspace">
+      <div class="policy-region-tabs" aria-label="Policy regions">
+        ${policyRegions.map((region) => renderPolicyRegionTab(region, reports, selectedRegion)).join("")}
+      </div>
+      ${renderPolicyRegionDetail(selectedRegion, reports)}
     </div>
   `;
 }
 
-function renderPolicyRegion(region, reports) {
+function selectedPolicyRegion(categoryId, reports) {
+  const current = state.policyRegion[categoryId];
+  const validCurrent = policyRegions.find((region) => region.id === current);
+  const firstWithReports = policyRegions.find((region) => reports.some((report) => report.regionGroup === region.id));
+  const selected = validCurrent || firstWithReports || policyRegions[0];
+  state.policyRegion[categoryId] = selected.id;
+  return selected;
+}
+
+function renderPolicyRegionTab(region, reports, selectedRegion) {
   const regionReports = reports.filter((report) => report.regionGroup === region.id);
+  const currentCount = regionReports.filter((report) => (report.impactWindow || "current") === "current").length;
+  const futureCount = regionReports.filter((report) => report.impactWindow === "future").length;
+  const active = region.id === selectedRegion.id;
   return `
-    <article class="policy-region-card">
-      <header>
-        <span>${escapeHtml(region.label)}</span>
-        <h3>${escapeHtml(region.name)}</h3>
-        <small>${fmtExactNumber(regionReports.length)} regulation${regionReports.length === 1 ? "" : "s"} loaded</small>
+    <button class="policy-region-tab ${active ? "is-active" : ""}" type="button" data-action="policy-region" data-region-id="${escapeAttr(region.id)}" aria-pressed="${active}">
+      <span>${escapeHtml(region.label)}</span>
+      <strong>${escapeHtml(region.name)}</strong>
+      <small>${fmtExactNumber(regionReports.length)} regulations · ${fmtExactNumber(currentCount)} current · ${fmtExactNumber(futureCount)} future</small>
+    </button>
+  `;
+}
+
+function renderPolicyRegionDetail(region, reports) {
+  const regionReports = reports.filter((report) => report.regionGroup === region.id);
+  const currentCount = regionReports.filter((report) => (report.impactWindow || "current") === "current").length;
+  const futureCount = regionReports.filter((report) => report.impactWindow === "future").length;
+  return `
+    <article class="policy-region-detail">
+      <header class="policy-region-detail-head">
+        <div>
+          <span>${escapeHtml(region.label)}</span>
+          <h3>${escapeHtml(region.name)}</h3>
+          <p>Regional policy view split by near-term and later-quarter portfolio impact.</p>
+        </div>
+        <div class="policy-region-statline">
+          <div><span>Total</span><strong>${fmtExactNumber(regionReports.length)}</strong></div>
+          <div><span>Current</span><strong>${fmtExactNumber(currentCount)}</strong></div>
+          <div><span>Future</span><strong>${fmtExactNumber(futureCount)}</strong></div>
+        </div>
       </header>
       <div class="policy-impact-columns">
         ${policyImpactWindows.map((window) => renderPolicyImpactBucket(region, window, regionReports)).join("")}
@@ -3186,6 +3223,9 @@ function handleClick(event) {
   } else if (action === "module-view") {
     if (state.categoryView === "market") state.marketModule = button.dataset.module;
     if (state.categoryView === "overview") state.overviewModule = button.dataset.module;
+    render();
+  } else if (action === "policy-region") {
+    state.policyRegion[state.categoryId] = button.dataset.regionId;
     render();
   } else if (action === "structure-market") {
     state.structureMarket[button.dataset.category || state.categoryId] = button.dataset.marketCode;
