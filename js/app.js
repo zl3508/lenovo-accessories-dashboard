@@ -39,6 +39,9 @@ const state = {
   summaryGeoProducts: {},
   summaryCountryProducts: {},
   summarySelectedGeo: {},
+  detailRevenueMetric: "order",
+  detailQuantityMetric: "order",
+  detailGeoMetric: "order",
   industrySlides: {},
   variantId: "all",
 };
@@ -2717,6 +2720,9 @@ function renderDetailKpis(product, selectedPartNumber) {
 function renderDetailCharts(product, selectedPartNumber) {
   const target = document.querySelector("#detailCharts");
   if (!target) return;
+  const revenueMetric = flowMetricConfig(state.detailRevenueMetric);
+  const quantityMetric = flowMetricConfig(state.detailQuantityMetric);
+  const geoMetric = flowMetricConfig(state.detailGeoMetric);
   if (state.dimension === "user") {
     target.innerHTML = `
       <div class="chart-shell">
@@ -2729,20 +2735,58 @@ function renderDetailCharts(product, selectedPartNumber) {
     `;
     drawReviewDetail(product);
   } else if (state.dimension === "product") {
+    const showPnShare = selectedPartNumber === "all";
     target.innerHTML = `
-      ${chartShell("detailPlotA", "PN Order_Rev & Growth", selectedPartNumber === "all" ? "all part numbers" : selectedPartNumber)}
-      ${chartShell("detailPlotB", "PN Order Quantity & Growth", "order quantity + growth rate")}
-      ${chartShell("detailGeoTrendPlot", "Geo Order_Rev & Growth", `${granularityLabels[state.detailGranularity]} trend`, true)}
-      ${chartShell("detailCountrySharePlot", "Country Order_Rev Share", selectedPeriod("detail"))}
+      ${chartShellWithControls(
+        "detailPlotA",
+        `${revenueMetric.revenueLabel} Trend & Growth`,
+        selectedPartNumber === "all" ? "all PN total" : selectedPartNumber,
+        renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+      )}
+      ${chartShellWithControls(
+        "detailPlotB",
+        `${quantityMetric.quantityLabel} Trend & Growth`,
+        selectedPartNumber === "all" ? "all PN total" : selectedPartNumber,
+        renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+      )}
+      ${showPnShare ? chartShell("detailSharePlot", `PN ${revenueMetric.revenueLabel} Share`, selectedPeriod("detail")) : ""}
+      ${chartShellWithControls(
+        "detailGeoTrendPlot",
+        `Geo ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
+        `${granularityLabels[state.detailGranularity]} trend`,
+        renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
+        true,
+      )}
+      ${chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
+      ${chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
     `;
     drawPartNumberDetail(product, selectedPartNumber);
     drawProductGeoDetail(product, { partNumber: selectedPartNumber });
   } else {
+    const showSegmentShare = state.segmentFilter === "all";
     target.innerHTML = `
-      ${chartShell("detailPlotA", "Order_Rev by Segment & Growth", state.segmentFilter === "all" ? "Commercial vs Consumer" : state.segmentFilter)}
-      ${chartShell("detailPlotB", "Order Quantity by Segment & Growth", `${granularityLabels[state.detailGranularity]} trend`)}
-      ${chartShell("detailGeoTrendPlot", "Geo Order_Rev & Growth", `${granularityLabels[state.detailGranularity]} trend`, true)}
-      ${chartShell("detailCountrySharePlot", "Country Order_Rev Share", selectedPeriod("detail"))}
+      ${chartShellWithControls(
+        "detailPlotA",
+        `${revenueMetric.revenueLabel} Trend & Growth`,
+        state.segmentFilter === "all" ? "all segments total" : state.segmentFilter,
+        renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+      )}
+      ${chartShellWithControls(
+        "detailPlotB",
+        `${quantityMetric.quantityLabel} Trend & Growth`,
+        state.segmentFilter === "all" ? "all segments total" : state.segmentFilter,
+        renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+      )}
+      ${showSegmentShare ? chartShell("detailSharePlot", `Segment ${revenueMetric.revenueLabel} Share`, selectedPeriod("detail")) : ""}
+      ${chartShellWithControls(
+        "detailGeoTrendPlot",
+        `Geo ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
+        `${granularityLabels[state.detailGranularity]} trend`,
+        renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
+        true,
+      )}
+      ${chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
+      ${chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
     `;
     drawSegmentDetail(product);
     drawProductGeoDetail(product, { segment: state.segmentFilter });
@@ -2761,206 +2805,201 @@ function growthSeries(values) {
 function drawSegmentDetail(product) {
   const rows = detailProductRows(product, { selectedOnly: false, segment: state.segmentFilter });
   const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.detailGranularity))));
-  const segments = state.segmentFilter === "all" ? ["Commercial", "Consumer"] : [state.segmentFilter];
-  const revenueTraces = segments.map((segment, idx) => {
-    const byPeriod = aggregateProductRows(
-      rows.filter((row) => row.segment === segment),
-      (row) => periodKey(row.date, state.detailGranularity),
-    );
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
-      name: segment,
-      type: "bar",
-      marker: { color: palette[idx % palette.length] },
-    };
-  });
+  const revenueMetric = flowMetricConfig(state.detailRevenueMetric);
+  const quantityMetric = flowMetricConfig(state.detailQuantityMetric);
+  const activeLabel = state.segmentFilter === "all" ? "All Segments" : state.segmentFilter;
   const revenueByPeriod = aggregateProductRows(rows, (row) => periodKey(row.date, state.detailGranularity));
-  const revenueValues = periods.map((period) => revenueByPeriod.get(period)?.orderRevenue || revenueByPeriod.get(period)?.revenueNet || 0);
-  revenueTraces.push({
-    x: periods,
-    y: growthSeries(revenueValues),
-    name: "Order_Rev Growth %",
-    type: "scatter",
-    mode: "lines+markers",
-    yaxis: "y2",
-    line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: "%{x}<br>Order_Rev Growth %{y:.1f}%<extra></extra>",
-  });
+  const revenueValues = periods.map((period) => summaryMetricValue(revenueByPeriod.get(period) || {}, revenueMetric.revenueField));
+  const revenueTraces = [
+    {
+      x: periods,
+      y: revenueValues,
+      name: activeLabel,
+      type: "bar",
+      marker: { color: "#e2231a" },
+    },
+    {
+      x: periods,
+      y: growthSeries(revenueValues),
+      name: `${revenueMetric.revenueLabel} Growth %`,
+      type: "scatter",
+      mode: "lines+markers",
+      yaxis: "y2",
+      line: { color: "#1f2328", width: 2.8 },
+      hovertemplate: `%{x}<br>${revenueMetric.revenueLabel} Growth %{y:.1f}%<extra></extra>`,
+    },
+  ];
   drawPlot("detailPlotA", revenueTraces, {
-    barmode: "stack",
-    yaxis: { title: "Order_Rev", tickprefix: "$" },
+    yaxis: { title: revenueMetric.revenueLabel, tickprefix: "$" },
     yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
   });
 
-  const quantityTraces = segments.map((segment, idx) => {
-    const byPeriod = aggregateProductRows(
-      rows.filter((row) => row.segment === segment),
-      (row) => periodKey(row.date, state.detailGranularity),
-    );
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.orderQty || byPeriod.get(period)?.unitsNet || 0),
-      name: segment,
-      type: "bar",
-      marker: { color: palette[idx % palette.length] },
-    };
-  });
   const quantityByPeriod = aggregateProductRows(rows, (row) => periodKey(row.date, state.detailGranularity));
-  const quantityValues = periods.map((period) => quantityByPeriod.get(period)?.orderQty || quantityByPeriod.get(period)?.unitsNet || 0);
-  quantityTraces.push({
-    x: periods,
-    y: growthSeries(quantityValues),
-    name: "Order Qty Growth %",
-    type: "scatter",
-    mode: "lines+markers",
-    yaxis: "y2",
-    line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: "%{x}<br>Order Qty Growth %{y:.1f}%<extra></extra>",
-  });
+  const quantityValues = periods.map((period) => summaryMetricValue(quantityByPeriod.get(period) || {}, quantityMetric.quantityField));
+  const quantityTraces = [
+    {
+      x: periods,
+      y: quantityValues,
+      name: activeLabel,
+      type: "bar",
+      marker: { color: "#e2231a" },
+    },
+    {
+      x: periods,
+      y: growthSeries(quantityValues),
+      name: `${quantityMetric.quantityLabel} Growth %`,
+      type: "scatter",
+      mode: "lines+markers",
+      yaxis: "y2",
+      line: { color: "#1f2328", width: 2.8 },
+      hovertemplate: `%{x}<br>${quantityMetric.quantityLabel} Growth %{y:.1f}%<extra></extra>`,
+    },
+  ];
   drawPlot("detailPlotB", quantityTraces, {
-    barmode: "stack",
-    yaxis: { title: "Order Quantity" },
+    yaxis: { title: quantityMetric.quantityLabel },
     yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
   });
+
+  if (state.segmentFilter === "all") {
+    drawDetailSharePie("detailSharePlot", detailProductRows(product, { selectedOnly: true, segment: "all" }), "segment", revenueMetric.revenueField, revenueMetric.revenueLabel);
+  }
 }
 
 function drawPartNumberDetail(product, selectedPartNumber) {
   const rows = detailProductRows(product, { selectedOnly: false, partNumber: selectedPartNumber });
   const periods = sortedPeriods(unique(rows.map((row) => periodKey(row.date, state.detailGranularity))));
-  const partNumbers =
-    selectedPartNumber === "all"
-      ? unique(rows.map((row) => row.partNumber))
-          .map((partNumber) => ({
-            partNumber,
-            revenue: sumRows(rows.filter((row) => row.partNumber === partNumber), "orderRevenue"),
-          }))
-          .sort((a, b) => b.revenue - a.revenue)
-          .slice(0, 8)
-          .map((item) => item.partNumber)
-      : [selectedPartNumber];
-
-  const revenueTraces = partNumbers.map((partNumber, idx) => {
-    const byPeriod = aggregateProductRows(
-      rows.filter((row) => row.partNumber === partNumber),
-      (row) => periodKey(row.date, state.detailGranularity),
-    );
-    return {
-      x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
-      name: partNumber,
-      type: "bar",
-      marker: { color: palette[idx % palette.length] },
-    };
-  });
+  const revenueMetric = flowMetricConfig(state.detailRevenueMetric);
+  const quantityMetric = flowMetricConfig(state.detailQuantityMetric);
+  const activeLabel = selectedPartNumber === "all" ? "All PN" : selectedPartNumber;
   const byPeriod = aggregateProductRows(rows, (row) => periodKey(row.date, state.detailGranularity));
-  const revenueValues = periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0);
-  revenueTraces.push({
-    x: periods,
-    y: growthSeries(revenueValues),
-    name: "Order_Rev Growth %",
-    type: "scatter",
-    mode: "lines+markers",
-    yaxis: "y2",
-    line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: "%{x}<br>Order_Rev Growth %{y:.1f}%<extra></extra>",
-  });
+  const revenueValues = periods.map((period) => summaryMetricValue(byPeriod.get(period) || {}, revenueMetric.revenueField));
+  const revenueTraces = [
+    {
+      x: periods,
+      y: revenueValues,
+      name: activeLabel,
+      type: "bar",
+      marker: { color: "#e2231a" },
+    },
+    {
+      x: periods,
+      y: growthSeries(revenueValues),
+      name: `${revenueMetric.revenueLabel} Growth %`,
+      type: "scatter",
+      mode: "lines+markers",
+      yaxis: "y2",
+      line: { color: "#1f2328", width: 2.8 },
+      hovertemplate: `%{x}<br>${revenueMetric.revenueLabel} Growth %{y:.1f}%<extra></extra>`,
+    },
+  ];
   drawPlot("detailPlotA", revenueTraces, {
-    barmode: "stack",
-    yaxis: { title: "Order_Rev", tickprefix: "$" },
+    yaxis: { title: revenueMetric.revenueLabel, tickprefix: "$" },
     yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
   });
 
-  const quantityValues = periods.map((period) => byPeriod.get(period)?.orderQty || byPeriod.get(period)?.unitsNet || 0);
+  const quantityValues = periods.map((period) => summaryMetricValue(byPeriod.get(period) || {}, quantityMetric.quantityField));
   drawPlot(
     "detailPlotB",
     [
       {
         x: periods,
         y: quantityValues,
-        name: "Order Qty",
+        name: activeLabel,
         type: "bar",
         marker: { color: "#e2231a" },
       },
       {
         x: periods,
         y: growthSeries(quantityValues),
-        name: "Order Qty Growth %",
+        name: `${quantityMetric.quantityLabel} Growth %`,
         type: "scatter",
         mode: "lines+markers",
         yaxis: "y2",
         line: { color: "#1f2328", width: 2.6 },
-        hovertemplate: "%{x}<br>Order Qty Growth %{y:.1f}%<extra></extra>",
+        hovertemplate: `%{x}<br>${quantityMetric.quantityLabel} Growth %{y:.1f}%<extra></extra>`,
       },
     ],
     {
-      yaxis: { title: "Order Quantity" },
+      yaxis: { title: quantityMetric.quantityLabel },
       yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
     },
+  );
+
+  if (selectedPartNumber === "all") {
+    drawDetailSharePie("detailSharePlot", detailProductRows(product, { selectedOnly: true, partNumber: "all" }), "partNumber", revenueMetric.revenueField, revenueMetric.revenueLabel);
+  }
+}
+
+function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText) {
+  const grouped = unique(rows.map((row) => row[groupField] || "Unassigned"))
+    .map((name) => ({
+      name,
+      value: rows.filter((row) => (row[groupField] || "Unassigned") === name).reduce((sum, row) => sum + (row[metricField] || 0), 0),
+    }))
+    .filter((row) => row.value)
+    .sort((a, b) => b.value - a.value);
+  const slices = grouped.slice(0, 8);
+  const otherValue = grouped.slice(8).reduce((sum, row) => sum + row.value, 0);
+  if (otherValue) slices.push({ name: "Other", value: otherValue });
+  const valuePrefix = metricField.toLowerCase().includes("revenue") ? "$" : "";
+  drawPlot(
+    id,
+    slices.length
+      ? [
+          {
+            labels: slices.map((row) => displayLocationLabel(row.name)),
+            values: slices.map((row) => row.value),
+            type: "pie",
+            hole: 0.42,
+            textinfo: "label+percent",
+            textposition: "outside",
+            automargin: true,
+            hovertemplate: `<b>%{label}</b><br>${metricLabelText} ${valuePrefix}%{value:,.0f}<br>%{percent}<extra></extra>`,
+            marker: { colors: slices.map((_, idx) => palette[idx % palette.length]) },
+          },
+        ]
+      : [],
+    { margin: { l: 28, r: 28, t: 8, b: 42 }, showlegend: true, legend: { orientation: "h", y: -0.18, x: 0 } },
   );
 }
 
 function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } = {}) {
   const trendRows = detailGeoRows(product, { partNumber, segment, selectedOnly: false });
   const periods = sortedPeriods(unique(trendRows.map((row) => periodKey(row.date, state.detailGranularity))));
-  const geos = topGeoNames(trendRows);
+  const metric = flowMetricConfig(state.detailGeoMetric);
+  const geos = topGeoNamesByMetric(trendRows, metric.revenueField);
   const traces = geos.map((geo, idx) => ({
     x: periods,
+    customdata: periods.map(() => geo),
     y: periods.map((period) =>
       sumGeoRows(
         trendRows.filter((row) => (row.geo || "Unassigned") === geo && periodKey(row.date, state.detailGranularity) === period),
-        "orderRevenue",
+        metric.revenueField,
       ),
     ),
-    name: geo,
+    name: displayLocationLabel(geo),
     type: "bar",
     marker: { color: palette[idx % palette.length] },
   }));
-  const revenueByPeriod = periods.map((period) => sumGeoRows(trendRows.filter((row) => periodKey(row.date, state.detailGranularity) === period), "orderRevenue"));
   traces.push({
     x: periods,
-    y: growthSeries(revenueByPeriod),
-    name: "Geo Order_Rev Growth %",
+    y: periods.map((period) => sumGeoRows(trendRows.filter((row) => periodKey(row.date, state.detailGranularity) === period), metric.quantityField)),
+    name: `${metric.quantityLabel} Total`,
     type: "scatter",
     mode: "lines+markers",
     yaxis: "y2",
     line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: "%{x}<br>Geo Order_Rev Growth %{y:.1f}%<extra></extra>",
+    hovertemplate: `%{x}<br>${metric.quantityLabel} %{y:,.0f}<extra></extra>`,
   });
   drawPlot("detailGeoTrendPlot", traces, {
     barmode: "stack",
-    yaxis: { title: "Order_Rev", tickprefix: "$" },
-    yaxis2: { title: "Growth %", overlaying: "y", side: "right", ticksuffix: "%", showgrid: false },
+    yaxis: { title: metric.revenueLabel, tickprefix: "$" },
+    yaxis2: { title: metric.quantityLabel, overlaying: "y", side: "right", showgrid: false },
   });
 
   const selectedRows = detailGeoRows(product, { partNumber, segment, selectedOnly: true });
-  const countryRows = unique(selectedRows.map((row) => row.country || "Unassigned"))
-    .map((country) => ({
-      country,
-      revenue: sumGeoRows(selectedRows.filter((row) => (row.country || "Unassigned") === country), "orderRevenue"),
-    }))
-    .filter((row) => row.revenue)
-    .sort((a, b) => b.revenue - a.revenue);
-  const countries = countryRows.slice(0, 8);
-  const otherRevenue = countryRows.slice(8).reduce((sum, row) => sum + row.revenue, 0);
-  if (otherRevenue) countries.push({ country: "Other", revenue: otherRevenue });
-  drawPlot(
-    "detailCountrySharePlot",
-    countries.length
-      ? [
-          {
-            labels: countries.map((row) => row.country),
-            values: countries.map((row) => row.revenue),
-            type: "pie",
-            hole: 0.42,
-            textinfo: "label+percent",
-            hovertemplate: "<b>%{label}</b><br>Order_Rev $%{value:,.0f}<br>%{percent}<extra></extra>",
-            marker: { colors: countries.map((_, idx) => palette[idx % palette.length]) },
-          },
-        ]
-      : [],
-    { margin: { l: 18, r: 18, t: 8, b: 18 }, showlegend: false },
-  );
+  drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel);
+  drawDetailSharePie("detailCountrySharePlot", selectedRows, "country", metric.revenueField, metric.revenueLabel);
 }
 
 function detailGeoRows(product, { partNumber = "all", segment = "all", selectedOnly = true } = {}) {
@@ -3724,6 +3763,21 @@ function handleChange(event) {
   }
   if (target.dataset.action === "summary-country-metric") {
     state.summaryCountryMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "detail-revenue-metric") {
+    state.detailRevenueMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "detail-quantity-metric") {
+    state.detailQuantityMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "detail-geo-metric") {
+    state.detailGeoMetric = target.value;
     render();
     return;
   }
