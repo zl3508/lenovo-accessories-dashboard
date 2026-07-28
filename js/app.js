@@ -32,6 +32,8 @@ const state = {
   structureMarket: {},
   summaryRevenueMetric: "orderRevenue",
   summaryQuantityMetric: "orderQty",
+  summaryQuantityTrendMetric: "order",
+  summaryRevenueTrendMetric: "order",
   summaryGeoMetric: "order",
   summaryCountryMetric: "order",
   summaryGeoProducts: {},
@@ -1237,8 +1239,18 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
       </div>
       <section class="chart-grid product-summary-trends">
-        ${chartShell("categorySalesPlot", "Order_Qty Trend", `${granularityLabels[state.granularity]} · selected products`)}
-        ${chartShell("categoryRevenuePlot", "Order_Rev Trend", `${granularityLabels[state.granularity]} · selected products`)}
+        ${chartShellWithControls(
+          "categorySalesPlot",
+          `${flowMetricConfig(state.summaryQuantityTrendMetric).quantityLabel} Trend`,
+          "",
+          renderMetricSelect("summary-quantity-trend-metric", state.summaryQuantityTrendMetric, flowMetricOptions),
+        )}
+        ${chartShellWithControls(
+          "categoryRevenuePlot",
+          `${flowMetricConfig(state.summaryRevenueTrendMetric).revenueLabel} Trend`,
+          "",
+          renderMetricSelect("summary-revenue-trend-metric", state.summaryRevenueTrendMetric, flowMetricOptions),
+        )}
       </section>
       ${renderProductBrowser(visibleProducts, selectedIds)}
     </section>
@@ -1550,34 +1562,36 @@ function drawCategoryCharts(categoryId, selectedIds) {
   const categoryRows = data.productMetrics.filter((row) => row.categoryId === categoryId && selectedIds.includes(row.modelId));
   const periods = sortedPeriods(unique(categoryRows.map((row) => periodKey(row.date, state.granularity))));
   const products = selectedIds.map((id) => indexes.products.get(id)).filter(Boolean);
+  const quantityTrendMetric = flowMetricConfig(state.summaryQuantityTrendMetric);
+  const revenueTrendMetric = flowMetricConfig(state.summaryRevenueTrendMetric);
 
   const salesTraces = products.map((product, idx) => {
     const productRows = categoryRows.filter((row) => row.modelId === product.id);
     const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
     return {
       x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.orderQty || byPeriod.get(period)?.unitsNet || 0),
+      y: periods.map((period) => summaryMetricValue(byPeriod.get(period) || {}, quantityTrendMetric.quantityField)),
       name: product.shortName,
       type: "scatter",
       mode: "lines+markers",
       line: { color: palette[idx % palette.length], width: 2.4 },
     };
   });
-  drawPlot("categorySalesPlot", salesTraces, { yaxis: { title: "Order_Qty" } });
+  drawPlot("categorySalesPlot", salesTraces, { yaxis: { title: quantityTrendMetric.quantityLabel } });
 
   const revenueTraces = products.map((product, idx) => {
     const productRows = categoryRows.filter((row) => row.modelId === product.id);
     const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
     return {
       x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.orderRevenue || byPeriod.get(period)?.revenueNet || 0),
+      y: periods.map((period) => summaryMetricValue(byPeriod.get(period) || {}, revenueTrendMetric.revenueField)),
       name: product.shortName,
       type: "scatter",
       mode: "lines+markers",
       line: { color: palette[idx % palette.length], width: 2.4 },
     };
   });
-  drawPlot("categoryRevenuePlot", revenueTraces, { yaxis: { title: "Order_Rev", tickprefix: "$" } });
+  drawPlot("categoryRevenuePlot", revenueTraces, { yaxis: { title: revenueTrendMetric.revenueLabel, tickprefix: "$" } });
 
   const latest = selectedPeriod();
   const latestByModel = products.map((product) => ({
@@ -3689,6 +3703,16 @@ function handleChange(event) {
   }
   if (target.dataset.action === "summary-quantity-metric") {
     state.summaryQuantityMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-quantity-trend-metric") {
+    state.summaryQuantityTrendMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "summary-revenue-trend-metric") {
+    state.summaryRevenueTrendMetric = target.value;
     render();
     return;
   }
