@@ -42,6 +42,7 @@ const state = {
   detailRevenueMetric: "order",
   detailQuantityMetric: "order",
   detailGeoMetric: "order",
+  detailSelectedGeo: {},
   industrySlides: {},
   variantId: "all",
 };
@@ -2723,6 +2724,7 @@ function renderDetailCharts(product, selectedPartNumber) {
   const revenueMetric = flowMetricConfig(state.detailRevenueMetric);
   const quantityMetric = flowMetricConfig(state.detailQuantityMetric);
   const geoMetric = flowMetricConfig(state.detailGeoMetric);
+  const selectedGeo = validDetailSelectedGeo(product);
   if (state.dimension === "user") {
     target.innerHTML = `
       <div class="chart-shell">
@@ -2737,60 +2739,104 @@ function renderDetailCharts(product, selectedPartNumber) {
   } else if (state.dimension === "product") {
     const showPnShare = selectedPartNumber === "all";
     target.innerHTML = `
-      ${chartShellWithControls(
-        "detailPlotA",
-        `${revenueMetric.revenueLabel} Trend & Growth`,
-        selectedPartNumber === "all" ? "all PN total" : selectedPartNumber,
-        renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+      ${detailChartRow(
+        chartShellWithControls(
+          "detailPlotA",
+          `${revenueMetric.revenueLabel} Trend & Growth`,
+          selectedPartNumber === "all" ? "all PN total" : selectedPartNumber,
+          renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+        ),
+        showPnShare ? chartShell("detailRevenueSharePlot", `PN ${revenueMetric.revenueLabel} Share`, selectedPeriod("detail")) : "",
       )}
-      ${chartShellWithControls(
-        "detailPlotB",
-        `${quantityMetric.quantityLabel} Trend & Growth`,
-        selectedPartNumber === "all" ? "all PN total" : selectedPartNumber,
-        renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+      ${detailChartRow(
+        chartShellWithControls(
+          "detailPlotB",
+          `${quantityMetric.quantityLabel} Trend & Growth`,
+          selectedPartNumber === "all" ? "all PN total" : selectedPartNumber,
+          renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+        ),
+        showPnShare ? chartShell("detailQuantitySharePlot", `PN ${quantityMetric.quantityLabel} Share`, selectedPeriod("detail")) : "",
       )}
-      ${showPnShare ? chartShell("detailSharePlot", `PN ${revenueMetric.revenueLabel} Share`, selectedPeriod("detail")) : ""}
-      ${chartShellWithControls(
-        "detailGeoTrendPlot",
-        `Geo ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
-        `${granularityLabels[state.detailGranularity]} trend`,
-        renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
-        true,
+      ${detailChartRow(
+        chartShellWithControls(
+          "detailGeoTrendPlot",
+          `Geo ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
+          "click a geo slice to view country detail",
+          renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
+        ),
+        chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, selectedPeriod("detail")),
       )}
-      ${chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
-      ${chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
+      ${
+        selectedGeo
+          ? detailChartRow(
+              chartShell("detailCountryTrendPlot", `Country ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`, displayLocationLabel(selectedGeo)),
+              chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, displayLocationLabel(selectedGeo)),
+            )
+          : ""
+      }
     `;
     drawPartNumberDetail(product, selectedPartNumber);
     drawProductGeoDetail(product, { partNumber: selectedPartNumber });
   } else {
     const showSegmentShare = state.segmentFilter === "all";
     target.innerHTML = `
-      ${chartShellWithControls(
-        "detailPlotA",
-        `${revenueMetric.revenueLabel} Trend & Growth`,
-        state.segmentFilter === "all" ? "all segments total" : state.segmentFilter,
-        renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+      ${detailChartRow(
+        chartShellWithControls(
+          "detailPlotA",
+          `${revenueMetric.revenueLabel} Trend & Growth`,
+          state.segmentFilter === "all" ? "all segments total" : state.segmentFilter,
+          renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+        ),
+        showSegmentShare ? chartShell("detailRevenueSharePlot", `Segment ${revenueMetric.revenueLabel} Share`, selectedPeriod("detail")) : "",
       )}
-      ${chartShellWithControls(
-        "detailPlotB",
-        `${quantityMetric.quantityLabel} Trend & Growth`,
-        state.segmentFilter === "all" ? "all segments total" : state.segmentFilter,
-        renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+      ${detailChartRow(
+        chartShellWithControls(
+          "detailPlotB",
+          `${quantityMetric.quantityLabel} Trend & Growth`,
+          state.segmentFilter === "all" ? "all segments total" : state.segmentFilter,
+          renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+        ),
+        showSegmentShare ? chartShell("detailQuantitySharePlot", `Segment ${quantityMetric.quantityLabel} Share`, selectedPeriod("detail")) : "",
       )}
-      ${showSegmentShare ? chartShell("detailSharePlot", `Segment ${revenueMetric.revenueLabel} Share`, selectedPeriod("detail")) : ""}
-      ${chartShellWithControls(
-        "detailGeoTrendPlot",
-        `Geo ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
-        `${granularityLabels[state.detailGranularity]} trend`,
-        renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
-        true,
+      ${detailChartRow(
+        chartShellWithControls(
+          "detailGeoTrendPlot",
+          `Geo ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
+          "click a geo slice to view country detail",
+          renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
+        ),
+        chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, selectedPeriod("detail")),
       )}
-      ${chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
-      ${chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedPeriod("detail"))}
+      ${
+        selectedGeo
+          ? detailChartRow(
+              chartShell("detailCountryTrendPlot", `Country ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`, displayLocationLabel(selectedGeo)),
+              chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, displayLocationLabel(selectedGeo)),
+            )
+          : ""
+      }
     `;
     drawSegmentDetail(product);
     drawProductGeoDetail(product, { segment: state.segmentFilter });
   }
+}
+
+function detailChartRow(mainMarkup, sideMarkup = "") {
+  return `
+    <section class="detail-chart-row ${sideMarkup ? "has-side" : "is-main-only"}">
+      ${mainMarkup}
+      ${sideMarkup}
+    </section>
+  `;
+}
+
+function validDetailSelectedGeo(product, filters = {}) {
+  const partNumber = filters.partNumber ?? (state.dimension === "product" ? state.partNumber : "all");
+  const segment = filters.segment ?? (state.dimension === "segment" ? state.segmentFilter : "all");
+  const selected = state.detailSelectedGeo[product.id];
+  if (!selected) return null;
+  const rows = detailGeoRows(product, { partNumber, segment, selectedOnly: true });
+  return rows.some((row) => (row.geo || "Unassigned") === selected) ? selected : null;
 }
 
 function growthSeries(values) {
@@ -2861,7 +2907,9 @@ function drawSegmentDetail(product) {
   });
 
   if (state.segmentFilter === "all") {
-    drawDetailSharePie("detailSharePlot", detailProductRows(product, { selectedOnly: true, segment: "all" }), "segment", revenueMetric.revenueField, revenueMetric.revenueLabel);
+    const shareRows = detailProductRows(product, { selectedOnly: true, segment: "all" });
+    drawDetailSharePie("detailRevenueSharePlot", shareRows, "segment", revenueMetric.revenueField, revenueMetric.revenueLabel);
+    drawDetailSharePie("detailQuantitySharePlot", shareRows, "segment", quantityMetric.quantityField, quantityMetric.quantityLabel);
   }
 }
 
@@ -2926,11 +2974,13 @@ function drawPartNumberDetail(product, selectedPartNumber) {
   );
 
   if (selectedPartNumber === "all") {
-    drawDetailSharePie("detailSharePlot", detailProductRows(product, { selectedOnly: true, partNumber: "all" }), "partNumber", revenueMetric.revenueField, revenueMetric.revenueLabel);
+    const shareRows = detailProductRows(product, { selectedOnly: true, partNumber: "all" });
+    drawDetailSharePie("detailRevenueSharePlot", shareRows, "partNumber", revenueMetric.revenueField, revenueMetric.revenueLabel);
+    drawDetailSharePie("detailQuantitySharePlot", shareRows, "partNumber", quantityMetric.quantityField, quantityMetric.quantityLabel);
   }
 }
 
-function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText) {
+function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, options = {}) {
   const grouped = unique(rows.map((row) => row[groupField] || "Unassigned"))
     .map((name) => ({
       name,
@@ -2942,12 +2992,13 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText) 
   const otherValue = grouped.slice(8).reduce((sum, row) => sum + row.value, 0);
   if (otherValue) slices.push({ name: "Other", value: otherValue });
   const valuePrefix = metricField.toLowerCase().includes("revenue") ? "$" : "";
-  drawPlot(
+  const node = drawPlot(
     id,
     slices.length
       ? [
           {
             labels: slices.map((row) => displayLocationLabel(row.name)),
+            customdata: slices.map((row) => row.name),
             values: slices.map((row) => row.value),
             type: "pie",
             hole: 0.42,
@@ -2961,6 +3012,13 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText) 
       : [],
     { margin: { l: 28, r: 28, t: 8, b: 42 }, showlegend: true, legend: { orientation: "h", y: -0.18, x: 0 } },
   );
+  if (options.onClick && node?.on) {
+    if (node.removeAllListeners) node.removeAllListeners("plotly_click");
+    node.on("plotly_click", (eventData) => {
+      const name = eventData?.points?.[0]?.customdata || eventData?.points?.[0]?.label;
+      if (name && name !== "Other") options.onClick(name);
+    });
+  }
 }
 
 function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } = {}) {
@@ -2991,15 +3049,63 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
     line: { color: "#1f2328", width: 2.8 },
     hovertemplate: `%{x}<br>${metric.quantityLabel} %{y:,.0f}<extra></extra>`,
   });
-  drawPlot("detailGeoTrendPlot", traces, {
+  const geoNode = drawPlot("detailGeoTrendPlot", traces, {
     barmode: "stack",
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
     yaxis2: { title: metric.quantityLabel, overlaying: "y", side: "right", showgrid: false },
   });
+  if (geoNode?.on) {
+    if (geoNode.removeAllListeners) geoNode.removeAllListeners("plotly_click");
+    geoNode.on("plotly_click", (eventData) => {
+      const geo = eventData?.points?.[0]?.customdata;
+      if (!geo) return;
+      state.detailSelectedGeo[product.id] = geo;
+      render();
+    });
+  }
 
   const selectedRows = detailGeoRows(product, { partNumber, segment, selectedOnly: true });
-  drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel);
-  drawDetailSharePie("detailCountrySharePlot", selectedRows, "country", metric.revenueField, metric.revenueLabel);
+  drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
+    onClick: (geo) => {
+      state.detailSelectedGeo[product.id] = geo;
+      render();
+    },
+  });
+
+  const selectedGeo = validDetailSelectedGeo(product, { partNumber, segment });
+  if (!selectedGeo) return;
+  const countryTrendRows = trendRows.filter((row) => (row.geo || "Unassigned") === selectedGeo);
+  const countrySelectedRows = selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo);
+  const countries = topCountryNamesByMetric(countryTrendRows, metric.revenueField);
+  const countryTraces = countries.map((country, idx) => ({
+    x: periods,
+    customdata: periods.map(() => country),
+    y: periods.map((period) =>
+      sumGeoRows(
+        countryTrendRows.filter((row) => (row.country || "Unassigned") === country && periodKey(row.date, state.detailGranularity) === period),
+        metric.revenueField,
+      ),
+    ),
+    name: displayLocationLabel(country),
+    type: "bar",
+    marker: { color: palette[idx % palette.length] },
+  }));
+  countryTraces.push({
+    x: periods,
+    y: periods.map((period) => sumGeoRows(countryTrendRows.filter((row) => periodKey(row.date, state.detailGranularity) === period), metric.quantityField)),
+    name: `${metric.quantityLabel} Total`,
+    type: "scatter",
+    mode: "lines+markers",
+    yaxis: "y2",
+    line: { color: "#1f2328", width: 2.8 },
+    hovertemplate: `%{x}<br>${metric.quantityLabel} %{y:,.0f}<extra></extra>`,
+  });
+  drawPlot("detailCountryTrendPlot", countryTraces, {
+    barmode: "stack",
+    yaxis: { title: metric.revenueLabel, tickprefix: "$" },
+    yaxis2: { title: metric.quantityLabel, overlaying: "y", side: "right", showgrid: false },
+  });
+  drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel);
 }
 
 function detailGeoRows(product, { partNumber = "all", segment = "all", selectedOnly = true } = {}) {

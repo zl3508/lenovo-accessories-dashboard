@@ -2941,6 +2941,26 @@ input[type="search"] {
   gap: 14px;
 }
 
+.detail-chart-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  min-width: 0;
+}
+
+.detail-chart-row.has-side {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.34fr);
+}
+
+.detail-chart-row > .chart-shell {
+  min-width: 0;
+}
+
+.detail-chart-row.has-side > .chart-shell:first-child .plot {
+  height: 390px;
+}
+
 .news-list {
   display: grid;
   gap: 10px;
@@ -3162,6 +3182,10 @@ input[type="search"] {
 
   .chart-controls {
     justify-content: stretch;
+  }
+
+  .detail-chart-row.has-side {
+    grid-template-columns: 1fr;
   }
 
   .inline-field,
