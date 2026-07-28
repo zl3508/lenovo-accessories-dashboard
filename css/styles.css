@@ -547,15 +547,47 @@ h3 {
   padding: 16px;
 }
 
+.filter-panel.is-compact {
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.filter-panel.is-compact .section-head {
+  gap: 10px;
+}
+
+.filter-panel.is-compact .section-head h2 {
+  font-size: 18px;
+}
+
+.filter-panel.is-compact .eyebrow {
+  font-size: 10px;
+}
+
 .filter-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(150px, 1fr));
   gap: 12px;
 }
 
+.filter-panel.is-compact .filter-grid {
+  grid-template-columns: repeat(auto-fit, minmax(142px, 1fr));
+  gap: 9px;
+}
+
 .filter-group {
   display: grid;
   gap: 8px;
+}
+
+.filter-panel.is-compact .filter-group {
+  gap: 5px;
+}
+
+.filter-panel.is-compact select {
+  min-height: 36px;
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 
 .filter-group label {

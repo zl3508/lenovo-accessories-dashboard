@@ -15,7 +15,6 @@ const state = {
   productId: null,
   categoryView: "market",
   marketModule: "policy",
-  overviewModule: "summary",
   granularity: "quarter",
   detailGranularity: "quarter",
   selectedPeriod: { category: null, detail: null },
@@ -106,11 +105,6 @@ const policyImpactWindows = [
   { id: "current", label: "Current Quarter Impact" },
   { id: "future", label: "Future Quarter Impact" },
 ];
-
-const overviewModules = {
-  summary: "Product Summary",
-  filter: "Data Filters",
-};
 
 const dimensionLabels = {
   segment: "Segment",
@@ -375,9 +369,9 @@ function renderCategoryTabs() {
 }
 
 function renderModuleTabs(categoryId) {
-  const modules = state.categoryView === "market" ? marketModules : state.categoryView === "overview" ? overviewModules : null;
+  const modules = state.categoryView === "market" ? marketModules : null;
   if (!modules) return "";
-  const active = state.categoryView === "market" ? state.marketModule : state.overviewModule;
+  const active = state.marketModule;
   return `
     <section class="module-tabs" aria-label="${state.categoryView} modules">
       ${Object.entries(modules)
@@ -1197,14 +1191,14 @@ function renderCompetitorEmptyState(product, country) {
 }
 
 function renderCategoryOverview(categoryId) {
-  if (!overviewModules[state.overviewModule]) state.overviewModule = "summary";
   const visibleProducts = getFilteredProducts(categoryId);
   const selectedIds = getSelectedModelIds(categoryId, visibleProducts);
   const metricRows = data.productMetrics.filter((row) => row.categoryId === categoryId && selectedIds.includes(row.modelId));
   const latestRows = metricRows.filter((row) => rowInSelectedPeriod(row));
   const latestSummary = summarizeProductRows(latestRows);
-  const modules = {
-    summary: `
+  return `
+    <div class="view-stack category-overview-stack">
+      ${renderCategoryFilters(categoryId, { compact: true })}
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
@@ -1212,80 +1206,14 @@ function renderCategoryOverview(categoryId) {
         </div>
         ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
       </section>
-    `,
-    filter: `
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
-          <h2>Data Filters</h2>
-          <p>Filter models, compare performance, and open product detail pages.</p>
+          <h2>Product Performance</h2>
+          <p>Compare product contribution, revenue, quantity, geo, and country performance under the selected filters.</p>
         </div>
-        ${renderCategoryFilters(categoryId)}
-        <section class="chart-grid">
-          ${chartShell("categorySalesPlot", "Order Quantity Trend", `${granularityLabels[state.granularity]} · selected models`)}
-          ${chartShell("categoryRevenuePlot", "Order_Rev Trend", `${granularityLabels[state.granularity]} · selected models`)}
-          ${chartShell("categoryFulfillmentPlot", "Ship_Rev vs Bklg_Rev", selectedPeriod())}
-          ${chartShell("categoryRevenueSharePlot", "Product Order_Rev Contribution", selectedPeriod())}
-          ${chartShell("categoryGeoUnitsPlot", "Geo Order_Qty by Product", selectedPeriod(), true)}
-          ${chartShell("categoryCountryUnitsPlot", "Country Order_Qty by Product", selectedPeriod(), true)}
-        </section>
-        <section class="product-browser product-browser-full">
-          <section class="product-list product-list-full">
-            <div class="product-list-head">
-              <div>
-                <h3>Products</h3>
-                <span class="product-meta">${visibleProducts.length} visible · ${selectedIds.length} charted</span>
-              </div>
-              <div class="toolbar-group product-list-tools">
-                <input type="search" value="${escapeAttr(state.search)}" placeholder="Search product" data-action="search-products" />
-                <button class="solid-button" type="button" data-action="show-all-products">Show all</button>
-                <button class="ghost-button" type="button" data-action="select-visible-models">Select visible</button>
-              </div>
-            </div>
-            <div class="product-rows">
-              ${visibleProducts.length ? visibleProducts.map((product) => renderProductRow(product, selectedIds)).join("") : renderEmptyProducts()}
-            </div>
-          </section>
-        </section>
+        ${renderProductPerformanceMatrix(categoryId, visibleProducts, selectedIds)}
       </section>
-    `,
-    feedback: `
-      <section class="module-block">
-        <div class="module-head">
-          <span>Overview Module</span>
-          <h2>${modeledText("User Feedback")}</h2>
-        </div>
-        <div class="chart-grid">
-          <div class="chart-shell">
-            <div class="chart-title"><strong>${escapeHtml(modeledText("Keyword Cloud"))}</strong><span>${escapeHtml(selectedPeriod())}</span></div>
-            <div id="feedbackWordCloud" class="word-cloud"></div>
-          </div>
-          ${chartShell("feedbackPainPowerPlot", modeledText("Pain Point × Power"), "stacked share")}
-          ${chartShell("feedbackRatingMatrix", modeledText("Rating Matrix"), "power × ports")}
-          ${chartShell("feedbackReturnReasonsPlot", modeledText("Return Reasons"), selectedPeriod())}
-          ${chartShell("feedbackReturnRiskMatrix", modeledText("Return / Service Risk"), "risk heatmap")}
-          ${chartShell("feedbackRatingReturnPlot", modeledText("Rating × Return Risk"), "bubble = sales")}
-        </div>
-      </section>
-    `,
-    decision: `
-      <section class="module-block">
-        <div class="module-head">
-          <span>Overview Module</span>
-          <h2>${modeledText("Product Decision")}</h2>
-        </div>
-        <div class="chart-grid">
-          ${chartShell("decisionOpportunityPlot", modeledText("Opportunity Matrix"), "growth × share × margin")}
-          ${chartShell("decisionGapPlot", modeledText("Portfolio Gap Map"), selectedPeriod())}
-          <div class="detail-panel">${renderDecisionCards(categoryId, selectedIds)}</div>
-        </div>
-      </section>
-    `,
-  };
-
-  return `
-    <div class="view-stack">
-      ${modules[state.overviewModule]}
     </div>
   `;
 }
@@ -1301,7 +1229,6 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
     ["Order_Qty Leader", volume, "highest Order_Qty"],
     ["Bklg_Rev Watch", backlog, "highest Bklg_Rev"],
   ];
-  const selectedGeo = state.summarySelectedGeo[categoryId];
 
   return `
     <section class="product-matrix">
@@ -1309,6 +1236,20 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
       <div class="matrix-card-grid">
         ${cards.map(([badge, item, note]) => renderMatrixHighlightCard(badge, item, note)).join("")}
       </div>
+      <section class="chart-grid product-summary-trends">
+        ${chartShell("categorySalesPlot", "Order_Qty Trend", `${granularityLabels[state.granularity]} · selected products`)}
+        ${chartShell("categoryRevenuePlot", "Order_Rev Trend", `${granularityLabels[state.granularity]} · selected products`)}
+      </section>
+      ${renderProductBrowser(visibleProducts, selectedIds)}
+    </section>
+  `;
+}
+
+function renderProductPerformanceMatrix(categoryId, visibleProducts, selectedIds) {
+  const productIds = selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id);
+  const selectedGeo = state.summarySelectedGeo[categoryId];
+  return `
+    <section class="product-matrix">
       <div class="chart-grid">
         ${chartShellWithControls(
           "matrixRevenueSharePlot",
@@ -1333,13 +1274,36 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
         ${chartShellWithControls(
           "matrixCountryUnitsPlot",
           `Country ${flowMetricLabel(state.summaryCountryMetric)} Revenue + Quantity by Product`,
-          selectedGeo ? `Geo: ${selectedGeo}` : "all geos",
+          selectedGeo ? `Geo: ${displayLocationLabel(selectedGeo)}` : "all geos",
           `${renderMetricSelect("summary-country-metric", state.summaryCountryMetric, flowMetricOptions)}
           ${renderProductCheckboxList("summary-country-product-toggle", categoryId, visibleProducts, getSummaryProductIds("summaryCountryProducts", categoryId, productIds))}
           ${selectedGeo ? `<button class="ghost-button compact-button" type="button" data-action="clear-summary-geo">All Geo</button>` : ""}`,
           true,
         )}
       </div>
+    </section>
+  `;
+}
+
+function renderProductBrowser(visibleProducts, selectedIds) {
+  return `
+    <section class="product-browser product-browser-full">
+      <section class="product-list product-list-full">
+        <div class="product-list-head">
+          <div>
+            <h3>Products</h3>
+            <span class="product-meta">${visibleProducts.length} visible · ${selectedIds.length} charted</span>
+          </div>
+          <div class="toolbar-group product-list-tools">
+            <input type="search" value="${escapeAttr(state.search)}" placeholder="Search product" data-action="search-products" />
+            <button class="solid-button" type="button" data-action="show-all-products">Show all</button>
+            <button class="ghost-button" type="button" data-action="select-visible-models">Select visible</button>
+          </div>
+        </div>
+        <div class="product-rows">
+          ${visibleProducts.length ? visibleProducts.map((product) => renderProductRow(product, selectedIds)).join("") : renderEmptyProducts()}
+        </div>
+      </section>
     </section>
   `;
 }
@@ -1477,10 +1441,11 @@ function renderProductCard(product) {
   `;
 }
 
-function renderCategoryFilters(categoryId) {
+function renderCategoryFilters(categoryId, options = {}) {
   const filters = data.catalog.filters[categoryId] || [];
+  const compactClass = options.compact ? " is-compact" : "";
   return `
-    <section class="filter-panel">
+    <section class="filter-panel${compactClass}">
       <div class="section-head">
         <div>
           <p class="eyebrow">Filters</p>
@@ -1591,7 +1556,7 @@ function drawCategoryCharts(categoryId, selectedIds) {
     const byPeriod = aggregateProductRows(productRows, (row) => periodKey(row.date, state.granularity));
     return {
       x: periods,
-      y: periods.map((period) => byPeriod.get(period)?.unitsNet || 0),
+      y: periods.map((period) => byPeriod.get(period)?.orderQty || byPeriod.get(period)?.unitsNet || 0),
       name: product.shortName,
       type: "scatter",
       mode: "lines+markers",
@@ -1693,12 +1658,20 @@ function topCountryNamesByUnits(rows, limit = 8) {
   return topCountryNamesByMetric(rows, "orderQty", limit);
 }
 
+function displayLocationLabel(value) {
+  const label = String(value || "Unassigned");
+  if (["United States of America", "United States", "USA"].includes(label)) return "US";
+  if (["United Kingdom of Great Britain and Northern Ireland", "United Kingdom", "Great Britain"].includes(label)) return "UK";
+  return label;
+}
+
 function drawCategoryGeoChart(categoryId, selectedIds) {
   const rows = geoMetricRows({ categoryId, selectedIds });
   const geos = topGeoNames(rows);
   const products = selectedIds.map((id) => indexes.products.get(id)).filter(Boolean);
   const traces = products.map((product, idx) => ({
-    x: geos,
+    x: geos.map(displayLocationLabel),
+    customdata: geos,
     y: geos.map((geo) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.geo || "Unassigned") === geo), "orderRevenue")),
     name: product.shortName,
     type: "bar",
@@ -1716,7 +1689,8 @@ function drawCategoryGeoUnitsChart(id, categoryId, selectedIds, field = "orderQt
   const geos = topGeoNamesByMetric(rows, field);
   const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
   const traces = products.map((product, idx) => ({
-    x: geos,
+    x: geos.map(displayLocationLabel),
+    customdata: geos,
     y: geos.map((geo) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.geo || "Unassigned") === geo), field)),
     name: product.shortName,
     type: "bar",
@@ -1726,7 +1700,7 @@ function drawCategoryGeoUnitsChart(id, categoryId, selectedIds, field = "orderQt
   if (interactive && node?.on) {
     if (node.removeAllListeners) node.removeAllListeners("plotly_click");
     node.on("plotly_click", (eventData) => {
-      const geo = eventData?.points?.[0]?.x;
+      const geo = eventData?.points?.[0]?.customdata || eventData?.points?.[0]?.x;
       if (!geo) return;
       state.summarySelectedGeo[categoryId] = geo;
       render();
@@ -1743,7 +1717,8 @@ function drawCategoryCountryUnitsChart(id, categoryId, selectedIds, field = "ord
   const countries = topCountryNamesByMetric(rows, field);
   const products = selectedIds.map((productId) => indexes.products.get(productId)).filter(Boolean);
   const traces = products.map((product, idx) => ({
-    x: countries,
+    x: countries.map(displayLocationLabel),
+    customdata: countries,
     y: countries.map((country) => sumGeoRows(rows.filter((row) => row.modelId === product.id && (row.country || "Unassigned") === country), field)),
     name: product.shortName,
     type: "bar",
@@ -1762,7 +1737,7 @@ function drawCategoryGeoFlowChart(id, categoryId, selectedIds, flow, { interacti
   if (interactive && node?.on) {
     if (node.removeAllListeners) node.removeAllListeners("plotly_click");
     node.on("plotly_click", (eventData) => {
-      const geo = eventData?.points?.[0]?.x;
+      const geo = eventData?.points?.[0]?.customdata || eventData?.points?.[0]?.x;
       if (!geo) return;
       state.summarySelectedGeo[categoryId] = geo;
       render();
@@ -1786,7 +1761,8 @@ function buildDualMetricProductBarTraces(products, groups, rows, groupField, met
     const productRows = rows.filter((row) => row.modelId === product.id);
     return [
       {
-        x: groups,
+        x: groups.map(displayLocationLabel),
+        customdata: groups,
         y: groups.map((group) => sumGeoRows(productRows.filter((row) => groupValue(row) === group), metric.revenueField)),
         name: `${product.shortName} ${metric.revenueLabel}`,
         type: "bar",
@@ -1796,7 +1772,8 @@ function buildDualMetricProductBarTraces(products, groups, rows, groupField, met
         hovertemplate: `<b>%{x}</b><br>${product.shortName}<br>${metric.revenueLabel} $%{y:,.0f}<extra></extra>`,
       },
       {
-        x: groups,
+        x: groups.map(displayLocationLabel),
+        customdata: groups,
         y: groups.map((group) => sumGeoRows(productRows.filter((row) => groupValue(row) === group), metric.quantityField)),
         name: `${product.shortName} ${metric.quantityLabel}`,
         type: "bar",
@@ -2203,12 +2180,14 @@ function drawProductSharePie(id, summaries, field, label) {
             type: "pie",
             hole: 0.42,
             textinfo: "label+percent",
+            textposition: "outside",
+            automargin: true,
             hovertemplate: `<b>%{label}</b><br>${label} ${valuePrefix}%{value:,.0f}<br>%{percent}<extra></extra>`,
             marker: { colors: rows.map((_, idx) => palette[idx % palette.length]) },
           },
         ]
       : [],
-    { margin: { l: 18, r: 18, t: 8, b: 18 }, showlegend: false },
+    { margin: { l: 28, r: 28, t: 8, b: 42 }, showlegend: true, legend: { orientation: "h", y: -0.18, x: 0 } },
   );
 }
 
@@ -3592,7 +3571,6 @@ function handleClick(event) {
     render();
   } else if (action === "module-view") {
     if (state.categoryView === "market") state.marketModule = button.dataset.module;
-    if (state.categoryView === "overview") state.overviewModule = button.dataset.module;
     render();
   } else if (action === "policy-region") {
     state.policyRegion[state.categoryId] = button.dataset.regionId;
