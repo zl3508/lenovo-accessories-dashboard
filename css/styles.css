@@ -2941,63 +2941,6 @@ input[type="search"] {
   gap: 14px;
 }
 
-.detail-control-card {
-  display: grid;
-  grid-column: 1 / -1;
-  gap: 12px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.detail-control-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.detail-control-head > div:first-child {
-  display: grid;
-  gap: 3px;
-}
-
-.detail-control-head strong {
-  font-size: 18px;
-}
-
-.detail-metric-buttons button {
-  min-width: 68px;
-}
-
-.detail-compare-bar {
-  display: grid;
-  gap: 8px;
-}
-
-.detail-compare-bar > span {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.detail-compare-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  max-height: 112px;
-  overflow: auto;
-  padding-right: 4px;
-}
-
-.filter-chip.is-focused {
-  border-color: var(--red);
-  box-shadow: inset 0 -2px 0 var(--red);
-}
-
 .detail-chart-row {
   display: grid;
   grid-column: 1 / -1;
@@ -3240,7 +3183,6 @@ input[type="search"] {
 
   .product-list-head,
   .product-list-tools,
-  .detail-control-head,
   .chart-title-with-controls {
     align-items: stretch;
     flex-direction: column;

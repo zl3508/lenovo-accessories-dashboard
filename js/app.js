@@ -43,8 +43,6 @@ const state = {
   detailQuantityMetric: "order",
   detailGeoMetric: "order",
   detailProductMetric: "order",
-  detailFocus: {},
-  detailTrendSelections: {},
   detailSelectedGeo: {},
   industrySlides: {},
   variantId: "all",
@@ -2738,25 +2736,34 @@ function renderDetailCharts(product, selectedPartNumber) {
     drawReviewDetail(product);
   } else {
     const metric = flowMetricConfig(state.detailProductMetric);
-    const focusKey = validDetailFocus(product, selectedPartNumber);
+    const focusKey = detailCurrentFocusKey(selectedPartNumber);
     const focusFilters = detailFiltersFromFocus(focusKey);
     const selectedGeo = validDetailSelectedGeo(product, focusFilters);
+    const shareLabel = state.dimension === "product" ? "PN" : "Segment";
     const latestRows = detailProductRows(product, { selectedOnly: true });
     const revenueTotal = sumRows(latestRows, metric.revenueField);
     const quantityTotal = sumRows(latestRows, metric.quantityField);
-    const selectedItems = getDetailTrendSelections(product, selectedPartNumber);
     target.innerHTML = `
-      ${renderDetailProductControlBar(product, selectedPartNumber)}
       ${detailChartRow(
-        chartShell("detailRevenueSharePlot", `${metric.revenueLabel} Share`, `Total ${formatMetricValue(metric.revenueField, revenueTotal)} · ${selectedPeriod("detail")}`),
-        chartShell("detailQuantitySharePlot", `${metric.quantityLabel} Share`, `Total ${formatMetricValue(metric.quantityField, quantityTotal)} · ${selectedPeriod("detail")}`),
+        chartShellWithControls(
+          "detailRevenueSharePlot",
+          `${shareLabel} ${metric.revenueLabel} Share`,
+          `Total ${formatMetricValue(metric.revenueField, revenueTotal)} · ${selectedPeriod("detail")}`,
+          renderMetricSelect("detail-product-metric", state.detailProductMetric, flowMetricOptions),
+        ),
+        chartShellWithControls(
+          "detailQuantitySharePlot",
+          `${shareLabel} ${metric.quantityLabel} Share`,
+          `Total ${formatMetricValue(metric.quantityField, quantityTotal)} · ${selectedPeriod("detail")}`,
+          renderMetricSelect("detail-product-metric", state.detailProductMetric, flowMetricOptions),
+        ),
         "is-balanced",
       )}
       ${detailChartRow(
-        chartShell("detailRevenueTrendPlot", `${metric.revenueLabel} Trend`, `${selectedItems.length} selected curve${selectedItems.length > 1 ? "s" : ""}`),
+        chartShell("detailRevenueTrendPlot", `${metric.revenueLabel} Trend`, detailItemLabel(focusKey)),
       )}
       ${detailChartRow(
-        chartShell("detailQuantityTrendPlot", `${metric.quantityLabel} Trend`, `${selectedItems.length} selected curve${selectedItems.length > 1 ? "s" : ""}`),
+        chartShell("detailQuantityTrendPlot", `${metric.quantityLabel} Trend`, detailItemLabel(focusKey)),
       )}
       ${detailChartRow(
         chartShellWithControls(
@@ -2799,110 +2806,18 @@ function validDetailSelectedGeo(product, filters = {}) {
   return rows.some((row) => (row.geo || "Unassigned") === selected) ? selected : null;
 }
 
-function renderDetailProductControlBar(product, selectedPartNumber) {
-  const selectedItems = getDetailTrendSelections(product, selectedPartNumber);
-  const activeFocus = validDetailFocus(product, selectedPartNumber);
-  return `
-    <section class="detail-control-card">
-      <div class="detail-control-head">
-        <div>
-          <span class="metric-label">Product Performance</span>
-          <strong>${escapeHtml(detailItemLabel(activeFocus))}</strong>
-        </div>
-        ${renderDetailFlowButtons()}
-      </div>
-      <div class="detail-compare-bar">
-        <span>Trend Compare</span>
-        <div class="detail-compare-chips">
-          ${detailComparisonItems(product)
-            .map(
-              (item) => `
-                <button
-                  class="filter-chip ${selectedItems.includes(item.key) ? "is-active" : ""} ${activeFocus === item.key ? "is-focused" : ""}"
-                  type="button"
-                  data-action="detail-compare-item"
-                  data-item-key="${escapeAttr(item.key)}"
-                  title="${escapeAttr(item.label)}"
-                >${escapeHtml(item.shortLabel || item.label)}</button>
-              `,
-            )
-            .join("")}
-        </div>
-      </div>
-    </section>
-  `;
+function detailCurrentFocusKey(selectedPartNumber = state.partNumber) {
+  if (state.dimension === "product") return detailPartNumberKey(selectedPartNumber);
+  return detailSegmentKey(state.segmentFilter);
 }
 
-function renderDetailFlowButtons() {
-  return `
-    <div class="segmented detail-metric-buttons" aria-label="Product metric">
-      ${flowMetricOptions
-        .map(
-          (option) => `
-            <button
-              type="button"
-              class="${state.detailProductMetric === option.field ? "is-active" : ""}"
-              data-action="detail-flow-metric"
-              data-metric-field="${escapeAttr(option.field)}"
-            >${escapeHtml(option.label)}</button>
-          `,
-        )
-        .join("")}
-    </div>
-  `;
-}
-
-function detailComparisonItems(product) {
-  const rows = detailProductRows(product, { selectedOnly: false });
-  const segmentOrder = ["Consumer", "Commercial"];
-  const segments = segmentOrder.filter((segment) => rows.some((row) => row.segment === segment));
-  const partNumbers = product.partNumbers?.length ? product.partNumbers : unique(rows.map((row) => row.partNumber).filter(Boolean));
-  return [
-    { key: "all", label: "All", shortLabel: "All", type: "all" },
-    ...segments.map((segment) => ({ key: detailSegmentKey(segment), label: segment, shortLabel: segment, type: "segment", value: segment })),
-    ...partNumbers.map((pn) => ({ key: detailPartNumberKey(pn), label: pn, shortLabel: shortPartNumberLabel(pn), type: "partNumber", value: pn })),
-  ];
-}
-
-function validDetailFocus(product, selectedPartNumber = state.partNumber) {
-  const validKeys = new Set(detailComparisonItems(product).map((item) => item.key));
-  const stored = state.detailFocus[product.id];
-  if (stored && validKeys.has(stored)) return stored;
-  const fallback =
-    state.dimension === "segment"
-      ? detailSegmentKey(state.segmentFilter)
-      : state.dimension === "product"
-        ? detailPartNumberKey(selectedPartNumber)
-        : "all";
-  return validKeys.has(fallback) ? fallback : "all";
-}
-
-function getDetailTrendSelections(product, selectedPartNumber = state.partNumber) {
-  const validKeys = new Set(detailComparisonItems(product).map((item) => item.key));
-  const focusKey = validDetailFocus(product, selectedPartNumber);
-  const stored = state.detailTrendSelections[product.id] || [focusKey];
-  const cleaned = stored.filter((key) => validKeys.has(key));
-  return cleaned.length ? cleaned : [focusKey];
-}
-
-function setDetailFocus(productId, itemKey, { resetTrend = true } = {}) {
-  state.detailFocus[productId] = itemKey;
-  if (resetTrend) state.detailTrendSelections[productId] = [itemKey];
-  delete state.detailSelectedGeo[productId];
-}
-
-function toggleDetailTrendSelection(product, itemKey) {
-  const validKeys = new Set(detailComparisonItems(product).map((item) => item.key));
-  if (!validKeys.has(itemKey)) return;
-  if (itemKey === "all") {
-    setDetailFocus(product.id, "all");
+function setDetailFocusFromPie(product, itemKey) {
+  delete state.detailSelectedGeo[product.id];
+  if (state.dimension === "product") {
+    state.partNumber = itemKey === "all" ? "all" : detailItemLabel(itemKey);
     return;
   }
-  const current = getDetailTrendSelections(product).filter((key) => key !== "all");
-  const next = current.includes(itemKey) ? current.filter((key) => key !== itemKey) : [...current, itemKey];
-  state.detailFocus[product.id] = itemKey;
-  state.detailTrendSelections[product.id] = next.length ? next : [itemKey];
-  delete state.detailSelectedGeo[product.id];
+  state.segmentFilter = itemKey === "all" ? "all" : detailItemLabel(itemKey);
 }
 
 function detailSegmentKey(segment) {
@@ -2948,80 +2863,54 @@ function growthSeries(values) {
 
 function drawDetailProductPerformance(product, selectedPartNumber) {
   const metric = flowMetricConfig(state.detailProductMetric);
-  const focusKey = validDetailFocus(product, selectedPartNumber);
-  const trendSelections = getDetailTrendSelections(product, selectedPartNumber);
-  drawDetailBreakdownSunburst("detailRevenueSharePlot", product, metric.revenueField, metric.revenueLabel, focusKey);
-  drawDetailBreakdownSunburst("detailQuantitySharePlot", product, metric.quantityField, metric.quantityLabel, focusKey);
-  drawDetailTrendLines("detailRevenueTrendPlot", product, trendSelections, metric.revenueField, metric.revenueLabel);
-  drawDetailTrendLines("detailQuantityTrendPlot", product, trendSelections, metric.quantityField, metric.quantityLabel);
+  const focusKey = detailCurrentFocusKey(selectedPartNumber);
+  drawDetailDimensionPie("detailRevenueSharePlot", product, metric.revenueField, metric.revenueLabel, focusKey);
+  drawDetailDimensionPie("detailQuantitySharePlot", product, metric.quantityField, metric.quantityLabel, focusKey);
+  drawDetailTrendLines("detailRevenueTrendPlot", product, [focusKey], metric.revenueField, metric.revenueLabel);
+  drawDetailTrendLines("detailQuantityTrendPlot", product, [focusKey], metric.quantityField, metric.quantityLabel);
 }
 
-function drawDetailBreakdownSunburst(id, product, metricField, metricLabelText, focusKey) {
+function drawDetailDimensionPie(id, product, metricField, metricLabelText, focusKey) {
   const rows = detailProductRows(product, { selectedOnly: true });
-  const segments = ["Consumer", "Commercial"].filter((segment) => rows.some((row) => row.segment === segment));
-  const partNumbers = product.partNumbers?.length ? product.partNumbers : unique(rows.map((row) => row.partNumber).filter(Boolean));
-  const total = sumRows(rows, metricField);
-  if (!total) {
+  const items =
+    state.dimension === "product"
+      ? (product.partNumbers?.length ? product.partNumbers : unique(rows.map((row) => row.partNumber).filter(Boolean))).map((partNumber) => ({
+          key: detailPartNumberKey(partNumber),
+          label: partNumber,
+          shortLabel: shortPartNumberLabel(partNumber),
+          value: sumRows(rows.filter((row) => row.partNumber === partNumber), metricField),
+        }))
+      : ["Consumer", "Commercial"].map((segment) => ({
+          key: detailSegmentKey(segment),
+          label: segment,
+          shortLabel: segment,
+          value: sumRows(rows.filter((row) => row.segment === segment), metricField),
+        }));
+  const slices = items.filter((item) => item.value);
+  const total = slices.reduce((sum, item) => sum + item.value, 0);
+  if (!slices.length || !total) {
     drawPlot(id, [], {});
     return;
   }
-  const ids = ["all"];
-  const labels = ["Total"];
-  const parents = [""];
-  const values = [total];
-  const customdata = ["all"];
-  const hoverValues = [formatMetricValue(metricField, total)];
-  const nodeKinds = ["all"];
-
-  for (const segment of segments) {
-    const segmentRows = rows.filter((row) => row.segment === segment);
-    const segmentValue = sumRows(segmentRows, metricField);
-    if (!segmentValue) continue;
-    const segmentKey = detailSegmentKey(segment);
-    ids.push(segmentKey);
-    labels.push(segment);
-    parents.push("all");
-    values.push(segmentValue);
-    customdata.push(segmentKey);
-    hoverValues.push(formatMetricValue(metricField, segmentValue));
-    nodeKinds.push("segment");
-
-    for (const partNumber of partNumbers) {
-      const pnRows = segmentRows.filter((row) => row.partNumber === partNumber);
-      const pnValue = sumRows(pnRows, metricField);
-      if (!pnValue) continue;
-      const pnKey = detailPartNumberKey(partNumber);
-      ids.push(`${segmentKey}|${pnKey}`);
-      labels.push(shortPartNumberLabel(partNumber));
-      parents.push(segmentKey);
-      values.push(pnValue);
-      customdata.push(pnKey);
-      hoverValues.push(formatMetricValue(metricField, pnValue));
-      nodeKinds.push("partNumber");
-    }
-  }
-
-  const colors = ids.map((nodeId, idx) => detailBreakdownColor(nodeId, customdata[idx], nodeKinds[idx], focusKey, idx));
+  const colors = slices.map((item, idx) => (focusKey === "all" || item.key === focusKey ? palette[idx % palette.length] : "#e8e2d9"));
   const node = drawPlot(
     id,
-    [
-      {
-        type: "sunburst",
-        ids,
-        labels,
-        parents,
-        values,
-        customdata: customdata.map((key, idx) => [key, hoverValues[idx]]),
-        branchvalues: "total",
-        maxdepth: 3,
-        insidetextorientation: "radial",
-        marker: { colors, line: { color: "#ffffff", width: 2 } },
-        hovertemplate: `<b>%{label}</b><br>${metricLabelText}: %{customdata[1]}<br>%{percentRoot:.1%} of total<extra></extra>`,
-      },
-    ],
+    [{
+      labels: slices.map((item) => item.shortLabel || item.label),
+      customdata: slices.map((item) => item.key),
+      values: slices.map((item) => item.value),
+      type: "pie",
+      hole: 0.48,
+      textinfo: "label+percent",
+      textposition: "outside",
+      automargin: true,
+      hovertemplate: `<b>%{label}</b><br>${metricLabelText}: ${metricField.toLowerCase().includes("revenue") ? "$" : ""}%{value:,.0f}<br>%{percent}<extra></extra>`,
+      marker: { colors, line: { color: "#ffffff", width: 2 } },
+    }],
     {
       margin: { l: 16, r: 16, t: 8, b: 16 },
-      showlegend: false,
+      showlegend: true,
+      legend: { orientation: "h", y: -0.18, x: 0 },
       annotations: [
         {
           text: `<b>${escapeHtml(formatMetricValue(metricField, total))}</b><br><span style="font-size:11px;color:#6b7280">Total</span>`,
@@ -3038,38 +2927,18 @@ function drawDetailBreakdownSunburst(id, product, metricField, metricLabelText, 
   if (node?.on) {
     if (node.removeAllListeners) node.removeAllListeners("plotly_click");
     node.on("plotly_click", (eventData) => {
-      const point = eventData?.points?.[0];
-      const itemKey = Array.isArray(point?.customdata) ? point.customdata[0] : point?.customdata;
+      const itemKey = eventData?.points?.[0]?.customdata;
       if (!itemKey) return;
-      setDetailFocus(product.id, itemKey);
+      setDetailFocusFromPie(product, itemKey);
       render();
     });
   }
 }
 
-function detailBreakdownColor(nodeId, itemKey, nodeKind, focusKey, idx) {
-  const normal = nodeKind === "all" ? "#1f2328" : palette[idx % palette.length];
-  if (!focusKey || focusKey === "all") return normal;
-  if (focusKey.startsWith("segment:")) {
-    if (itemKey === focusKey || nodeId.startsWith(`${focusKey}|`)) return normal;
-    return "#e8e2d9";
-  }
-  if (focusKey.startsWith("pn:")) {
-    if (itemKey === focusKey) return normal;
-    if (nodeKind === "segment" && nodeId && detailProductRowsFromNodeKey(nodeId, focusKey)) return "#f2a9a4";
-    return "#e8e2d9";
-  }
-  return normal;
-}
-
-function detailProductRowsFromNodeKey(nodeId, focusKey) {
-  return nodeId.startsWith("segment:") && focusKey.startsWith("pn:");
-}
-
 function drawDetailTrendLines(id, product, itemKeys, metricField, metricLabelText) {
   const baseRows = detailProductRows(product, { selectedOnly: false });
   const periods = sortedPeriods(unique(baseRows.map((row) => periodKey(row.date, state.detailGranularity))));
-  const focusKey = validDetailFocus(product);
+  const focusKey = itemKeys[0] || "all";
   const isRevenue = metricField.toLowerCase().includes("revenue");
   const hoverValue = isRevenue ? "$%{y:,.2f}" : "%{y:,.0f}";
   const traces = itemKeys.map((itemKey, idx) => {
@@ -4014,24 +3883,15 @@ function handleClick(event) {
     render();
   } else if (action === "dimension") {
     state.dimension = button.dataset.dimension;
-    const product = state.productId ? indexes.products.get(state.productId) : null;
-    if (product && state.dimension === "segment") setDetailFocus(product.id, detailSegmentKey(state.segmentFilter));
-    if (product && state.dimension === "product") setDetailFocus(product.id, detailPartNumberKey(state.partNumber));
+    if (state.productId) delete state.detailSelectedGeo[state.productId];
     render();
   } else if (action === "segment-filter") {
     state.segmentFilter = button.dataset.segment;
-    if (state.productId) setDetailFocus(state.productId, detailSegmentKey(state.segmentFilter));
+    if (state.productId) delete state.detailSelectedGeo[state.productId];
     render();
   } else if (action === "part-number") {
     state.partNumber = button.dataset.partNumber;
-    if (state.productId) setDetailFocus(state.productId, detailPartNumberKey(state.partNumber));
-    render();
-  } else if (action === "detail-flow-metric") {
-    state.detailProductMetric = button.dataset.metricField;
-    render();
-  } else if (action === "detail-compare-item") {
-    const product = state.productId ? indexes.products.get(state.productId) : null;
-    if (product) toggleDetailTrendSelection(product, button.dataset.itemKey);
+    if (state.productId) delete state.detailSelectedGeo[state.productId];
     render();
   } else if (action === "clear-summary-geo") {
     delete state.summarySelectedGeo[state.categoryId];
@@ -4148,6 +4008,11 @@ function handleChange(event) {
   }
   if (target.dataset.action === "detail-geo-metric") {
     state.detailGeoMetric = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "detail-product-metric") {
+    state.detailProductMetric = target.value;
     render();
     return;
   }
