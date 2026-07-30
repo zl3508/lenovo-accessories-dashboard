@@ -2787,10 +2787,6 @@ function renderDetailCharts(product, selectedPartNumber) {
       )}
       ${detailChartRow(
         chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, `${detailItemLabel(focusKey)} · ${selectedPeriod("detail")}`),
-        chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedGeo ? displayLocationLabel(selectedGeo) : "All countries"),
-        "is-balanced",
-      )}
-      ${detailChartRow(
         chartShellWithControls(
           "detailGeoTrendPlot",
           `Geo ${geoMetric.revenueLabel} by Quarter`,
@@ -2798,6 +2794,10 @@ function renderDetailCharts(product, selectedPartNumber) {
           `${renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions)}
           ${renderDetailTrendModeButtons(geoTrendMode, "geo")}`,
         ),
+        "is-balanced",
+      )}
+      ${detailChartRow(
+        chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedGeo ? displayLocationLabel(selectedGeo) : "All countries"),
         chartShellWithControls(
           "detailCountryTrendPlot",
           `Country ${geoMetric.revenueLabel} by Quarter`,
@@ -3244,6 +3244,8 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
   if (otherValue) slices.push({ name: "Other", value: otherValue });
   const valuePrefix = metricField.toLowerCase().includes("revenue") ? "$" : "";
   const inlineLabels = Boolean(options.inlineLabels);
+  const outsideLabels = Boolean(options.outsideLabels);
+  const showLegend = options.showLegend ?? (!inlineLabels && !outsideLabels);
   const node = drawPlot(
     id,
     slices.length
@@ -3264,8 +3266,8 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
         ]
       : [],
     {
-      margin: inlineLabels ? { l: 12, r: 12, t: 8, b: 12 } : { l: 28, r: 28, t: 8, b: 42 },
-      showlegend: !inlineLabels,
+      margin: inlineLabels ? { l: 12, r: 12, t: 8, b: 12 } : outsideLabels ? { l: 54, r: 54, t: 8, b: 26 } : { l: 28, r: 28, t: 8, b: 42 },
+      showlegend: showLegend,
       legend: { orientation: "h", y: -0.18, x: 0 },
     },
   );
@@ -3290,7 +3292,8 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   const hoverValue = isRevenueMetric ? "$%{y:,.2f}" : "%{y:,.0f}";
 
   drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
-    inlineLabels: true,
+    outsideLabels: true,
+    showLegend: false,
     onClick: (geo) => {
       state.detailSelectedGeo[product.id] = geo;
       state.detailGeoTrendMode[product.id] = "breakdown";
@@ -3300,7 +3303,7 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   });
 
   const countrySelectedRows = selectedGeo ? selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : selectedRows;
-  drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel, { inlineLabels: true });
+  drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel, { outsideLabels: true, showLegend: false });
 
   const traces =
     geoTrendMode === "overall"
