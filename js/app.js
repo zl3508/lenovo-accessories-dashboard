@@ -43,7 +43,8 @@ const state = {
   detailQuantityMetric: "order",
   detailGeoMetric: "order",
   detailProductMetric: "order",
-  detailTrendMode: {},
+  detailRevenueTrendMode: {},
+  detailQuantityTrendMode: {},
   detailSelectedGeo: {},
   industrySlides: {},
   variantId: "all",
@@ -2740,7 +2741,8 @@ function renderDetailCharts(product, selectedPartNumber) {
     const focusKey = detailCurrentFocusKey(selectedPartNumber);
     const focusFilters = detailFiltersFromFocus(focusKey);
     const selectedGeo = validDetailSelectedGeo(product, focusFilters);
-    const trendMode = detailTrendMode(product, focusKey);
+    const revenueTrendMode = detailTrendMode(product, "revenue", focusKey);
+    const quantityTrendMode = detailTrendMode(product, "quantity", focusKey);
     const shareLabel = state.dimension === "product" ? "PN" : "Segment";
     const latestRows = detailProductRows(product, { selectedOnly: true });
     const revenueTotal = sumRows(latestRows, metric.revenueField);
@@ -2765,41 +2767,42 @@ function renderDetailCharts(product, selectedPartNumber) {
         chartShellWithControls(
           "detailRevenueTrendPlot",
           `${flowMetricConfig(state.detailRevenueMetric).revenueLabel} Trend`,
-          detailTrendMeta(trendMode, focusKey),
+          detailTrendMeta(revenueTrendMode, focusKey),
           `${renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions)}
-          ${renderDetailTrendModeButtons(trendMode)}`,
+          ${renderDetailTrendModeButtons(revenueTrendMode, "revenue")}`,
         ),
       )}
       ${detailChartRow(
         chartShellWithControls(
           "detailQuantityTrendPlot",
           `${flowMetricConfig(state.detailQuantityMetric).quantityLabel} Trend`,
-          detailTrendMeta(trendMode, focusKey),
+          detailTrendMeta(quantityTrendMode, focusKey),
           `${renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions)}
-          ${renderDetailTrendModeButtons(trendMode)}`,
+          ${renderDetailTrendModeButtons(quantityTrendMode, "quantity")}`,
         ),
+      )}
+      ${detailChartRow(
+        chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, `${detailItemLabel(focusKey)} · ${selectedPeriod("detail")}`),
+        chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedGeo ? displayLocationLabel(selectedGeo) : "All countries"),
+        "is-balanced",
       )}
       ${detailChartRow(
         chartShellWithControls(
           "detailGeoTrendPlot",
-          `Geo ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
-          `${detailItemLabel(focusKey)} · click a geo slice to view country detail`,
+          `Geo ${geoMetric.revenueLabel} by Quarter`,
+          `${detailItemLabel(focusKey)} · click a geo bar or slice to view countries`,
           renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
         ),
-        chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, selectedPeriod("detail")),
       )}
       ${
-        selectedGeo
-          ? detailChartRow(
-              chartShellWithControls(
-                "detailCountryTrendPlot",
-                `Country ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
-                displayLocationLabel(selectedGeo),
-                renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
-              ),
-              chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, displayLocationLabel(selectedGeo)),
-            )
-          : ""
+        detailChartRow(
+          chartShellWithControls(
+            "detailCountryTrendPlot",
+            `Country ${geoMetric.revenueLabel} by Quarter`,
+            selectedGeo ? displayLocationLabel(selectedGeo) : "All countries",
+            renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
+          )
+        )
       }
     `;
     drawDetailProductPerformance(product, selectedPartNumber);
@@ -2837,30 +2840,36 @@ function setDetailFocusFromPie(product, itemKey) {
   } else {
     state.segmentFilter = itemKey === "all" ? "all" : detailItemLabel(itemKey);
   }
-  state.detailTrendMode[product.id] = itemKey === "all" ? "overall" : "breakdown";
+  const mode = itemKey === "all" ? "overall" : "breakdown";
+  state.detailRevenueTrendMode[product.id] = mode;
+  state.detailQuantityTrendMode[product.id] = mode;
 }
 
-function setDetailFocusFromTrend(product, itemKey) {
+function setDetailFocusFromTrend(product, itemKey, target = "revenue") {
   delete state.detailSelectedGeo[product.id];
   if (state.dimension === "product") {
     state.partNumber = itemKey === "all" ? "all" : detailItemLabel(itemKey);
   } else {
     state.segmentFilter = itemKey === "all" ? "all" : detailItemLabel(itemKey);
   }
-  state.detailTrendMode[product.id] = "focus";
+  detailTrendModeStore(target)[product.id] = "focus";
 }
 
-function detailTrendMode(product, focusKey = detailCurrentFocusKey()) {
-  const stored = state.detailTrendMode[product.id];
+function detailTrendModeStore(target) {
+  return target === "quantity" ? state.detailQuantityTrendMode : state.detailRevenueTrendMode;
+}
+
+function detailTrendMode(product, target, focusKey = detailCurrentFocusKey()) {
+  const stored = detailTrendModeStore(target)[product.id];
   if (["overall", "breakdown", "focus"].includes(stored)) return stored;
   return focusKey === "all" ? "overall" : "breakdown";
 }
 
-function renderDetailTrendModeButtons(activeMode) {
+function renderDetailTrendModeButtons(activeMode, target) {
   return `
     <div class="segmented trend-mode-control" aria-label="Trend view">
-      <button type="button" class="${activeMode === "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-mode="overall">Overall</button>
-      <button type="button" class="${activeMode !== "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-mode="breakdown">Breakdown</button>
+      <button type="button" class="${activeMode === "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-target="${escapeAttr(target)}" data-trend-mode="overall">Overall</button>
+      <button type="button" class="${activeMode !== "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-target="${escapeAttr(target)}" data-trend-mode="breakdown">Breakdown</button>
     </div>
   `;
 }
@@ -2940,12 +2949,22 @@ function drawDetailProductPerformance(product, selectedPartNumber) {
   const revenueMetric = flowMetricConfig(state.detailRevenueMetric);
   const quantityMetric = flowMetricConfig(state.detailQuantityMetric);
   const focusKey = detailCurrentFocusKey(selectedPartNumber);
-  const trendMode = detailTrendMode(product, focusKey);
-  const trendItemKeys = detailTrendItemKeys(product, focusKey, trendMode);
+  const revenueTrendMode = detailTrendMode(product, "revenue", focusKey);
+  const quantityTrendMode = detailTrendMode(product, "quantity", focusKey);
+  const revenueTrendItemKeys = detailTrendItemKeys(product, focusKey, revenueTrendMode);
+  const quantityTrendItemKeys = detailTrendItemKeys(product, focusKey, quantityTrendMode);
   drawDetailDimensionPie("detailRevenueSharePlot", product, metric.revenueField, metric.revenueLabel, focusKey);
   drawDetailDimensionPie("detailQuantitySharePlot", product, metric.quantityField, metric.quantityLabel, focusKey);
-  drawDetailTrendLines("detailRevenueTrendPlot", product, trendItemKeys, revenueMetric.revenueField, revenueMetric.revenueLabel, { focusKey, trendMode });
-  drawDetailTrendLines("detailQuantityTrendPlot", product, trendItemKeys, quantityMetric.quantityField, quantityMetric.quantityLabel, { focusKey, trendMode });
+  drawDetailTrendLines("detailRevenueTrendPlot", product, revenueTrendItemKeys, revenueMetric.revenueField, revenueMetric.revenueLabel, {
+    focusKey,
+    trendMode: revenueTrendMode,
+    trendTarget: "revenue",
+  });
+  drawDetailTrendLines("detailQuantityTrendPlot", product, quantityTrendItemKeys, quantityMetric.quantityField, quantityMetric.quantityLabel, {
+    focusKey,
+    trendMode: quantityTrendMode,
+    trendTarget: "quantity",
+  });
 }
 
 function drawDetailDimensionPie(id, product, metricField, metricLabelText, focusKey) {
@@ -3020,6 +3039,7 @@ function drawDetailTrendLines(id, product, itemKeys, metricField, metricLabelTex
   const periods = sortedPeriods(unique(baseRows.map((row) => periodKey(row.date, state.detailGranularity))));
   const focusKey = options.focusKey || itemKeys[0] || "all";
   const trendMode = options.trendMode || "focus";
+  const trendTarget = options.trendTarget || "revenue";
   const isRevenue = metricField.toLowerCase().includes("revenue");
   const hoverValue = isRevenue ? "$%{y:,.2f}" : "%{y:,.0f}";
   const traces = itemKeys.map((itemKey, idx) => {
@@ -3050,7 +3070,7 @@ function drawDetailTrendLines(id, product, itemKeys, metricField, metricLabelTex
     node.on("plotly_click", (eventData) => {
       const itemKey = eventData?.points?.[0]?.customdata || itemKeys[eventData?.points?.[0]?.curveNumber || 0];
       if (!itemKey) return;
-      setDetailFocusFromTrend(product, itemKey);
+      setDetailFocusFromTrend(product, itemKey, trendTarget);
       render();
     });
   }
@@ -3240,6 +3260,19 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   const trendRows = detailGeoRows(product, { partNumber, segment, selectedOnly: false });
   const periods = sortedPeriods(unique(trendRows.map((row) => periodKey(row.date, state.detailGranularity))));
   const metric = flowMetricConfig(state.detailGeoMetric);
+  const selectedRows = detailGeoRows(product, { partNumber, segment, selectedOnly: true });
+  const selectedGeo = validDetailSelectedGeo(product, { partNumber, segment });
+
+  drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
+    onClick: (geo) => {
+      state.detailSelectedGeo[product.id] = geo;
+      render();
+    },
+  });
+
+  const countrySelectedRows = selectedGeo ? selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : selectedRows;
+  drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel);
+
   const geos = topGeoNamesByMetric(trendRows, metric.revenueField);
   const traces = geos.map((geo, idx) => ({
     x: periods,
@@ -3254,20 +3287,9 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
     type: "bar",
     marker: { color: palette[idx % palette.length] },
   }));
-  traces.push({
-    x: periods,
-    y: periods.map((period) => sumGeoRows(trendRows.filter((row) => periodKey(row.date, state.detailGranularity) === period), metric.quantityField)),
-    name: `${metric.quantityLabel} Total`,
-    type: "scatter",
-    mode: "lines+markers",
-    yaxis: "y2",
-    line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: `%{x}<br>${metric.quantityLabel} %{y:,.0f}<extra></extra>`,
-  });
   const geoNode = drawPlot("detailGeoTrendPlot", traces, {
     barmode: "stack",
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
-    yaxis2: { title: metric.quantityLabel, overlaying: "y", side: "right", showgrid: false },
   });
   if (geoNode?.on) {
     if (geoNode.removeAllListeners) geoNode.removeAllListeners("plotly_click");
@@ -3279,18 +3301,7 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
     });
   }
 
-  const selectedRows = detailGeoRows(product, { partNumber, segment, selectedOnly: true });
-  drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
-    onClick: (geo) => {
-      state.detailSelectedGeo[product.id] = geo;
-      render();
-    },
-  });
-
-  const selectedGeo = validDetailSelectedGeo(product, { partNumber, segment });
-  if (!selectedGeo) return;
-  const countryTrendRows = trendRows.filter((row) => (row.geo || "Unassigned") === selectedGeo);
-  const countrySelectedRows = selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo);
+  const countryTrendRows = selectedGeo ? trendRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : trendRows;
   const countries = topCountryNamesByMetric(countryTrendRows, metric.revenueField);
   const countryTraces = countries.map((country, idx) => ({
     x: periods,
@@ -3305,22 +3316,10 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
     type: "bar",
     marker: { color: palette[idx % palette.length] },
   }));
-  countryTraces.push({
-    x: periods,
-    y: periods.map((period) => sumGeoRows(countryTrendRows.filter((row) => periodKey(row.date, state.detailGranularity) === period), metric.quantityField)),
-    name: `${metric.quantityLabel} Total`,
-    type: "scatter",
-    mode: "lines+markers",
-    yaxis: "y2",
-    line: { color: "#1f2328", width: 2.8 },
-    hovertemplate: `%{x}<br>${metric.quantityLabel} %{y:,.0f}<extra></extra>`,
-  });
   drawPlot("detailCountryTrendPlot", countryTraces, {
     barmode: "stack",
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
-    yaxis2: { title: metric.quantityLabel, overlaying: "y", side: "right", showgrid: false },
   });
-  drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel);
 }
 
 function detailGeoRows(product, { partNumber = "all", segment = "all", selectedOnly = true } = {}) {
@@ -3980,25 +3979,31 @@ function handleClick(event) {
     if (state.productId) {
       delete state.detailSelectedGeo[state.productId];
       const focusKey = detailCurrentFocusKey();
-      state.detailTrendMode[state.productId] = focusKey === "all" ? "overall" : "breakdown";
+      const mode = focusKey === "all" ? "overall" : "breakdown";
+      state.detailRevenueTrendMode[state.productId] = mode;
+      state.detailQuantityTrendMode[state.productId] = mode;
     }
     render();
   } else if (action === "segment-filter") {
     state.segmentFilter = button.dataset.segment;
     if (state.productId) {
       delete state.detailSelectedGeo[state.productId];
-      state.detailTrendMode[state.productId] = state.segmentFilter === "all" ? "overall" : "breakdown";
+      const mode = state.segmentFilter === "all" ? "overall" : "breakdown";
+      state.detailRevenueTrendMode[state.productId] = mode;
+      state.detailQuantityTrendMode[state.productId] = mode;
     }
     render();
   } else if (action === "part-number") {
     state.partNumber = button.dataset.partNumber;
     if (state.productId) {
       delete state.detailSelectedGeo[state.productId];
-      state.detailTrendMode[state.productId] = state.partNumber === "all" ? "overall" : "breakdown";
+      const mode = state.partNumber === "all" ? "overall" : "breakdown";
+      state.detailRevenueTrendMode[state.productId] = mode;
+      state.detailQuantityTrendMode[state.productId] = mode;
     }
     render();
   } else if (action === "detail-trend-mode") {
-    if (state.productId) state.detailTrendMode[state.productId] = button.dataset.trendMode;
+    if (state.productId) detailTrendModeStore(button.dataset.trendTarget)[state.productId] = button.dataset.trendMode;
     render();
   } else if (action === "clear-summary-geo") {
     delete state.summarySelectedGeo[state.categoryId];
