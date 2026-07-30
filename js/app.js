@@ -2760,10 +2760,20 @@ function renderDetailCharts(product, selectedPartNumber) {
         "is-balanced",
       )}
       ${detailChartRow(
-        chartShell("detailRevenueTrendPlot", `${metric.revenueLabel} Trend`, detailItemLabel(focusKey)),
+        chartShellWithControls(
+          "detailRevenueTrendPlot",
+          `${flowMetricConfig(state.detailRevenueMetric).revenueLabel} Trend`,
+          detailItemLabel(focusKey),
+          renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+        ),
       )}
       ${detailChartRow(
-        chartShell("detailQuantityTrendPlot", `${metric.quantityLabel} Trend`, detailItemLabel(focusKey)),
+        chartShellWithControls(
+          "detailQuantityTrendPlot",
+          `${flowMetricConfig(state.detailQuantityMetric).quantityLabel} Trend`,
+          detailItemLabel(focusKey),
+          renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+        ),
       )}
       ${detailChartRow(
         chartShellWithControls(
@@ -2777,7 +2787,12 @@ function renderDetailCharts(product, selectedPartNumber) {
       ${
         selectedGeo
           ? detailChartRow(
-              chartShell("detailCountryTrendPlot", `Country ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`, displayLocationLabel(selectedGeo)),
+              chartShellWithControls(
+                "detailCountryTrendPlot",
+                `Country ${geoMetric.revenueLabel} + ${geoMetric.quantityLabel} Trend`,
+                displayLocationLabel(selectedGeo),
+                renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
+              ),
               chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, displayLocationLabel(selectedGeo)),
             )
           : ""
@@ -2863,11 +2878,13 @@ function growthSeries(values) {
 
 function drawDetailProductPerformance(product, selectedPartNumber) {
   const metric = flowMetricConfig(state.detailProductMetric);
+  const revenueMetric = flowMetricConfig(state.detailRevenueMetric);
+  const quantityMetric = flowMetricConfig(state.detailQuantityMetric);
   const focusKey = detailCurrentFocusKey(selectedPartNumber);
   drawDetailDimensionPie("detailRevenueSharePlot", product, metric.revenueField, metric.revenueLabel, focusKey);
   drawDetailDimensionPie("detailQuantitySharePlot", product, metric.quantityField, metric.quantityLabel, focusKey);
-  drawDetailTrendLines("detailRevenueTrendPlot", product, [focusKey], metric.revenueField, metric.revenueLabel);
-  drawDetailTrendLines("detailQuantityTrendPlot", product, [focusKey], metric.quantityField, metric.quantityLabel);
+  drawDetailTrendLines("detailRevenueTrendPlot", product, [focusKey], revenueMetric.revenueField, revenueMetric.revenueLabel);
+  drawDetailTrendLines("detailQuantityTrendPlot", product, [focusKey], quantityMetric.quantityField, quantityMetric.quantityLabel);
 }
 
 function drawDetailDimensionPie(id, product, metricField, metricLabelText, focusKey) {
@@ -2892,6 +2909,7 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
     drawPlot(id, [], {});
     return;
   }
+  const isProductPie = state.dimension === "product";
   const colors = slices.map((item, idx) => (focusKey === "all" || item.key === focusKey ? palette[idx % palette.length] : "#e8e2d9"));
   const node = drawPlot(
     id,
@@ -2900,16 +2918,17 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
       customdata: slices.map((item) => item.key),
       values: slices.map((item) => item.value),
       type: "pie",
-      hole: 0.48,
-      textinfo: "label+percent",
-      textposition: "outside",
+      hole: isProductPie ? 0.36 : 0.48,
+      sort: false,
+      textinfo: isProductPie ? "none" : "label+percent",
+      textposition: isProductPie ? "none" : "outside",
       automargin: true,
-      hovertemplate: `<b>%{label}</b><br>${metricLabelText}: ${metricField.toLowerCase().includes("revenue") ? "$" : ""}%{value:,.0f}<br>%{percent}<extra></extra>`,
+      hovertemplate: `<b>%{label}</b><br>${metricLabelText}: ${metricField.toLowerCase().includes("revenue") ? "$" : ""}%{value:,.0f}<br>Share: %{percent}<extra></extra>`,
       marker: { colors, line: { color: "#ffffff", width: 2 } },
     }],
     {
-      margin: { l: 16, r: 16, t: 8, b: 16 },
-      showlegend: true,
+      margin: isProductPie ? { l: 6, r: 6, t: 4, b: 4 } : { l: 16, r: 16, t: 8, b: 16 },
+      showlegend: !isProductPie,
       legend: { orientation: "h", y: -0.18, x: 0 },
       annotations: [
         {
