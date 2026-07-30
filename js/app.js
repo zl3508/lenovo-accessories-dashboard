@@ -45,6 +45,8 @@ const state = {
   detailProductMetric: "order",
   detailRevenueTrendMode: {},
   detailQuantityTrendMode: {},
+  detailGeoTrendMode: {},
+  detailCountryTrendMode: {},
   detailSelectedGeo: {},
   industrySlides: {},
   variantId: "all",
@@ -2743,6 +2745,9 @@ function renderDetailCharts(product, selectedPartNumber) {
     const selectedGeo = validDetailSelectedGeo(product, focusFilters);
     const revenueTrendMode = detailTrendMode(product, "revenue", focusKey);
     const quantityTrendMode = detailTrendMode(product, "quantity", focusKey);
+    const geoTrendFocusKey = selectedGeo ? `geo:${selectedGeo}` : "all";
+    const geoTrendMode = detailTrendMode(product, "geo", geoTrendFocusKey);
+    const countryTrendMode = detailTrendMode(product, "country", geoTrendFocusKey);
     const shareLabel = state.dimension === "product" ? "PN" : "Segment";
     const latestRows = detailProductRows(product, { selectedOnly: true });
     const revenueTotal = sumRows(latestRows, metric.revenueField);
@@ -2756,23 +2761,21 @@ function renderDetailCharts(product, selectedPartNumber) {
           renderMetricSelect("detail-product-metric", state.detailProductMetric, flowMetricOptions),
         ),
         chartShellWithControls(
-          "detailQuantitySharePlot",
-          `${shareLabel} ${metric.quantityLabel} Share`,
-          `Total ${formatMetricValue(metric.quantityField, quantityTotal)} · ${selectedPeriod("detail")}`,
-          renderMetricSelect("detail-product-metric", state.detailProductMetric, flowMetricOptions),
-        ),
-        "is-balanced",
-      )}
-      ${detailChartRow(
-        chartShellWithControls(
           "detailRevenueTrendPlot",
           `${flowMetricConfig(state.detailRevenueMetric).revenueLabel} Trend`,
           detailTrendMeta(revenueTrendMode, focusKey),
           `${renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions)}
           ${renderDetailTrendModeButtons(revenueTrendMode, "revenue")}`,
         ),
+        "is-balanced",
       )}
       ${detailChartRow(
+        chartShellWithControls(
+          "detailQuantitySharePlot",
+          `${shareLabel} ${metric.quantityLabel} Share`,
+          `Total ${formatMetricValue(metric.quantityField, quantityTotal)} · ${selectedPeriod("detail")}`,
+          renderMetricSelect("detail-product-metric", state.detailProductMetric, flowMetricOptions),
+        ),
         chartShellWithControls(
           "detailQuantityTrendPlot",
           `${flowMetricConfig(state.detailQuantityMetric).quantityLabel} Trend`,
@@ -2780,6 +2783,7 @@ function renderDetailCharts(product, selectedPartNumber) {
           `${renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions)}
           ${renderDetailTrendModeButtons(quantityTrendMode, "quantity")}`,
         ),
+        "is-balanced",
       )}
       ${detailChartRow(
         chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, `${detailItemLabel(focusKey)} · ${selectedPeriod("detail")}`),
@@ -2790,20 +2794,19 @@ function renderDetailCharts(product, selectedPartNumber) {
         chartShellWithControls(
           "detailGeoTrendPlot",
           `Geo ${geoMetric.revenueLabel} by Quarter`,
-          `${detailItemLabel(focusKey)} · click a geo line or slice to view countries`,
-          renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
+          geoTrendMeta(geoTrendMode, selectedGeo, "geo"),
+          `${renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions)}
+          ${renderDetailTrendModeButtons(geoTrendMode, "geo")}`,
         ),
+        chartShellWithControls(
+          "detailCountryTrendPlot",
+          `Country ${geoMetric.revenueLabel} by Quarter`,
+          geoTrendMeta(countryTrendMode, selectedGeo, "country"),
+          `${renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions)}
+          ${renderDetailTrendModeButtons(countryTrendMode, "country")}`,
+        ),
+        "is-balanced",
       )}
-      ${
-        detailChartRow(
-          chartShellWithControls(
-            "detailCountryTrendPlot",
-            `Country ${geoMetric.revenueLabel} by Quarter`,
-            selectedGeo ? displayLocationLabel(selectedGeo) : "All countries",
-            renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
-          )
-        )
-      }
     `;
     drawDetailProductPerformance(product, selectedPartNumber);
     drawProductGeoDetail(product, focusFilters);
@@ -2843,6 +2846,8 @@ function setDetailFocusFromPie(product, itemKey) {
   const mode = itemKey === "all" ? "overall" : "breakdown";
   state.detailRevenueTrendMode[product.id] = mode;
   state.detailQuantityTrendMode[product.id] = mode;
+  state.detailGeoTrendMode[product.id] = "overall";
+  state.detailCountryTrendMode[product.id] = "overall";
 }
 
 function setDetailFocusFromTrend(product, itemKey, target = "revenue") {
@@ -2853,10 +2858,15 @@ function setDetailFocusFromTrend(product, itemKey, target = "revenue") {
     state.segmentFilter = itemKey === "all" ? "all" : detailItemLabel(itemKey);
   }
   detailTrendModeStore(target)[product.id] = "focus";
+  state.detailGeoTrendMode[product.id] = "overall";
+  state.detailCountryTrendMode[product.id] = "overall";
 }
 
 function detailTrendModeStore(target) {
-  return target === "quantity" ? state.detailQuantityTrendMode : state.detailRevenueTrendMode;
+  if (target === "quantity") return state.detailQuantityTrendMode;
+  if (target === "geo") return state.detailGeoTrendMode;
+  if (target === "country") return state.detailCountryTrendMode;
+  return state.detailRevenueTrendMode;
 }
 
 function detailTrendMode(product, target, focusKey = detailCurrentFocusKey()) {
@@ -2879,6 +2889,12 @@ function detailTrendMeta(mode, focusKey) {
   if (mode === "focus") return `${detailItemLabel(focusKey)} only`;
   if (focusKey === "all") return state.dimension === "product" ? "All PN lines" : "Consumer / Commercial lines";
   return `${detailItemLabel(focusKey)} highlighted`;
+}
+
+function geoTrendMeta(mode, selectedGeo, scope) {
+  if (mode === "overall") return scope === "country" && selectedGeo ? `${displayLocationLabel(selectedGeo)} total` : "Overall total";
+  if (scope === "geo") return selectedGeo ? `${displayLocationLabel(selectedGeo)} highlighted` : "All geo lines";
+  return selectedGeo ? `${displayLocationLabel(selectedGeo)} country lines` : "All country lines";
 }
 
 function detailBreakdownItems(product) {
@@ -3268,11 +3284,17 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   const metric = flowMetricConfig(state.detailGeoMetric);
   const selectedRows = detailGeoRows(product, { partNumber, segment, selectedOnly: true });
   const selectedGeo = validDetailSelectedGeo(product, { partNumber, segment });
+  const geoTrendMode = detailTrendMode(product, "geo", selectedGeo ? `geo:${selectedGeo}` : "all");
+  const countryTrendMode = detailTrendMode(product, "country", selectedGeo ? `geo:${selectedGeo}` : "all");
+  const isRevenueMetric = metric.revenueField.toLowerCase().includes("revenue");
+  const hoverValue = isRevenueMetric ? "$%{y:,.2f}" : "%{y:,.0f}";
 
   drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
     inlineLabels: true,
     onClick: (geo) => {
       state.detailSelectedGeo[product.id] = geo;
+      state.detailGeoTrendMode[product.id] = "breakdown";
+      state.detailCountryTrendMode[product.id] = "breakdown";
       render();
     },
   });
@@ -3280,23 +3302,43 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   const countrySelectedRows = selectedGeo ? selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : selectedRows;
   drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel, { inlineLabels: true });
 
-  const geos = topGeoNamesByMetric(trendRows, metric.revenueField);
-  const traces = geos.map((geo, idx) => ({
-    x: periods,
-    customdata: periods.map(() => geo),
-    y: periods.map((period) =>
-      sumGeoRows(
-        trendRows.filter((row) => (row.geo || "Unassigned") === geo && periodKey(row.date, state.detailGranularity) === period),
-        metric.revenueField,
-      ),
-    ),
-    name: displayLocationLabel(geo),
-    type: "scatter",
-    mode: "lines+markers",
-    line: { color: palette[idx % palette.length], width: 2.8 },
-    marker: { color: palette[idx % palette.length], size: 7 },
-  }));
+  const traces =
+    geoTrendMode === "overall"
+      ? [
+          {
+            x: periods,
+            y: periods.map((period) => sumGeoRows(trendRows.filter((row) => periodKey(row.date, state.detailGranularity) === period), metric.revenueField)),
+            name: "All Geo",
+            type: "scatter",
+            mode: "lines+markers",
+            line: { color: "#1f2328", width: 3.4 },
+            marker: { color: "#1f2328", size: 8 },
+            hovertemplate: `<b>All Geo</b><br>%{x}<br>${metric.revenueLabel}: ${hoverValue}<extra></extra>`,
+          },
+        ]
+      : topGeoNamesByMetric(trendRows, metric.revenueField).map((geo, idx) => {
+          const isMuted = selectedGeo && geo !== selectedGeo;
+          const color = palette[idx % palette.length];
+          return {
+            x: periods,
+            customdata: periods.map(() => geo),
+            y: periods.map((period) =>
+              sumGeoRows(
+                trendRows.filter((row) => (row.geo || "Unassigned") === geo && periodKey(row.date, state.detailGranularity) === period),
+                metric.revenueField,
+              ),
+            ),
+            name: displayLocationLabel(geo),
+            type: "scatter",
+            mode: "lines+markers",
+            opacity: isMuted ? 0.22 : 1,
+            line: { color, width: selectedGeo === geo ? 3.6 : 2.4 },
+            marker: { color, size: selectedGeo === geo ? 8 : 6 },
+            hovertemplate: `<b>${escapeHtml(displayLocationLabel(geo))}</b><br>%{x}<br>${metric.revenueLabel}: ${hoverValue}<extra></extra>`,
+          };
+        });
   const geoNode = drawPlot("detailGeoTrendPlot", traces, {
+    margin: { l: 66, r: 28, t: 8, b: 58 },
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
   });
   if (geoNode?.on) {
@@ -3305,28 +3347,49 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
       const geo = eventData?.points?.[0]?.customdata;
       if (!geo) return;
       state.detailSelectedGeo[product.id] = geo;
+      state.detailGeoTrendMode[product.id] = "breakdown";
+      state.detailCountryTrendMode[product.id] = "breakdown";
       render();
     });
   }
 
   const countryTrendRows = selectedGeo ? trendRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : trendRows;
-  const countries = topCountryNamesByMetric(countryTrendRows, metric.revenueField);
-  const countryTraces = countries.map((country, idx) => ({
-    x: periods,
-    customdata: periods.map(() => country),
-    y: periods.map((period) =>
-      sumGeoRows(
-        countryTrendRows.filter((row) => (row.country || "Unassigned") === country && periodKey(row.date, state.detailGranularity) === period),
-        metric.revenueField,
-      ),
-    ),
-    name: displayLocationLabel(country),
-    type: "scatter",
-    mode: "lines+markers",
-    line: { color: palette[idx % palette.length], width: 2.8 },
-    marker: { color: palette[idx % palette.length], size: 7 },
-  }));
+  const countryOverallName = selectedGeo ? `${displayLocationLabel(selectedGeo)} Total` : "All Countries";
+  const countryTraces =
+    countryTrendMode === "overall"
+      ? [
+          {
+            x: periods,
+            y: periods.map((period) => sumGeoRows(countryTrendRows.filter((row) => periodKey(row.date, state.detailGranularity) === period), metric.revenueField)),
+            name: countryOverallName,
+            type: "scatter",
+            mode: "lines+markers",
+            line: { color: "#1f2328", width: 3.4 },
+            marker: { color: "#1f2328", size: 8 },
+            hovertemplate: `<b>${escapeHtml(countryOverallName)}</b><br>%{x}<br>${metric.revenueLabel}: ${hoverValue}<extra></extra>`,
+          },
+        ]
+      : topCountryNamesByMetric(countryTrendRows, metric.revenueField).map((country, idx) => {
+          const color = palette[idx % palette.length];
+          return {
+            x: periods,
+            customdata: periods.map(() => country),
+            y: periods.map((period) =>
+              sumGeoRows(
+                countryTrendRows.filter((row) => (row.country || "Unassigned") === country && periodKey(row.date, state.detailGranularity) === period),
+                metric.revenueField,
+              ),
+            ),
+            name: displayLocationLabel(country),
+            type: "scatter",
+            mode: "lines+markers",
+            line: { color, width: 2.6 },
+            marker: { color, size: 6 },
+            hovertemplate: `<b>${escapeHtml(displayLocationLabel(country))}</b><br>%{x}<br>${metric.revenueLabel}: ${hoverValue}<extra></extra>`,
+          };
+        });
   drawPlot("detailCountryTrendPlot", countryTraces, {
+    margin: { l: 66, r: 28, t: 8, b: 58 },
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
   });
 }
@@ -3991,6 +4054,8 @@ function handleClick(event) {
       const mode = focusKey === "all" ? "overall" : "breakdown";
       state.detailRevenueTrendMode[state.productId] = mode;
       state.detailQuantityTrendMode[state.productId] = mode;
+      state.detailGeoTrendMode[state.productId] = "overall";
+      state.detailCountryTrendMode[state.productId] = "overall";
     }
     render();
   } else if (action === "segment-filter") {
@@ -4000,6 +4065,8 @@ function handleClick(event) {
       const mode = state.segmentFilter === "all" ? "overall" : "breakdown";
       state.detailRevenueTrendMode[state.productId] = mode;
       state.detailQuantityTrendMode[state.productId] = mode;
+      state.detailGeoTrendMode[state.productId] = "overall";
+      state.detailCountryTrendMode[state.productId] = "overall";
     }
     render();
   } else if (action === "part-number") {
@@ -4009,6 +4076,8 @@ function handleClick(event) {
       const mode = state.partNumber === "all" ? "overall" : "breakdown";
       state.detailRevenueTrendMode[state.productId] = mode;
       state.detailQuantityTrendMode[state.productId] = mode;
+      state.detailGeoTrendMode[state.productId] = "overall";
+      state.detailCountryTrendMode[state.productId] = "overall";
     }
     render();
   } else if (action === "detail-trend-mode") {
