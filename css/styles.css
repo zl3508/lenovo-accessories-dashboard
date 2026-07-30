@@ -2538,6 +2538,11 @@ input[type="search"] {
   max-width: 62%;
 }
 
+.trend-mode-control button {
+  min-width: 82px;
+  padding-inline: 10px;
+}
+
 .inline-field {
   display: grid;
   gap: 4px;

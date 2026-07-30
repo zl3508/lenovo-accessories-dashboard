@@ -43,6 +43,7 @@ const state = {
   detailQuantityMetric: "order",
   detailGeoMetric: "order",
   detailProductMetric: "order",
+  detailTrendMode: {},
   detailSelectedGeo: {},
   industrySlides: {},
   variantId: "all",
@@ -2739,6 +2740,7 @@ function renderDetailCharts(product, selectedPartNumber) {
     const focusKey = detailCurrentFocusKey(selectedPartNumber);
     const focusFilters = detailFiltersFromFocus(focusKey);
     const selectedGeo = validDetailSelectedGeo(product, focusFilters);
+    const trendMode = detailTrendMode(product, focusKey);
     const shareLabel = state.dimension === "product" ? "PN" : "Segment";
     const latestRows = detailProductRows(product, { selectedOnly: true });
     const revenueTotal = sumRows(latestRows, metric.revenueField);
@@ -2763,16 +2765,18 @@ function renderDetailCharts(product, selectedPartNumber) {
         chartShellWithControls(
           "detailRevenueTrendPlot",
           `${flowMetricConfig(state.detailRevenueMetric).revenueLabel} Trend`,
-          detailItemLabel(focusKey),
-          renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions),
+          detailTrendMeta(trendMode, focusKey),
+          `${renderMetricSelect("detail-revenue-metric", state.detailRevenueMetric, flowMetricOptions)}
+          ${renderDetailTrendModeButtons(trendMode)}`,
         ),
       )}
       ${detailChartRow(
         chartShellWithControls(
           "detailQuantityTrendPlot",
           `${flowMetricConfig(state.detailQuantityMetric).quantityLabel} Trend`,
-          detailItemLabel(focusKey),
-          renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions),
+          detailTrendMeta(trendMode, focusKey),
+          `${renderMetricSelect("detail-quantity-metric", state.detailQuantityMetric, flowMetricOptions)}
+          ${renderDetailTrendModeButtons(trendMode)}`,
         ),
       )}
       ${detailChartRow(
@@ -2830,9 +2834,64 @@ function setDetailFocusFromPie(product, itemKey) {
   delete state.detailSelectedGeo[product.id];
   if (state.dimension === "product") {
     state.partNumber = itemKey === "all" ? "all" : detailItemLabel(itemKey);
-    return;
+  } else {
+    state.segmentFilter = itemKey === "all" ? "all" : detailItemLabel(itemKey);
   }
-  state.segmentFilter = itemKey === "all" ? "all" : detailItemLabel(itemKey);
+  state.detailTrendMode[product.id] = itemKey === "all" ? "overall" : "breakdown";
+}
+
+function setDetailFocusFromTrend(product, itemKey) {
+  delete state.detailSelectedGeo[product.id];
+  if (state.dimension === "product") {
+    state.partNumber = itemKey === "all" ? "all" : detailItemLabel(itemKey);
+  } else {
+    state.segmentFilter = itemKey === "all" ? "all" : detailItemLabel(itemKey);
+  }
+  state.detailTrendMode[product.id] = "focus";
+}
+
+function detailTrendMode(product, focusKey = detailCurrentFocusKey()) {
+  const stored = state.detailTrendMode[product.id];
+  if (["overall", "breakdown", "focus"].includes(stored)) return stored;
+  return focusKey === "all" ? "overall" : "breakdown";
+}
+
+function renderDetailTrendModeButtons(activeMode) {
+  return `
+    <div class="segmented trend-mode-control" aria-label="Trend view">
+      <button type="button" class="${activeMode === "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-mode="overall">Overall</button>
+      <button type="button" class="${activeMode !== "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-mode="breakdown">Breakdown</button>
+    </div>
+  `;
+}
+
+function detailTrendMeta(mode, focusKey) {
+  if (mode === "overall") return "Overall total";
+  if (mode === "focus") return `${detailItemLabel(focusKey)} only`;
+  if (focusKey === "all") return state.dimension === "product" ? "All PN lines" : "Consumer / Commercial lines";
+  return `${detailItemLabel(focusKey)} highlighted`;
+}
+
+function detailBreakdownItems(product) {
+  const rows = detailProductRows(product, { selectedOnly: false });
+  if (state.dimension === "product") {
+    const partNumbers = product.partNumbers?.length ? product.partNumbers : unique(rows.map((row) => row.partNumber).filter(Boolean));
+    return partNumbers.map((partNumber) => ({
+      key: detailPartNumberKey(partNumber),
+      label: partNumber,
+      shortLabel: shortPartNumberLabel(partNumber),
+    }));
+  }
+  return ["Consumer", "Commercial"]
+    .filter((segment) => rows.some((row) => row.segment === segment))
+    .map((segment) => ({ key: detailSegmentKey(segment), label: segment, shortLabel: segment }));
+}
+
+function detailTrendItemKeys(product, focusKey, mode) {
+  if (mode === "overall") return ["all"];
+  if (mode === "focus") return [focusKey || "all"];
+  const keys = detailBreakdownItems(product).map((item) => item.key);
+  return keys.length ? keys : ["all"];
 }
 
 function detailSegmentKey(segment) {
@@ -2881,10 +2940,12 @@ function drawDetailProductPerformance(product, selectedPartNumber) {
   const revenueMetric = flowMetricConfig(state.detailRevenueMetric);
   const quantityMetric = flowMetricConfig(state.detailQuantityMetric);
   const focusKey = detailCurrentFocusKey(selectedPartNumber);
+  const trendMode = detailTrendMode(product, focusKey);
+  const trendItemKeys = detailTrendItemKeys(product, focusKey, trendMode);
   drawDetailDimensionPie("detailRevenueSharePlot", product, metric.revenueField, metric.revenueLabel, focusKey);
   drawDetailDimensionPie("detailQuantitySharePlot", product, metric.quantityField, metric.quantityLabel, focusKey);
-  drawDetailTrendLines("detailRevenueTrendPlot", product, [focusKey], revenueMetric.revenueField, revenueMetric.revenueLabel);
-  drawDetailTrendLines("detailQuantityTrendPlot", product, [focusKey], quantityMetric.quantityField, quantityMetric.quantityLabel);
+  drawDetailTrendLines("detailRevenueTrendPlot", product, trendItemKeys, revenueMetric.revenueField, revenueMetric.revenueLabel, { focusKey, trendMode });
+  drawDetailTrendLines("detailQuantityTrendPlot", product, trendItemKeys, quantityMetric.quantityField, quantityMetric.quantityLabel, { focusKey, trendMode });
 }
 
 function drawDetailDimensionPie(id, product, metricField, metricLabelText, focusKey) {
@@ -2954,31 +3015,45 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
   }
 }
 
-function drawDetailTrendLines(id, product, itemKeys, metricField, metricLabelText) {
+function drawDetailTrendLines(id, product, itemKeys, metricField, metricLabelText, options = {}) {
   const baseRows = detailProductRows(product, { selectedOnly: false });
   const periods = sortedPeriods(unique(baseRows.map((row) => periodKey(row.date, state.detailGranularity))));
-  const focusKey = itemKeys[0] || "all";
+  const focusKey = options.focusKey || itemKeys[0] || "all";
+  const trendMode = options.trendMode || "focus";
   const isRevenue = metricField.toLowerCase().includes("revenue");
   const hoverValue = isRevenue ? "$%{y:,.2f}" : "%{y:,.0f}";
   const traces = itemKeys.map((itemKey, idx) => {
     const rows = detailRowsForItem(product, itemKey, false);
     const byPeriod = aggregateProductRows(rows, (row) => periodKey(row.date, state.detailGranularity));
     const values = periods.map((period) => summaryMetricValue(byPeriod.get(period) || {}, metricField));
+    const isMuted = trendMode === "breakdown" && focusKey !== "all" && itemKey !== focusKey;
+    const isFocused = itemKey === focusKey || trendMode === "overall";
     return {
       x: periods,
       y: values,
+      customdata: periods.map(() => itemKey),
       name: detailItemLabel(itemKey),
       type: "scatter",
       mode: "lines+markers",
-      line: { color: detailTrendColor(itemKey, idx), width: itemKey === focusKey ? 3.6 : 2.6 },
-      marker: { size: itemKey === focusKey ? 8 : 6 },
+      opacity: isMuted ? 0.22 : 1,
+      line: { color: detailTrendColor(itemKey, idx), width: isFocused ? 3.6 : 2.2 },
+      marker: { size: isFocused ? 8 : 5 },
       hovertemplate: `<b>${escapeHtml(detailItemLabel(itemKey))}</b><br>%{x}<br>${metricLabelText}: ${hoverValue}<extra></extra>`,
     };
   });
-  drawPlot(id, traces, {
+  const node = drawPlot(id, traces, {
     margin: { l: 66, r: 28, t: 8, b: 58 },
     yaxis: { title: metricLabelText, tickprefix: isRevenue ? "$" : "" },
   });
+  if (node?.on) {
+    if (node.removeAllListeners) node.removeAllListeners("plotly_click");
+    node.on("plotly_click", (eventData) => {
+      const itemKey = eventData?.points?.[0]?.customdata || itemKeys[eventData?.points?.[0]?.curveNumber || 0];
+      if (!itemKey) return;
+      setDetailFocusFromTrend(product, itemKey);
+      render();
+    });
+  }
 }
 
 function detailTrendColor(itemKey, idx) {
@@ -3902,15 +3977,28 @@ function handleClick(event) {
     render();
   } else if (action === "dimension") {
     state.dimension = button.dataset.dimension;
-    if (state.productId) delete state.detailSelectedGeo[state.productId];
+    if (state.productId) {
+      delete state.detailSelectedGeo[state.productId];
+      const focusKey = detailCurrentFocusKey();
+      state.detailTrendMode[state.productId] = focusKey === "all" ? "overall" : "breakdown";
+    }
     render();
   } else if (action === "segment-filter") {
     state.segmentFilter = button.dataset.segment;
-    if (state.productId) delete state.detailSelectedGeo[state.productId];
+    if (state.productId) {
+      delete state.detailSelectedGeo[state.productId];
+      state.detailTrendMode[state.productId] = state.segmentFilter === "all" ? "overall" : "breakdown";
+    }
     render();
   } else if (action === "part-number") {
     state.partNumber = button.dataset.partNumber;
-    if (state.productId) delete state.detailSelectedGeo[state.productId];
+    if (state.productId) {
+      delete state.detailSelectedGeo[state.productId];
+      state.detailTrendMode[state.productId] = state.partNumber === "all" ? "overall" : "breakdown";
+    }
+    render();
+  } else if (action === "detail-trend-mode") {
+    if (state.productId) state.detailTrendMode[state.productId] = button.dataset.trendMode;
     render();
   } else if (action === "clear-summary-geo") {
     delete state.summarySelectedGeo[state.categoryId];
