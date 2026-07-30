@@ -47,6 +47,7 @@ const state = {
   detailQuantityTrendMode: {},
   detailGeoTrendMode: {},
   detailCountryTrendMode: {},
+  detailGeoLinkEnabled: {},
   detailSelectedGeo: {},
   industrySlides: {},
   variantId: "all",
@@ -2752,6 +2753,10 @@ function renderDetailCharts(product, selectedPartNumber) {
     const latestRows = detailProductRows(product, { selectedOnly: true });
     const revenueTotal = sumRows(latestRows, metric.revenueField);
     const quantityTotal = sumRows(latestRows, metric.quantityField);
+    const selectedGeoRows = detailGeoRows(product, { ...focusFilters, selectedOnly: true });
+    const geoTotal = sumGeoRows(selectedGeoRows, geoMetric.revenueField);
+    const countryGeoRows = selectedGeo ? selectedGeoRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : selectedGeoRows;
+    const countryTotal = sumGeoRows(countryGeoRows, geoMetric.revenueField);
     target.innerHTML = `
       ${detailChartRow(
         chartShellWithControls(
@@ -2786,7 +2791,12 @@ function renderDetailCharts(product, selectedPartNumber) {
         "is-balanced",
       )}
       ${detailChartRow(
-        chartShell("detailGeoSharePlot", `Geo ${geoMetric.revenueLabel} Share`, `${detailItemLabel(focusKey)} · ${selectedPeriod("detail")}`),
+        chartShellWithControls(
+          "detailGeoSharePlot",
+          `Geo ${geoMetric.revenueLabel} Share`,
+          `Total ${formatMetricValue(geoMetric.revenueField, geoTotal)} · ${selectedPeriod("detail")}`,
+          renderDetailGeoLinkButton(product),
+        ),
         chartShellWithControls(
           "detailGeoTrendPlot",
           `Geo ${geoMetric.revenueLabel} by Quarter`,
@@ -2797,7 +2807,12 @@ function renderDetailCharts(product, selectedPartNumber) {
         "is-balanced",
       )}
       ${detailChartRow(
-        chartShell("detailCountrySharePlot", `Country ${geoMetric.revenueLabel} Share`, selectedGeo ? displayLocationLabel(selectedGeo) : "All countries"),
+        chartShellWithControls(
+          "detailCountrySharePlot",
+          `Country ${geoMetric.revenueLabel} Share`,
+          `Total ${formatMetricValue(geoMetric.revenueField, countryTotal)} · ${selectedPeriod("detail")}`,
+          renderDetailCountryResetButton(selectedGeo),
+        ),
         chartShellWithControls(
           "detailCountryTrendPlot",
           `Country ${geoMetric.revenueLabel} by Quarter`,
@@ -2880,6 +2895,24 @@ function renderDetailTrendModeButtons(activeMode, target) {
     <div class="segmented trend-mode-control" aria-label="Trend view">
       <button type="button" class="${activeMode === "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-target="${escapeAttr(target)}" data-trend-mode="overall">Overall</button>
       <button type="button" class="${activeMode !== "overall" ? "is-active" : ""}" data-action="detail-trend-mode" data-trend-target="${escapeAttr(target)}" data-trend-mode="breakdown">Breakdown</button>
+    </div>
+  `;
+}
+
+function renderDetailGeoLinkButton(product) {
+  const isActive = Boolean(state.detailGeoLinkEnabled[product.id]);
+  return `
+    <div class="segmented trend-mode-control" aria-label="Geo country link">
+      <button type="button" class="${isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle">${isActive ? "Geo Link On" : "Geo Link Off"}</button>
+    </div>
+  `;
+}
+
+function renderDetailCountryResetButton(selectedGeo) {
+  if (!selectedGeo) return "";
+  return `
+    <div class="segmented trend-mode-control" aria-label="Country reset">
+      <button type="button" data-action="detail-clear-geo">Reset Country</button>
     </div>
   `;
 }
@@ -3005,7 +3038,6 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
     drawPlot(id, [], {});
     return;
   }
-  const isProductPie = state.dimension === "product";
   const colors = slices.map((item, idx) => (focusKey === "all" || item.key === focusKey ? palette[idx % palette.length] : "#e8e2d9"));
   const node = drawPlot(
     id,
@@ -3014,17 +3046,17 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
       customdata: slices.map((item) => item.key),
       values: slices.map((item) => item.value),
       type: "pie",
-      hole: isProductPie ? 0.36 : 0.48,
+      hole: 0.42,
       sort: false,
-      textinfo: isProductPie ? "none" : "label+percent",
-      textposition: isProductPie ? "none" : "outside",
+      textinfo: "label+percent",
+      textposition: "outside",
       automargin: true,
       hovertemplate: `<b>%{label}</b><br>${metricLabelText}: ${metricField.toLowerCase().includes("revenue") ? "$" : ""}%{value:,.0f}<br>Share: %{percent}<extra></extra>`,
       marker: { colors, line: { color: "#ffffff", width: 2 } },
     }],
     {
-      margin: isProductPie ? { l: 6, r: 6, t: 4, b: 4 } : { l: 16, r: 16, t: 8, b: 16 },
-      showlegend: !isProductPie,
+      margin: { l: 54, r: 54, t: 8, b: 26 },
+      showlegend: false,
       legend: { orientation: "h", y: -0.18, x: 0 },
       annotations: [
         {
@@ -3246,6 +3278,7 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
   const inlineLabels = Boolean(options.inlineLabels);
   const outsideLabels = Boolean(options.outsideLabels);
   const showLegend = options.showLegend ?? (!inlineLabels && !outsideLabels);
+  const total = slices.reduce((sum, row) => sum + row.value, 0);
   const node = drawPlot(
     id,
     slices.length
@@ -3269,14 +3302,27 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
       margin: inlineLabels ? { l: 12, r: 12, t: 8, b: 12 } : outsideLabels ? { l: 54, r: 54, t: 8, b: 26 } : { l: 28, r: 28, t: 8, b: 42 },
       showlegend: showLegend,
       legend: { orientation: "h", y: -0.18, x: 0 },
+      annotations: [
+        {
+          text: `<b>${escapeHtml(formatMetricValue(metricField, total))}</b><br><span style="font-size:11px;color:#6b7280">Total</span>`,
+          showarrow: false,
+          x: 0.5,
+          y: 0.5,
+          xref: "paper",
+          yref: "paper",
+          align: "center",
+        },
+      ],
     },
   );
-  if (options.onClick && node?.on) {
+  if (node?.on) {
     if (node.removeAllListeners) node.removeAllListeners("plotly_click");
-    node.on("plotly_click", (eventData) => {
-      const name = eventData?.points?.[0]?.customdata || eventData?.points?.[0]?.label;
-      if (name && name !== "Other") options.onClick(name);
-    });
+    if (options.onClick) {
+      node.on("plotly_click", (eventData) => {
+        const name = eventData?.points?.[0]?.customdata || eventData?.points?.[0]?.label;
+        if (name && name !== "Other") options.onClick(name);
+      });
+    }
   }
 }
 
@@ -3290,16 +3336,19 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   const countryTrendMode = detailTrendMode(product, "country", selectedGeo ? `geo:${selectedGeo}` : "all");
   const isRevenueMetric = metric.revenueField.toLowerCase().includes("revenue");
   const hoverValue = isRevenueMetric ? "$%{y:,.2f}" : "%{y:,.0f}";
+  const geoLinkEnabled = Boolean(state.detailGeoLinkEnabled[product.id]);
+  const selectLinkedGeo = (geo) => {
+    if (!geoLinkEnabled || !geo) return;
+    state.detailSelectedGeo[product.id] = geo;
+    state.detailGeoTrendMode[product.id] = "breakdown";
+    state.detailCountryTrendMode[product.id] = "breakdown";
+    render();
+  };
 
   drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
     outsideLabels: true,
     showLegend: false,
-    onClick: (geo) => {
-      state.detailSelectedGeo[product.id] = geo;
-      state.detailGeoTrendMode[product.id] = "breakdown";
-      state.detailCountryTrendMode[product.id] = "breakdown";
-      render();
-    },
+    onClick: geoLinkEnabled ? selectLinkedGeo : null,
   });
 
   const countrySelectedRows = selectedGeo ? selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : selectedRows;
@@ -3346,14 +3395,11 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   });
   if (geoNode?.on) {
     if (geoNode.removeAllListeners) geoNode.removeAllListeners("plotly_click");
-    geoNode.on("plotly_click", (eventData) => {
-      const geo = eventData?.points?.[0]?.customdata;
-      if (!geo) return;
-      state.detailSelectedGeo[product.id] = geo;
-      state.detailGeoTrendMode[product.id] = "breakdown";
-      state.detailCountryTrendMode[product.id] = "breakdown";
-      render();
-    });
+    if (geoLinkEnabled) {
+      geoNode.on("plotly_click", (eventData) => {
+        selectLinkedGeo(eventData?.points?.[0]?.customdata);
+      });
+    }
   }
 
   const countryTrendRows = selectedGeo ? trendRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : trendRows;
@@ -4085,6 +4131,22 @@ function handleClick(event) {
     render();
   } else if (action === "detail-trend-mode") {
     if (state.productId) detailTrendModeStore(button.dataset.trendTarget)[state.productId] = button.dataset.trendMode;
+    render();
+  } else if (action === "detail-geo-link-toggle") {
+    if (state.productId) {
+      const next = !state.detailGeoLinkEnabled[state.productId];
+      state.detailGeoLinkEnabled[state.productId] = next;
+      if (next) {
+        state.detailGeoTrendMode[state.productId] = "breakdown";
+        state.detailCountryTrendMode[state.productId] = "breakdown";
+      }
+    }
+    render();
+  } else if (action === "detail-clear-geo") {
+    if (state.productId) {
+      delete state.detailSelectedGeo[state.productId];
+      state.detailCountryTrendMode[state.productId] = state.detailGeoLinkEnabled[state.productId] ? "breakdown" : "overall";
+    }
     render();
   } else if (action === "clear-summary-geo") {
     delete state.summarySelectedGeo[state.categoryId];
