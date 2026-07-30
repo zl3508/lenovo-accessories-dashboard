@@ -2790,7 +2790,7 @@ function renderDetailCharts(product, selectedPartNumber) {
         chartShellWithControls(
           "detailGeoTrendPlot",
           `Geo ${geoMetric.revenueLabel} by Quarter`,
-          `${detailItemLabel(focusKey)} · click a geo bar or slice to view countries`,
+          `${detailItemLabel(focusKey)} · click a geo line or slice to view countries`,
           renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions),
         ),
       )}
@@ -3227,6 +3227,7 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
   const otherValue = grouped.slice(8).reduce((sum, row) => sum + row.value, 0);
   if (otherValue) slices.push({ name: "Other", value: otherValue });
   const valuePrefix = metricField.toLowerCase().includes("revenue") ? "$" : "";
+  const inlineLabels = Boolean(options.inlineLabels);
   const node = drawPlot(
     id,
     slices.length
@@ -3238,14 +3239,19 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
             type: "pie",
             hole: 0.42,
             textinfo: "label+percent",
-            textposition: "outside",
+            textposition: inlineLabels ? "inside" : "outside",
+            insidetextorientation: inlineLabels ? "radial" : undefined,
             automargin: true,
             hovertemplate: `<b>%{label}</b><br>${metricLabelText} ${valuePrefix}%{value:,.0f}<br>%{percent}<extra></extra>`,
             marker: { colors: slices.map((_, idx) => palette[idx % palette.length]) },
           },
         ]
       : [],
-    { margin: { l: 28, r: 28, t: 8, b: 42 }, showlegend: true, legend: { orientation: "h", y: -0.18, x: 0 } },
+    {
+      margin: inlineLabels ? { l: 12, r: 12, t: 8, b: 12 } : { l: 28, r: 28, t: 8, b: 42 },
+      showlegend: !inlineLabels,
+      legend: { orientation: "h", y: -0.18, x: 0 },
+    },
   );
   if (options.onClick && node?.on) {
     if (node.removeAllListeners) node.removeAllListeners("plotly_click");
@@ -3264,6 +3270,7 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   const selectedGeo = validDetailSelectedGeo(product, { partNumber, segment });
 
   drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
+    inlineLabels: true,
     onClick: (geo) => {
       state.detailSelectedGeo[product.id] = geo;
       render();
@@ -3271,7 +3278,7 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   });
 
   const countrySelectedRows = selectedGeo ? selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : selectedRows;
-  drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel);
+  drawDetailSharePie("detailCountrySharePlot", countrySelectedRows, "country", metric.revenueField, metric.revenueLabel, { inlineLabels: true });
 
   const geos = topGeoNamesByMetric(trendRows, metric.revenueField);
   const traces = geos.map((geo, idx) => ({
@@ -3284,11 +3291,12 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
       ),
     ),
     name: displayLocationLabel(geo),
-    type: "bar",
-    marker: { color: palette[idx % palette.length] },
+    type: "scatter",
+    mode: "lines+markers",
+    line: { color: palette[idx % palette.length], width: 2.8 },
+    marker: { color: palette[idx % palette.length], size: 7 },
   }));
   const geoNode = drawPlot("detailGeoTrendPlot", traces, {
-    barmode: "stack",
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
   });
   if (geoNode?.on) {
@@ -3313,11 +3321,12 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
       ),
     ),
     name: displayLocationLabel(country),
-    type: "bar",
-    marker: { color: palette[idx % palette.length] },
+    type: "scatter",
+    mode: "lines+markers",
+    line: { color: palette[idx % palette.length], width: 2.8 },
+    marker: { color: palette[idx % palette.length], size: 7 },
   }));
   drawPlot("detailCountryTrendPlot", countryTraces, {
-    barmode: "stack",
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
   });
 }
