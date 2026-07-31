@@ -2795,7 +2795,8 @@ function renderDetailCharts(product, selectedPartNumber) {
           "detailGeoSharePlot",
           `Geo ${geoMetric.revenueLabel} Share`,
           `Total ${formatMetricValue(geoMetric.revenueField, geoTotal)} · ${selectedPeriod("detail")}`,
-          renderDetailGeoLinkButton(product),
+          `${renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions)}
+          ${renderDetailGeoLinkButton(product)}`,
         ),
         chartShellWithControls(
           "detailGeoTrendPlot",
@@ -2811,7 +2812,8 @@ function renderDetailCharts(product, selectedPartNumber) {
           "detailCountrySharePlot",
           `Country ${geoMetric.revenueLabel} Share`,
           `Total ${formatMetricValue(geoMetric.revenueField, countryTotal)} · ${selectedPeriod("detail")}`,
-          renderDetailCountryResetButton(selectedGeo),
+          `${renderMetricSelect("detail-geo-metric", state.detailGeoMetric, flowMetricOptions)}
+          ${renderDetailCountryResetButton(selectedGeo)}`,
         ),
         chartShellWithControls(
           "detailCountryTrendPlot",
@@ -2928,6 +2930,15 @@ function geoTrendMeta(mode, selectedGeo, scope) {
   if (mode === "overall") return scope === "country" && selectedGeo ? `${displayLocationLabel(selectedGeo)} total` : "Overall total";
   if (scope === "geo") return selectedGeo ? `${displayLocationLabel(selectedGeo)} highlighted` : "All geo lines";
   return selectedGeo ? `${displayLocationLabel(selectedGeo)} country lines` : "All country lines";
+}
+
+function plotClickValue(point) {
+  if (!point) return null;
+  if (Array.isArray(point.customdata)) return point.customdata[point.pointNumber] ?? point.customdata[point.pointIndex] ?? null;
+  if (point.customdata) return point.customdata;
+  const traceCustomdata = point.data?.customdata;
+  if (Array.isArray(traceCustomdata)) return traceCustomdata[point.pointNumber] ?? traceCustomdata[point.pointIndex] ?? null;
+  return point.label || null;
 }
 
 function detailBreakdownItems(product) {
@@ -3319,7 +3330,7 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
     if (node.removeAllListeners) node.removeAllListeners("plotly_click");
     if (options.onClick) {
       node.on("plotly_click", (eventData) => {
-        const name = eventData?.points?.[0]?.customdata || eventData?.points?.[0]?.label;
+        const name = plotClickValue(eventData?.points?.[0]);
         if (name && name !== "Other") options.onClick(name);
       });
     }
@@ -3348,7 +3359,7 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   drawDetailSharePie("detailGeoSharePlot", selectedRows, "geo", metric.revenueField, metric.revenueLabel, {
     outsideLabels: true,
     showLegend: false,
-    onClick: geoLinkEnabled ? selectLinkedGeo : null,
+    onClick: selectLinkedGeo,
   });
 
   const countrySelectedRows = selectedGeo ? selectedRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : selectedRows;
@@ -3397,7 +3408,7 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
     if (geoNode.removeAllListeners) geoNode.removeAllListeners("plotly_click");
     if (geoLinkEnabled) {
       geoNode.on("plotly_click", (eventData) => {
-        selectLinkedGeo(eventData?.points?.[0]?.customdata);
+        selectLinkedGeo(plotClickValue(eventData?.points?.[0]));
       });
     }
   }
