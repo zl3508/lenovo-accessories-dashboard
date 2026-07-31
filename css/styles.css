@@ -2543,6 +2543,14 @@ input[type="search"] {
   padding-inline: 10px;
 }
 
+.geo-link-field {
+  min-width: 104px;
+}
+
+.geo-link-control button {
+  min-width: 44px;
+}
+
 .inline-field {
   display: grid;
   gap: 4px;

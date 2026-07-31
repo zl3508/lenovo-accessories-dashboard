@@ -2904,9 +2904,12 @@ function renderDetailTrendModeButtons(activeMode, target) {
 function renderDetailGeoLinkButton(product) {
   const isActive = Boolean(state.detailGeoLinkEnabled[product.id]);
   return `
-    <div class="segmented trend-mode-control geo-link-control" aria-label="Geo country link">
-      <button type="button" class="${!isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle" data-link-enabled="false">Off</button>
-      <button type="button" class="${isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle" data-link-enabled="true">On</button>
+    <div class="inline-field geo-link-field">
+      <span>Geo Link</span>
+      <div class="segmented trend-mode-control geo-link-control" aria-label="Geo country link">
+        <button type="button" class="${!isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle" data-link-enabled="false">Off</button>
+        <button type="button" class="${isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle" data-link-enabled="true">On</button>
+      </div>
     </div>
   `;
 }
@@ -2947,6 +2950,19 @@ function pieClickValue(point, slices) {
   if (!direct) return null;
   const byDisplayLabel = slices.find((slice) => displayLocationLabel(slice.name) === direct);
   return byDisplayLabel?.name || direct;
+}
+
+function setPlotClickHandler(node, handler) {
+  if (!node?.on) return;
+  if (node._codexPlotClickHandler && node.removeListener) {
+    node.removeListener("plotly_click", node._codexPlotClickHandler);
+  } else if (node.removeAllListeners) {
+    node.removeAllListeners("plotly_click");
+  }
+  delete node._codexPlotClickHandler;
+  if (!handler) return;
+  node._codexPlotClickHandler = handler;
+  node.on("plotly_click", handler);
 }
 
 function detailBreakdownItems(product) {
@@ -3044,7 +3060,7 @@ function drawDetailProductPerformance(product, selectedPartNumber) {
 function drawDetailDimensionPie(id, product, metricField, metricLabelText, focusKey) {
   const rows = detailProductRows(product, { selectedOnly: true });
   const isProductPie = state.dimension === "product";
-  const items =
+  const rawItems =
     state.dimension === "product"
       ? (product.partNumbers?.length ? product.partNumbers : unique(rows.map((row) => row.partNumber).filter(Boolean))).map((partNumber) => ({
           key: detailPartNumberKey(partNumber),
@@ -3058,9 +3074,10 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
           shortLabel: segment,
           value: sumRows(rows.filter((row) => row.segment === segment), metricField),
         }));
-  const slices = items.filter((item) => item.value);
-  const total = slices.reduce((sum, item) => sum + item.value, 0);
-  if (!slices.length || !total) {
+  const valuedItems = rawItems.filter((item) => item.value);
+  const total = valuedItems.reduce((sum, item) => sum + item.value, 0);
+  const slices = isProductPie ? compactProductPieSlices(valuedItems, focusKey) : valuedItems;
+  if (!valuedItems.length || !total) {
     drawPlot(id, [], {});
     return;
   }
@@ -3100,14 +3117,35 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
     },
   );
   if (node?.on) {
-    if (node.removeAllListeners) node.removeAllListeners("plotly_click");
-    node.on("plotly_click", (eventData) => {
+    setPlotClickHandler(node, (eventData) => {
       const itemKey = eventData?.points?.[0]?.customdata;
-      if (!itemKey) return;
+      if (!itemKey || itemKey === "__other__") return;
       setDetailFocusFromPie(product, itemKey);
       render();
     });
   }
+}
+
+function compactProductPieSlices(items, focusKey) {
+  const maxSlices = 6;
+  if (items.length <= maxSlices) return items;
+  const sorted = items.slice().sort((a, b) => b.value - a.value);
+  let kept = sorted.slice(0, maxSlices - 1);
+  const focused = focusKey !== "all" ? sorted.find((item) => item.key === focusKey) : null;
+  if (focused && !kept.some((item) => item.key === focused.key)) {
+    kept = [...sorted.slice(0, maxSlices - 2), focused];
+  }
+  const keptKeys = new Set(kept.map((item) => item.key));
+  const otherItems = sorted.filter((item) => !keptKeys.has(item.key));
+  if (otherItems.length) {
+    kept.push({
+      key: "__other__",
+      label: `${otherItems.length} other PN`,
+      shortLabel: "Other PN",
+      value: otherItems.reduce((sum, item) => sum + item.value, 0),
+    });
+  }
+  return kept;
 }
 
 function drawDetailTrendLines(id, product, itemKeys, metricField, metricLabelText, options = {}) {
@@ -3142,8 +3180,7 @@ function drawDetailTrendLines(id, product, itemKeys, metricField, metricLabelTex
     yaxis: { title: metricLabelText, tickprefix: isRevenue ? "$" : "" },
   });
   if (node?.on) {
-    if (node.removeAllListeners) node.removeAllListeners("plotly_click");
-    node.on("plotly_click", (eventData) => {
+    setPlotClickHandler(node, (eventData) => {
       const itemKey = eventData?.points?.[0]?.customdata || itemKeys[eventData?.points?.[0]?.curveNumber || 0];
       if (!itemKey) return;
       setDetailFocusFromTrend(product, itemKey, trendTarget);
@@ -3344,13 +3381,15 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
     },
   );
   if (node?.on) {
-    if (node.removeAllListeners) node.removeAllListeners("plotly_click");
-    if (options.onClick) {
-      node.on("plotly_click", (eventData) => {
+    setPlotClickHandler(
+      node,
+      options.onClick
+        ? (eventData) => {
         const name = pieClickValue(eventData?.points?.[0], slices);
         if (name && name !== "Other") options.onClick(name);
-      });
-    }
+          }
+        : null,
+    );
   }
 }
 
@@ -3422,12 +3461,14 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
     yaxis: { title: metric.revenueLabel, tickprefix: "$" },
   });
   if (geoNode?.on) {
-    if (geoNode.removeAllListeners) geoNode.removeAllListeners("plotly_click");
-    if (geoLinkEnabled) {
-      geoNode.on("plotly_click", (eventData) => {
-        selectLinkedGeo(plotClickValue(eventData?.points?.[0]));
-      });
-    }
+    setPlotClickHandler(
+      geoNode,
+      geoLinkEnabled
+        ? (eventData) => {
+            selectLinkedGeo(plotClickValue(eventData?.points?.[0]));
+          }
+        : null,
+    );
   }
 
   const countryTrendRows = selectedGeo ? trendRows.filter((row) => (row.geo || "Unassigned") === selectedGeo) : trendRows;
