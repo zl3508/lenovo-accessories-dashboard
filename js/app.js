@@ -2904,8 +2904,9 @@ function renderDetailTrendModeButtons(activeMode, target) {
 function renderDetailGeoLinkButton(product) {
   const isActive = Boolean(state.detailGeoLinkEnabled[product.id]);
   return `
-    <div class="segmented trend-mode-control" aria-label="Geo country link">
-      <button type="button" class="${isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle">${isActive ? "Geo Link On" : "Geo Link Off"}</button>
+    <div class="segmented trend-mode-control geo-link-control" aria-label="Geo country link">
+      <button type="button" class="${!isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle" data-link-enabled="false">Off</button>
+      <button type="button" class="${isActive ? "is-active" : ""}" data-action="detail-geo-link-toggle" data-link-enabled="true">On</button>
     </div>
   `;
 }
@@ -2939,6 +2940,13 @@ function plotClickValue(point) {
   const traceCustomdata = point.data?.customdata;
   if (Array.isArray(traceCustomdata)) return traceCustomdata[point.pointNumber] ?? traceCustomdata[point.pointIndex] ?? null;
   return point.label || null;
+}
+
+function pieClickValue(point, slices) {
+  const direct = plotClickValue(point);
+  if (!direct) return null;
+  const byDisplayLabel = slices.find((slice) => displayLocationLabel(slice.name) === direct);
+  return byDisplayLabel?.name || direct;
 }
 
 function detailBreakdownItems(product) {
@@ -2982,6 +2990,12 @@ function shortPartNumberLabel(partNumber) {
   if (!partNumber) return "PN";
   if (partNumber.length <= 12) return partNumber;
   return `${partNumber.slice(0, 6)}…${partNumber.slice(-4)}`;
+}
+
+function compactPartNumberLabel(partNumber) {
+  if (!partNumber) return "PN";
+  if (partNumber.length <= 8) return partNumber;
+  return `${partNumber.slice(0, 4)}…${partNumber.slice(-3)}`;
 }
 
 function detailFiltersFromFocus(key) {
@@ -3029,12 +3043,13 @@ function drawDetailProductPerformance(product, selectedPartNumber) {
 
 function drawDetailDimensionPie(id, product, metricField, metricLabelText, focusKey) {
   const rows = detailProductRows(product, { selectedOnly: true });
+  const isProductPie = state.dimension === "product";
   const items =
     state.dimension === "product"
       ? (product.partNumbers?.length ? product.partNumbers : unique(rows.map((row) => row.partNumber).filter(Boolean))).map((partNumber) => ({
           key: detailPartNumberKey(partNumber),
           label: partNumber,
-          shortLabel: shortPartNumberLabel(partNumber),
+          shortLabel: compactPartNumberLabel(partNumber),
           value: sumRows(rows.filter((row) => row.partNumber === partNumber), metricField),
         }))
       : ["Consumer", "Commercial"].map((segment) => ({
@@ -3057,16 +3072,18 @@ function drawDetailDimensionPie(id, product, metricField, metricLabelText, focus
       customdata: slices.map((item) => item.key),
       values: slices.map((item) => item.value),
       type: "pie",
-      hole: 0.42,
+      hole: isProductPie ? 0.52 : 0.42,
       sort: false,
       textinfo: "label+percent",
       textposition: "outside",
+      textfont: { size: isProductPie ? 10 : 12 },
+      hovertext: slices.map((item) => item.label),
       automargin: true,
-      hovertemplate: `<b>%{label}</b><br>${metricLabelText}: ${metricField.toLowerCase().includes("revenue") ? "$" : ""}%{value:,.0f}<br>Share: %{percent}<extra></extra>`,
+      hovertemplate: `<b>%{hovertext}</b><br>${metricLabelText}: ${metricField.toLowerCase().includes("revenue") ? "$" : ""}%{value:,.0f}<br>Share: %{percent}<extra></extra>`,
       marker: { colors, line: { color: "#ffffff", width: 2 } },
     }],
     {
-      margin: { l: 54, r: 54, t: 8, b: 26 },
+      margin: isProductPie ? { l: 68, r: 68, t: 8, b: 30 } : { l: 54, r: 54, t: 8, b: 26 },
       showlegend: false,
       legend: { orientation: "h", y: -0.18, x: 0 },
       annotations: [
@@ -3330,7 +3347,7 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
     if (node.removeAllListeners) node.removeAllListeners("plotly_click");
     if (options.onClick) {
       node.on("plotly_click", (eventData) => {
-        const name = plotClickValue(eventData?.points?.[0]);
+        const name = pieClickValue(eventData?.points?.[0], slices);
         if (name && name !== "Other") options.onClick(name);
       });
     }
@@ -4145,11 +4162,14 @@ function handleClick(event) {
     render();
   } else if (action === "detail-geo-link-toggle") {
     if (state.productId) {
-      const next = !state.detailGeoLinkEnabled[state.productId];
+      const next = button.dataset.linkEnabled === "true";
       state.detailGeoLinkEnabled[state.productId] = next;
       if (next) {
         state.detailGeoTrendMode[state.productId] = "breakdown";
         state.detailCountryTrendMode[state.productId] = "breakdown";
+      } else {
+        delete state.detailSelectedGeo[state.productId];
+        state.detailCountryTrendMode[state.productId] = "overall";
       }
     }
     render();
