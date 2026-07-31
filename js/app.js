@@ -3413,7 +3413,8 @@ function drawProductGeoDetail(product, { partNumber = "all", segment = "all" } =
   const hoverValue = isRevenueMetric ? "$%{y:,.2f}" : "%{y:,.0f}";
   const geoLinkEnabled = Boolean(state.detailGeoLinkEnabled[product.id]);
   const selectLinkedGeo = (geo) => {
-    if (!geoLinkEnabled || !geo) return;
+    if (!geo || geo === "Other") return;
+    state.detailGeoLinkEnabled[product.id] = true;
     state.detailSelectedGeo[product.id] = geo;
     state.detailGeoTrendMode[product.id] = "breakdown";
     state.detailCountryTrendMode[product.id] = "breakdown";
