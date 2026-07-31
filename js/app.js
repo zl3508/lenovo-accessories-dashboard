@@ -2938,14 +2938,21 @@ function geoTrendMeta(mode, selectedGeo, scope) {
 
 function plotClickValue(point) {
   if (!point) return null;
-  if (Array.isArray(point.customdata)) return point.customdata[point.pointNumber] ?? point.customdata[point.pointIndex] ?? null;
+  const pointIndex = Number.isInteger(point.pointNumber) ? point.pointNumber : Number.isInteger(point.pointIndex) ? point.pointIndex : null;
+  if (point.id) return point.id;
+  if (Array.isArray(point.customdata)) return pointIndex === null ? point.label || null : point.customdata[pointIndex] ?? point.label ?? null;
   if (point.customdata) return point.customdata;
   const traceCustomdata = point.data?.customdata;
-  if (Array.isArray(traceCustomdata)) return traceCustomdata[point.pointNumber] ?? traceCustomdata[point.pointIndex] ?? null;
+  if (Array.isArray(traceCustomdata)) return pointIndex === null ? point.label || null : traceCustomdata[pointIndex] ?? point.label ?? null;
   return point.label || null;
 }
 
 function pieClickValue(point, slices) {
+  const label = point?.label;
+  if (label) {
+    const byDisplayLabel = slices.find((slice) => displayLocationLabel(slice.name) === label);
+    if (byDisplayLabel) return byDisplayLabel.name;
+  }
   const direct = plotClickValue(point);
   if (!direct) return null;
   const byDisplayLabel = slices.find((slice) => displayLocationLabel(slice.name) === direct);
@@ -3350,6 +3357,7 @@ function drawDetailSharePie(id, rows, groupField, metricField, metricLabelText, 
       ? [
           {
             labels: slices.map((row) => displayLocationLabel(row.name)),
+            ids: slices.map((row) => row.name),
             customdata: slices.map((row) => row.name),
             values: slices.map((row) => row.value),
             type: "pie",
