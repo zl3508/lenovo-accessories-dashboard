@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260802-adapter-structure-rows";
+const DATA_VERSION = "20260802-market-region-rework";
 
 const state = {
   categoryId: null,
@@ -80,9 +80,18 @@ const categoryViews = {
 };
 
 const marketModules = {
-  policy: "Policy Insights",
-  industry: "Industry Trends",
-  structure: "Market Structure",
+  global: "Global",
+  NA: "NA",
+  EMEA: "EMEA",
+  AP: "AP",
+  LA: "LA",
+};
+
+const marketRegionModules = {
+  NA: { label: "NA", name: "North America", markets: ["US"] },
+  EMEA: { label: "EMEA", name: "Europe, Middle East & Africa", markets: ["DE+UK+SE", "SA"] },
+  AP: { label: "AP", name: "Asia Pacific", markets: ["JP", "IN"] },
+  LA: { label: "LA", name: "Latin America", markets: ["BR+MEX"] },
 };
 
 const policyRegions = [
@@ -385,7 +394,7 @@ function renderCategoryTabs() {
 function renderModuleTabs(categoryId) {
   const modules = state.categoryView === "market" ? marketModules : null;
   if (!modules) return "";
-  const active = state.marketModule;
+  const active = selectedMarketModule();
   return `
     <section class="module-tabs" aria-label="${state.categoryView} modules">
       ${Object.entries(modules)
@@ -396,34 +405,135 @@ function renderModuleTabs(categoryId) {
 }
 
 function renderMarketAnalysis(categoryId) {
-  const period = selectedPeriod();
-  const reports = data.catalog.policyReports?.[categoryId] || [];
-  const structureBrands = unique(data.brandMarket.filter((row) => row.categoryId === categoryId).map((row) => row.brand));
-  state.structureBrand[categoryId] ||= structureBrands.includes("Lenovo") ? "Lenovo" : structureBrands[0];
-  const moduleMarkup = {
-    policy: `
-      <section class="module-block">
-        <div class="module-head">
-          <span>Market Module</span>
-          <h2>${modeledText("Policy Insights")}</h2>
-          <p>Policy reports, sources, and portfolio implications.</p>
-        </div>
-        ${renderPolicyInsights(categoryId, reports)}
-      </section>
-    `,
-    industry: `
-      ${renderIndustryTrendsModule(categoryId)}
-    `,
-    structure: `
-      ${renderMarketStructureModule(categoryId, structureBrands, period)}
-    `,
-  }[state.marketModule];
-
+  const active = selectedMarketModule();
+  const moduleMarkup = active === "global" ? renderGlobalMarketModule(categoryId) : renderRegionalMarketModule(categoryId, active);
   return `
     <div class="view-stack">
       ${moduleMarkup}
     </div>
   `;
+}
+
+function selectedMarketModule() {
+  if (!marketModules[state.marketModule]) state.marketModule = "global";
+  return state.marketModule;
+}
+
+function renderGlobalMarketModule(categoryId) {
+  const report = marketStructureReport(categoryId);
+  if (report?.overview) {
+    return `
+      <section class="module-block">
+        <div class="module-head">
+          <span>Global</span>
+          <h2>Global Market</h2>
+        </div>
+        ${renderMarketStructureOverview(report)}
+      </section>
+    `;
+  }
+  return `
+    <section class="module-block">
+      <div class="module-head">
+        <span>Global</span>
+        <h2>${escapeHtml(categoryLabel(categoryId))} Global Market</h2>
+        <p>No global market narrative has been configured for this category yet.</p>
+      </div>
+    </section>
+  `;
+}
+
+function renderRegionalMarketModule(categoryId, regionId) {
+  const region = marketRegionModules[regionId];
+  const report = marketStructureReport(categoryId);
+  const markets = (report?.markets || []).filter((market) => region?.markets?.includes(market.code));
+  return `
+    <section class="module-block market-region-module">
+      <div class="module-head">
+        <span>${escapeHtml(region?.label || regionId)}</span>
+        <h2>${escapeHtml(region?.name || regionId)}</h2>
+      </div>
+      <section class="market-region-section">
+        <div class="market-region-head">
+          <span>Market</span>
+          <h3>Country Market Reading</h3>
+        </div>
+        <div class="region-row-list">
+          ${markets.length ? markets.map(renderRegionalMarketRow).join("") : `<div class="policy-empty"><strong>No country market reading loaded</strong><p>Add regional market bullets when the source data is ready.</p></div>`}
+        </div>
+      </section>
+      ${renderRegionalPolicySection(categoryId, regionId)}
+    </section>
+  `;
+}
+
+function renderRegionalMarketRow(market) {
+  const summary = market.insights?.[0] || market.note;
+  return `
+    <details class="region-market-row">
+      <summary>
+        <span class="tag">${escapeHtml(market.code)}</span>
+        <div>
+          <h4>${escapeHtml(market.label)}</h4>
+          <p>${escapeHtml(summary)}</p>
+        </div>
+        <em>Details</em>
+      </summary>
+      <div class="region-row-detail">
+        ${renderMarketCountryInsights(market)}
+      </div>
+    </details>
+  `;
+}
+
+function renderRegionalPolicySection(categoryId, regionId) {
+  const reports = (data.catalog.policyReports?.[categoryId] || []).filter((report) => report.regionGroup === regionId);
+  return `
+    <section class="market-region-section">
+      <div class="market-region-head">
+        <span>Policy</span>
+        <h3>Regulation Impact</h3>
+      </div>
+      <div class="region-policy-grid">
+        ${policyImpactWindows.map((window) => renderRegionalPolicyBucket(window, reports.filter((report) => report.impactWindow === window.id))).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderRegionalPolicyBucket(window, reports) {
+  return `
+    <div class="region-policy-bucket">
+      <h4>${escapeHtml(window.label)}</h4>
+      <div class="region-row-list">
+        ${reports.length ? reports.map(renderRegionalPolicyRow).join("") : `<div class="policy-empty"><strong>No confirmed regulation loaded</strong><p>No ${escapeHtml(window.label.toLowerCase())} policy item is currently configured.</p></div>`}
+      </div>
+    </div>
+  `;
+}
+
+function renderRegionalPolicyRow(report) {
+  return `
+    <details class="region-policy-row">
+      <summary>
+        <span>${escapeHtml(report.effectiveDate || "Current")}</span>
+        <div>
+          <h4>${escapeHtml(report.title)}</h4>
+          <p>${escapeHtml(report.region || "")}</p>
+        </div>
+        <em>Details</em>
+      </summary>
+      <div class="region-policy-detail">
+        <p>${escapeHtml(report.summary || "")}</p>
+        <strong>Portfolio Impact</strong>
+        <p>${escapeHtml(report.impact || "")}</p>
+      </div>
+    </details>
+  `;
+}
+
+function categoryLabel(categoryId) {
+  return indexes.categories.get(categoryId)?.label || categoryId;
 }
 
 function renderPolicyInsights(categoryId, reports) {
@@ -527,14 +637,17 @@ function renderPolicyEmpty(region, window) {
   `;
 }
 
-function renderIndustryTrendsModule(categoryId) {
+function renderIndustryTrendsModule(categoryId, options = {}) {
   const report = industryBrandReport(categoryId);
+  const eyebrow = options.eyebrow || "Market Module";
+  const title = options.title || report?.title || modeledText("Industry Trends");
+  const description = options.description ?? report?.categoryLens;
   if (!report) {
     return `
       <section class="module-block">
         <div class="module-head">
-          <span>Market Module</span>
-          <h2>${modeledText("Industry Trends")}</h2>
+          <span>${escapeHtml(eyebrow)}</span>
+          <h2>${escapeHtml(title)}</h2>
         </div>
         <div class="chart-grid">
           ${chartShell("industryHighPowerPlot", modeledText("High Power Migration"), "share of demand")}
@@ -548,9 +661,9 @@ function renderIndustryTrendsModule(categoryId) {
   return `
     <section class="module-block">
       <div class="module-head">
-        <span>Market Module</span>
-        <h2>${escapeHtml(report.title)}</h2>
-        <p>${escapeHtml(report.categoryLens)}</p>
+        <span>${escapeHtml(eyebrow)}</span>
+        <h2>${escapeHtml(title)}</h2>
+        ${description ? `<p>${escapeHtml(description)}</p>` : ""}
       </div>
       <div class="source-note">${escapeHtml(report.source)}</div>
       <div class="industry-brand-grid">
@@ -942,6 +1055,7 @@ function renderStructureVerticalChart(chart) {
 function renderStructureMiniChart(chart) {
   const items = chart.items || [];
   if (!items.length) return "";
+  if (chart.type === "donut") return renderStructureDonutChart(chart, items);
   if (chart.type === "stacked") return renderStructureStackedChart(chart, items);
   const max = Math.max(...items.map((item) => Number(item.value) || 0), 1);
   return `
@@ -960,6 +1074,33 @@ function renderStructureMiniChart(chart) {
             </div>
           `;
         }).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderStructureDonutChart(chart, items) {
+  const total = items.reduce((sum, item) => sum + (Number(item.value) || 0), 0) || 1;
+  let cursor = 0;
+  const segments = items.map((item, index) => {
+    const start = cursor;
+    const end = cursor + ((Number(item.value) || 0) / total) * 100;
+    cursor = end;
+    return `${structureChartColor(index)} ${start.toFixed(2)}% ${end.toFixed(2)}%`;
+  });
+  return `
+    <div class="structure-mini-chart">
+      <div class="structure-mini-chart-head">
+        <strong>${escapeHtml(chart.title || "Share")}</strong>
+        ${chart.note ? `<span>${escapeHtml(chart.note)}</span>` : ""}
+      </div>
+      <div class="structure-donut-wrap">
+        <div class="structure-donut" style="background: conic-gradient(${escapeAttr(segments.join(", "))})">
+          <span>${escapeHtml(chart.center || "Share")}</span>
+        </div>
+        <div class="structure-stack-legend">
+          ${items.map((item, index) => `<span><i style="background:${escapeAttr(structureChartColor(index))}"></i>${escapeHtml(item.label)} <strong>${escapeHtml(item.valueLabel || fmtWholePercent(item.value))}</strong></span>`).join("")}
+        </div>
       </div>
     </div>
   `;
@@ -1168,6 +1309,12 @@ function renderCompetitiveAnalysis(categoryId) {
 
   return `
     <div class="view-stack">
+      ${renderIndustryTrendsModule(categoryId, { eyebrow: "Industry Trend", title: "Industry Trend" })}
+      <section class="competitor-analysis-part">
+        <div class="module-head">
+          <span>Product Analysis</span>
+          <h2>Product Analysis</h2>
+        </div>
       <section class="competitor-control-panel">
         <div>
           <p class="eyebrow">Competitive Analysis</p>
@@ -1204,6 +1351,7 @@ function renderCompetitiveAnalysis(categoryId) {
 
       <section class="competitor-results">
         ${rows.length ? rows.map((row) => renderMarketplaceCompetitorCard(row, selectedProduct)).join("") : renderCompetitorEmptyState(selectedProduct, selectedCountry)}
+      </section>
       </section>
     </div>
   `;
@@ -1979,6 +2127,9 @@ function dualMetricBarLayout(metric, overrides = {}) {
 }
 
 function drawMarketAnalysis(categoryId) {
+  if (marketModules[state.marketModule]) {
+    return;
+  }
   if (state.marketModule === "policy") {
     drawPolicyRegionMaps();
     return;

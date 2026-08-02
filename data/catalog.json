@@ -436,7 +436,7 @@
     "adapter": {
       "title": "Adapter Market Structure",
       "overview": {
-        "eyebrow": "Market Structure Summary",
+        "eyebrow": "Global Market Summary",
         "heading": "Global Market Summary",
         "body": "The adapter market is growing steadily. The winning structure is shifting toward USB-C PD, 65W-100W mainstream demand, online retail execution, premium GaN form factors, and localized country portfolios.",
         "bullets": [
@@ -469,7 +469,7 @@
         ],
         "trend": {
           "eyebrow": "2020-2032 Market Size",
-          "title": "Recovery after 2022, then steady expansion through 2032",
+          "title": "Global Laptop Chargers Market Size",
           "note": "USD million. Forecast period keeps rising even though annual growth varies by replacement cycle and regional maturity.",
           "items": [
             {
@@ -549,7 +549,8 @@
             ],
             "chart": {
               "title": "2025 Region Share",
-              "type": "bar",
+              "type": "donut",
+              "center": "2025 Share",
               "items": [
                 {
                   "label": "APAC",
@@ -588,7 +589,8 @@
             ],
             "chart": {
               "title": "2025 Technology Mix",
-              "type": "stacked",
+              "type": "donut",
+              "center": "2025 Mix",
               "items": [
                 {
                   "label": "Silicon Based",
@@ -641,7 +643,8 @@
             ],
             "chart": {
               "title": "2025 Channel Share",
-              "type": "bar",
+              "type": "donut",
+              "center": "2025 Share",
               "items": [
                 {
                   "label": "Online Retail",
