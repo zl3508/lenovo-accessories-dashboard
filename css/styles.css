@@ -2216,6 +2216,98 @@ input[type="search"] {
   background: color-mix(in srgb, var(--accent, var(--red)) 5%, white);
 }
 
+.structure-overview {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--red) 7%, white), rgba(255, 255, 255, 0.96)),
+    var(--surface);
+}
+
+.structure-overview-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.structure-overview-copy span {
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.structure-overview-copy h3 {
+  margin: 0;
+  font-size: clamp(22px, 2.2vw, 32px);
+}
+
+.structure-overview-copy p,
+.structure-overview-sections p,
+.structure-overview-sections li {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.structure-overview-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.structure-overview-metrics div {
+  display: grid;
+  gap: 5px;
+  min-height: 88px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.structure-overview-metrics span,
+.structure-overview-metrics em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.structure-overview-metrics strong {
+  overflow-wrap: anywhere;
+  font-size: 20px;
+}
+
+.structure-overview-sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.structure-overview-sections article {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.structure-overview-sections h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.structure-overview-sections ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
 .structure-country-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3096,6 +3188,11 @@ input[type="search"] {
     grid-template-columns: 1fr;
   }
 
+  .structure-overview-metrics,
+  .structure-overview-sections {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .policy-region-detail-head {
     grid-template-columns: 1fr;
   }
@@ -3182,6 +3279,8 @@ input[type="search"] {
   .matrix-card-grid,
   .policy-grid,
   .structure-country-grid,
+  .structure-overview-metrics,
+  .structure-overview-sections,
   .structure-report-head,
   .structure-story-grid,
   .structure-metric-section,

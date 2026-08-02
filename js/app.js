@@ -10,6 +10,8 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
+const DATA_VERSION = "20260802-adapter-structure-report";
+
 const state = {
   categoryId: null,
   productId: null,
@@ -162,7 +164,7 @@ async function init() {
   try {
     const entries = await Promise.all(
       Object.entries(DATA_FILES).map(async ([key, path]) => {
-        const response = await fetch(path);
+        const response = await fetch(`${path}?v=${DATA_VERSION}`, { cache: "no-store" });
         if (!response.ok) throw new Error(`${path} ${response.status}`);
         return [key, await response.json()];
       }),
@@ -825,6 +827,7 @@ function renderMarketStructureModule(categoryId, structureBrands, period) {
           <p>Country-level qualitative analysis from the source reports. Select a market block to read the detailed assessment.</p>
         </div>
         <div class="source-note">${escapeHtml(report.source)}</div>
+        ${renderMarketStructureOverview(report)}
         <div class="structure-report-layout">
           <div class="structure-country-grid">
             ${report.markets.map((market) => renderMarketCountryCard(categoryId, market, report, selected)).join("")}
@@ -858,6 +861,44 @@ function renderMarketStructureModule(categoryId, structureBrands, period) {
   `;
 }
 
+function renderMarketStructureOverview(report) {
+  const overview = report.overview;
+  if (!overview) return "";
+  const metrics = overview.metrics || [];
+  const sections = overview.sections || [];
+  return `
+    <section class="structure-overview">
+      <div class="structure-overview-copy">
+        <span>${escapeHtml(overview.eyebrow || "Report Summary")}</span>
+        <h3>${escapeHtml(overview.heading || "Global Market Summary")}</h3>
+        <p>${escapeHtml(overview.body || "")}</p>
+      </div>
+      ${metrics.length ? `
+        <div class="structure-overview-metrics">
+          ${metrics.map((metric) => `
+            <div>
+              <span>${escapeHtml(metric.label)}</span>
+              <strong>${escapeHtml(metric.value)}</strong>
+              ${metric.note ? `<em>${escapeHtml(metric.note)}</em>` : ""}
+            </div>
+          `).join("")}
+        </div>
+      ` : ""}
+      ${sections.length ? `
+        <div class="structure-overview-sections">
+          ${sections.map((section) => `
+            <article>
+              <h4>${escapeHtml(section.title)}</h4>
+              <p>${escapeHtml(section.body)}</p>
+              ${section.points?.length ? `<ul>${section.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul>` : ""}
+            </article>
+          `).join("")}
+        </div>
+      ` : ""}
+    </section>
+  `;
+}
+
 function selectedStructureMarket(categoryId, report) {
   const selectedCode = state.structureMarket[categoryId];
   return report.markets.find((market) => market.code === selectedCode) || report.markets[0];
@@ -866,17 +907,21 @@ function selectedStructureMarket(categoryId, report) {
 function renderMarketCountryCard(categoryId, market, report, selected) {
   const topDemand = topMarketMetric(market, report.demandMetrics);
   const topChannel = topMarketMetric(market, report.channelMetrics);
+  const cardMetrics = market.cardMetrics || [
+    { label: "Sample", value: fmtExactNumber(market.sample) },
+    { label: "Self-purchased", value: fmtWholePercent(market.selfPurchased) },
+    { label: "Mean price", value: fmtExactCurrency(market.meanPrice) },
+  ];
+  const cardNote = market.cardNote || `${topDemand.label} ${fmtWholePercent(topDemand.value)} · ${topChannel.label} ${fmtWholePercent(topChannel.value)}`;
   const active = selected?.code === market.code ? "is-active" : "";
   return `
     <button class="structure-country-card ${active}" type="button" data-action="structure-market" data-market-code="${escapeAttr(market.code)}" data-category="${escapeAttr(categoryId)}">
       <span class="tag">${escapeHtml(market.code)}</span>
       <span class="structure-country-name">${escapeHtml(market.label)}</span>
       <span class="structure-card-metrics">
-        <span><strong>${fmtExactNumber(market.sample)}</strong><em>Sample</em></span>
-        <span><strong>${fmtWholePercent(market.selfPurchased)}</strong><em>Self-purchased</em></span>
-        <span><strong>${fmtExactCurrency(market.meanPrice)}</strong><em>Mean price</em></span>
+        ${cardMetrics.map((metric) => `<span><strong>${escapeHtml(metric.value)}</strong><em>${escapeHtml(metric.label)}</em></span>`).join("")}
       </span>
-      <span class="structure-card-note">${escapeHtml(topDemand.label)} ${fmtWholePercent(topDemand.value)} · ${escapeHtml(topChannel.label)} ${fmtWholePercent(topChannel.value)}</span>
+      <span class="structure-card-note">${escapeHtml(cardNote)}</span>
     </button>
   `;
 }
@@ -886,6 +931,7 @@ function renderMarketStructureDetail(market, report) {
   const secondDemand = rankedMarketMetrics(market, report.demandMetrics)[1] || topDemand;
   const topChannel = topMarketMetric(market, report.channelMetrics);
   const industryNotes = relatedIndustryNotes(report, market);
+  const story = market.story || {};
   return `
     <article class="structure-report-detail">
       <header class="structure-report-head">
@@ -905,15 +951,15 @@ function renderMarketStructureDetail(market, report) {
       <section class="structure-story-grid">
         <div>
           <h4>Market Behavior</h4>
-          <p>${marketBehaviorText(market, topChannel)}</p>
+          <p>${escapeHtml(story.behavior || marketBehaviorText(market, topChannel))}</p>
         </div>
         <div>
           <h4>Demand Signal</h4>
-          <p>${marketDemandText(market, topDemand, secondDemand)}</p>
+          <p>${escapeHtml(story.demand || marketDemandText(market, topDemand, secondDemand))}</p>
         </div>
         <div>
           <h4>Portfolio Implication</h4>
-          <p>${marketImplicationText(market, report, topDemand, topChannel)}</p>
+          <p>${escapeHtml(story.implication || marketImplicationText(market, report, topDemand, topChannel))}</p>
         </div>
       </section>
 
@@ -981,9 +1027,9 @@ function relatedIndustryNotes(report, market) {
     "US": ["USA"],
     "JP": ["Japan"],
     "DE+UK+SE": ["UK"],
-    "IN": ["Indonesia"],
-    "BR+MEX": [],
-    "SA": [],
+    "IN": ["India"],
+    "BR+MEX": ["Brazil/Mexico"],
+    "SA": ["SA"],
   };
   const targets = map[market.code] || [];
   return (report.industryCountries || []).filter((item) => targets.includes(item.country));

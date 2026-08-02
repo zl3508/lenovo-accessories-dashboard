@@ -434,51 +434,65 @@
   },
   "marketStructureReports": {
     "adapter": {
-      "title": "Power Adapter Country Market Structure",
-      "source": "Ipsos PC Accessories User Research - Power Adapters, pp.4, 6, 26-32; Lenovo PC Options Industry Analysis - Power Category Report, pp.15, 18, 21, 24, 29-32.",
+      "title": "Adapter Market Structure",
+      "source": "PW Consulting / P Market Research Worldwide Laptop Chargers Market Research, updated Jun 16 2026; Ipsos PC Accessories User Research - Power Adapters, pp.4, 6, 8, 10, 26-32; Lenovo PC Options Industry Analysis - Power Category Report, pp.5-10, 15, 18, 24, 28-32.",
+      "overview": {
+        "eyebrow": "External Market Report Summary",
+        "heading": "Laptop chargers are moving from replacement accessories into standardized USB-C PD infrastructure.",
+        "body": "The P Market Research / PW Consulting report sizes the worldwide laptop chargers market at USD 4.45B in 2025 and projects USD 7.08B by 2032, implying a 6.85% CAGR. The structure is led by Asia Pacific scale, mainstream 65W-100W demand, online retail execution, and the shift from silicon-based designs toward GaN and higher-power USB-C PD.",
+        "metrics": [
+          {
+            "label": "2025 Market Size",
+            "value": "$4.45B",
+            "note": "global laptop chargers"
+          },
+          {
+            "label": "2032 Forecast",
+            "value": "$7.08B",
+            "note": "6.85% CAGR"
+          },
+          {
+            "label": "Largest Region",
+            "value": "APAC 40.21%",
+            "note": "$1.79B in 2025"
+          },
+          {
+            "label": "Top Power Band",
+            "value": "65W-100W",
+            "note": "42.88% share"
+          }
+        ],
+        "sections": [
+          {
+            "title": "Regional Structure",
+            "body": "APAC is the largest demand and manufacturing block, followed by North America and Europe. Latin America and MEA remain smaller but useful for value-tier and channel expansion tests.",
+            "points": [
+              "APAC: $1.79B / 40.21%",
+              "North America: $1.16B / 26.02%",
+              "Europe: $1.01B / 22.80%"
+            ]
+          },
+          {
+            "title": "Technology Structure",
+            "body": "Silicon-based chargers still represent the majority of 2025 revenue, but GaN already reaches a meaningful minority share and supports smaller, higher-power multi-port designs.",
+            "points": [
+              "Silicon-based: 69.13%",
+              "GaN: 30.87%",
+              "USB-C PD and PD 3.1 raise the ceiling for universal high-power designs"
+            ]
+          },
+          {
+            "title": "Channel Structure",
+            "body": "Online retail is the dominant global channel because buyers compare specifications, price, delivery, and returns easily. Offline and OEM/direct routes still matter in enterprise, service-led, and risk-sensitive markets.",
+            "points": [
+              "Online retail: 58.28%",
+              "Offline stores: 24.69%",
+              "Direct OEM sales: 17.03%"
+            ]
+          }
+        ]
+      },
       "markets": [
-        {
-          "code": "DE+UK+SE",
-          "label": "DE + UK + SE",
-          "sample": 295,
-          "buyerBase": 135,
-          "featureBase": 130,
-          "selfPurchased": 46,
-          "meanPrice": 77.05,
-          "motivationConvenience": 35,
-          "motivationTravel": 24,
-          "motivationMultiDevice": 27,
-          "motivationFastCharging": 13,
-          "featureFastCharging": 58,
-          "featureMultiPort": 56,
-          "featureProtection": 52,
-          "featureStableOutput": 62,
-          "channelOnline": 32,
-          "channelPhysical": 35,
-          "channelBrandWebsite": 33,
-          "note": "Stable power output is the strongest feature signal at 62%; official brand website reaches 33%."
-        },
-        {
-          "code": "SA",
-          "label": "SA",
-          "sample": 320,
-          "buyerBase": 193,
-          "featureBase": 159,
-          "selfPurchased": 60,
-          "meanPrice": 75.76,
-          "motivationConvenience": 41,
-          "motivationTravel": 43,
-          "motivationMultiDevice": 35,
-          "motivationFastCharging": 35,
-          "featureFastCharging": 56,
-          "featureMultiPort": 68,
-          "featureProtection": 63,
-          "featureStableOutput": 38,
-          "channelOnline": 32,
-          "channelPhysical": 41,
-          "channelBrandWebsite": 26,
-          "note": "Original adapter not supporting fast charging is an important motivation at 35%; physical store is 41%."
-        },
         {
           "code": "US",
           "label": "US",
@@ -498,7 +512,67 @@
           "channelOnline": 29,
           "channelPhysical": 41,
           "channelBrandWebsite": 30,
-          "note": "Highest self-purchased rate in the adapter survey at 68%; physical store is 41%."
+          "cardNote": "Self-purchase 68% · physical retail 41% · mean price $65.18",
+          "note": "Highest self-purchased rate in the adapter survey at 68%; physical store is 41%.",
+          "story": {
+            "behavior": "US adapter buyers are highly self-directed: 68% purchased their own work adapter, and the average paid price is $65.18. The industry report describes the US as a mature, high-purchasing-power market where PC and phone OEM chargers remain strong, so third-party brands win mainly through fast charging, compact size, capacity, and service differentiation.",
+            "demand": "Survey demand is balanced rather than single-feature-led: multi-port compatibility is 56%, fast charging is 53%, intelligent protection is 53%, and stable output is 51%. This means US messaging should not rely on wattage alone; safety, compatibility, and device coverage need to be visible together.",
+            "implication": "For Lenovo, the US structure supports premium laptop-compatible and multi-port GaN adapters, but the route-to-market should combine physical retail credibility with online spec comparison. Anchor pricing against leading third-party brands while emphasizing Lenovo PC safety and compatibility."
+          }
+        },
+        {
+          "code": "JP",
+          "label": "Japan",
+          "sample": 378,
+          "buyerBase": 218,
+          "featureBase": 187,
+          "selfPurchased": 58,
+          "meanPrice": 35.04,
+          "motivationConvenience": 49,
+          "motivationTravel": 42,
+          "motivationMultiDevice": 32,
+          "motivationFastCharging": 24,
+          "featureFastCharging": 49,
+          "featureMultiPort": 52,
+          "featureProtection": 58,
+          "featureStableOutput": 56,
+          "channelOnline": 47,
+          "channelPhysical": 33,
+          "channelBrandWebsite": 20,
+          "cardNote": "Online 47% · safety 58% · mean price $35.04",
+          "note": "Japan is more price restrained, with safety and output stability more important than aggressive fast-charging claims.",
+          "story": {
+            "behavior": "Japan has 58% self-purchased adapter users and the lowest mean purchase price in the survey at $35.04. The industry report highlights strong local brands, fierce competition, and lower electronics replacement rates, which pushes products toward localized design, compactness, reliability, and refined service.",
+            "demand": "Safety is the top product signal at 58%, followed by stable output at 56% and multi-port compatibility at 52%. The industry report also says 45W-100W is the mainstream adapter power range at roughly 78-80%, while 100W-240W is a smaller high-end block.",
+            "implication": "Lenovo should avoid overbuilding the Japan adapter story around only high wattage. The stronger proposition is compact USB-C, reliable output, safety certification, and localized appearance or packaging that can compete against local accessory brands."
+          }
+        },
+        {
+          "code": "DE+UK+SE",
+          "label": "Europe / UK",
+          "sample": 295,
+          "buyerBase": 135,
+          "featureBase": 130,
+          "selfPurchased": 46,
+          "meanPrice": 77.05,
+          "motivationConvenience": 35,
+          "motivationTravel": 24,
+          "motivationMultiDevice": 27,
+          "motivationFastCharging": 13,
+          "featureFastCharging": 58,
+          "featureMultiPort": 56,
+          "featureProtection": 52,
+          "featureStableOutput": 62,
+          "channelOnline": 32,
+          "channelPhysical": 35,
+          "channelBrandWebsite": 33,
+          "cardNote": "Stable output 62% · brand site 33% · mean price $77.05",
+          "note": "Stable power output is the strongest feature signal at 62%; official brand website reaches 33%.",
+          "story": {
+            "behavior": "The DE/UK/SE survey block has a lower self-purchase rate at 46%, but the highest mean adapter price at $77.05. The industry report describes the European market, represented by the UK, as steadily growing with strong online habits and fragmented offline channels that require local distributor control.",
+            "demand": "Stable output is the clearest feature priority at 62%, with fast charging at 58% and multi-port compatibility at 56%. The survey also calls out demand for longer cables above 2m, especially in this market block.",
+            "implication": "For Lenovo, Europe / UK should emphasize stable output, certification, durable cable setup, and PC compatibility. Online content is important, but official brand website and distributor-supported offline coverage both matter because buyer confidence and service signals are stronger here than in pure price-led markets."
+          }
         },
         {
           "code": "IN",
@@ -519,28 +593,40 @@
           "channelOnline": 53,
           "channelPhysical": 29,
           "channelBrandWebsite": 18,
-          "note": "Fast charging is the clearest feature signal at 79%; online e-commerce is 53%."
+          "cardNote": "Fast charging 79% · online 53% · brand consideration 75%",
+          "note": "Fast charging is the clearest feature signal at 79%; online e-commerce is 53%.",
+          "story": {
+            "behavior": "India shows 61% self-purchased adapter users and a mean paid price of $41.10. The adapter survey says brand is unusually important at 75%, and the category is associated with safety and reliability because the market includes a mixed range of products.",
+            "demand": "India has the strongest feature intensity in the survey: fast charging is 79%, multi-port compatibility is 64%, charging power range is 63%, and USB-C / Type-C preference reaches 65%. Portability is also important for mobile scenarios.",
+            "implication": "For Lenovo, India needs a trust-led value proposition: branded safety, USB-C compatibility, clear power-range claims, and online commerce execution. Price still matters, but big-brand reassurance is a real differentiator."
+          }
         },
         {
-          "code": "JP",
-          "label": "JP",
-          "sample": 378,
-          "buyerBase": 218,
-          "featureBase": 187,
-          "selfPurchased": 58,
-          "meanPrice": 35.04,
-          "motivationConvenience": 49,
-          "motivationTravel": 42,
-          "motivationMultiDevice": 32,
-          "motivationFastCharging": 24,
-          "featureFastCharging": 49,
-          "featureMultiPort": 52,
-          "featureProtection": 58,
-          "featureStableOutput": 56,
-          "channelOnline": 47,
-          "channelPhysical": 33,
-          "channelBrandWebsite": 20,
-          "note": "Convenient use in different locations is 49%; online e-commerce is 47%."
+          "code": "SA",
+          "label": "SA",
+          "sample": 320,
+          "buyerBase": 193,
+          "featureBase": 159,
+          "selfPurchased": 60,
+          "meanPrice": 75.76,
+          "motivationConvenience": 41,
+          "motivationTravel": 43,
+          "motivationMultiDevice": 35,
+          "motivationFastCharging": 35,
+          "featureFastCharging": 56,
+          "featureMultiPort": 68,
+          "featureProtection": 63,
+          "featureStableOutput": 38,
+          "channelOnline": 32,
+          "channelPhysical": 41,
+          "channelBrandWebsite": 26,
+          "cardNote": "Multi-port 68% · physical retail 41% · mean price $75.76",
+          "note": "Original adapter not supporting fast charging is an important motivation at 35%; physical store is 41%.",
+          "story": {
+            "behavior": "SA has a 60% self-purchase rate and a relatively high mean paid price of $75.76. The survey also notes that matching the laptop brand is less essential here, and Anker appears as the leading personally purchased adapter brand.",
+            "demand": "Multi-port compatibility is the leading feature signal at 68%, followed by intelligent protection at 63% and fast charging at 56%. Fast charging is also an important replacement motivation because 35% say the original adapter does not support it.",
+            "implication": "For Lenovo, SA should be treated as a performance-and-convenience market. The portfolio should highlight multi-device use, fast charging upgrades from the original adapter, and safety protection, while keeping physical retail content strong."
+          }
         },
         {
           "code": "BR+MEX",
@@ -561,7 +647,13 @@
           "channelOnline": 48,
           "channelPhysical": 31,
           "channelBrandWebsite": 21,
-          "note": "Travel or mobile work motivation is 44%; fast-charging feature consideration is 66%."
+          "cardNote": "Online 48% · fast charging 66% · mean price $36.45",
+          "note": "Travel or mobile work motivation is 44%; fast-charging feature consideration is 66%.",
+          "story": {
+            "behavior": "Brazil and Mexico show a 63% self-purchase rate and a value-oriented mean paid price of $36.45. Most price interest is below $40, with $20-$39.99 accounting for 49% of reported purchase prices.",
+            "demand": "Travel or mobile work is the strongest motivation at 44%, while fast charging is the most important feature signal at 66%. Intelligent protection at 60% and multi-port compatibility at 59% mean value-tier products still need credible safety and device coverage.",
+            "implication": "For Lenovo, BR + MEX should prioritize portable, reliable, value-priced USB-C adapters. Online e-commerce is the leading channel at 48%, so product cards need clear wattage, safety certification, and fast-charging proof."
+          }
         }
       ],
       "demandMetrics": [
@@ -595,27 +687,39 @@
       "industryCountries": [
         {
           "country": "USA",
-          "headline": "Adapter category faces PC / phone OEM competition.",
-          "metrics": "Adapter sales revenue 1.5 billion; market share 17-18%; growth 10%; 60-80W accounts for 72%.",
-          "sourcePage": "Industry report p.15"
+          "headline": "Mature market with OEM competition and strong third-party premium plays.",
+          "metrics": "Industry report sizes the US power category at about RMB 23.8B, including about RMB 8.8B for power adapters. Anker adapter revenue is about RMB 1.5B, share is 17-18%, growth is 10%, and 60-80W accounts for 72% of adapter structure.",
+          "sourcePage": "Industry report pp.6, 15"
         },
         {
           "country": "Japan",
-          "headline": "Local brands are strong and price pressure is high.",
-          "metrics": "Adapter sales revenue 0.7 billion; market share 18%; 45-100W is mainstream at 78-80%; 100-240W is 15%.",
-          "sourcePage": "Industry report p.18"
-        },
-        {
-          "country": "Indonesia",
-          "headline": "Power category is highly price sensitive.",
-          "metrics": "Anker Indonesia power category sales revenue is about 1 billion; growth about 40%; market share about 50-60%.",
-          "sourcePage": "Industry report p.21"
+          "headline": "Fierce local-brand competition pushes compact, localized, reliable designs.",
+          "metrics": "Japan power category is about RMB 7.6B, including about RMB 3.9B for adapters. Anker adapter revenue is about RMB 0.7B, share is 18%, 45-100W accounts for 78-80%, and 100-240W is about 15%.",
+          "sourcePage": "Industry report pp.7, 18"
         },
         {
           "country": "UK",
-          "headline": "Adapter revenue is smaller than power bank revenue.",
-          "metrics": "Anker adapter revenue in the UK is 30% of UK power bank revenue; report notes slower growth and no separate series yet.",
-          "sourcePage": "Industry report p.24"
+          "headline": "Online-first European market, with adapters weaker than PC-suitable power banks.",
+          "metrics": "Europe is about RMB 5.3-6.7B and the UK is about RMB 0.8-1B. The report says UK adapter revenue is much smaller than power bank revenue, about 30% of UK power bank revenue, and growth is slower.",
+          "sourcePage": "Industry report pp.9, 24, 25"
+        },
+        {
+          "country": "India",
+          "headline": "Brand trust, safety, power range, and USB-C clarity are unusually important.",
+          "metrics": "Adapter survey shows brand consideration at 75%, charging power range at 63%, fast charging at 79%, USB-C / Type-C preference at 65%, and online e-commerce at 53%.",
+          "sourcePage": "Adapter survey pp.8, 27-29, 32"
+        },
+        {
+          "country": "SA",
+          "headline": "Upgrade demand centers on fast charging and multi-device use.",
+          "metrics": "Adapter survey shows 60% self-purchase, $75.76 mean price, multi-port compatibility at 68%, intelligent protection at 63%, and physical stores at 41%.",
+          "sourcePage": "Adapter survey pp.8, 20, 28, 32"
+        },
+        {
+          "country": "Brazil/Mexico",
+          "headline": "Value-led market where portability and fast charging still matter.",
+          "metrics": "Adapter survey shows 63% self-purchase, $36.45 mean price, 69% of reported purchase prices below $40, fast charging at 66%, and online e-commerce at 48%.",
+          "sourcePage": "Adapter survey pp.8, 15-16, 28, 32"
         }
       ]
     },
