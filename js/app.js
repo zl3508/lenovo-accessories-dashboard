@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260802-adapter-structure-report";
+const DATA_VERSION = "20260802-adapter-structure-visual";
 
 const state = {
   categoryId: null,
@@ -824,9 +824,7 @@ function renderMarketStructureModule(categoryId, structureBrands, period) {
         <div class="module-head">
           <span>Market Module</span>
           <h2>${escapeHtml(report.title)}</h2>
-          <p>Country-level qualitative analysis from the source reports. Select a market block to read the detailed assessment.</p>
         </div>
-        <div class="source-note">${escapeHtml(report.source)}</div>
         ${renderMarketStructureOverview(report)}
         <div class="structure-report-layout">
           <div class="structure-country-grid">
@@ -865,7 +863,8 @@ function renderMarketStructureOverview(report) {
   const overview = report.overview;
   if (!overview) return "";
   const metrics = overview.metrics || [];
-  const sections = overview.sections || [];
+  const bullets = overview.bullets || [];
+  const conclusions = overview.conclusions || overview.sections || [];
   return `
     <section class="structure-overview">
       <div class="structure-overview-copy">
@@ -873,6 +872,11 @@ function renderMarketStructureOverview(report) {
         <h3>${escapeHtml(overview.heading || "Global Market Summary")}</h3>
         <p>${escapeHtml(overview.body || "")}</p>
       </div>
+      ${bullets.length ? `
+        <ol class="structure-summary-bullets">
+          ${bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+        </ol>
+      ` : ""}
       ${metrics.length ? `
         <div class="structure-overview-metrics">
           ${metrics.map((metric) => `
@@ -884,19 +888,104 @@ function renderMarketStructureOverview(report) {
           `).join("")}
         </div>
       ` : ""}
-      ${sections.length ? `
-        <div class="structure-overview-sections">
-          ${sections.map((section) => `
-            <article>
-              <h4>${escapeHtml(section.title)}</h4>
-              <p>${escapeHtml(section.body)}</p>
-              ${section.points?.length ? `<ul>${section.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul>` : ""}
+      ${overview.trend ? `
+        <article class="structure-trend-panel">
+          <div>
+            <span>${escapeHtml(overview.trend.eyebrow || "Trend")}</span>
+            <h4>${escapeHtml(overview.trend.title || "Market Size Trend")}</h4>
+            ${overview.trend.note ? `<p>${escapeHtml(overview.trend.note)}</p>` : ""}
+          </div>
+          ${renderStructureVerticalChart(overview.trend)}
+        </article>
+      ` : ""}
+      ${conclusions.length ? `
+        <div class="structure-conclusion-grid">
+          ${conclusions.map((section, index) => `
+            <article class="structure-conclusion-card">
+              <div class="structure-conclusion-copy">
+                <span>${String(index + 1).padStart(2, "0")}</span>
+                <h4>${escapeHtml(section.title)}</h4>
+                <p>${escapeHtml(section.body)}</p>
+                ${section.points?.length ? `<ul>${section.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul>` : ""}
+              </div>
+              ${section.chart ? renderStructureMiniChart(section.chart) : ""}
             </article>
           `).join("")}
         </div>
       ` : ""}
     </section>
   `;
+}
+
+function renderStructureVerticalChart(chart) {
+  const items = chart.items || [];
+  const max = Math.max(...items.map((item) => Number(item.value) || 0), 1);
+  return `
+    <div class="structure-vertical-chart" aria-label="${escapeAttr(chart.title || "Trend chart")}">
+      ${items.map((item) => {
+        const height = `${Math.max(4, ((Number(item.value) || 0) / max) * 100)}%`;
+        return `
+          <div class="structure-vertical-bar">
+            <span style="height:${escapeAttr(height)}"></span>
+            <strong>${escapeHtml(item.label)}</strong>
+            <em>${escapeHtml(item.valueLabel || fmtExactNumber(item.value))}</em>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderStructureMiniChart(chart) {
+  const items = chart.items || [];
+  if (!items.length) return "";
+  if (chart.type === "stacked") return renderStructureStackedChart(chart, items);
+  const max = Math.max(...items.map((item) => Number(item.value) || 0), 1);
+  return `
+    <div class="structure-mini-chart">
+      <div class="structure-mini-chart-head">
+        <strong>${escapeHtml(chart.title || "Chart")}</strong>
+        ${chart.note ? `<span>${escapeHtml(chart.note)}</span>` : ""}
+      </div>
+      <div class="structure-mini-bars">
+        ${items.map((item) => {
+          const width = `${Math.max(3, ((Number(item.value) || 0) / max) * 100)}%`;
+          return `
+            <div class="structure-mini-row">
+              <div><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.valueLabel || fmtWholePercent(item.value))}</strong></div>
+              <i><b style="width:${escapeAttr(width)}"></b></i>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderStructureStackedChart(chart, items) {
+  const total = items.reduce((sum, item) => sum + (Number(item.value) || 0), 0) || 1;
+  return `
+    <div class="structure-mini-chart">
+      <div class="structure-mini-chart-head">
+        <strong>${escapeHtml(chart.title || "Share")}</strong>
+        ${chart.note ? `<span>${escapeHtml(chart.note)}</span>` : ""}
+      </div>
+      <div class="structure-stacked-bar">
+        ${items.map((item, index) => {
+          const width = `${Math.max(3, ((Number(item.value) || 0) / total) * 100)}%`;
+          return `<span style="width:${escapeAttr(width)}; background:${escapeAttr(structureChartColor(index))}"></span>`;
+        }).join("")}
+      </div>
+      <div class="structure-stack-legend">
+        ${items.map((item, index) => `<span><i style="background:${escapeAttr(structureChartColor(index))}"></i>${escapeHtml(item.label)} <strong>${escapeHtml(item.valueLabel || fmtWholePercent(item.value))}</strong></span>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function structureChartColor(index) {
+  const colors = ["#e2231a", "#861f18", "#f08b82", "#232733", "#6b7280", "#d16a5e"];
+  return colors[index % colors.length];
 }
 
 function selectedStructureMarket(categoryId, report) {
@@ -932,6 +1021,7 @@ function renderMarketStructureDetail(market, report) {
   const topChannel = topMarketMetric(market, report.channelMetrics);
   const industryNotes = relatedIndustryNotes(report, market);
   const story = market.story || {};
+  const hasInsightLayout = market.insights?.length || market.charts?.length;
   return `
     <article class="structure-report-detail">
       <header class="structure-report-head">
@@ -948,20 +1038,22 @@ function renderMarketStructureDetail(market, report) {
         </div>
       </header>
 
-      <section class="structure-story-grid">
-        <div>
-          <h4>Market Behavior</h4>
-          <p>${escapeHtml(story.behavior || marketBehaviorText(market, topChannel))}</p>
-        </div>
-        <div>
-          <h4>Demand Signal</h4>
-          <p>${escapeHtml(story.demand || marketDemandText(market, topDemand, secondDemand))}</p>
-        </div>
-        <div>
-          <h4>Portfolio Implication</h4>
-          <p>${escapeHtml(story.implication || marketImplicationText(market, report, topDemand, topChannel))}</p>
-        </div>
-      </section>
+      ${hasInsightLayout ? renderMarketCountryInsights(market) : `
+        <section class="structure-story-grid">
+          <div>
+            <h4>Market Behavior</h4>
+            <p>${escapeHtml(story.behavior || marketBehaviorText(market, topChannel))}</p>
+          </div>
+          <div>
+            <h4>Demand Signal</h4>
+            <p>${escapeHtml(story.demand || marketDemandText(market, topDemand, secondDemand))}</p>
+          </div>
+          <div>
+            <h4>Portfolio Implication</h4>
+            <p>${escapeHtml(story.implication || marketImplicationText(market, report, topDemand, topChannel))}</p>
+          </div>
+        </section>
+      `}
 
       <section class="structure-metric-section">
         <div>
@@ -976,9 +1068,25 @@ function renderMarketStructureDetail(market, report) {
 
       <section class="structure-industry-notes">
         <h4>Industry Context</h4>
-        ${industryNotes.length ? industryNotes.map(renderIndustryNote).join("") : `<p>No dedicated country page in the industry report for this market group; use the survey metrics above as the primary structure signal.</p>`}
+        ${industryNotes.length ? industryNotes.map(renderIndustryNote).join("") : `<p>No additional country context is configured for this market block.</p>`}
       </section>
     </article>
+  `;
+}
+
+function renderMarketCountryInsights(market) {
+  return `
+    <section class="structure-country-insights">
+      <div class="structure-insight-copy">
+        <h4>Key Conclusions</h4>
+        <ol>
+          ${(market.insights || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ol>
+      </div>
+      <div class="structure-country-chart-grid">
+        ${(market.charts || []).map(renderStructureMiniChart).join("")}
+      </div>
+    </section>
   `;
 }
 
@@ -1003,7 +1111,7 @@ function renderIndustryNote(item) {
   return `
     <article class="structure-note">
       <strong>${escapeHtml(item.country)} · ${escapeHtml(item.headline)}</strong>
-      <p>${escapeHtml(item.metrics)} <span class="muted-inline">${escapeHtml(item.sourcePage)}</span></p>
+      <p>${escapeHtml(item.metrics)}</p>
     </article>
   `;
 }
