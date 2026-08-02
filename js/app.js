@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260802-adapter-structure-visual";
+const DATA_VERSION = "20260802-adapter-structure-rows";
 
 const state = {
   categoryId: null,
@@ -863,7 +863,6 @@ function renderMarketStructureOverview(report) {
   const overview = report.overview;
   if (!overview) return "";
   const metrics = overview.metrics || [];
-  const bullets = overview.bullets || [];
   const conclusions = overview.conclusions || overview.sections || [];
   return `
     <section class="structure-overview">
@@ -872,11 +871,6 @@ function renderMarketStructureOverview(report) {
         <h3>${escapeHtml(overview.heading || "Global Market Summary")}</h3>
         <p>${escapeHtml(overview.body || "")}</p>
       </div>
-      ${bullets.length ? `
-        <ol class="structure-summary-bullets">
-          ${bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
-        </ol>
-      ` : ""}
       ${metrics.length ? `
         <div class="structure-overview-metrics">
           ${metrics.map((metric) => `
@@ -900,17 +894,26 @@ function renderMarketStructureOverview(report) {
       ` : ""}
       ${conclusions.length ? `
         <div class="structure-conclusion-grid">
-          ${conclusions.map((section, index) => `
-            <article class="structure-conclusion-card">
-              <div class="structure-conclusion-copy">
-                <span>${String(index + 1).padStart(2, "0")}</span>
-                <h4>${escapeHtml(section.title)}</h4>
-                <p>${escapeHtml(section.body)}</p>
+          ${conclusions.map((section, index) => {
+            const number = String(index + 1).padStart(2, "0");
+            return `
+            <details class="structure-conclusion-card">
+              <summary class="structure-conclusion-summary">
+                <span>${number}</span>
+                <div>
+                  <h4>${escapeHtml(section.title)}</h4>
+                  <p>${escapeHtml(section.body)}</p>
+                </div>
+                <em>Details</em>
+              </summary>
+              <div class="structure-conclusion-detail">
+                <div class="structure-conclusion-copy">
                 ${section.points?.length ? `<ul>${section.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul>` : ""}
+                </div>
+                ${section.chart ? renderStructureMiniChart(section.chart) : ""}
               </div>
-              ${section.chart ? renderStructureMiniChart(section.chart) : ""}
-            </article>
-          `).join("")}
+            </details>
+          `;}).join("")}
         </div>
       ` : ""}
     </section>

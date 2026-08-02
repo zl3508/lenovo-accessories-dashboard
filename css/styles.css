@@ -2242,7 +2242,7 @@ input[type="search"] {
 
 .structure-overview-copy h3 {
   margin: 0;
-  font-size: clamp(22px, 2.2vw, 32px);
+  font-size: clamp(22px, 2vw, 30px);
 }
 
 .structure-overview-copy p,
@@ -2399,26 +2399,37 @@ input[type="search"] {
 
 .structure-conclusion-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
 .structure-conclusion-card {
-  display: grid;
-  grid-template-columns: minmax(0, 0.98fr) minmax(220px, 1.02fr);
-  gap: 14px;
-  padding: 16px;
+  display: block;
+  overflow: hidden;
+  padding: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.9);
 }
 
-.structure-conclusion-copy {
-  display: grid;
-  gap: 8px;
-  align-content: start;
+.structure-conclusion-card[open] {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 18%, transparent);
 }
 
-.structure-conclusion-copy > span {
+.structure-conclusion-summary {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.structure-conclusion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.structure-conclusion-summary > span {
   display: grid;
   place-items: center;
   width: 32px;
@@ -2429,9 +2440,49 @@ input[type="search"] {
   font-weight: 900;
 }
 
-.structure-conclusion-copy h4 {
+.structure-conclusion-summary h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.structure-conclusion-summary p {
   margin: 0;
-  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.structure-conclusion-summary em {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.structure-conclusion-card[open] .structure-conclusion-summary {
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--red) 4%, white);
+}
+
+.structure-conclusion-card[open] .structure-conclusion-summary em {
+  border-color: color-mix(in srgb, var(--red) 34%, var(--line));
+  color: var(--red);
+}
+
+.structure-conclusion-detail {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.56fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px 16px 16px;
+}
+
+.structure-conclusion-copy {
+  display: grid;
+  gap: 8px;
+  align-content: start;
 }
 
 .structure-conclusion-copy p,
@@ -2570,16 +2621,18 @@ input[type="search"] {
 
 .structure-country-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 10px;
   align-content: start;
 }
 
 .structure-country-card {
   display: grid;
-  gap: 9px;
-  min-height: 148px;
-  padding: 14px;
+  grid-template-columns: auto minmax(170px, 0.42fr) minmax(280px, 0.78fr) minmax(260px, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 88px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -2605,7 +2658,7 @@ input[type="search"] {
 }
 
 .structure-country-name {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 850;
 }
 
@@ -2645,7 +2698,7 @@ input[type="search"] {
 
 .structure-report-layout {
   display: grid;
-  grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr);
+  grid-template-columns: 1fr;
   gap: 14px;
   align-items: start;
 }
@@ -3498,6 +3551,14 @@ input[type="search"] {
     grid-template-columns: 1fr;
   }
 
+  .structure-country-card {
+    grid-template-columns: auto minmax(180px, 0.55fr) minmax(0, 1fr);
+  }
+
+  .structure-card-note {
+    grid-column: 2 / -1;
+  }
+
   .structure-country-chart-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3593,9 +3654,12 @@ input[type="search"] {
   .structure-summary-bullets,
   .structure-conclusion-grid,
   .structure-conclusion-card,
+  .structure-conclusion-summary,
+  .structure-conclusion-detail,
   .structure-trend-panel,
   .structure-country-insights,
   .structure-country-chart-grid,
+  .structure-country-card,
   .structure-report-head,
   .structure-story-grid,
   .structure-metric-section,
@@ -3636,6 +3700,10 @@ input[type="search"] {
 
   .product-list-tools input[type="search"] {
     width: 100%;
+  }
+
+  .structure-card-note {
+    grid-column: auto;
   }
 
   .chart-shell.is-wide {

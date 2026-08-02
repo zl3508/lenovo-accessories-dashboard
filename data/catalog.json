@@ -437,8 +437,8 @@
       "title": "Adapter Market Structure",
       "overview": {
         "eyebrow": "Market Structure Summary",
-        "heading": "The adapter market is growing steadily, but the winning structure is shifting toward USB-C PD, 65W-100W, online retail, and localized portfolios.",
-        "body": "The market recovered from the 2022 dip and returned to steady expansion after 2023. By 2025 it reached $4.45B, with the next phase driven less by basic replacement demand and more by universal charging standards, premium GaN form factors, multi-device use, and region-specific channel execution.",
+        "heading": "Global Market Summary",
+        "body": "The adapter market is growing steadily. The winning structure is shifting toward USB-C PD, 65W-100W mainstream demand, online retail execution, premium GaN form factors, and localized country portfolios.",
         "bullets": [
           "Growth is not a short spike: the market moves from $3.45B in 2020 to $7.08B in 2032, with 2025-2032 CAGR at 6.85%.",
           "APAC is the largest structural block at 40.21%, while North America and Europe together remain the key premium and enterprise demand pools.",
@@ -541,8 +541,8 @@
         },
         "conclusions": [
           {
-            "title": "APAC owns scale; NA and Europe own premium discipline.",
-            "body": "Adapter demand is not evenly distributed. APAC leads by revenue share, while North America and Europe are still large enough to shape premium, enterprise, and compliance-led product planning.",
+            "title": "Regional Summary",
+            "body": "APAC owns scale; North America and Europe remain the key premium and enterprise demand pools.",
             "points": [
               "APAC is above 40% of 2025 market value.",
               "North America and Europe together are close to half of the market."
@@ -580,8 +580,8 @@
             }
           },
           {
-            "title": "GaN is already strategic even before it becomes the majority.",
-            "body": "Silicon-based chargers still dominate by value, but GaN has crossed 30% share and directly supports the premium story: compact, cooler, higher-efficiency, multi-port charging.",
+            "title": "Technology Summary",
+            "body": "GaN is already strategic even before it becomes the majority technology.",
             "points": [
               "GaN share is large enough to define premium positioning.",
               "Silicon remains necessary for cost and supply stability."
@@ -604,8 +604,8 @@
             }
           },
           {
-            "title": "65W-100W is the commercial center of gravity.",
-            "body": "The largest band is 65W-100W, which matches mainstream commercial and consumer notebooks. Below 65W remains nearly as large, while 100W+ is smaller but strategically tied to high-end laptops and PD 3.1.",
+            "title": "Power Segment Summary",
+            "body": "65W-100W is the commercial center of gravity, while 100W+ remains a premium signal.",
             "points": [
               "65W-100W is the main revenue pool.",
               "100W+ should be treated as a premium capability signal."
@@ -633,8 +633,8 @@
             }
           },
           {
-            "title": "Online is the default shelf, but not the only purchase logic.",
-            "body": "Online retail is the largest channel because buyers can compare specs and price quickly. Offline stores and direct OEM routes still matter for immediate service, enterprise procurement, and brand-trust decisions.",
+            "title": "Channel Summary",
+            "body": "Online retail is the default shelf, but offline and OEM routes still protect trust-sensitive demand.",
             "points": [
               "Online retail is above 58% of global value.",
               "OEM and offline execution still protect trust-sensitive demand."
