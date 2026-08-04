@@ -132,6 +132,7 @@ const policyImpactWindows = [
 const dimensionLabels = {
   segment: "Segment",
   product: "Product",
+  competitor: "Competitor",
   user: "User",
 };
 
@@ -1301,60 +1302,108 @@ function marketImplicationText(market, report, topDemand, topChannel) {
 }
 
 function renderCompetitiveAnalysis(categoryId) {
-  const products = data.catalog.products.filter((product) => product.categoryId === categoryId);
-  const selectedProduct = selectedCompetitorLenovoProduct(categoryId, products);
-  const selectedCountry = selectedCompetitorCountry(categoryId);
-  const rows = competitorRowsForSelection(categoryId, selectedProduct.id, selectedCountry.code);
-  const summary = summarizeCompetitorRows(rows, selectedProduct);
-
+  const report = industryBrandReport(categoryId);
   return `
     <div class="view-stack">
-      ${renderIndustryTrendsModule(categoryId, { eyebrow: "Industry Trend", title: "Industry Trend" })}
       <section class="competitor-analysis-part">
         <div class="module-head">
-          <span>Product Analysis</span>
-          <h2>Product Analysis</h2>
+          <span>Company Profiles</span>
+          <h2>Company Profiles</h2>
+          <p>Review the companies shaping the ${escapeHtml(indexes.categories.get(categoryId)?.label || "category")} market. Select a company module to open its detailed positioning, strategy, and representative products.</p>
         </div>
-      <section class="competitor-control-panel">
-        <div>
-          <p class="eyebrow">Competitive Analysis</p>
-          <h2>Marketplace Competitor Comparison</h2>
-          <p>Select a Lenovo product and market to review 1-2 mainstream ecommerce competitors with product image, pricing, sales velocity, seller, rating, and spec signals.</p>
-        </div>
-        <div class="competitor-filters">
-          <label class="filter-group">
-            <span>Lenovo Product</span>
-            <select data-action="competitor-lenovo-product">
-              ${products.map((product) => `<option value="${escapeAttr(product.id)}" ${product.id === selectedProduct.id ? "selected" : ""}>${escapeHtml(product.name)}</option>`).join("")}
-            </select>
-          </label>
-          <label class="filter-group">
-            <span>Country / Market</span>
-            <select data-action="competitor-country">
-              ${competitorCountries.map((country) => `<option value="${escapeAttr(country.code)}" ${country.code === selectedCountry.code ? "selected" : ""}>${escapeHtml(country.label)}</option>`).join("")}
-            </select>
-          </label>
-        </div>
-      </section>
-
-      <section class="competitor-market-header">
-        ${renderCompetitorLenovoContext(selectedProduct)}
-        <div class="competitor-market-kpis">
-          ${renderCompetitorKpi("Loaded Competitors", fmtExactNumber(rows.length), selectedCountry.label)}
-          ${renderCompetitorKpi("Monthly Sales Qty", fmtExactNumber(summary.monthlyUnits), "marketplace export")}
-          ${renderCompetitorKpi("Monthly Sales Revenue", fmtExactCurrency(summary.monthlyRevenue), "marketplace export")}
-          ${renderCompetitorKpi("Weighted AUR", fmtExactCurrency(summary.aur), "revenue / sales qty")}
-          ${renderCompetitorKpi("Avg Rating", summary.rating ? summary.rating.toFixed(1) : "—", "review-weighted")}
-          ${renderCompetitorKpi("Avg Price Index", summary.priceIndex ? `${(summary.priceIndex * 100).toFixed(1)}%` : "—", "vs Lenovo RSP")}
-        </div>
-      </section>
-
-      <section class="competitor-results">
-        ${rows.length ? rows.map((row) => renderMarketplaceCompetitorCard(row, selectedProduct)).join("") : renderCompetitorEmptyState(selectedProduct, selectedCountry)}
-      </section>
+        ${report?.brands?.length ? `<div class="company-profile-grid">${report.brands.map(renderCompanyProfileCard).join("")}</div>` : renderCompanyProfileEmpty(categoryId)}
       </section>
     </div>
   `;
+}
+
+function renderCompanyProfileCard(brand) {
+  const details = [
+    brand.strategy?.length ? renderCompanyDetailGroup("Strategic Focus", brand.strategy) : "",
+    brand.portfolio?.length ? renderCompanyDetailGroup("Portfolio Architecture", brand.portfolio) : "",
+    brand.pricing?.length ? renderCompanyDetailGroup("Pricing and Promotion", brand.pricing) : "",
+    brand.countries?.length ? renderCompanyCountryDetails(brand.countries) : "",
+    brand.products?.length ? renderCompanyProducts(brand.products) : "",
+  ].filter(Boolean).join("");
+  return `
+    <details class="company-profile-card">
+      <summary>
+        <img class="company-logo-image" src="${escapeAttr(brandLogoPath(brand))}" alt="${escapeAttr(brand.brand)} logo" loading="lazy">
+        <span class="company-profile-summary">
+          <span class="tag">${escapeHtml(brand.role || "Market Participant")}</span>
+          <strong>${escapeHtml(brand.brand)}</strong>
+          <span>${escapeHtml(brand.summary || "Company profile available in the category report.")}</span>
+        </span>
+        <span class="company-profile-caret" aria-hidden="true">+</span>
+      </summary>
+      <div class="company-profile-detail">
+        ${brand.metrics?.length ? `<div class="company-profile-metrics">${brand.metrics.map(renderIndustryMetric).join("")}</div>` : ""}
+        ${details || `<p class="product-meta">No additional company detail is loaded for this category.</p>`}
+      </div>
+    </details>
+  `;
+}
+
+function brandLogoPath(brand) {
+  const key = idFromText(brand?.brand);
+  return `assets/brands/${["anker", "baseus", "ugreen"].includes(key) ? key : "generic"}.svg`;
+}
+
+function renderCompanyDetailGroup(title, items) {
+  return `
+    <section class="company-detail-group">
+      <h4>${escapeHtml(title)}</h4>
+      <ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+    </section>
+  `;
+}
+
+function renderCompanyCountryDetails(countries) {
+  return `
+    <section class="company-detail-group company-country-details">
+      <h4>Country Strategy</h4>
+      <div class="company-country-list">
+        ${countries.map((country) => `
+          <article>
+            <header><strong>${escapeHtml(country.market)}</strong><span>${escapeHtml(country.model || "")}</span></header>
+            ${(country.metrics || []).length ? `<div class="company-country-metrics">${country.metrics.map(renderIndustryMetric).join("")}</div>` : ""}
+            <ul>${(country.strategy || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+            ${country.implication ? `<p>${escapeHtml(country.implication)}</p>` : ""}
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderCompanyProducts(products) {
+  return `
+    <section class="company-detail-group">
+      <h4>Representative Products</h4>
+      <div class="company-product-list">
+        ${products.map((product) => `
+          <article class="company-product-item">
+            <a class="company-product-image" href="${escapeAttr(product.productUrl || product.amazonUrl || "#")}" target="_blank" rel="noreferrer">
+              <img src="${escapeAttr(product.imageUrl || "")}" alt="${escapeAttr(product.name)}" loading="lazy">
+            </a>
+            <div>
+              <strong>${escapeHtml(product.name)}</strong>
+              <span>${escapeHtml(product.price || "Price varies")}</span>
+              <p>${escapeHtml(product.positioning || "")}</p>
+              <div class="company-product-links">
+                ${product.productUrl ? `<a href="${escapeAttr(product.productUrl)}" target="_blank" rel="noreferrer">Official site</a>` : ""}
+                ${product.amazonUrl ? `<a href="${escapeAttr(product.amazonUrl)}" target="_blank" rel="noreferrer">Amazon</a>` : ""}
+              </div>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderCompanyProfileEmpty(categoryId) {
+  return `<div class="empty-state"><div><h3>No company profiles loaded</h3><p>Company-level profiles are not yet configured for ${escapeHtml(indexes.categories.get(categoryId)?.label || "this category")}.</p></div></div>`;
 }
 
 function selectedCompetitorLenovoProduct(categoryId, products) {
@@ -2890,7 +2939,7 @@ function renderProductDetail(productId) {
   const partNumbers = product.partNumbers || variants.map((variant) => variant.partNumber || variant.name);
   const selectedPartNumber = state.partNumber === "all" || partNumbers.includes(state.partNumber) ? state.partNumber : "all";
   state.partNumber = selectedPartNumber;
-  if (!["segment", "product", "user"].includes(state.dimension)) state.dimension = "segment";
+  if (!["segment", "product", "competitor", "user"].includes(state.dimension)) state.dimension = "segment";
   const detailKpis = renderDetailKpis(product, selectedPartNumber);
 
   app.innerHTML = `
@@ -2971,6 +3020,9 @@ function renderDetailSelector(product, partNumbers, selectedPartNumber) {
       </div>
     `;
   }
+  if (state.dimension === "competitor") {
+    return `<p class="product-meta">Compare this Lenovo product with 1-2 mainstream marketplace competitors by country.</p>`;
+  }
   return `<p class="product-meta">Product-level user overview. Segment and PN filters are intentionally disabled for this view.</p>`;
 }
 
@@ -3035,6 +3087,10 @@ function renderDetailKpis(product, selectedPartNumber) {
 function renderDetailCharts(product, selectedPartNumber) {
   const target = document.querySelector("#detailCharts");
   if (!target) return;
+  if (state.dimension === "competitor") {
+    target.innerHTML = renderProductCompetitorDimension(product);
+    return;
+  }
   const geoMetric = flowMetricConfig(state.detailGeoMetric);
   if (state.dimension === "user") {
     target.innerHTML = `
@@ -3136,6 +3192,43 @@ function renderDetailCharts(product, selectedPartNumber) {
     drawDetailProductPerformance(product, selectedPartNumber);
     drawProductGeoDetail(product, focusFilters);
   }
+}
+
+function renderProductCompetitorDimension(product) {
+  const selectedCountry = selectedCompetitorCountry(product.categoryId);
+  const rows = competitorRowsForSelection(product.categoryId, product.id, selectedCountry.code);
+  const summary = summarizeCompetitorRows(rows, product);
+  return `
+    <section class="product-competitor-module">
+      <header class="product-competitor-head">
+        <div>
+          <p class="eyebrow">Competitor Dimension</p>
+          <h2>Marketplace Competitor Comparison</h2>
+          <p>Review comparable products for this Lenovo model by country. Marketplace metrics are shown only when a source export has been loaded.</p>
+        </div>
+        <label class="filter-group product-competitor-country">
+          <span>Country / Market</span>
+          <select data-action="competitor-country">
+            ${competitorCountries.map((country) => `<option value="${escapeAttr(country.code)}" ${country.code === selectedCountry.code ? "selected" : ""}>${escapeHtml(country.label)}</option>`).join("")}
+          </select>
+        </label>
+      </header>
+      <section class="competitor-market-header">
+        ${renderCompetitorLenovoContext(product)}
+        <div class="competitor-market-kpis">
+          ${renderCompetitorKpi("Loaded Competitors", fmtExactNumber(rows.length), selectedCountry.label)}
+          ${renderCompetitorKpi("Monthly Sales Qty", fmtExactNumber(summary.monthlyUnits), "marketplace export")}
+          ${renderCompetitorKpi("Monthly Sales Revenue", fmtExactCurrency(summary.monthlyRevenue), "marketplace export")}
+          ${renderCompetitorKpi("Weighted AUR", fmtExactCurrency(summary.aur), "revenue / sales qty")}
+          ${renderCompetitorKpi("Avg Rating", summary.rating ? summary.rating.toFixed(1) : "—", "review-weighted")}
+          ${renderCompetitorKpi("Avg Price Index", summary.priceIndex ? `${(summary.priceIndex * 100).toFixed(1)}%` : "—", "vs Lenovo RSP")}
+        </div>
+      </section>
+      <section class="competitor-results">
+        ${rows.length ? rows.map((row) => renderMarketplaceCompetitorCard(row, product)).join("") : renderCompetitorEmptyState(product, selectedCountry)}
+      </section>
+    </section>
+  `;
 }
 
 function detailChartRow(mainMarkup, sideMarkup = "", modifier = "") {

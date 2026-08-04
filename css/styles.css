@@ -810,6 +810,289 @@ input[type="search"] {
   gap: 14px;
 }
 
+.company-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.company-profile-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.company-profile-card[open] {
+  grid-column: 1 / -1;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 24%, transparent);
+}
+
+.company-profile-card summary {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 24px;
+  gap: 14px;
+  align-items: center;
+  min-height: 188px;
+  padding: 18px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.company-profile-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.company-logo-image {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  box-shadow: 0 10px 22px rgba(31, 35, 40, 0.14);
+}
+
+.company-logo-anker {
+  background: #111827;
+}
+
+.company-logo-baseus {
+  background: #e2231a;
+}
+
+.company-logo-ugreen {
+  background: #0f766e;
+}
+
+.company-profile-summary {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.company-profile-summary > strong {
+  font-size: 22px;
+}
+
+.company-profile-summary > span:last-child {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted);
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.company-profile-caret {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--red);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.company-profile-card[open] .company-profile-caret {
+  transform: rotate(45deg);
+}
+
+.company-profile-detail {
+  display: grid;
+  gap: 16px;
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(226, 35, 26, 0.035), rgba(255, 255, 255, 0.96));
+}
+
+.company-profile-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding-top: 16px;
+}
+
+.company-profile-metrics > div,
+.company-country-metrics > div {
+  min-height: 64px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.company-profile-metrics > div span,
+.company-country-metrics > div span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.company-profile-metrics > div strong,
+.company-country-metrics > div strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+}
+
+.company-detail-group {
+  display: grid;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.company-detail-group h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.company-detail-group ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.company-country-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.company-country-list article {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.company-country-list header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.company-country-list header span,
+.company-country-list p {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.company-country-list p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.company-country-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.company-country-list article ul {
+  font-size: 12px;
+}
+
+.company-product-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.company-product-item {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.company-product-image {
+  display: grid;
+  place-items: center;
+  height: 104px;
+  padding: 8px;
+  background: var(--surface-soft);
+}
+
+.company-product-image img {
+  width: 100%;
+  height: 88px;
+  object-fit: contain;
+}
+
+.company-product-item > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.company-product-item > div > span,
+.company-product-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.company-product-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.product-competitor-module {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 14px;
+}
+
+.product-competitor-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 18px;
+  align-items: end;
+  padding: 18px;
+  border-left: 4px solid var(--red);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.product-competitor-head h2 {
+  margin: 0;
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.product-competitor-head p:not(.eyebrow) {
+  max-width: 800px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.product-competitor-country {
+  min-width: 0;
+}
+
 .marketplace-competitor-card {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
@@ -3669,6 +3952,7 @@ input[type="search"] {
   .competitor-control-panel,
   .competitor-market-header,
   .marketplace-competitor-card,
+  .product-competitor-head,
   .detail-hero,
   .product-browser {
     grid-template-columns: 1fr;
@@ -3686,6 +3970,7 @@ input[type="search"] {
 
   .category-grid,
   .competitor-grid,
+  .company-profile-grid,
   .matrix-card-grid,
   .industry-brand-head,
   .policy-region-tabs,
@@ -3777,6 +4062,19 @@ input[type="search"] {
 }
 
 @media (max-width: 760px) {
+  .company-profile-card summary {
+    grid-template-columns: 70px minmax(0, 1fr) 24px;
+    min-height: 150px;
+    padding: 14px;
+  }
+
+  .company-logo-image {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    font-size: 12px;
+  }
+
   .topbar,
   .section-head,
   .page-head,
@@ -3804,6 +4102,11 @@ input[type="search"] {
   .competitor-boss-grid,
   .competitor-detail-grid,
   .competitor-lenovo-context,
+  .company-profile-grid,
+  .company-profile-metrics,
+  .company-country-list,
+  .company-product-list,
+  .company-country-metrics,
   .policy-region-tabs,
   .policy-region-grid,
   .policy-impact-columns,
