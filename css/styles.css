@@ -2639,6 +2639,11 @@ input[type="search"] {
   line-height: 1.5;
 }
 
+.global-market-size-plot {
+  height: 360px;
+  min-width: 0;
+}
+
 .structure-vertical-chart {
   display: grid;
   grid-template-columns: repeat(13, minmax(28px, 1fr));
@@ -2760,6 +2765,21 @@ input[type="search"] {
   grid-template-columns: minmax(240px, 0.56fr) minmax(0, 1fr);
   gap: 14px;
   padding: 14px 16px 16px;
+}
+
+.structure-conclusion-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.structure-conclusion-charts > .structure-mini-chart:only-child {
+  grid-column: 1 / -1;
+}
+
+.structure-pie-plot {
+  height: 286px;
 }
 
 .structure-conclusion-copy {
@@ -4133,6 +4153,7 @@ input[type="search"] {
   .structure-conclusion-card,
   .structure-conclusion-summary,
   .structure-conclusion-detail,
+  .structure-conclusion-charts,
   .structure-trend-panel,
   .structure-country-insights,
   .structure-country-chart-grid,

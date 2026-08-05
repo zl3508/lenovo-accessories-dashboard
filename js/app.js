@@ -80,7 +80,7 @@ const categoryViews = {
 };
 
 const marketModules = {
-  global: "Global",
+  global: "Global Overview",
   NA: "NA",
   EMEA: "EMEA",
   AP: "AP",
@@ -426,8 +426,9 @@ function renderGlobalMarketModule(categoryId) {
     return `
       <section class="module-block">
         <div class="module-head">
-          <span>Global</span>
-          <h2>Global Market</h2>
+          <span>Global Overview</span>
+          <h2>Global Laptop Charger Market</h2>
+          <p>Market Size, Competitive Landscape, Product Structure and Channel Mix</p>
         </div>
         ${renderMarketStructureOverview(report)}
       </section>
@@ -1003,13 +1004,14 @@ function renderMarketStructureOverview(report) {
             <h4>${escapeHtml(overview.trend.title || "Market Size Trend")}</h4>
             ${overview.trend.note ? `<p>${escapeHtml(overview.trend.note)}</p>` : ""}
           </div>
-          ${renderStructureVerticalChart(overview.trend)}
+          <div id="globalMarketSizeTrendPlot" class="plot global-market-size-plot"></div>
         </article>
       ` : ""}
       ${conclusions.length ? `
         <div class="structure-conclusion-grid">
           ${conclusions.map((section, index) => {
             const number = String(index + 1).padStart(2, "0");
+            const charts = section.charts || (section.chart ? [section.chart] : []);
             return `
             <details class="structure-conclusion-card">
               <summary class="structure-conclusion-summary">
@@ -1024,13 +1026,25 @@ function renderMarketStructureOverview(report) {
                 <div class="structure-conclusion-copy">
                 ${section.points?.length ? `<ul>${section.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul>` : ""}
                 </div>
-                ${section.chart ? renderStructureMiniChart(section.chart) : ""}
+                ${charts.length ? `<div class="structure-conclusion-charts">${charts.map((chart, chartIndex) => renderStructurePlotPanel(chart, `${idFromText(section.title)}-${chartIndex}`)).join("")}</div>` : ""}
               </div>
             </details>
           `;}).join("")}
         </div>
       ` : ""}
     </section>
+  `;
+}
+
+function renderStructurePlotPanel(chart, chartId) {
+  return `
+    <div class="structure-mini-chart structure-plot-panel">
+      <div class="structure-mini-chart-head">
+        <strong>${escapeHtml(chart.title || "Share")}</strong>
+        <span>${escapeHtml(chart.center || "Selected period")}</span>
+      </div>
+      <div id="structurePlot-${escapeAttr(chartId)}" class="plot structure-pie-plot"></div>
+    </div>
   `;
 }
 
@@ -2175,7 +2189,130 @@ function dualMetricBarLayout(metric, overrides = {}) {
   };
 }
 
+function drawGlobalMarketStructure(report) {
+  const overview = report?.overview;
+  if (!overview) return;
+  drawGlobalMarketTrend(overview.trend);
+  const conclusions = overview.conclusions || overview.sections || [];
+  conclusions.forEach((section) => {
+    const charts = section.charts || (section.chart ? [section.chart] : []);
+    charts.forEach((chart, chartIndex) => {
+      drawStructurePiePlot(`structurePlot-${idFromText(section.title)}-${chartIndex}`, chart);
+    });
+  });
+}
+
+function drawGlobalMarketTrend(trend) {
+  const node = document.getElementById("globalMarketSizeTrendPlot");
+  if (!node || !trend?.items?.length || !window.Plotly) return;
+  const items = trend.items;
+  const years = items.map((item) => item.label);
+  const values = items.map((item) => (Number(item.value) || 0) / 1000);
+  const growth = values.map((value, index) => (index === 0 ? null : ((value - values[index - 1]) / values[index - 1]) * 100));
+  const labels = years.map((year) => (["2025", "2026", "2027", "2032"].includes(year) ? `$${values[years.indexOf(year)].toFixed(2)}B` : ""));
+  const historicalEnd = years.indexOf("2025");
+  const forecastStart = years.indexOf("2026");
+  const shapes = forecastStart >= 0
+    ? [{
+        type: "rect",
+        xref: "x",
+        yref: "paper",
+        x0: forecastStart - 0.5,
+        x1: years.length - 0.5,
+        y0: 0,
+        y1: 1,
+        fillcolor: "rgba(226, 35, 26, 0.055)",
+        line: { width: 0 },
+        layer: "below",
+      }, {
+        type: "line",
+        xref: "x",
+        yref: "paper",
+        x0: historicalEnd + 0.5,
+        x1: historicalEnd + 0.5,
+        y0: 0,
+        y1: 1,
+        line: { color: "#9ca3af", width: 1.5, dash: "dash" },
+      }]
+    : [];
+  drawPlot(
+    "globalMarketSizeTrendPlot",
+    [
+      {
+        x: years,
+        y: values,
+        text: labels,
+        textposition: "outside",
+        textfont: { size: 11, color: "#1f2328" },
+        hovertemplate: "<b>%{x}</b><br>Market Size: $%{y:.2f}B<extra></extra>",
+        name: "Market Size",
+        type: "bar",
+        marker: { color: years.map((year) => year <= "2025" ? "#e98079" : "#f3b7b2") },
+        cliponaxis: false,
+      },
+      {
+        x: years,
+        y: growth,
+        yaxis: "y2",
+        name: "YoY Growth",
+        type: "scatter",
+        mode: "lines+markers",
+        line: { color: "#1f2328", width: 2.5 },
+        marker: { size: 6, color: "#1f2328" },
+        hovertemplate: "<b>%{x}</b><br>YoY Growth: %{y:.2f}%<extra></extra>",
+      },
+    ],
+    {
+      margin: { l: 58, r: 64, t: 24, b: 54 },
+      barmode: "group",
+      shapes,
+      xaxis: { title: "Year", type: "category" },
+      yaxis: { title: "Market Size", ticksuffix: "B", tickprefix: "$" },
+      yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false },
+      legend: { orientation: "h", y: -0.2, x: 0 },
+      annotations: forecastStart >= 0 ? [
+        { x: years[historicalEnd], y: 1.08, xref: "x", yref: "paper", text: "Historical", showarrow: false, font: { size: 11, color: "#6b7280" } },
+        { x: years[Math.min(forecastStart + 2, years.length - 1)], y: 1.08, xref: "x", yref: "paper", text: "Forecast", showarrow: false, font: { size: 11, color: "#e2231a" } },
+      ] : [],
+    },
+  );
+}
+
+function drawStructurePiePlot(id, chart) {
+  const node = document.getElementById(id);
+  if (!node || !chart?.items?.length || !window.Plotly) return;
+  const items = chart.items;
+  const total = items.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+  drawPlot(
+    id,
+    [{
+      labels: items.map((item) => item.label),
+      values: items.map((item) => Number(item.value) || 0),
+      type: "pie",
+      hole: 0.56,
+      sort: false,
+      direction: "clockwise",
+      textinfo: "label+percent",
+      textposition: "outside",
+      texttemplate: "%{label}<br>%{percent:.1%}",
+      hovertemplate: "<b>%{label}</b><br>%{value:.2f}%<br>Share: %{percent:.1%}<extra></extra>",
+      marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
+      customdata: items.map((item) => [item.label, item.value, total]),
+    }],
+    {
+      margin: { l: 78, r: 78, t: 54, b: 38 },
+      showlegend: false,
+      hoverlabel: { bgcolor: "#1f2328", font: { color: "#ffffff" } },
+      uniformtext: { minsize: 10, mode: "hide" },
+    },
+  );
+}
+
 function drawMarketAnalysis(categoryId) {
+  if (state.marketModule === "global" && marketStructureReport(categoryId)?.overview) {
+    drawGlobalMarketStructure(marketStructureReport(categoryId));
+    return;
+  }
   if (marketModules[state.marketModule]) {
     return;
   }
