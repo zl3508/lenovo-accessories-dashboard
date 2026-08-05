@@ -436,8 +436,9 @@
     "adapter": {
       "title": "Adapter Market Structure",
       "overview": {
-        "eyebrow": "Overview",
-        "heading": "Market Overview",
+        "eyebrow": "Global Overview",
+        "heading": "Global Laptop Charger Market",
+        "subtitle": "Market Size, Competitive Landscape, Product Structure and Channel Mix",
         "body": "The global laptop charger market is expanding steadily, driven by USB-C PD standardization, demand for replacement and multi-device charging, and the adoption of compact GaN designs. Market growth is global, but product preferences and channel strategies remain highly localized.",
         "bullets": [
           "Growth is not a short spike: the market moves from $3.45B in 2020 to $7.08B in 2032, with 2025-2032 CAGR at 6.85%.",
@@ -543,6 +544,10 @@
           {
             "title": "Regional Summary",
             "body": "APAC leads the market by scale, while North America and Europe together contribute 48.82% of global value and remain important premium and enterprise markets.",
+            "summaryPoints": [
+              "APAC leads the market by scale, supported by a large consumer base and electronics manufacturing ecosystem.",
+              "North America and Europe together contribute 48.82% of global value and remain important premium and enterprise markets."
+            ],
             "points": [
               "APAC accounts for more than 40% of the global market, supported by its large consumer base and established electronics manufacturing ecosystem.",
               "Regional execution remains highly differentiated, requiring localized product, pricing and channel strategies."
@@ -583,6 +588,10 @@
           {
             "title": "Product & Technology Structure Summary",
             "body": "The market is concentrated below 100W, with the 65W–100W segment leading narrowly. GaN has reached meaningful scale, although silicon-based chargers still dominate total market value.",
+            "summaryPoints": [
+              "The market is concentrated below 100W, with the 65W–100W segment leading narrowly.",
+              "GaN has reached meaningful scale, although silicon-based chargers still dominate total market value."
+            ],
             "points": [
               "65W–100W represents the largest power segment, but below-65W products remain almost equally important.",
               "Above-100W chargers remain a smaller, high-performance segment serving premium laptops, gaming devices and workstations.",
@@ -633,6 +642,10 @@
           {
             "title": "Channel Summary",
             "body": "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery. Offline and OEM channels remain relevant where buyers value immediate service, warranty support, product compatibility and direct brand relationships.",
+            "summaryPoints": [
+              "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery.",
+              "Offline and OEM channels remain relevant where buyers value immediate service, warranty support, compatibility and direct brand relationships."
+            ],
             "points": [
               "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery.",
               "Offline and OEM channels remain relevant where buyers value immediate service, warranty support, product compatibility and direct brand relationships."

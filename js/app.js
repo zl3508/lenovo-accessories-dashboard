@@ -425,11 +425,6 @@ function renderGlobalMarketModule(categoryId) {
   if (report?.overview) {
     return `
       <section class="module-block">
-        <div class="module-head">
-          <span>Global Overview</span>
-          <h2>Global Laptop Charger Market</h2>
-          <p>Market Size, Competitive Landscape, Product Structure and Channel Mix</p>
-        </div>
         ${renderMarketStructureOverview(report)}
       </section>
     `;
@@ -984,6 +979,7 @@ function renderMarketStructureOverview(report) {
       <div class="structure-overview-copy">
         <span>${escapeHtml(overview.eyebrow || "Report Summary")}</span>
         <h3>${escapeHtml(overview.heading || "Global Market Summary")}</h3>
+        ${overview.subtitle ? `<p class="structure-overview-subtitle">${escapeHtml(overview.subtitle)}</p>` : ""}
         <p>${escapeHtml(overview.body || "")}</p>
       </div>
       ${metrics.length ? `
@@ -1018,7 +1014,7 @@ function renderMarketStructureOverview(report) {
                 <span>${number}</span>
                 <div>
                   <h4>${escapeHtml(section.title)}</h4>
-                  <p>${escapeHtml(section.body)}</p>
+                  ${section.summaryPoints?.length ? `<ol class="structure-conclusion-summary-points">${section.summaryPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>` : `<p>${escapeHtml(section.body)}</p>`}
                 </div>
                 <em>Details</em>
               </summary>
@@ -2206,19 +2202,18 @@ function drawGlobalMarketTrend(trend) {
   const node = document.getElementById("globalMarketSizeTrendPlot");
   if (!node || !trend?.items?.length || !window.Plotly) return;
   const items = trend.items;
-  const years = items.map((item) => item.label);
+  const years = items.map((item) => Number(item.label));
   const values = items.map((item) => (Number(item.value) || 0) / 1000);
   const growth = values.map((value, index) => (index === 0 ? null : ((value - values[index - 1]) / values[index - 1]) * 100));
-  const labels = years.map((year) => (["2025", "2026", "2027", "2032"].includes(year) ? `$${values[years.indexOf(year)].toFixed(2)}B` : ""));
-  const historicalEnd = years.indexOf("2025");
-  const forecastStart = years.indexOf("2026");
+  const labels = years.map((year, index) => ([2025, 2026, 2027, 2032].includes(year) ? `$${values[index].toFixed(2)}B` : ""));
+  const forecastStart = years.indexOf(2026);
   const shapes = forecastStart >= 0
     ? [{
         type: "rect",
         xref: "x",
         yref: "paper",
-        x0: forecastStart - 0.5,
-        x1: years.length - 0.5,
+        x0: 2025.5,
+        x1: 2032.5,
         y0: 0,
         y1: 1,
         fillcolor: "rgba(226, 35, 26, 0.055)",
@@ -2228,8 +2223,8 @@ function drawGlobalMarketTrend(trend) {
         type: "line",
         xref: "x",
         yref: "paper",
-        x0: historicalEnd + 0.5,
-        x1: historicalEnd + 0.5,
+        x0: 2025.5,
+        x1: 2025.5,
         y0: 0,
         y1: 1,
         line: { color: "#9ca3af", width: 1.5, dash: "dash" },
@@ -2247,7 +2242,7 @@ function drawGlobalMarketTrend(trend) {
         hovertemplate: "<b>%{x}</b><br>Market Size: $%{y:.2f}B<extra></extra>",
         name: "Market Size",
         type: "bar",
-        marker: { color: years.map((year) => year <= "2025" ? "#e98079" : "#f3b7b2") },
+        marker: { color: years.map((year) => year <= 2025 ? "#e98079" : "#f3b7b2") },
         cliponaxis: false,
       },
       {
@@ -2266,14 +2261,10 @@ function drawGlobalMarketTrend(trend) {
       margin: { l: 58, r: 64, t: 24, b: 54 },
       barmode: "group",
       shapes,
-      xaxis: { title: "Year", type: "category" },
+      xaxis: { title: "Year", type: "linear", tickmode: "array", tickvals: years, ticktext: years.map(String), range: [2019.5, 2032.5], dtick: 1 },
       yaxis: { title: "Market Size", ticksuffix: "B", tickprefix: "$" },
       yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false },
       legend: { orientation: "h", y: -0.2, x: 0 },
-      annotations: forecastStart >= 0 ? [
-        { x: years[historicalEnd], y: 1.08, xref: "x", yref: "paper", text: "Historical", showarrow: false, font: { size: 11, color: "#6b7280" } },
-        { x: years[Math.min(forecastStart + 2, years.length - 1)], y: 1.08, xref: "x", yref: "paper", text: "Forecast", showarrow: false, font: { size: 11, color: "#e2231a" } },
-      ] : [],
     },
   );
 }
