@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260810-na-layout";
+const DATA_VERSION = "20260810-na-cards";
 
 const state = {
   categoryId: null,
@@ -189,7 +189,7 @@ async function init() {
     app.addEventListener("change", handleChange);
     app.addEventListener("input", handleInput);
     app.addEventListener("toggle", (event) => {
-      if (event.target.matches(".geo-na-detail-card") && event.target.open) {
+      if (event.target.matches(".geo-na-card-disclosure") && event.target.open) {
         requestAnimationFrame(() => drawNARegionalDetail(state.categoryId));
       }
     }, true);
@@ -542,19 +542,19 @@ function renderNARegionalDetail(categoryId, overview) {
           ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.user.body)}</p><ul class="geo-driver-list"><li>Multi-device compatibility leads at 52%.</li><li>Intelligent safety protection follows at 50%.</li><li>Super-fast charging is expected by 48% of surveyed consumers.</li><li>${escapeHtml(detail.user.noMajorPainPoint)} report no major pain point.</li></ul><div class="geo-detail-callout"><strong>Product Implication</strong><span>${escapeHtml(detail.user.implication)}</span></div></div><div class="geo-na-detail-visual"><div class="geo-user-layout"><div class="geo-user-kpi"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><div><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div></div></div></div></div>`)}
         </section>
 
-        <details class="geo-detail-section geo-na-detail-card geo-na-policy-card">
-          <summary class="geo-na-detail-summary">
+        <article class="geo-detail-section geo-na-detail-card geo-na-policy-card">
+          <div class="geo-na-detail-summary">
             <div class="geo-detail-section-head"><span>05</span><h3>${escapeHtml(detail.policy.title)}</h3></div>
-            <span class="geo-details-trigger">Details</span>
-          </summary>
+          </div>
           <div class="geo-na-policy-summary">
             <div><strong>Effective now</strong><p>${escapeHtml(detail.policy.effectiveSummary || detail.policy.body)}</p></div>
             <div><strong>Future direction</strong><p>${escapeHtml(detail.policy.futureSummary || "Monitor future requirements.")}</p></div>
           </div>
-          <div class="geo-na-detail-content">
-            <div class="geo-na-policy-detail-list">${[...effectivePolicy, ...futurePolicy].map((item) => `<article><span class="geo-policy-status">${escapeHtml(item.status || "Policy")}</span><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div></article>`).join("")}</div>
-          </div>
-        </details>
+          <details class="geo-na-card-disclosure">
+            <summary class="geo-details-trigger">Details</summary>
+            <div class="geo-na-detail-content"><div class="geo-na-policy-detail-list">${[...effectivePolicy, ...futurePolicy].map((item) => `<article><span class="geo-policy-status">${escapeHtml(item.status || "Policy")}</span><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div></article>`).join("")}</div></div>
+          </details>
+        </article>
       </section>
     </section>
   `;
@@ -562,14 +562,16 @@ function renderNARegionalDetail(categoryId, overview) {
 
 function renderNADetailCard(index, section, bullets, detailMarkup) {
   return `
-    <details class="geo-detail-section geo-na-detail-card">
-      <summary class="geo-na-detail-summary">
+    <article class="geo-detail-section geo-na-detail-card">
+      <div class="geo-na-detail-summary">
         <div class="geo-detail-section-head"><span>${String(index).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div>
-        <span class="geo-details-trigger">Details</span>
-      </summary>
+      </div>
       <ul class="geo-core-list">${bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      <div class="geo-na-detail-content">${detailMarkup}</div>
-    </details>
+      <details class="geo-na-card-disclosure">
+        <summary class="geo-details-trigger">Details</summary>
+        <div class="geo-na-detail-content">${detailMarkup}</div>
+      </details>
+    </article>
   `;
 }
 
