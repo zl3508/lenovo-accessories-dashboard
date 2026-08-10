@@ -437,9 +437,12 @@ function renderGeoOverviewModule(categoryId) {
     <section class="module-block">
       <section class="geo-overview-module">
         <header class="geo-overview-head">
-          <span>${escapeHtml(overview.eyebrow || "Geo Overview")}</span>
-          <h2>${escapeHtml(overview.heading || "Regional Market Summary")}</h2>
-          <p>${escapeHtml(overview.body || "")}</p>
+          <div class="geo-overview-copy">
+            <span>${escapeHtml(overview.eyebrow || "Geo Overview")}</span>
+            <h2>${escapeHtml(overview.heading || "Regional Market Summary")}</h2>
+            <p>${escapeHtml(overview.body || "")}</p>
+          </div>
+          ${overview.summaryPoints?.length ? `<ol class="geo-overview-points">${overview.summaryPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>` : ""}
         </header>
         <div class="geo-region-grid">
           ${(overview.regions || []).map(renderGeoRegionCard).join("")}
@@ -460,9 +463,9 @@ function renderGeoRegionCard(region) {
       ${region.id === "NA" ? `<button class="geo-region-card-hit" type="button" data-action="geo-region" data-region-id="NA" aria-label="Open NA regional overview"></button>` : ""}
       <div class="geo-region-map" id="geoOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
       <div class="geo-region-summary">
-        <p><strong class="geo-region-summary-label">Market</strong><span>${geoEmphasize(region.market)}</span></p>
-        <p><strong class="geo-region-summary-label">Characteristics</strong><span>${geoEmphasize(region.characteristics)}</span></p>
-        <p><strong class="geo-region-summary-label">Representative Country</strong><span>${geoEmphasize(region.representativeCountry)}</span></p>
+        <p>${geoEmphasize(region.market)}</p>
+        <p>${geoEmphasize(region.characteristics)}</p>
+        <p>${geoEmphasize(region.representativeCountry)}</p>
       </div>
     </article>
   `;
@@ -545,7 +548,7 @@ function renderNATextChartSection(section, label, chartId, listKey) {
     <article class="geo-detail-section">
       <div class="geo-detail-section-head"><span>01</span><h3>${escapeHtml(label)}</h3></div>
       <p>${escapeHtml(section.body)}</p>
-      <div class="geo-market-growth-row"><div><strong>USD 1.29B</strong><span>U.S. Power Adapter Market, 2024</span></div><div><strong>~10%</strong><span>Annual Market Growth <b aria-hidden="true">↗</b></span></div></div>
+      <div class="geo-market-growth-row"><div><strong>${escapeHtml(section.marketValue || "-")}</strong><span>U.S. Power Adapter Market, 2024</span></div><div><strong>${escapeHtml(section.growth || "-")}</strong><span>Annual Market Growth <b aria-hidden="true">↗</b></span></div></div>
       <ul class="geo-driver-list">${section[listKey].map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     </article>
   `;
@@ -2506,15 +2509,11 @@ function drawGeoOverviewMaps() {
         type: "choropleth",
         locationmode: "ISO-3",
         locations: map.countries,
-        z: map.countries.map((country) => region.id === "NA" ? (country === "USA" ? 2 : 1) : 1),
-        zmin: region.id === "NA" ? 1 : 0,
-        zmax: region.id === "NA" ? 2 : 1,
+        z: map.countries.map(() => 1),
         text: map.labels,
-        hovertemplate: `<b>${region.label}</b><br>%{text}<extra></extra>`,
+        hoverinfo: "skip",
         showscale: false,
-        colorscale: region.id === "NA"
-          ? [[0, "#eeeae2"], [0.49, "#eeeae2"], [0.5, "#f6b0a9"], [1, "#e2231a"]]
-          : [[0, colors[region.id] || "#e2231a"], [1, colors[region.id] || "#e2231a"]],
+        colorscale: [[0, colors[region.id] || "#e2231a"], [1, colors[region.id] || "#e2231a"]],
         marker: { line: { color: "#ffffff", width: 0.6 } },
       }],
       {
@@ -2526,9 +2525,7 @@ function drawGeoOverviewMaps() {
           fitbounds: "locations",
           showframe: false,
           showcoastlines: false,
-          showcountries: true,
-          countrycolor: "#d8d3ca",
-          countrywidth: 0.5,
+          showcountries: false,
           showland: true,
           landcolor: "#eeeae2",
           showocean: true,
@@ -2538,84 +2535,58 @@ function drawGeoOverviewMaps() {
       },
       { displayModeBar: false, staticPlot: true, responsive: false },
     );
-    if (region.id === "NA") {
-      Plotly.addTraces(node, {
-        type: "scattergeo",
-        lat: [37.1],
-        lon: [-95.7],
-        mode: "markers+text",
-        text: ["USA - Representative Country"],
-        textposition: "top center",
-        textfont: { size: 10, color: "#1f2328" },
-        marker: { size: 9, color: "#e2231a", line: { color: "#ffffff", width: 1.5 } },
-        hoverinfo: "skip",
-        showlegend: false,
-      });
-    }
   });
 }
 
 function drawNARegionalDetail(categoryId) {
   const detail = marketStructureReport(categoryId)?.geoOverview?.regions?.find((region) => region.id === "NA")?.detail;
   if (!detail) return;
-  drawPlot("geoNaCompetitivePlot", detail.competitive.share.map((item) => ({
-    x: [item.value],
-    y: ["U.S. Adapter Market"],
-    name: item.label,
-    type: "bar",
-    orientation: "h",
-    marker: { color: item.label === "Anker" ? "#e2231a" : "#d9d5ce" },
-    hovertemplate: `<b>${item.label}</b><br>%{x}%<extra></extra>`,
-  })), {
-    barmode: "stack",
-    margin: { l: 122, r: 24, t: 10, b: 34 },
-    xaxis: { range: [0, 100], ticksuffix: "%", title: "Market Share" },
-    yaxis: { automargin: true },
-    showlegend: true,
-  });
-  drawPlot("geoNaPricePlot", detail.price.share.map((item) => ({
-    x: [item.value],
-    y: ["Surveyed Purchases"],
-    name: item.label,
-    type: "bar",
-    orientation: "h",
-    marker: { color: item.label === "USD 40-79.99" ? "#e2231a" : "#d9d5ce" },
-    hovertemplate: `<b>${item.label}</b><br>%{x}%<extra></extra>`,
-  })), {
-    barmode: "stack",
-    margin: { l: 122, r: 24, t: 10, b: 34 },
-    xaxis: { range: [0, 100], ticksuffix: "%", title: "Share" },
-    yaxis: { automargin: true },
-    showlegend: true,
-  });
-  drawPlot("geoNaChannelPlot", [{
-    labels: detail.channel.share.map((item) => item.label),
-    values: detail.channel.share.map((item) => item.value),
+  drawGeoShareDonut("geoNaCompetitivePlot", detail.competitive.share, "100%<br>Market Share");
+  drawGeoShareDonut("geoNaPricePlot", detail.price.share, "100%<br>Purchases");
+  drawGeoShareDonut("geoNaChannelPlot", detail.channel.share, "100%<br>Purchases");
+  drawGeoReportedShareDonut("geoNaExpectationPlot", detail.user.expectations, "Reported<br>Share");
+  drawGeoReportedShareDonut("geoNaPainPlot", detail.user.painPoints, "Reported<br>Share");
+}
+
+function drawGeoShareDonut(id, items, center) {
+  drawPlot(id, [{
+    labels: items.map((item) => item.label),
+    values: items.map((item) => Number(item.value) || 0),
     type: "pie",
     hole: 0.58,
     sort: false,
     textinfo: "label+percent",
     textposition: "outside",
     texttemplate: "%{label}<br>%{percent:.0%}",
-    marker: { colors: ["#e2231a", "#861f18", "#f08b82"], line: { color: "#ffffff", width: 2 } },
+    marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
     hovertemplate: "<b>%{label}</b><br>%{value}%<extra></extra>",
-  }], { margin: { l: 74, r: 74, t: 12, b: 24 }, showlegend: false, uniformtext: { minsize: 10, mode: "hide" } });
-  drawPlot("geoNaExpectationPlot", [{
-    x: detail.user.expectations.map((item) => item.value),
-    y: detail.user.expectations.map((item) => item.label),
-    type: "bar",
-    orientation: "h",
-    marker: { color: "#e2231a" },
-    hovertemplate: "%{y}: %{x}%<extra></extra>",
-  }], { margin: { l: 152, r: 22, t: 6, b: 26 }, xaxis: { range: [0, 60], ticksuffix: "%" }, yaxis: { automargin: true } });
-  drawPlot("geoNaPainPlot", [{
-    x: detail.user.painPoints.map((item) => item.value),
-    y: detail.user.painPoints.map((item) => item.label),
-    type: "bar",
-    orientation: "h",
-    marker: { color: "#861f18" },
-    hovertemplate: "%{y}: %{x}%<extra></extra>",
-  }], { margin: { l: 152, r: 22, t: 6, b: 26 }, xaxis: { range: [0, 30], ticksuffix: "%" }, yaxis: { automargin: true } });
+  }], {
+    margin: { l: 80, r: 80, t: 28, b: 24 },
+    showlegend: false,
+    uniformtext: { minsize: 10, mode: "hide" },
+    annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#1f2328" } }],
+  });
+}
+
+function drawGeoReportedShareDonut(id, items, center) {
+  drawPlot(id, [{
+    labels: items.map((item) => item.label),
+    values: items.map((item) => Number(item.value) || 0),
+    customdata: items.map((item) => item.valueLabel || `${item.value}%`),
+    type: "pie",
+    hole: 0.58,
+    sort: false,
+    textinfo: "label",
+    textposition: "outside",
+    texttemplate: "%{label}<br>%{customdata}",
+    marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
+    hovertemplate: "<b>%{label}</b><br>Reported share: %{customdata}<extra></extra>",
+  }], {
+    margin: { l: 80, r: 80, t: 28, b: 24 },
+    showlegend: false,
+    uniformtext: { minsize: 9, mode: "hide" },
+    annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#1f2328" } }],
+  });
 }
 
 function drawPolicyRegionMaps() {

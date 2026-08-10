@@ -2774,7 +2774,9 @@ input[type="search"] {
 
 .geo-overview-head {
   display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
   gap: 8px;
+  align-items: start;
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -2801,6 +2803,21 @@ input[type="search"] {
   margin: 0;
   color: var(--muted);
   line-height: 1.62;
+}
+
+.geo-overview-points {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 2px 0 0 20px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.48;
+}
+
+.geo-overview-points li::marker {
+  color: var(--red);
+  font-weight: 850;
 }
 
 .geo-region-grid {
@@ -2879,21 +2896,23 @@ input[type="search"] {
 }
 
 .geo-region-summary p {
-  display: grid;
-  grid-template-columns: 138px minmax(0, 1fr);
-  gap: 10px;
+  position: relative;
+  padding-left: 14px;
   margin: 0;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.48;
 }
 
-.geo-region-summary-label {
-  color: var(--ink);
-  font-size: 11px;
-  font-weight: 850;
-  letter-spacing: 0;
-  text-transform: uppercase;
+.geo-region-summary p::before {
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--red);
+  content: "";
 }
 
 .geo-region-summary .geo-highlight {
@@ -4484,6 +4503,10 @@ input[type="search"] {
   }
 
   .structure-report-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .geo-overview-head {
     grid-template-columns: 1fr;
   }
 

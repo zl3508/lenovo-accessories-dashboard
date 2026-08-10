@@ -679,6 +679,12 @@
         "eyebrow": "Geo Overview",
         "heading": "Regional Market Summary",
         "body": "Regional demand for chargers and power banks varies significantly in market maturity, purchasing power, product preference and channel structure. Asia Pacific is the global scale and growth engine, while North America and developed Europe concentrate more premium demand for high-power, GaN and multi-device products. Latin America and other emerging markets remain more price-sensitive, with affordability, durability and channel reach playing a larger role. Across regions, USB-C adoption and the convergence of laptop and mobile-device charging are creating opportunities for localized 65W-140W product portfolios.",
+        "summaryPoints": [
+          "AP: largest scale and fastest growth, with clear country-level differences.",
+          "NA: mature, high-value and highly competitive, with premium demand.",
+          "EMEA: premium and regulation-led, with stronger fast-charging demand in the Middle East.",
+          "LA: value-driven growth, balancing affordability with fast charging and safety."
+        ],
         "regions": [
           {
             "id": "NA",
@@ -690,25 +696,27 @@
             "detail": {
               "eyebrow": "NA Regional Overview",
               "title": "North America Power Adapter Market",
-              "summary": "North America is a mature and highly competitive power adapter market with strong purchasing power and broad retail coverage. The region accounted for approximately 26.4% of the global wall charger market in 2025. The U.S. serves as the representative market, where consumers are willing to pay for trusted brands, fast charging, compact design and multi-device compatibility.",
+              "summary": "North America is a mature and highly competitive power adapter market. Strong purchasing power supports demand for branded, high-power and portable products, while PC manufacturers retain an advantage through device compatibility and consumer trust. Success depends on premium product positioning, strong retail coverage and reliable after-sales support.",
               "metrics": [
                 { "label": "North America Wall Charger Market", "value": "USD 2.27B", "note": "2025 market size" },
                 { "label": "Global Market Share", "value": "26.4%", "note": "2025 regional share" },
                 { "label": "Representative Country", "value": "USA", "note": "North America reference market" }
               ],
               "usaMetrics": [
-                { "label": "Market Size", "value": "USD 1.29B", "note": "U.S. power adapter market, 2024" },
+                { "label": "Market Size", "value": "RMB 8.8B", "note": "U.S. power adapter market, 2024" },
                 { "label": "Annual Growth", "value": "~10%", "note": "Estimated annual market growth" },
                 { "label": "Average Purchase Price", "value": "USD 65.18", "note": "Average surveyed purchase price" }
               ],
               "marketSize": {
                 "title": "Market Size & Growth",
-                "body": "The U.S. power adapter market was estimated at approximately USD 1.29 billion in 2024, with annual growth of around 10%. Growth is supported by replacement demand, additional adapters for different locations and the increasing convergence of laptop and mobile-device charging.",
+                "marketValue": "RMB 8.8B",
+                "growth": "~10%",
+                "body": "A mature replacement market supported by additional adapters for home, office and travel. High-power USB-C adapters are benefiting from the growing convergence of laptop and mobile-device charging.",
                 "drivers": ["Replacement of damaged or lost original adapters", "Additional adapters for home, office and travel", "Growing demand for high-power USB-C charging", "Increasing need to charge multiple devices"]
               },
               "competitive": {
                 "title": "Competitive Landscape",
-                "body": "The U.S. market is highly competitive and fragmented. PC manufacturers retain an advantage through device compatibility, brand trust and established customer relationships. Third-party accessory brands compete through compact design, GaN technology, multiple ports and fast charging.",
+                "body": "The U.S. market is highly competitive and fragmented. PC manufacturers retain an advantage because consumers associate original adapters with better compatibility, quality and safety. Leading third-party competitors include Anker, Belkin and other premium accessory brands. Anker held approximately 17% of the U.S. power adapter market in 2024, while the remaining market is fragmented across PC OEMs and other brands.",
                 "share": [
                   { "label": "Anker", "value": 17, "valueLabel": "17%" },
                   { "label": "Other Brands & PC OEMs", "value": 83, "valueLabel": "83%" }
@@ -766,7 +774,7 @@
                 ]
               },
               "opportunity": {
-                "title": "NA Market Opportunity",
+                "title": "Key Takeaway",
                 "body": "The U.S. opportunity is concentrated in branded 65W-100W USB-C power adapters priced between USD 40 and USD 80. Products should combine fast charging, compact design, multiple ports and reliable safety protection. Lenovo can leverage its PC compatibility and brand trust while strengthening execution across Amazon, major retailers and official online channels.",
                 "steps": ["65W-100W", "USD 40-80", "USB-C / Multi-port", "Compact & Safe", "Core NA Opportunity"]
               }
