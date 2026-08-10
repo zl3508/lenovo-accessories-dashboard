@@ -3055,6 +3055,111 @@ input[type="search"] {
   background: color-mix(in srgb, var(--red) 4%, white);
 }
 
+.geo-detail-head {
+  gap: 10px;
+}
+
+.geo-na-takeaway-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 28px;
+  margin: 2px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.geo-na-takeaway-list li::marker,
+.geo-core-list li::marker {
+  color: var(--red);
+}
+
+.geo-na-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.geo-na-metric-card {
+  display: grid;
+  gap: 5px;
+  min-height: 104px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.geo-na-metric-card span,
+.geo-na-metric-card small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.geo-na-metric-card strong {
+  color: var(--ink);
+  font-size: 25px;
+  line-height: 1.1;
+}
+
+.geo-na-market-trend {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1.58fr);
+  gap: 18px;
+  align-items: stretch;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.geo-na-market-trend-copy {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  padding: 6px 4px;
+}
+
+.geo-na-market-trend-copy > span {
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.geo-na-market-trend-copy h3 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.18;
+}
+
+.geo-na-market-trend-copy .geo-core-list {
+  font-size: 13px;
+}
+
+.geo-na-market-trend-visual {
+  display: grid;
+  grid-template-rows: auto minmax(190px, 1fr);
+  gap: 4px;
+  min-width: 0;
+}
+
+.geo-na-virtual-note {
+  justify-self: end;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.geo-na-us-market-plot {
+  height: 235px;
+  min-width: 0;
+}
+
 .geo-na-detail-card {
   height: 100%;
   align-content: start;
@@ -3130,6 +3235,34 @@ input[type="search"] {
   gap: 12px;
   padding-top: 8px;
   border-top: 1px solid var(--line);
+}
+
+.geo-na-detail-split {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.78fr) minmax(0, 1.22fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.geo-na-detail-copy {
+  display: grid;
+  gap: 9px;
+  align-content: start;
+}
+
+.geo-na-detail-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.geo-na-detail-copy .geo-driver-list {
+  font-size: 12px;
+}
+
+.geo-na-detail-visual {
+  min-width: 0;
 }
 
 .geo-detail-plot {
@@ -3277,6 +3410,80 @@ input[type="search"] {
   padding: 12px;
   border: 1px solid var(--line);
   background: var(--surface-soft);
+}
+
+.geo-na-policy-card {
+  margin-top: 0;
+}
+
+.geo-na-policy-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  padding: 2px 0 4px;
+}
+
+.geo-na-policy-summary > div {
+  display: grid;
+  gap: 5px;
+  padding: 0 14px;
+}
+
+.geo-na-policy-summary > div:first-child {
+  padding-left: 0;
+}
+
+.geo-na-policy-summary > div + div {
+  border-left: 1px solid var(--line);
+}
+
+.geo-na-policy-summary strong {
+  color: var(--ink);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.geo-na-policy-summary p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.geo-na-policy-detail-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.geo-na-policy-detail-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  padding: 10px;
+  background: var(--surface-soft);
+}
+
+.geo-policy-status {
+  padding: 4px 6px;
+  border: 1px solid color-mix(in srgb, var(--red) 24%, var(--line));
+  border-radius: 999px;
+  color: var(--red);
+  font-size: 10px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.geo-na-policy-detail-list strong {
+  font-size: 12px;
+}
+
+.geo-na-policy-detail-list p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .geo-policy-icon {
@@ -4670,6 +4877,15 @@ input[type="search"] {
   .industry-flow-card.is-country .industry-flow li:nth-child(2)::after {
     display: grid;
   }
+
+  .geo-na-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .geo-na-market-trend,
+  .geo-na-detail-split {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -4772,6 +4988,23 @@ input[type="search"] {
   .detail-grid,
   .spec-grid {
     grid-template-columns: 1fr;
+  }
+
+  .geo-na-takeaway-list,
+  .geo-na-policy-summary,
+  .geo-na-policy-detail-list {
+    grid-template-columns: 1fr;
+  }
+
+  .geo-na-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .geo-na-policy-summary > div + div {
+    padding-top: 10px;
+    padding-left: 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
   }
 
   .product-list-head,

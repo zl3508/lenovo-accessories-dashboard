@@ -704,10 +704,23 @@
                 { "label": "Representative Country", "value": "USA", "note": "North America reference market" }
               ],
               "usaMetrics": [
-                { "label": "Market Size", "value": "RMB 8.8B", "note": "U.S. power adapter market, 2024" },
-                { "label": "Annual Growth", "value": "~10%", "note": "Estimated annual market growth" },
-                { "label": "Average Purchase Price", "value": "USD 65.18", "note": "Average surveyed purchase price" }
+                { "label": "U.S. Market Size", "value": "RMB 8.8B", "note": "Power adapter market, 2024" },
+                { "label": "2026 Forecast", "value": "RMB 9.68B*", "note": "Modeled 2026 market size" },
+                { "label": "2026 YoY Growth", "value": "10.0%*", "note": "Modeled 2025 to 2026 growth" },
+                { "label": "Top Power Segment", "value": "65W-100W*", "note": "42.9% modeled share" }
               ],
+              "usMarketTrend": {
+                "title": "U.S. Power Adapter Market Size*",
+                "note": "* Virtual / modeled data for layout preview.",
+                "items": [
+                  { "label": "2024", "value": 8.80 },
+                  { "label": "2025", "value": 9.68 },
+                  { "label": "2026", "value": 10.65 },
+                  { "label": "2027", "value": 11.60 },
+                  { "label": "2028", "value": 12.35 },
+                  { "label": "2029", "value": 13.05 }
+                ]
+              },
               "marketSize": {
                 "title": "Market Size & Growth",
                 "marketValue": "RMB 8.8B",
@@ -767,11 +780,15 @@
               "policy": {
                 "title": "Policy & Standards",
                 "body": "Compliance is a basic requirement for entering the U.S. power adapter market. Products must meet applicable electromagnetic compatibility, electrical safety and energy-efficiency requirements. Clearly communicated compatibility, safety protection and warranty support can further strengthen consumer trust.",
+                "effectiveSummary": "FCC electromagnetic compatibility, electrical safety and energy-efficiency requirements are active entry conditions for U.S. power adapters.",
+                "futureSummary": "USB-C interoperability, efficiency and protection expectations are likely to tighten as laptop and mobile charging ecosystems converge.",
                 "items": [
-                  { "title": "FCC Compliance", "text": "Meet applicable electromagnetic compatibility requirements for the U.S. market.", "icon": "signal" },
-                  { "title": "Electrical Safety", "text": "Provide protection against overheating, overvoltage, overcurrent and short circuits.", "icon": "shield" },
-                  { "title": "Energy Efficiency", "text": "Maintain efficient power conversion and low standby power consumption.", "icon": "leaf" },
-                  { "title": "Warranty & Compatibility", "text": "Clearly communicate device compatibility, warranty coverage and after-sales support.", "icon": "check" }
+                  { "title": "FCC Compliance", "status": "Effective", "text": "Meet applicable electromagnetic compatibility requirements for the U.S. market.", "icon": "signal" },
+                  { "title": "Electrical Safety", "status": "Effective", "text": "Provide protection against overheating, overvoltage, overcurrent and short circuits.", "icon": "shield" },
+                  { "title": "Energy Efficiency", "status": "Effective", "text": "Maintain efficient power conversion and low standby power consumption.", "icon": "leaf" },
+                  { "title": "Warranty & Compatibility", "status": "Effective", "text": "Clearly communicate device compatibility, warranty coverage and after-sales support.", "icon": "check" },
+                  { "title": "USB-C Interoperability", "status": "Future direction", "text": "Track evolving interoperability expectations as USB-C becomes the common charging interface across devices.", "icon": "signal" },
+                  { "title": "Efficiency Updates", "status": "Future direction", "text": "Monitor future efficiency and standby-power requirements that may affect product design and certification.", "icon": "leaf" }
                 ]
               },
               "opportunity": {

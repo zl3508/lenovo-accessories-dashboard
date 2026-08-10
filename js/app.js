@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260810-na-detail";
+const DATA_VERSION = "20260810-na-layout";
 
 const state = {
   categoryId: null,
@@ -188,6 +188,11 @@ async function init() {
     app.addEventListener("click", handleClick);
     app.addEventListener("change", handleChange);
     app.addEventListener("input", handleInput);
+    app.addEventListener("toggle", (event) => {
+      if (event.target.matches(".geo-na-detail-card") && event.target.open) {
+        requestAnimationFrame(() => drawNARegionalDetail(state.categoryId));
+      }
+    }, true);
     topNav.addEventListener("click", handleClick);
     render();
   } catch (error) {
@@ -473,6 +478,11 @@ function renderNARegionalDetail(categoryId, overview) {
   const region = overview.regions.find((item) => item.id === "NA");
   const detail = region?.detail;
   if (!detail) return renderGeoOverviewModuleFallback("NA");
+  const usaMetrics = detail.usaMetrics || [];
+  const trend = detail.usMarketTrend || {};
+  const policyItems = detail.policy?.items || [];
+  const effectivePolicy = policyItems.filter((item) => item.status === "Effective");
+  const futurePolicy = policyItems.filter((item) => item.status !== "Effective");
   return `
     <section class="module-block">
       <section class="geo-detail-view">
@@ -480,45 +490,71 @@ function renderNARegionalDetail(categoryId, overview) {
           <button class="ghost-button" type="button" data-action="geo-back">← Geo Overview</button>
           <span>${escapeHtml(detail.eyebrow)}</span>
           <h2>${escapeHtml(detail.title)}</h2>
+          <ul class="geo-na-takeaway-list">${(detail.opportunity.corePoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </header>
 
-        <section class="geo-detail-section geo-na-keytakeaway">
-          <div class="geo-detail-section-head"><span>07</span><h3>${escapeHtml(detail.opportunity.title)}</h3></div>
-          <ul class="geo-core-list">${(detail.opportunity.corePoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        <section class="geo-na-metrics">
+          ${(usaMetrics.slice(0, 4)).map((metric) => `
+            <div class="geo-na-metric-card">
+              <span>${escapeHtml(metric.label)}</span>
+              <strong>${escapeHtml(metric.value)}</strong>
+              <small>${escapeHtml(metric.note || "")}</small>
+            </div>
+          `).join("")}
+        </section>
+
+        <section class="geo-na-market-trend">
+          <div class="geo-na-market-trend-copy">
+            <span>Market Size Trend</span>
+            <h3>${escapeHtml(trend.title || "U.S. Power Adapter Market Size*")}</h3>
+            <ul class="geo-core-list">
+              <li>Market size: RMB 8.8B in 2024</li>
+              <li>Annual growth: approximately 10%</li>
+              <li>Demand is supported by replacement, travel and multi-device charging</li>
+            </ul>
+          </div>
+          <div class="geo-na-market-trend-visual">
+            <span class="geo-na-virtual-note">${escapeHtml(trend.note || "* Virtual / modeled data for layout preview.")}</span>
+            <div id="geoNaUSMarketTrendPlot" class="plot geo-na-us-market-plot"></div>
+          </div>
         </section>
 
         <section class="geo-detail-grid">
-          ${renderNADetailCard(1, detail.marketSize, [
-            "Market size: RMB 8.8B in 2024",
-            "Annual growth: approximately 10%",
-            "Demand is supported by replacement, travel and multi-device charging"
-          ], `<p>${escapeHtml(detail.marketSize.body)}</p><div class="geo-market-growth-row"><div><strong>${escapeHtml(detail.marketSize.marketValue || "-")}</strong><span>U.S. Power Adapter Market, 2024</span></div><div><strong>${escapeHtml(detail.marketSize.growth || "-")}</strong><span>Annual Market Growth <b aria-hidden="true">↗</b></span></div></div><ul class="geo-driver-list">${detail.marketSize.drivers.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`)}
-          ${renderNADetailCard(2, detail.competitive, [
+          ${renderNADetailCard(1, detail.competitive, [
             "OEM compatibility and trust remain important purchase drivers",
             "Anker, Belkin and other premium accessory brands lead third-party competition",
             "The market remains fragmented, leaving room for differentiated products"
-          ], `<p>${escapeHtml(detail.competitive.body)}</p><div id="geoNaCompetitivePlot" class="plot geo-detail-plot"></div><div class="geo-compare-grid">${detail.competitive.groups.map((group) => `<div><strong>${escapeHtml(group.title)}</strong><ul>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`).join("")}</div>`)}
-          ${renderNADetailCard(3, detail.price, [
+          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.competitive.body)}</p><ul class="geo-driver-list"><li>PC manufacturers win through compatibility, brand trust and official support.</li><li>Third-party brands compete through compact GaN designs, multiple ports and fast charging.</li><li>Anker represents approximately 17% of the U.S. power adapter market.</li></ul></div><div class="geo-na-detail-visual"><div id="geoNaCompetitivePlot" class="plot geo-detail-plot"></div><div class="geo-compare-grid">${detail.competitive.groups.map((group) => `<div><strong>${escapeHtml(group.title)}</strong><ul>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`).join("")}</div></div>`)}
+          ${renderNADetailCard(2, detail.price, [
             "Average surveyed purchase price: USD 65.18",
             "USD 40-79.99 is the core price opportunity",
             "Higher-priced products compete through power, portability and brand trust"
-          ], `<p>${escapeHtml(detail.price.body)}</p><div id="geoNaPricePlot" class="plot geo-detail-plot"></div><div class="geo-detail-callout"><strong>${escapeHtml(detail.price.average)}</strong><span>Average Purchase Price</span><em>Core opportunity: USD 40-79.99</em></div>`)}
-          ${renderNADetailCard(4, detail.channel, [
+          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.price.body)}</p><ul class="geo-driver-list"><li>USD 40-79.99 is the largest surveyed price tier at 47%.</li><li>Below USD 40 accounts for 28%, while USD 80+ accounts for 25%.</li><li>The core opportunity is branded 65W-100W USB-C and multi-port adapters.</li></ul></div><div class="geo-na-detail-visual"><div id="geoNaPricePlot" class="plot geo-detail-plot"></div><div class="geo-detail-callout"><strong>${escapeHtml(detail.price.average)}</strong><span>Average Purchase Price</span><em>Core opportunity: USD 40-79.99</em></div></div></div>`)}
+          ${renderNADetailCard(3, detail.channel, [
             "Physical stores: 41% of surveyed purchases",
             "Official brand websites: 30% | Online e-commerce: 29%",
             "Amazon, major retailers and direct brand channels each play a distinct role"
-          ], `<p>${escapeHtml(detail.channel.body)}</p><div class="geo-channel-layout"><div id="geoNaChannelPlot" class="plot geo-detail-donut"></div><ul>${detail.channel.representative.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`)}
-          ${renderNADetailCard(5, detail.user, [
+          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.channel.body)}</p><ul class="geo-driver-list">${detail.channel.representative.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div class="geo-na-detail-visual"><div id="geoNaChannelPlot" class="plot geo-detail-donut"></div></div></div>`)}
+          ${renderNADetailCard(4, detail.user, [
             "68% of surveyed consumers purchased a power adapter themselves",
             "Top expectations: multi-device compatibility, safety and fast charging",
             "Portability, cable storage and charging speed remain key pain points"
-          ], `<p>${escapeHtml(detail.user.body)}</p><div class="geo-user-layout"><div class="geo-user-kpi"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><div><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div><strong class="geo-pain-callout">${escapeHtml(detail.user.noMajorPainPoint)} No Major Pain Point</strong></div></div><div class="geo-detail-callout"><strong>Product Implication</strong><span>${escapeHtml(detail.user.implication)}</span></div>`)}
-          ${renderNADetailCard(6, detail.policy, [
-            "FCC and applicable electrical safety compliance are basic entry requirements",
-            "Energy efficiency and clear protection specifications support market access",
-            "Compatibility, warranty and after-sales information strengthen trust"
-          ], `<p>${escapeHtml(detail.policy.body)}</p><div class="geo-policy-grid">${detail.policy.items.map((item) => `<div><span class="geo-policy-icon" aria-hidden="true">${escapeHtml(geoPolicyIcon(item.icon))}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div>`).join("")}</div>`)}
+          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.user.body)}</p><ul class="geo-driver-list"><li>Multi-device compatibility leads at 52%.</li><li>Intelligent safety protection follows at 50%.</li><li>Super-fast charging is expected by 48% of surveyed consumers.</li><li>${escapeHtml(detail.user.noMajorPainPoint)} report no major pain point.</li></ul><div class="geo-detail-callout"><strong>Product Implication</strong><span>${escapeHtml(detail.user.implication)}</span></div></div><div class="geo-na-detail-visual"><div class="geo-user-layout"><div class="geo-user-kpi"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><div><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div></div></div></div></div>`)}
         </section>
+
+        <details class="geo-detail-section geo-na-detail-card geo-na-policy-card">
+          <summary class="geo-na-detail-summary">
+            <div class="geo-detail-section-head"><span>05</span><h3>${escapeHtml(detail.policy.title)}</h3></div>
+            <span class="geo-details-trigger">Details</span>
+          </summary>
+          <div class="geo-na-policy-summary">
+            <div><strong>Effective now</strong><p>${escapeHtml(detail.policy.effectiveSummary || detail.policy.body)}</p></div>
+            <div><strong>Future direction</strong><p>${escapeHtml(detail.policy.futureSummary || "Monitor future requirements.")}</p></div>
+          </div>
+          <div class="geo-na-detail-content">
+            <div class="geo-na-policy-detail-list">${[...effectivePolicy, ...futurePolicy].map((item) => `<article><span class="geo-policy-status">${escapeHtml(item.status || "Policy")}</span><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div></article>`).join("")}</div>
+          </div>
+        </details>
       </section>
     </section>
   `;
@@ -2528,11 +2564,48 @@ function drawGeoOverviewMaps() {
 function drawNARegionalDetail(categoryId) {
   const detail = marketStructureReport(categoryId)?.geoOverview?.regions?.find((region) => region.id === "NA")?.detail;
   if (!detail) return;
+  drawNAUSMarketTrend(detail.usMarketTrend);
   drawGeoShareDonut("geoNaCompetitivePlot", detail.competitive.share, "100%<br>Market Share");
   drawGeoShareDonut("geoNaPricePlot", detail.price.share, "100%<br>Purchases");
   drawGeoShareDonut("geoNaChannelPlot", detail.channel.share, "100%<br>Purchases");
   drawGeoReportedShareDonut("geoNaExpectationPlot", detail.user.expectations, "Reported<br>Share");
   drawGeoReportedShareDonut("geoNaPainPlot", detail.user.painPoints, "Reported<br>Share");
+}
+
+function drawNAUSMarketTrend(trend) {
+  const items = trend?.items || [];
+  if (!items.length) return;
+  const years = items.map((item) => String(item.label));
+  const values = items.map((item) => Number(item.value) || 0);
+  const growth = values.map((value, index) => index === 0 ? null : ((value - values[index - 1]) / values[index - 1]) * 100);
+  drawPlot("geoNaUSMarketTrendPlot", [
+    {
+      x: years,
+      y: values,
+      type: "bar",
+      name: "Market Size",
+      marker: { color: "#efaaa4" },
+      hovertemplate: "<b>%{x}</b><br>Market Size: RMB %{y:.2f}B<extra></extra>",
+    },
+    {
+      x: years,
+      y: growth,
+      type: "scatter",
+      mode: "lines+markers",
+      name: "YoY Growth",
+      yaxis: "y2",
+      line: { color: "#1f2328", width: 2.2 },
+      marker: { color: "#1f2328", size: 6 },
+      hovertemplate: "<b>%{x}</b><br>YoY Growth: %{y:.1f}%<extra></extra>",
+    },
+  ], {
+    margin: { l: 54, r: 54, t: 16, b: 42 },
+    barmode: "group",
+    xaxis: { title: "Year", type: "category" },
+    yaxis: { title: "Market Size", ticksuffix: "B", tickprefix: "RMB " },
+    yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false },
+    legend: { orientation: "h", y: -0.24, x: 0 },
+  });
 }
 
 function drawGeoShareDonut(id, items, center) {
@@ -2547,8 +2620,9 @@ function drawGeoShareDonut(id, items, center) {
     texttemplate: "%{label}<br>%{percent:.0%}",
     marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
     hovertemplate: "<b>%{label}</b><br>%{value}%<extra></extra>",
+    textfont: { size: 10, color: "#1f2328" },
   }], {
-    margin: { l: 80, r: 80, t: 28, b: 24 },
+    margin: { l: 62, r: 62, t: 24, b: 20 },
     showlegend: false,
     uniformtext: { minsize: 10, mode: "hide" },
     annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#1f2328" } }],
@@ -2568,8 +2642,9 @@ function drawGeoReportedShareDonut(id, items, center) {
     texttemplate: "%{label}<br>%{customdata}",
     marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
     hovertemplate: "<b>%{label}</b><br>Reported share: %{customdata}<extra></extra>",
+    textfont: { size: 10, color: "#1f2328" },
   }], {
-    margin: { l: 80, r: 80, t: 28, b: 24 },
+    margin: { l: 62, r: 62, t: 24, b: 20 },
     showlegend: false,
     uniformtext: { minsize: 9, mode: "hide" },
     annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#1f2328" } }],
