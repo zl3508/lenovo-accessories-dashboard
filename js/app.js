@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260810-global-geo-overview";
+const DATA_VERSION = "20260810-na-detail";
 
 const state = {
   categoryId: null,
