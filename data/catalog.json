@@ -777,6 +777,12 @@
               "opportunity": {
                 "title": "Key Takeaway",
                 "body": "The U.S. opportunity is concentrated in branded 65W-100W USB-C power adapters priced between USD 40 and USD 80. Products should combine fast charging, compact design, multiple ports and reliable safety protection. Lenovo can leverage its PC compatibility and brand trust while strengthening execution across Amazon, major retailers and official online channels.",
+                "corePoints": [
+                  "Market: Mature, high-value and highly competitive",
+                  "Core opportunity: Branded 65W-100W USB-C adapters in the USD 40-80 range",
+                  "Winning product: Fast charging, compact form factor, multiple ports and reliable safety protection",
+                  "Lenovo advantage: PC compatibility and brand trust, supported by strong retail and online execution"
+                ],
                 "steps": ["65W-100W", "USD 40-80", "USB-C / Multi-port", "Compact & Safe", "Core NA Opportunity"]
               }
             }

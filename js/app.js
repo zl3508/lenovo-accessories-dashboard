@@ -480,75 +480,60 @@ function renderNARegionalDetail(categoryId, overview) {
           <button class="ghost-button" type="button" data-action="geo-back">← Geo Overview</button>
           <span>${escapeHtml(detail.eyebrow)}</span>
           <h2>${escapeHtml(detail.title)}</h2>
-          <p>${escapeHtml(detail.summary)}</p>
         </header>
 
-        <section class="geo-detail-kpis">
-          ${detail.metrics.map((metric) => `<div><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.note)}</small></div>`).join("")}
-        </section>
-
-        <section class="geo-detail-section geo-usa-overview">
-          <div class="geo-detail-section-head">
-            <span>Representative Country</span>
-            <h3>USA Market Overview</h3>
-          </div>
-          <div class="geo-usa-kpis">
-            ${detail.usaMetrics.map((metric) => `<div><strong>${escapeHtml(metric.value)}</strong><span>${escapeHtml(metric.label)}</span><small>${escapeHtml(metric.note)}</small></div>`).join("")}
-          </div>
-          <div class="geo-use-case-list" aria-label="Primary use cases">
-            ${["Home", "Office", "Travel"].map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
-          </div>
+        <section class="geo-detail-section geo-na-keytakeaway">
+          <div class="geo-detail-section-head"><span>07</span><h3>${escapeHtml(detail.opportunity.title)}</h3></div>
+          <ul class="geo-core-list">${(detail.opportunity.corePoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </section>
 
         <section class="geo-detail-grid">
-          ${renderNATextChartSection(detail.marketSize, "Market Size & Growth", "geoNaMarketDrivers", "drivers")}
-          <article class="geo-detail-section">
-            <div class="geo-detail-section-head"><span>02</span><h3>${escapeHtml(detail.competitive.title)}</h3></div>
-            <p>${escapeHtml(detail.competitive.body)}</p>
-            <div id="geoNaCompetitivePlot" class="plot geo-detail-plot"></div>
-            <div class="geo-compare-grid">${detail.competitive.groups.map((group) => `<div><strong>${escapeHtml(group.title)}</strong><ul>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`).join("")}</div>
-          </article>
-          <article class="geo-detail-section">
-            <div class="geo-detail-section-head"><span>03</span><h3>${escapeHtml(detail.price.title)}</h3></div>
-            <p>${escapeHtml(detail.price.body)}</p>
-            <div id="geoNaPricePlot" class="plot geo-detail-plot"></div>
-            <div class="geo-detail-callout"><strong>${escapeHtml(detail.price.average)}</strong><span>Average Purchase Price</span><em>Core opportunity: USD 40-79.99</em></div>
-          </article>
-          <article class="geo-detail-section">
-            <div class="geo-detail-section-head"><span>04</span><h3>${escapeHtml(detail.channel.title)}</h3></div>
-            <p>${escapeHtml(detail.channel.body)}</p>
-            <div class="geo-channel-layout"><div id="geoNaChannelPlot" class="plot geo-detail-donut"></div><ul>${detail.channel.representative.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
-          </article>
-          <article class="geo-detail-section geo-user-section">
-            <div class="geo-detail-section-head"><span>05</span><h3>${escapeHtml(detail.user.title)}</h3></div>
-            <p>${escapeHtml(detail.user.body)}</p>
-            <div class="geo-user-layout"><div class="geo-user-kpi"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><div><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div><strong class="geo-pain-callout">${escapeHtml(detail.user.noMajorPainPoint)} No Major Pain Point</strong></div></div>
-            <div class="geo-detail-callout"><strong>Product Implication</strong><span>${escapeHtml(detail.user.implication)}</span></div>
-          </article>
-          <article class="geo-detail-section geo-policy-section">
-            <div class="geo-detail-section-head"><span>06</span><h3>${escapeHtml(detail.policy.title)}</h3></div>
-            <p>${escapeHtml(detail.policy.body)}</p>
-            <div class="geo-policy-grid">${detail.policy.items.map((item) => `<div><span class="geo-policy-icon" aria-hidden="true">${escapeHtml(geoPolicyIcon(item.icon))}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div>`).join("")}</div>
-          </article>
-          <article class="geo-detail-section geo-opportunity-section">
-            <div class="geo-detail-section-head"><span>07</span><h3>${escapeHtml(detail.opportunity.title)}</h3></div>
-            <p>${escapeHtml(detail.opportunity.body)}</p>
-            <div class="geo-opportunity-path">${detail.opportunity.steps.map((step, index) => `<span>${escapeHtml(step)}</span>${index < detail.opportunity.steps.length - 1 ? `<b aria-hidden="true">→</b>` : ""}`).join("")}</div>
-          </article>
+          ${renderNADetailCard(1, detail.marketSize, [
+            "Market size: RMB 8.8B in 2024",
+            "Annual growth: approximately 10%",
+            "Demand is supported by replacement, travel and multi-device charging"
+          ], `<p>${escapeHtml(detail.marketSize.body)}</p><div class="geo-market-growth-row"><div><strong>${escapeHtml(detail.marketSize.marketValue || "-")}</strong><span>U.S. Power Adapter Market, 2024</span></div><div><strong>${escapeHtml(detail.marketSize.growth || "-")}</strong><span>Annual Market Growth <b aria-hidden="true">↗</b></span></div></div><ul class="geo-driver-list">${detail.marketSize.drivers.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`)}
+          ${renderNADetailCard(2, detail.competitive, [
+            "OEM compatibility and trust remain important purchase drivers",
+            "Anker, Belkin and other premium accessory brands lead third-party competition",
+            "The market remains fragmented, leaving room for differentiated products"
+          ], `<p>${escapeHtml(detail.competitive.body)}</p><div id="geoNaCompetitivePlot" class="plot geo-detail-plot"></div><div class="geo-compare-grid">${detail.competitive.groups.map((group) => `<div><strong>${escapeHtml(group.title)}</strong><ul>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`).join("")}</div>`)}
+          ${renderNADetailCard(3, detail.price, [
+            "Average surveyed purchase price: USD 65.18",
+            "USD 40-79.99 is the core price opportunity",
+            "Higher-priced products compete through power, portability and brand trust"
+          ], `<p>${escapeHtml(detail.price.body)}</p><div id="geoNaPricePlot" class="plot geo-detail-plot"></div><div class="geo-detail-callout"><strong>${escapeHtml(detail.price.average)}</strong><span>Average Purchase Price</span><em>Core opportunity: USD 40-79.99</em></div>`)}
+          ${renderNADetailCard(4, detail.channel, [
+            "Physical stores: 41% of surveyed purchases",
+            "Official brand websites: 30% | Online e-commerce: 29%",
+            "Amazon, major retailers and direct brand channels each play a distinct role"
+          ], `<p>${escapeHtml(detail.channel.body)}</p><div class="geo-channel-layout"><div id="geoNaChannelPlot" class="plot geo-detail-donut"></div><ul>${detail.channel.representative.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`)}
+          ${renderNADetailCard(5, detail.user, [
+            "68% of surveyed consumers purchased a power adapter themselves",
+            "Top expectations: multi-device compatibility, safety and fast charging",
+            "Portability, cable storage and charging speed remain key pain points"
+          ], `<p>${escapeHtml(detail.user.body)}</p><div class="geo-user-layout"><div class="geo-user-kpi"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><div><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div><strong class="geo-pain-callout">${escapeHtml(detail.user.noMajorPainPoint)} No Major Pain Point</strong></div></div><div class="geo-detail-callout"><strong>Product Implication</strong><span>${escapeHtml(detail.user.implication)}</span></div>`)}
+          ${renderNADetailCard(6, detail.policy, [
+            "FCC and applicable electrical safety compliance are basic entry requirements",
+            "Energy efficiency and clear protection specifications support market access",
+            "Compatibility, warranty and after-sales information strengthen trust"
+          ], `<p>${escapeHtml(detail.policy.body)}</p><div class="geo-policy-grid">${detail.policy.items.map((item) => `<div><span class="geo-policy-icon" aria-hidden="true">${escapeHtml(geoPolicyIcon(item.icon))}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div>`).join("")}</div>`)}
         </section>
       </section>
     </section>
   `;
 }
 
-function renderNATextChartSection(section, label, chartId, listKey) {
+function renderNADetailCard(index, section, bullets, detailMarkup) {
   return `
-    <article class="geo-detail-section">
-      <div class="geo-detail-section-head"><span>01</span><h3>${escapeHtml(label)}</h3></div>
-      <p>${escapeHtml(section.body)}</p>
-      <div class="geo-market-growth-row"><div><strong>${escapeHtml(section.marketValue || "-")}</strong><span>U.S. Power Adapter Market, 2024</span></div><div><strong>${escapeHtml(section.growth || "-")}</strong><span>Annual Market Growth <b aria-hidden="true">↗</b></span></div></div>
-      <ul class="geo-driver-list">${section[listKey].map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-    </article>
+    <details class="geo-detail-section geo-na-detail-card">
+      <summary class="geo-na-detail-summary">
+        <div class="geo-detail-section-head"><span>${String(index).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div>
+        <span class="geo-details-trigger">Details</span>
+      </summary>
+      <ul class="geo-core-list">${bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <div class="geo-na-detail-content">${detailMarkup}</div>
+    </details>
   `;
 }
 
