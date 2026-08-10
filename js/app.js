@@ -440,7 +440,6 @@ function renderGeoOverviewModule(categoryId) {
           <div class="geo-overview-copy">
             <span>${escapeHtml(overview.eyebrow || "Geo Overview")}</span>
             <h2>${escapeHtml(overview.heading || "Regional Market Summary")}</h2>
-            <p>${escapeHtml(overview.body || "")}</p>
           </div>
           ${overview.summaryPoints?.length ? `<ol class="geo-overview-points">${overview.summaryPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>` : ""}
         </header>
@@ -457,15 +456,15 @@ function renderGeoRegionCard(region) {
     <article class="geo-region-card">
       <header class="geo-region-card-head">
         <div>
-          <h3>${escapeHtml(region.label)}: ${escapeHtml(region.heading)}</h3>
+          <h3>${escapeHtml(region.label)} &mdash; ${escapeHtml(region.heading)}</h3>
         </div>
       </header>
       ${region.id === "NA" ? `<button class="geo-region-card-hit" type="button" data-action="geo-region" data-region-id="NA" aria-label="Open NA regional overview"></button>` : ""}
       <div class="geo-region-map" id="geoOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
       <div class="geo-region-summary">
-        <p>${geoEmphasize(region.market)}</p>
-        <p>${geoEmphasize(region.characteristics)}</p>
-        <p>${geoEmphasize(region.representativeCountry)}</p>
+        <p><strong>Market:</strong> ${geoCardValue(region.market)}</p>
+        <p><strong>Characteristics:</strong> ${geoCardValue(region.characteristics)}</p>
+        <p><strong>${escapeHtml(region.representativeLabel || "Representative")}:</strong> ${geoCardValue(region.representativeCountry)}</p>
       </div>
     </article>
   `;
@@ -564,6 +563,13 @@ function geoPolicyIcon(icon) {
 
 function geoEmphasize(value) {
   return escapeHtml(value || "").replace(/((?:USD|RMB)\s?[\d,.]+B?|\d+(?:\.\d+)?%)/g, '<strong class="geo-highlight">$1</strong>');
+}
+
+function geoCardValue(value) {
+  return String(value || "")
+    .split("|")
+    .map((part) => `<strong class="geo-highlight">${escapeHtml(part.trim())}</strong>`)
+    .join('<span class="geo-pipe"> | </span>');
 }
 
 function selectedMarketModule() {
@@ -2498,7 +2504,7 @@ function drawGeoOverviewMaps() {
     });
     return;
   }
-  const colors = { NA: "#e2231a", EMEA: "#861f18", AP: "#0f766e", LA: "#c76b32" };
+  const colors = { NA: "#e2231a", EMEA: "#e2231a", AP: "#e2231a", LA: "#e2231a" };
   policyRegions.forEach((region) => {
     const node = document.getElementById(`geoOverviewMap${region.id}`);
     const map = policyRegionMaps[region.id];

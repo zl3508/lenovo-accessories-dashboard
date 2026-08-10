@@ -680,19 +680,20 @@
         "heading": "Regional Market Summary",
         "body": "Regional demand for chargers and power banks varies significantly in market maturity, purchasing power, product preference and channel structure. Asia Pacific is the global scale and growth engine, while North America and developed Europe concentrate more premium demand for high-power, GaN and multi-device products. Latin America and other emerging markets remain more price-sensitive, with affordability, durability and channel reach playing a larger role. Across regions, USB-C adoption and the convergence of laptop and mobile-device charging are creating opportunities for localized 65W-140W product portfolios.",
         "summaryPoints": [
-          "AP: largest scale and fastest growth, with clear country-level differences.",
-          "NA: mature, high-value and highly competitive, with premium demand.",
-          "EMEA: premium and regulation-led, with stronger fast-charging demand in the Middle East.",
-          "LA: value-driven growth, balancing affordability with fast charging and safety."
+          "AP: Largest scale and fastest growth, with clear country-level differences.",
+          "NA: Mature, high-value and highly competitive, with premium demand.",
+          "EMEA: Premium and regulation-led, with stronger fast-charging demand in the Middle East.",
+          "LA: Value-driven growth, balancing affordability with fast charging and safety."
         ],
         "regions": [
           {
             "id": "NA",
             "label": "NA",
             "heading": "Mature Premium Market",
-            "market": "USD 2.27B wall charger market in 2025, accounting for 26.4% globally.",
-            "characteristics": "Mature and competitive market with strong demand for branded, high-power, compact and fast-charging adapters.",
-            "representativeCountry": "USA - approximately RMB 8.8B adapter market in 2024, with around 10% annual growth.",
+            "market": "USD 2.27B | 26.4% global share",
+            "characteristics": "Mature | Premium | Brand-led | High-power",
+            "representativeLabel": "Representative",
+            "representativeCountry": "USA",
             "detail": {
               "eyebrow": "NA Regional Overview",
               "title": "North America Power Adapter Market",
@@ -784,25 +785,28 @@
             "id": "EMEA",
             "label": "EMEA",
             "heading": "Premium & Regulation-led Market",
-            "market": "Europe's wall charger market reached approximately USD 1.83B in 2025, representing 21.3% of global value.",
-            "characteristics": "Strong focus on USB-C standardization, product safety, output stability and environmental compliance; consumers in developed Europe accept higher price points.",
-            "representativeCountry": "UK / Developed Europe and Saudi Arabia - the UK represents premium and online-oriented demand, while Saudi Arabia shows stronger demand for fast charging."
+            "market": "USD 1.83B | 21.3% global share",
+            "characteristics": "USB-C Standardization | Safety | High ASP | Compliance",
+            "representativeLabel": "Representatives",
+            "representativeCountry": "UK / Developed Europe | Saudi Arabia"
           },
           {
             "id": "AP",
             "label": "AP",
             "heading": "Largest & Most Diverse Market",
-            "market": "USD 3.40B wall charger market in 2025, accounting for 39.5% globally - the largest regional market.",
-            "characteristics": "Highly diversified demand: Japan values localized design and reliability, while India and Southeast Asia place greater emphasis on price, portability and charging power.",
-            "representativeCountry": "Japan, Indonesia and India - Japan's adapter market was approximately RMB 3.9B in 2024, with around 10% annual growth."
+            "market": "USD 3.40B | 39.5% global share",
+            "characteristics": "Largest Scale | Diverse Demand | Localization | Price Sensitivity",
+            "representativeLabel": "Representatives",
+            "representativeCountry": "Japan | Indonesia | India"
           },
           {
             "id": "LA",
             "label": "LA",
             "heading": "Value-driven Growth Market",
-            "market": "Latin America represents 13.7% of the global laptop charger market, equivalent to approximately USD 0.58B in 2025.",
-            "characteristics": "Price-sensitive aftermarket with strong demand for affordable adapters that still provide fast charging, multiple ports and safety protection.",
-            "representativeCountry": "Brazil & Mexico - surveyed average adapter purchase price was USD 36.45, with 69% of purchases below USD 40."
+            "market": "USD 0.58B | 13.7% global laptop charger share",
+            "characteristics": "Value-driven | Price-sensitive | Fast Charging | Multi-port",
+            "representativeLabel": "Representatives",
+            "representativeCountry": "Brazil & Mexico"
           }
         ]
       },

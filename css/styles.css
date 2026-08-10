@@ -2816,8 +2816,8 @@ input[type="search"] {
 }
 
 .geo-overview-points li::marker {
-  color: var(--red);
-  font-weight: 850;
+  color: inherit;
+  font-weight: inherit;
 }
 
 .geo-region-grid {
@@ -2913,6 +2913,16 @@ input[type="search"] {
   border-radius: 50%;
   background: var(--red);
   content: "";
+}
+
+.geo-region-summary p > strong:first-child {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.geo-pipe {
+  color: var(--muted);
 }
 
 .geo-region-summary .geo-highlight {
