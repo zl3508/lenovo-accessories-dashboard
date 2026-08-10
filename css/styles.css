@@ -2763,8 +2763,119 @@ input[type="search"] {
 
 .structure-conclusion-summary-points li::before {
   content: counter(summary-point) ". ";
+  color: inherit;
+  font-weight: inherit;
+}
+
+.geo-overview-module {
+  display: grid;
+  gap: 14px;
+}
+
+.geo-overview-head {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--red) 7%, white), rgba(255, 255, 255, 0.96)),
+    var(--surface);
+}
+
+.geo-overview-head > span {
   color: var(--red);
+  font-size: 12px;
   font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.geo-overview-head h2 {
+  margin: 0;
+  font-size: clamp(24px, 2.4vw, 34px);
+}
+
+.geo-overview-head p {
+  max-width: 1160px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.geo-region-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.geo-region-card {
+  display: grid;
+  gap: 12px;
+  overflow: hidden;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.geo-region-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.geo-region-card-head > div {
+  display: grid;
+  gap: 6px;
+}
+
+.geo-region-card-head h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.geo-region-card-arrow {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--red);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.geo-region-map {
+  height: 190px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.geo-region-summary {
+  display: grid;
+  gap: 8px;
+}
+
+.geo-region-summary p {
+  display: grid;
+  grid-template-columns: 138px minmax(0, 1fr);
+  gap: 10px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.48;
+}
+
+.geo-region-summary strong {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .structure-conclusion-summary em {
@@ -4024,6 +4135,7 @@ input[type="search"] {
   .policy-region-tabs,
   .policy-region-grid,
   .policy-grid,
+  .geo-region-grid,
   .industry-story-grid,
   .industry-country-grid,
   .industry-country-block-grid,
@@ -4173,6 +4285,7 @@ input[type="search"] {
   .competitor-grid,
   .matrix-card-grid,
   .policy-grid,
+  .geo-region-grid,
   .structure-country-grid,
   .structure-overview-metrics,
   .structure-overview-sections,
@@ -4233,6 +4346,11 @@ input[type="search"] {
 
   .structure-card-note {
     grid-column: auto;
+  }
+
+  .geo-region-summary p {
+    grid-template-columns: 1fr;
+    gap: 3px;
   }
 
   .structure-donut-wrap {

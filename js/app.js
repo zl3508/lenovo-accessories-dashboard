@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260802-market-region-rework";
+const DATA_VERSION = "20260810-global-geo-overview";
 
 const state = {
   categoryId: null,
@@ -81,10 +81,7 @@ const categoryViews = {
 
 const marketModules = {
   global: "Global Overview",
-  NA: "NA",
-  EMEA: "EMEA",
-  AP: "AP",
-  LA: "LA",
+  geo: "Geo Overview",
 };
 
 const marketRegionModules = {
@@ -407,11 +404,65 @@ function renderModuleTabs(categoryId) {
 
 function renderMarketAnalysis(categoryId) {
   const active = selectedMarketModule();
-  const moduleMarkup = active === "global" ? renderGlobalMarketModule(categoryId) : renderRegionalMarketModule(categoryId, active);
+  const moduleMarkup = active === "global"
+    ? renderGlobalMarketModule(categoryId)
+    : active === "geo"
+    ? renderGeoOverviewModule(categoryId)
+    : renderRegionalMarketModule(categoryId, active);
   return `
     <div class="view-stack">
       ${moduleMarkup}
     </div>
+  `;
+}
+
+function renderGeoOverviewModule(categoryId) {
+  const report = marketStructureReport(categoryId);
+  const overview = report?.geoOverview;
+  if (!overview) {
+    return `
+      <section class="module-block">
+        <div class="module-head">
+          <span>Geo Overview</span>
+          <h2>Regional Market Summary</h2>
+          <p>No regional market summary has been configured for this category yet.</p>
+        </div>
+      </section>
+    `;
+  }
+  return `
+    <section class="module-block">
+      <section class="geo-overview-module">
+        <header class="geo-overview-head">
+          <span>${escapeHtml(overview.eyebrow || "Geo Overview")}</span>
+          <h2>${escapeHtml(overview.heading || "Regional Market Summary")}</h2>
+          <p>${escapeHtml(overview.body || "")}</p>
+        </header>
+        <div class="geo-region-grid">
+          ${(overview.regions || []).map(renderGeoRegionCard).join("")}
+        </div>
+      </section>
+    </section>
+  `;
+}
+
+function renderGeoRegionCard(region) {
+  return `
+    <article class="geo-region-card">
+      <header class="geo-region-card-head">
+        <div>
+          <span class="tag">${escapeHtml(region.label)}</span>
+          <h3>${escapeHtml(region.heading)}</h3>
+        </div>
+        <span class="geo-region-card-arrow" aria-hidden="true">↗</span>
+      </header>
+      <div class="geo-region-map" id="geoOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
+      <div class="geo-region-summary">
+        <p><strong>Market</strong>${escapeHtml(region.market)}</p>
+        <p><strong>Characteristics</strong>${escapeHtml(region.characteristics)}</p>
+        <p><strong>Representative Markets</strong>${escapeHtml(region.representative)}</p>
+      </div>
+    </article>
   `;
 }
 
@@ -2304,6 +2355,10 @@ function drawMarketAnalysis(categoryId) {
     drawGlobalMarketStructure(marketStructureReport(categoryId));
     return;
   }
+  if (state.marketModule === "geo") {
+    drawGeoOverviewMaps();
+    return;
+  }
   if (marketModules[state.marketModule]) {
     return;
   }
@@ -2332,6 +2387,56 @@ function drawMarketAnalysis(categoryId) {
   drawPowerPortHeatmap("structurePowerPortHeatmap", selectedRows, powerSegments, portSegments, "Units");
   drawPricePowerStructure(categoryId, selectedRows, powerSegments);
   drawScenarioDonut(categoryId, selectedRows);
+}
+
+function drawGeoOverviewMaps() {
+  if (!window.Plotly) {
+    policyRegions.forEach((region) => {
+      const node = document.getElementById(`geoOverviewMap${region.id}`);
+      if (node) node.innerHTML = `<div class="policy-map-fallback">${escapeHtml(region.label)}</div>`;
+    });
+    return;
+  }
+  const colors = { NA: "#e2231a", EMEA: "#861f18", AP: "#0f766e", LA: "#c76b32" };
+  policyRegions.forEach((region) => {
+    const node = document.getElementById(`geoOverviewMap${region.id}`);
+    const map = policyRegionMaps[region.id];
+    if (!node || !map) return;
+    Plotly.react(
+      node,
+      [{
+        type: "choropleth",
+        locationmode: "ISO-3",
+        locations: map.countries,
+        z: map.countries.map(() => 1),
+        text: map.labels,
+        hovertemplate: `<b>${region.label}</b><br>%{text}<extra></extra>`,
+        showscale: false,
+        colorscale: [[0, colors[region.id] || "#e2231a"], [1, colors[region.id] || "#e2231a"]],
+        marker: { line: { color: "#ffffff", width: 0.6 } },
+      }],
+      {
+        margin: { l: 0, r: 0, t: 0, b: 0 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        geo: {
+          projection: { type: map.projection },
+          fitbounds: "locations",
+          showframe: false,
+          showcoastlines: false,
+          showcountries: true,
+          countrycolor: "#d8d3ca",
+          countrywidth: 0.5,
+          showland: true,
+          landcolor: "#eeeae2",
+          showocean: true,
+          oceancolor: "#fbfaf7",
+          bgcolor: "rgba(0,0,0,0)",
+        },
+      },
+      { displayModeBar: false, responsive: true },
+    );
+  });
 }
 
 function drawPolicyRegionMaps() {
