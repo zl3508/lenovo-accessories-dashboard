@@ -2810,6 +2810,7 @@ input[type="search"] {
 }
 
 .geo-region-card {
+  position: relative;
   display: grid;
   gap: 12px;
   overflow: hidden;
@@ -2817,6 +2818,23 @@ input[type="search"] {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
+}
+
+.geo-region-card-hit {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.geo-region-card:has(.geo-region-card-hit):hover {
+  border-color: var(--red);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 25%, transparent);
 }
 
 .geo-region-card-head {
@@ -2870,12 +2888,327 @@ input[type="search"] {
   line-height: 1.48;
 }
 
-.geo-region-summary strong {
+.geo-region-summary-label {
   color: var(--ink);
   font-size: 11px;
   font-weight: 850;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.geo-region-summary .geo-highlight {
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.geo-detail-view {
+  display: grid;
+  gap: 14px;
+}
+
+.geo-detail-head {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--red) 7%, white), rgba(255, 255, 255, 0.96)),
+    var(--surface);
+}
+
+.geo-detail-head .ghost-button {
+  justify-self: start;
+  margin-bottom: 4px;
+}
+
+.geo-detail-head > span,
+.geo-detail-section-head > span {
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.geo-detail-head h2 {
+  margin: 0;
+  font-size: clamp(24px, 2.6vw, 36px);
+}
+
+.geo-detail-head p,
+.geo-detail-section > p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.geo-detail-kpis,
+.geo-usa-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.geo-detail-kpis > div,
+.geo-usa-kpis > div {
+  display: grid;
+  gap: 4px;
+  min-height: 92px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.geo-detail-kpis span,
+.geo-usa-kpis span,
+.geo-detail-kpis small,
+.geo-usa-kpis small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.geo-detail-kpis strong,
+.geo-usa-kpis strong {
+  color: var(--ink);
+  font-size: 24px;
+}
+
+.geo-usa-overview,
+.geo-detail-section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.geo-detail-section-head {
+  display: grid;
+  gap: 4px;
+}
+
+.geo-detail-section-head h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.geo-use-case-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.geo-use-case-list span {
+  padding: 9px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.geo-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.geo-detail-plot {
+  height: 152px;
+  min-width: 0;
+}
+
+.geo-detail-donut {
+  height: 220px;
+  min-width: 0;
+}
+
+.geo-market-growth-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.geo-market-growth-row > div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  background: var(--surface-soft);
+}
+
+.geo-market-growth-row strong {
+  font-size: 25px;
+}
+
+.geo-market-growth-row span,
+.geo-detail-callout span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.geo-market-growth-row b {
+  color: #138a4b;
+  font-size: 20px;
+}
+
+.geo-driver-list,
+.geo-compare-grid ul,
+.geo-channel-layout ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.geo-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.geo-compare-grid > div {
+  padding: 10px;
+  background: var(--surface-soft);
+}
+
+.geo-compare-grid strong {
+  font-size: 12px;
+}
+
+.geo-detail-callout {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--red);
+  background: color-mix(in srgb, var(--red) 6%, white);
+}
+
+.geo-detail-callout strong {
+  font-size: 14px;
+}
+
+.geo-channel-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(180px, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.geo-user-section,
+.geo-policy-section,
+.geo-opportunity-section {
+  grid-column: 1 / -1;
+}
+
+.geo-user-layout {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.geo-user-layout h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+
+.geo-user-kpi {
+  display: grid;
+  align-content: center;
+  min-height: 150px;
+  padding: 16px;
+  background: var(--surface-soft);
+}
+
+.geo-user-kpi strong {
+  font-size: 38px;
+}
+
+.geo-user-kpi span,
+.geo-pain-callout {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.geo-small-plot {
+  height: 148px;
+  min-width: 0;
+}
+
+.geo-pain-callout {
+  display: block;
+  margin-top: 4px;
+  font-weight: 850;
+}
+
+.geo-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.geo-policy-grid > div {
+  display: grid;
+  gap: 7px;
+  align-content: start;
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.geo-policy-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--red) 12%, white);
+  color: var(--red);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.geo-policy-grid strong {
+  font-size: 13px;
+}
+
+.geo-policy-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.geo-opportunity-path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.geo-opportunity-path span {
+  padding: 11px 14px;
+  border: 1px solid color-mix(in srgb, var(--red) 30%, var(--line));
+  background: color-mix(in srgb, var(--red) 5%, white);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.geo-opportunity-path b {
+  color: var(--red);
+  font-size: 19px;
 }
 
 .structure-conclusion-summary em {
@@ -4136,6 +4469,7 @@ input[type="search"] {
   .policy-region-grid,
   .policy-grid,
   .geo-region-grid,
+  .geo-detail-grid,
   .industry-story-grid,
   .industry-country-grid,
   .industry-country-block-grid,
@@ -4286,6 +4620,15 @@ input[type="search"] {
   .matrix-card-grid,
   .policy-grid,
   .geo-region-grid,
+  .geo-detail-grid,
+  .geo-detail-kpis,
+  .geo-usa-kpis,
+  .geo-market-growth-row,
+  .geo-compare-grid,
+  .geo-channel-layout,
+  .geo-user-layout,
+  .geo-policy-grid,
+  .geo-use-case-list,
   .structure-country-grid,
   .structure-overview-metrics,
   .structure-overview-sections,

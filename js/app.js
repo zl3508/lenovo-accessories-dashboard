@@ -32,6 +32,7 @@ const state = {
   policyRegion: {},
   structureBrand: {},
   structureMarket: {},
+  geoRegionDetail: {},
   summaryRevenueMetric: "orderRevenue",
   summaryQuantityMetric: "orderQty",
   summaryQuantityTrendMetric: "order",
@@ -100,8 +101,8 @@ const policyRegions = [
 
 const policyRegionMaps = {
   NA: {
-    countries: ["USA", "CAN"],
-    labels: ["United States", "Canada"],
+    countries: ["USA", "CAN", "MEX"],
+    labels: ["United States", "Canada", "Mexico"],
     projection: "natural earth",
   },
   LA: {
@@ -430,6 +431,8 @@ function renderGeoOverviewModule(categoryId) {
       </section>
     `;
   }
+  const selectedRegion = state.geoRegionDetail[categoryId];
+  if (selectedRegion === "NA") return renderNARegionalDetail(categoryId, overview);
   return `
     <section class="module-block">
       <section class="geo-overview-module">
@@ -451,19 +454,113 @@ function renderGeoRegionCard(region) {
     <article class="geo-region-card">
       <header class="geo-region-card-head">
         <div>
-          <span class="tag">${escapeHtml(region.label)}</span>
-          <h3>${escapeHtml(region.heading)}</h3>
+          <h3>${escapeHtml(region.label)}: ${escapeHtml(region.heading)}</h3>
         </div>
-        <span class="geo-region-card-arrow" aria-hidden="true">↗</span>
       </header>
+      ${region.id === "NA" ? `<button class="geo-region-card-hit" type="button" data-action="geo-region" data-region-id="NA" aria-label="Open NA regional overview"></button>` : ""}
       <div class="geo-region-map" id="geoOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
       <div class="geo-region-summary">
-        <p><strong>Market</strong>${escapeHtml(region.market)}</p>
-        <p><strong>Characteristics</strong>${escapeHtml(region.characteristics)}</p>
-        <p><strong>Representative Markets</strong>${escapeHtml(region.representative)}</p>
+        <p><strong class="geo-region-summary-label">Market</strong><span>${geoEmphasize(region.market)}</span></p>
+        <p><strong class="geo-region-summary-label">Characteristics</strong><span>${geoEmphasize(region.characteristics)}</span></p>
+        <p><strong class="geo-region-summary-label">Representative Country</strong><span>${geoEmphasize(region.representativeCountry)}</span></p>
       </div>
     </article>
   `;
+}
+
+function renderNARegionalDetail(categoryId, overview) {
+  const region = overview.regions.find((item) => item.id === "NA");
+  const detail = region?.detail;
+  if (!detail) return renderGeoOverviewModuleFallback("NA");
+  return `
+    <section class="module-block">
+      <section class="geo-detail-view">
+        <header class="geo-detail-head">
+          <button class="ghost-button" type="button" data-action="geo-back">← Geo Overview</button>
+          <span>${escapeHtml(detail.eyebrow)}</span>
+          <h2>${escapeHtml(detail.title)}</h2>
+          <p>${escapeHtml(detail.summary)}</p>
+        </header>
+
+        <section class="geo-detail-kpis">
+          ${detail.metrics.map((metric) => `<div><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.note)}</small></div>`).join("")}
+        </section>
+
+        <section class="geo-detail-section geo-usa-overview">
+          <div class="geo-detail-section-head">
+            <span>Representative Country</span>
+            <h3>USA Market Overview</h3>
+          </div>
+          <div class="geo-usa-kpis">
+            ${detail.usaMetrics.map((metric) => `<div><strong>${escapeHtml(metric.value)}</strong><span>${escapeHtml(metric.label)}</span><small>${escapeHtml(metric.note)}</small></div>`).join("")}
+          </div>
+          <div class="geo-use-case-list" aria-label="Primary use cases">
+            ${["Home", "Office", "Travel"].map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
+          </div>
+        </section>
+
+        <section class="geo-detail-grid">
+          ${renderNATextChartSection(detail.marketSize, "Market Size & Growth", "geoNaMarketDrivers", "drivers")}
+          <article class="geo-detail-section">
+            <div class="geo-detail-section-head"><span>02</span><h3>${escapeHtml(detail.competitive.title)}</h3></div>
+            <p>${escapeHtml(detail.competitive.body)}</p>
+            <div id="geoNaCompetitivePlot" class="plot geo-detail-plot"></div>
+            <div class="geo-compare-grid">${detail.competitive.groups.map((group) => `<div><strong>${escapeHtml(group.title)}</strong><ul>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`).join("")}</div>
+          </article>
+          <article class="geo-detail-section">
+            <div class="geo-detail-section-head"><span>03</span><h3>${escapeHtml(detail.price.title)}</h3></div>
+            <p>${escapeHtml(detail.price.body)}</p>
+            <div id="geoNaPricePlot" class="plot geo-detail-plot"></div>
+            <div class="geo-detail-callout"><strong>${escapeHtml(detail.price.average)}</strong><span>Average Purchase Price</span><em>Core opportunity: USD 40-79.99</em></div>
+          </article>
+          <article class="geo-detail-section">
+            <div class="geo-detail-section-head"><span>04</span><h3>${escapeHtml(detail.channel.title)}</h3></div>
+            <p>${escapeHtml(detail.channel.body)}</p>
+            <div class="geo-channel-layout"><div id="geoNaChannelPlot" class="plot geo-detail-donut"></div><ul>${detail.channel.representative.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+          </article>
+          <article class="geo-detail-section geo-user-section">
+            <div class="geo-detail-section-head"><span>05</span><h3>${escapeHtml(detail.user.title)}</h3></div>
+            <p>${escapeHtml(detail.user.body)}</p>
+            <div class="geo-user-layout"><div class="geo-user-kpi"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><div><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div><strong class="geo-pain-callout">${escapeHtml(detail.user.noMajorPainPoint)} No Major Pain Point</strong></div></div>
+            <div class="geo-detail-callout"><strong>Product Implication</strong><span>${escapeHtml(detail.user.implication)}</span></div>
+          </article>
+          <article class="geo-detail-section geo-policy-section">
+            <div class="geo-detail-section-head"><span>06</span><h3>${escapeHtml(detail.policy.title)}</h3></div>
+            <p>${escapeHtml(detail.policy.body)}</p>
+            <div class="geo-policy-grid">${detail.policy.items.map((item) => `<div><span class="geo-policy-icon" aria-hidden="true">${escapeHtml(geoPolicyIcon(item.icon))}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div>`).join("")}</div>
+          </article>
+          <article class="geo-detail-section geo-opportunity-section">
+            <div class="geo-detail-section-head"><span>07</span><h3>${escapeHtml(detail.opportunity.title)}</h3></div>
+            <p>${escapeHtml(detail.opportunity.body)}</p>
+            <div class="geo-opportunity-path">${detail.opportunity.steps.map((step, index) => `<span>${escapeHtml(step)}</span>${index < detail.opportunity.steps.length - 1 ? `<b aria-hidden="true">→</b>` : ""}`).join("")}</div>
+          </article>
+        </section>
+      </section>
+    </section>
+  `;
+}
+
+function renderNATextChartSection(section, label, chartId, listKey) {
+  return `
+    <article class="geo-detail-section">
+      <div class="geo-detail-section-head"><span>01</span><h3>${escapeHtml(label)}</h3></div>
+      <p>${escapeHtml(section.body)}</p>
+      <div class="geo-market-growth-row"><div><strong>USD 1.29B</strong><span>U.S. Power Adapter Market, 2024</span></div><div><strong>~10%</strong><span>Annual Market Growth <b aria-hidden="true">↗</b></span></div></div>
+      <ul class="geo-driver-list">${section[listKey].map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+    </article>
+  `;
+}
+
+function renderGeoOverviewModuleFallback(regionId) {
+  return `<section class="module-block"><div class="module-head"><span>Geo Overview</span><h2>${escapeHtml(regionId)} Regional Overview</h2><p>No regional detail is configured yet.</p></div></section>`;
+}
+
+function geoPolicyIcon(icon) {
+  return { signal: "⌁", shield: "◇", leaf: "⌁", check: "✓" }[icon] || "•";
+}
+
+function geoEmphasize(value) {
+  return escapeHtml(value || "").replace(/((?:USD|RMB)\s?[\d,.]+B?|\d+(?:\.\d+)?%)/g, '<strong class="geo-highlight">$1</strong>');
 }
 
 function selectedMarketModule() {
@@ -2356,7 +2453,8 @@ function drawMarketAnalysis(categoryId) {
     return;
   }
   if (state.marketModule === "geo") {
-    drawGeoOverviewMaps();
+    if (state.geoRegionDetail[categoryId] === "NA") drawNARegionalDetail(categoryId);
+    else drawGeoOverviewMaps();
     return;
   }
   if (marketModules[state.marketModule]) {
@@ -2408,11 +2506,15 @@ function drawGeoOverviewMaps() {
         type: "choropleth",
         locationmode: "ISO-3",
         locations: map.countries,
-        z: map.countries.map(() => 1),
+        z: map.countries.map((country) => region.id === "NA" ? (country === "USA" ? 2 : 1) : 1),
+        zmin: region.id === "NA" ? 1 : 0,
+        zmax: region.id === "NA" ? 2 : 1,
         text: map.labels,
         hovertemplate: `<b>${region.label}</b><br>%{text}<extra></extra>`,
         showscale: false,
-        colorscale: [[0, colors[region.id] || "#e2231a"], [1, colors[region.id] || "#e2231a"]],
+        colorscale: region.id === "NA"
+          ? [[0, "#eeeae2"], [0.49, "#eeeae2"], [0.5, "#f6b0a9"], [1, "#e2231a"]]
+          : [[0, colors[region.id] || "#e2231a"], [1, colors[region.id] || "#e2231a"]],
         marker: { line: { color: "#ffffff", width: 0.6 } },
       }],
       {
@@ -2434,9 +2536,86 @@ function drawGeoOverviewMaps() {
           bgcolor: "rgba(0,0,0,0)",
         },
       },
-      { displayModeBar: false, responsive: true },
+      { displayModeBar: false, staticPlot: true, responsive: false },
     );
+    if (region.id === "NA") {
+      Plotly.addTraces(node, {
+        type: "scattergeo",
+        lat: [37.1],
+        lon: [-95.7],
+        mode: "markers+text",
+        text: ["USA - Representative Country"],
+        textposition: "top center",
+        textfont: { size: 10, color: "#1f2328" },
+        marker: { size: 9, color: "#e2231a", line: { color: "#ffffff", width: 1.5 } },
+        hoverinfo: "skip",
+        showlegend: false,
+      });
+    }
   });
+}
+
+function drawNARegionalDetail(categoryId) {
+  const detail = marketStructureReport(categoryId)?.geoOverview?.regions?.find((region) => region.id === "NA")?.detail;
+  if (!detail) return;
+  drawPlot("geoNaCompetitivePlot", detail.competitive.share.map((item) => ({
+    x: [item.value],
+    y: ["U.S. Adapter Market"],
+    name: item.label,
+    type: "bar",
+    orientation: "h",
+    marker: { color: item.label === "Anker" ? "#e2231a" : "#d9d5ce" },
+    hovertemplate: `<b>${item.label}</b><br>%{x}%<extra></extra>`,
+  })), {
+    barmode: "stack",
+    margin: { l: 122, r: 24, t: 10, b: 34 },
+    xaxis: { range: [0, 100], ticksuffix: "%", title: "Market Share" },
+    yaxis: { automargin: true },
+    showlegend: true,
+  });
+  drawPlot("geoNaPricePlot", detail.price.share.map((item) => ({
+    x: [item.value],
+    y: ["Surveyed Purchases"],
+    name: item.label,
+    type: "bar",
+    orientation: "h",
+    marker: { color: item.label === "USD 40-79.99" ? "#e2231a" : "#d9d5ce" },
+    hovertemplate: `<b>${item.label}</b><br>%{x}%<extra></extra>`,
+  })), {
+    barmode: "stack",
+    margin: { l: 122, r: 24, t: 10, b: 34 },
+    xaxis: { range: [0, 100], ticksuffix: "%", title: "Share" },
+    yaxis: { automargin: true },
+    showlegend: true,
+  });
+  drawPlot("geoNaChannelPlot", [{
+    labels: detail.channel.share.map((item) => item.label),
+    values: detail.channel.share.map((item) => item.value),
+    type: "pie",
+    hole: 0.58,
+    sort: false,
+    textinfo: "label+percent",
+    textposition: "outside",
+    texttemplate: "%{label}<br>%{percent:.0%}",
+    marker: { colors: ["#e2231a", "#861f18", "#f08b82"], line: { color: "#ffffff", width: 2 } },
+    hovertemplate: "<b>%{label}</b><br>%{value}%<extra></extra>",
+  }], { margin: { l: 74, r: 74, t: 12, b: 24 }, showlegend: false, uniformtext: { minsize: 10, mode: "hide" } });
+  drawPlot("geoNaExpectationPlot", [{
+    x: detail.user.expectations.map((item) => item.value),
+    y: detail.user.expectations.map((item) => item.label),
+    type: "bar",
+    orientation: "h",
+    marker: { color: "#e2231a" },
+    hovertemplate: "%{y}: %{x}%<extra></extra>",
+  }], { margin: { l: 152, r: 22, t: 6, b: 26 }, xaxis: { range: [0, 60], ticksuffix: "%" }, yaxis: { automargin: true } });
+  drawPlot("geoNaPainPlot", [{
+    x: detail.user.painPoints.map((item) => item.value),
+    y: detail.user.painPoints.map((item) => item.label),
+    type: "bar",
+    orientation: "h",
+    marker: { color: "#861f18" },
+    hovertemplate: "%{y}: %{x}%<extra></extra>",
+  }], { margin: { l: 152, r: 22, t: 6, b: 26 }, xaxis: { range: [0, 30], ticksuffix: "%" }, yaxis: { automargin: true } });
 }
 
 function drawPolicyRegionMaps() {
@@ -4778,6 +4957,12 @@ function handleClick(event) {
     render();
   } else if (action === "module-view") {
     if (state.categoryView === "market") state.marketModule = button.dataset.module;
+    render();
+  } else if (action === "geo-region") {
+    state.geoRegionDetail[state.categoryId] = button.dataset.regionId;
+    render();
+  } else if (action === "geo-back") {
+    delete state.geoRegionDetail[state.categoryId];
     render();
   } else if (action === "policy-region") {
     state.policyRegion[state.categoryId] = button.dataset.regionId;

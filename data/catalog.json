@@ -686,7 +686,91 @@
             "heading": "Mature Premium Market",
             "market": "USD 2.27B wall charger market in 2025, accounting for 26.4% globally.",
             "characteristics": "Mature and competitive market with strong demand for branded, high-power, compact and fast-charging adapters.",
-            "representative": "USA - approximately RMB 8.8B adapter market in 2024, with around 10% annual growth."
+            "representativeCountry": "USA - approximately RMB 8.8B adapter market in 2024, with around 10% annual growth.",
+            "detail": {
+              "eyebrow": "NA Regional Overview",
+              "title": "North America Power Adapter Market",
+              "summary": "North America is a mature and highly competitive power adapter market with strong purchasing power and broad retail coverage. The region accounted for approximately 26.4% of the global wall charger market in 2025. The U.S. serves as the representative market, where consumers are willing to pay for trusted brands, fast charging, compact design and multi-device compatibility.",
+              "metrics": [
+                { "label": "North America Wall Charger Market", "value": "USD 2.27B", "note": "2025 market size" },
+                { "label": "Global Market Share", "value": "26.4%", "note": "2025 regional share" },
+                { "label": "Representative Country", "value": "USA", "note": "North America reference market" }
+              ],
+              "usaMetrics": [
+                { "label": "Market Size", "value": "USD 1.29B", "note": "U.S. power adapter market, 2024" },
+                { "label": "Annual Growth", "value": "~10%", "note": "Estimated annual market growth" },
+                { "label": "Average Purchase Price", "value": "USD 65.18", "note": "Average surveyed purchase price" }
+              ],
+              "marketSize": {
+                "title": "Market Size & Growth",
+                "body": "The U.S. power adapter market was estimated at approximately USD 1.29 billion in 2024, with annual growth of around 10%. Growth is supported by replacement demand, additional adapters for different locations and the increasing convergence of laptop and mobile-device charging.",
+                "drivers": ["Replacement of damaged or lost original adapters", "Additional adapters for home, office and travel", "Growing demand for high-power USB-C charging", "Increasing need to charge multiple devices"]
+              },
+              "competitive": {
+                "title": "Competitive Landscape",
+                "body": "The U.S. market is highly competitive and fragmented. PC manufacturers retain an advantage through device compatibility, brand trust and established customer relationships. Third-party accessory brands compete through compact design, GaN technology, multiple ports and fast charging.",
+                "share": [
+                  { "label": "Anker", "value": 17, "valueLabel": "17%" },
+                  { "label": "Other Brands & PC OEMs", "value": 83, "valueLabel": "83%" }
+                ],
+                "groups": [
+                  { "title": "PC Manufacturers", "items": ["Compatibility", "Brand trust", "Official support", "PC ecosystem"] },
+                  { "title": "Third-party Brands", "items": ["Compact design", "GaN technology", "Multiple ports", "Fast charging"] }
+                ]
+              },
+              "price": {
+                "title": "Price Segmentation",
+                "body": "U.S. consumers demonstrate relatively strong purchasing power, with an average surveyed adapter purchase price of USD 65.18. The USD 40-79.99 segment is the largest price tier and represents the core opportunity for branded 65W-100W USB-C and multi-port adapters.",
+                "share": [
+                  { "label": "Below USD 40", "value": 28, "valueLabel": "28%" },
+                  { "label": "USD 40-79.99", "value": 47, "valueLabel": "47%" },
+                  { "label": "USD 80+", "value": 25, "valueLabel": "25%" }
+                ],
+                "average": "USD 65.18"
+              },
+              "channel": {
+                "title": "Channel Structure",
+                "body": "The U.S. market requires balanced online and offline channel execution. Physical stores represented 41% of surveyed purchases, while official brand websites and online e-commerce platforms accounted for 30% and 29%, respectively.",
+                "share": [
+                  { "label": "Physical Stores", "value": 41, "valueLabel": "41%" },
+                  { "label": "Official Brand Websites", "value": 30, "valueLabel": "30%" },
+                  { "label": "Online E-commerce Platforms", "value": 29, "valueLabel": "29%" }
+                ],
+                "representative": ["Amazon - core online platform", "Walmart and Target - major offline retailers", "Official Brand Websites - important direct-sales channel", "TikTok Shop and Temu - emerging e-commerce opportunities"]
+              },
+              "user": {
+                "title": "User Research Insights",
+                "body": "U.S. consumers demonstrate strong aftermarket demand, with 68% of surveyed users having purchased a power adapter themselves. Their main expectations focus on multi-device charging, intelligent safety protection and faster charging.",
+                "selfPurchase": "68%",
+                "expectations": [
+                  { "label": "Multi-device Compatibility", "value": 52, "valueLabel": "52%" },
+                  { "label": "Intelligent Safety Protection", "value": 50, "valueLabel": "50%" },
+                  { "label": "Super-fast Charging", "value": 48, "valueLabel": "48%" }
+                ],
+                "painPoints": [
+                  { "label": "Heavy or Bulky", "value": 21, "valueLabel": "21%" },
+                  { "label": "Difficult Cable Storage", "value": 21, "valueLabel": "21%" },
+                  { "label": "Slow Charging", "value": 21, "valueLabel": "21%" }
+                ],
+                "noMajorPainPoint": "32%",
+                "implication": "U.S. consumers expect one compact and reliable adapter to safely charge laptops, smartphones and other personal devices."
+              },
+              "policy": {
+                "title": "Policy & Standards",
+                "body": "Compliance is a basic requirement for entering the U.S. power adapter market. Products must meet applicable electromagnetic compatibility, electrical safety and energy-efficiency requirements. Clearly communicated compatibility, safety protection and warranty support can further strengthen consumer trust.",
+                "items": [
+                  { "title": "FCC Compliance", "text": "Meet applicable electromagnetic compatibility requirements for the U.S. market.", "icon": "signal" },
+                  { "title": "Electrical Safety", "text": "Provide protection against overheating, overvoltage, overcurrent and short circuits.", "icon": "shield" },
+                  { "title": "Energy Efficiency", "text": "Maintain efficient power conversion and low standby power consumption.", "icon": "leaf" },
+                  { "title": "Warranty & Compatibility", "text": "Clearly communicate device compatibility, warranty coverage and after-sales support.", "icon": "check" }
+                ]
+              },
+              "opportunity": {
+                "title": "NA Market Opportunity",
+                "body": "The U.S. opportunity is concentrated in branded 65W-100W USB-C power adapters priced between USD 40 and USD 80. Products should combine fast charging, compact design, multiple ports and reliable safety protection. Lenovo can leverage its PC compatibility and brand trust while strengthening execution across Amazon, major retailers and official online channels.",
+                "steps": ["65W-100W", "USD 40-80", "USB-C / Multi-port", "Compact & Safe", "Core NA Opportunity"]
+              }
+            }
           },
           {
             "id": "EMEA",
@@ -694,7 +778,7 @@
             "heading": "Premium & Regulation-led Market",
             "market": "Europe's wall charger market reached approximately USD 1.83B in 2025, representing 21.3% of global value.",
             "characteristics": "Strong focus on USB-C standardization, product safety, output stability and environmental compliance; consumers in developed Europe accept higher price points.",
-            "representative": "UK / Developed Europe and Saudi Arabia - the UK represents premium and online-oriented demand, while Saudi Arabia shows stronger demand for fast charging."
+            "representativeCountry": "UK / Developed Europe and Saudi Arabia - the UK represents premium and online-oriented demand, while Saudi Arabia shows stronger demand for fast charging."
           },
           {
             "id": "AP",
@@ -702,7 +786,7 @@
             "heading": "Largest & Most Diverse Market",
             "market": "USD 3.40B wall charger market in 2025, accounting for 39.5% globally - the largest regional market.",
             "characteristics": "Highly diversified demand: Japan values localized design and reliability, while India and Southeast Asia place greater emphasis on price, portability and charging power.",
-            "representative": "Japan, Indonesia and India - Japan's adapter market was approximately RMB 3.9B in 2024, with around 10% annual growth."
+            "representativeCountry": "Japan, Indonesia and India - Japan's adapter market was approximately RMB 3.9B in 2024, with around 10% annual growth."
           },
           {
             "id": "LA",
@@ -710,7 +794,7 @@
             "heading": "Value-driven Growth Market",
             "market": "Latin America represents 13.7% of the global laptop charger market, equivalent to approximately USD 0.58B in 2025.",
             "characteristics": "Price-sensitive aftermarket with strong demand for affordable adapters that still provide fast charging, multiple ports and safety protection.",
-            "representative": "Brazil & Mexico - surveyed average adapter purchase price was USD 36.45, with 69% of purchases below USD 40."
+            "representativeCountry": "Brazil & Mexico - surveyed average adapter purchase price was USD 36.45, with 69% of purchases below USD 40."
           }
         ]
       },
