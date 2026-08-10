@@ -438,7 +438,6 @@ function renderGeoOverviewModule(categoryId) {
       <section class="geo-overview-module">
         <header class="geo-overview-head">
           <div class="geo-overview-copy">
-            <span>${escapeHtml(overview.eyebrow || "Geo Overview")}</span>
             <h2>${escapeHtml(overview.heading || "Regional Market Summary")}</h2>
           </div>
           ${overview.summaryPoints?.length ? `<ol class="geo-overview-points">${overview.summaryPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>` : ""}
@@ -566,10 +565,7 @@ function geoEmphasize(value) {
 }
 
 function geoCardValue(value) {
-  return String(value || "")
-    .split("|")
-    .map((part) => `<strong class="geo-highlight">${escapeHtml(part.trim())}</strong>`)
-    .join('<span class="geo-pipe"> | </span>');
+  return escapeHtml(String(value || ""));
 }
 
 function selectedMarketModule() {

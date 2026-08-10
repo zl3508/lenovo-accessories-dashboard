@@ -2774,7 +2774,7 @@ input[type="search"] {
 
 .geo-overview-head {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  grid-template-columns: 1fr;
   gap: 8px;
   align-items: start;
   padding: 18px;
@@ -2807,6 +2807,7 @@ input[type="search"] {
 
 .geo-overview-points {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 8px;
   margin: 0;
   padding: 2px 0 0 20px;
@@ -2916,9 +2917,9 @@ input[type="search"] {
 }
 
 .geo-region-summary p > strong:first-child {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 850;
 }
 
 .geo-pipe {
