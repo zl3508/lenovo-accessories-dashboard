@@ -3155,7 +3155,7 @@ input[type="search"] {
   font-weight: 800;
 }
 
-.geo-na-us-market-plot {
+.plot.geo-na-us-market-plot {
   height: 235px;
   min-width: 0;
 }
@@ -3278,13 +3278,13 @@ input[type="search"] {
   min-width: 0;
 }
 
-.geo-detail-plot {
-  height: 152px;
+.plot.geo-detail-plot {
+  height: 190px;
   min-width: 0;
 }
 
-.geo-detail-donut {
-  height: 220px;
+.plot.geo-detail-donut {
+  height: 215px;
   min-width: 0;
 }
 
@@ -3399,8 +3399,8 @@ input[type="search"] {
   font-size: 12px;
 }
 
-.geo-small-plot {
-  height: 148px;
+.plot.geo-small-plot {
+  height: 160px;
   min-width: 0;
 }
 
