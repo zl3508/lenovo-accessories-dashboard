@@ -704,26 +704,41 @@
                 { "label": "Representative Country", "value": "USA", "note": "North America reference market" }
               ],
               "usaMetrics": [
-                { "label": "U.S. Market Size", "value": "RMB 8.8B", "note": "Power adapter market, 2024" },
-                { "label": "2026 Forecast", "value": "RMB 9.68B*", "note": "Modeled 2026 market size" },
-                { "label": "2026 YoY Growth", "value": "10.0%*", "note": "Modeled 2025 to 2026 growth" },
+                { "label": "U.S. Market Size", "value": "$1.29B", "note": "RMB 8.8B ÷ 6.8, 2024" },
+                { "label": "2026 Forecast", "value": "$1.40B*", "note": "Forecast using 3.9% CAGR" },
+                { "label": "2026 YoY Growth", "value": "3.9%*", "note": "Fact.MR forecast CAGR" },
                 { "label": "Top Power Segment", "value": "65W-100W*", "note": "42.9% modeled share" }
               ],
               "usMarketTrend": {
-                "title": "U.S. Power Adapter Market Size*",
-                "note": "* Virtual / modeled data for layout preview.",
+                "title": "2024–2033 U.S. Power Adapter Market Size*",
+                "note": "* 2024 base converted at 6.8 RMB/USD; 2025–2033 forecast at 3.9% CAGR.",
                 "items": [
-                  { "label": "2024", "value": 8.80 },
-                  { "label": "2025", "value": 9.68 },
-                  { "label": "2026", "value": 10.65 },
-                  { "label": "2027", "value": 11.60 },
-                  { "label": "2028", "value": 12.35 },
-                  { "label": "2029", "value": 13.05 }
+                  { "label": "2024", "value": 1.294, "type": "Base" },
+                  { "label": "2025", "value": 1.345, "type": "Forecast" },
+                  { "label": "2026", "value": 1.397, "type": "Forecast" },
+                  { "label": "2027", "value": 1.452, "type": "Forecast" },
+                  { "label": "2028", "value": 1.508, "type": "Forecast" },
+                  { "label": "2029", "value": 1.567, "type": "Forecast" },
+                  { "label": "2030", "value": 1.628, "type": "Forecast" },
+                  { "label": "2031", "value": 1.692, "type": "Forecast" },
+                  { "label": "2032", "value": 1.758, "type": "Forecast" },
+                  { "label": "2033", "value": 1.826, "type": "Forecast" }
+                ],
+                "references": [
+                  {
+                    "title": "Lenovo PC Options Industry Analysis – Power Category Report",
+                    "note": "2024 U.S. adapter base: RMB 8.8B; converted at 6.8 RMB/USD."
+                  },
+                  {
+                    "title": "Fact.MR / GlobeNewswire – USB Charger Market Forecast",
+                    "url": "https://www.globenewswire.com/news-release/2023/10/11/2758434/0/en/USB-Charger-Market-to-Cross-US-53-3-Billion-at-6-6-CAGR-at-2033-Fact-MR-Analysis.html",
+                    "note": "U.S. USB charger market forecast CAGR: 3.9% for 2023–2033."
+                  }
                 ]
               },
               "marketSize": {
                 "title": "Market Size & Growth",
-                "marketValue": "RMB 8.8B",
+                "marketValue": "$1.29B",
                 "growth": "~10%",
                 "body": "A mature replacement market supported by additional adapters for home, office and travel. High-power USB-C adapters are benefiting from the growing convergence of laptop and mobile-device charging.",
                 "drivers": ["Replacement of damaged or lost original adapters", "Additional adapters for home, office and travel", "Growing demand for high-power USB-C charging", "Increasing need to charge multiple devices"]

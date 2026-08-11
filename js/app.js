@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260810-na-cards";
+const DATA_VERSION = "20260811-na-usd-forecast";
 
 const state = {
   categoryId: null,
@@ -508,14 +508,15 @@ function renderNARegionalDetail(categoryId, overview) {
             <span>Market Size Trend</span>
             <h3>${escapeHtml(trend.title || "U.S. Power Adapter Market Size*")}</h3>
             <ul class="geo-core-list">
-              <li>Market size: RMB 8.8B in 2024</li>
-              <li>Annual growth: approximately 10%</li>
+              <li>Market size: $1.29B in 2024 (RMB 8.8B ÷ 6.8)</li>
+              <li>Forecast CAGR: 3.9% from 2023 to 2033</li>
               <li>Demand is supported by replacement, travel and multi-device charging</li>
             </ul>
           </div>
           <div class="geo-na-market-trend-visual">
             <span class="geo-na-virtual-note">${escapeHtml(trend.note || "* Virtual / modeled data for layout preview.")}</span>
             <div id="geoNaUSMarketTrendPlot" class="plot geo-na-us-market-plot"></div>
+            ${(trend.references || []).length ? `<div class="geo-na-references"><strong>References</strong><ol>${trend.references.map((reference) => `<li>${reference.url ? `<a href="${escapeAttr(reference.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(reference.title)}</a>` : `<span>${escapeHtml(reference.title)}</span>`}<small>${escapeHtml(reference.note || "")}</small></li>`).join("")}</ol></div>` : ""}
           </div>
         </section>
 
@@ -529,7 +530,7 @@ function renderNARegionalDetail(categoryId, overview) {
             "Average surveyed purchase price: USD 65.18",
             "USD 40-79.99 is the core price opportunity",
             "Higher-priced products compete through power, portability and brand trust"
-          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.price.body)}</p><ul class="geo-driver-list"><li>USD 40-79.99 is the largest surveyed price tier at 47%.</li><li>Below USD 40 accounts for 28%, while USD 80+ accounts for 25%.</li><li>The core opportunity is branded 65W-100W USB-C and multi-port adapters.</li></ul></div><div class="geo-na-detail-visual"><div id="geoNaPricePlot" class="plot geo-detail-plot"></div><div class="geo-detail-callout"><strong>${escapeHtml(detail.price.average)}</strong><span>Average Purchase Price</span><em>Core opportunity: USD 40-79.99</em></div></div></div>`)}
+          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.price.body)}</p><ul class="geo-driver-list"><li>USD 40-79.99 is the largest surveyed price tier at 47%.</li><li>Below USD 40 accounts for 28%, while USD 80+ accounts for 25%.</li><li>The core opportunity is branded 65W-100W USB-C and multi-port adapters.</li></ul></div><div class="geo-na-detail-visual"><div id="geoNaPricePlot" class="plot geo-detail-plot"></div></div></div>`)}
           ${renderNADetailCard(3, detail.channel, [
             "Physical stores: 41% of surveyed purchases",
             "Official brand websites: 30% | Online e-commerce: 29%",
@@ -539,7 +540,7 @@ function renderNARegionalDetail(categoryId, overview) {
             "68% of surveyed consumers purchased a power adapter themselves",
             "Top expectations: multi-device compatibility, safety and fast charging",
             "Portability, cable storage and charging speed remain key pain points"
-          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.user.body)}</p><ul class="geo-driver-list"><li>Multi-device compatibility leads at 52%.</li><li>Intelligent safety protection follows at 50%.</li><li>Super-fast charging is expected by 48% of surveyed consumers.</li><li>${escapeHtml(detail.user.noMajorPainPoint)} report no major pain point.</li></ul><div class="geo-detail-callout"><strong>Product Implication</strong><span>${escapeHtml(detail.user.implication)}</span></div></div><div class="geo-na-detail-visual"><div class="geo-user-layout"><div class="geo-user-kpi"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><div><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div></div></div></div></div>`)}
+          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.user.body)}</p><div class="geo-user-kpi geo-user-kpi-compact"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><ul class="geo-driver-list"><li>Multi-device compatibility leads at 52%.</li><li>Intelligent safety protection follows at 50%.</li><li>Super-fast charging is expected by 48% of surveyed consumers.</li><li>${escapeHtml(detail.user.noMajorPainPoint)} report no major pain point.</li></ul></div><div class="geo-na-detail-visual geo-na-user-charts"><div class="geo-na-user-chart"><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div class="geo-na-user-chart"><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div></div></div></div>`)}
         </section>
 
         <article class="geo-detail-section geo-na-detail-card geo-na-policy-card">
@@ -2570,8 +2571,8 @@ function drawNARegionalDetail(categoryId) {
   drawGeoShareDonut("geoNaCompetitivePlot", detail.competitive.share, "100%<br>Market Share");
   drawGeoShareDonut("geoNaPricePlot", detail.price.share, "100%<br>Purchases");
   drawGeoShareDonut("geoNaChannelPlot", detail.channel.share, "100%<br>Purchases");
-  drawGeoReportedShareDonut("geoNaExpectationPlot", detail.user.expectations, "Reported<br>Share");
-  drawGeoReportedShareDonut("geoNaPainPlot", detail.user.painPoints, "Reported<br>Share");
+  drawGeoReportedShareBars("geoNaExpectationPlot", detail.user.expectations);
+  drawGeoReportedShareBars("geoNaPainPlot", detail.user.painPoints);
 }
 
 function drawNAUSMarketTrend(trend) {
@@ -2580,14 +2581,19 @@ function drawNAUSMarketTrend(trend) {
   const years = items.map((item) => String(item.label));
   const values = items.map((item) => Number(item.value) || 0);
   const growth = values.map((value, index) => index === 0 ? null : ((value - values[index - 1]) / values[index - 1]) * 100);
+  const maxValue = Math.max(...values, 1);
   drawPlot("geoNaUSMarketTrendPlot", [
     {
       x: years,
       y: values,
+      text: values.map((value) => `$${value.toFixed(2)}B`),
+      textposition: "outside",
+      textfont: { size: 10, color: "#1f2328" },
       type: "bar",
       name: "Market Size",
-      marker: { color: "#efaaa4" },
-      hovertemplate: "<b>%{x}</b><br>Market Size: RMB %{y:.2f}B<extra></extra>",
+      marker: { color: items.map((item) => item.type === "Base" ? "#e2231a" : "#efaaa4") },
+      cliponaxis: false,
+      hovertemplate: "<b>%{x}</b><br>Market Size: $%{y:.2f}B<extra></extra>",
     },
     {
       x: years,
@@ -2601,12 +2607,12 @@ function drawNAUSMarketTrend(trend) {
       hovertemplate: "<b>%{x}</b><br>YoY Growth: %{y:.1f}%<extra></extra>",
     },
   ], {
-    margin: { l: 54, r: 54, t: 16, b: 42 },
+    margin: { l: 76, r: 70, t: 30, b: 54 },
     barmode: "group",
-    xaxis: { title: "Year", type: "category" },
-    yaxis: { title: "Market Size", ticksuffix: "B", tickprefix: "RMB " },
-    yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false },
-    legend: { orientation: "h", y: -0.24, x: 0 },
+    xaxis: { title: "Year", type: "category", tickfont: { size: 10 } },
+    yaxis: { title: "Market Size (USD Billion)", ticksuffix: "B", tickprefix: "$", range: [0, maxValue * 1.22], titlefont: { size: 11 } },
+    yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false, range: [0, 5.2], titlefont: { size: 11 } },
+    legend: { orientation: "h", y: -0.26, x: 0 },
   });
 }
 
@@ -2631,25 +2637,26 @@ function drawGeoShareDonut(id, items, center) {
   });
 }
 
-function drawGeoReportedShareDonut(id, items, center) {
+function drawGeoReportedShareBars(id, items) {
+  const values = items.map((item) => Number(item.value) || 0);
+  const maxValue = Math.max(...values, 1);
   drawPlot(id, [{
-    labels: items.map((item) => item.label),
-    values: items.map((item) => Number(item.value) || 0),
+    x: values,
+    y: items.map((item) => item.label),
     customdata: items.map((item) => item.valueLabel || `${item.value}%`),
-    type: "pie",
-    hole: 0.58,
-    sort: false,
-    textinfo: "label",
+    type: "bar",
+    orientation: "h",
+    text: items.map((item) => item.valueLabel || `${item.value}%`),
     textposition: "outside",
-    texttemplate: "%{label}<br>%{customdata}",
-    marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
-    hovertemplate: "<b>%{label}</b><br>Reported share: %{customdata}<extra></extra>",
+    cliponaxis: false,
+    marker: { color: items.map((_, index) => structureChartColor(index)) },
+    hovertemplate: "<b>%{y}</b><br>Reported share: %{customdata}<extra></extra>",
     textfont: { size: 10, color: "#1f2328" },
   }], {
-    margin: { l: 62, r: 62, t: 24, b: 20 },
+    margin: { l: 142, r: 34, t: 8, b: 34 },
     showlegend: false,
-    uniformtext: { minsize: 9, mode: "hide" },
-    annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#1f2328" } }],
+    xaxis: { title: "Reported Share", ticksuffix: "%", range: [0, maxValue * 1.2], titlefont: { size: 10 }, tickfont: { size: 9 } },
+    yaxis: { autorange: "reversed", tickfont: { size: 10 } },
   });
 }
 

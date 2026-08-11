@@ -3143,7 +3143,7 @@ input[type="search"] {
 
 .geo-na-market-trend-visual {
   display: grid;
-  grid-template-rows: auto minmax(190px, 1fr);
+  grid-template-rows: auto auto auto;
   gap: 4px;
   min-width: 0;
 }
@@ -3156,8 +3156,43 @@ input[type="search"] {
 }
 
 .plot.geo-na-us-market-plot {
-  height: 235px;
+  height: 285px;
   min-width: 0;
+}
+
+.geo-na-references {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 12px;
+  align-items: start;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.geo-na-references > strong {
+  color: var(--ink);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.geo-na-references ol {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.geo-na-references li small {
+  display: block;
+  color: var(--muted);
+}
+
+.geo-na-references a {
+  color: var(--ink);
+  font-weight: 800;
 }
 
 .geo-na-detail-card {
@@ -3387,6 +3422,32 @@ input[type="search"] {
   min-height: 150px;
   padding: 16px;
   background: var(--surface-soft);
+}
+
+.geo-user-kpi.geo-user-kpi-compact {
+  min-height: 88px;
+  padding: 12px;
+}
+
+.geo-user-kpi.geo-user-kpi-compact strong {
+  font-size: 31px;
+}
+
+.geo-na-user-charts {
+  display: grid;
+  gap: 10px;
+}
+
+.geo-na-user-chart {
+  min-width: 0;
+  padding: 9px 10px 4px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.geo-na-user-chart h4 {
+  margin: 0 0 2px;
+  font-size: 12px;
 }
 
 .geo-user-kpi strong {
