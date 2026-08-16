@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260811-na-usd-forecast";
+const DATA_VERSION = "20260816-geo-regional-details";
 
 const state = {
   categoryId: null,
@@ -438,6 +438,7 @@ function renderGeoOverviewModule(categoryId) {
   }
   const selectedRegion = state.geoRegionDetail[categoryId];
   if (selectedRegion === "NA") return renderNARegionalDetail(categoryId, overview);
+  if (selectedRegion) return renderGeoRegionalDetail(categoryId, overview, selectedRegion);
   return `
     <section class="module-block">
       <section class="geo-overview-module">
@@ -463,7 +464,7 @@ function renderGeoRegionCard(region) {
           <h3>${escapeHtml(region.label)} &mdash; ${escapeHtml(region.heading)}</h3>
         </div>
       </header>
-      ${region.id === "NA" ? `<button class="geo-region-card-hit" type="button" data-action="geo-region" data-region-id="NA" aria-label="Open NA regional overview"></button>` : ""}
+      ${region.detail ? `<button class="geo-region-card-hit" type="button" data-action="geo-region" data-region-id="${escapeAttr(region.id)}" aria-label="Open ${escapeAttr(region.label)} regional overview"></button>` : ""}
       <div class="geo-region-map" id="geoOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
       <div class="geo-region-summary">
         <p><strong>Market:</strong> ${geoCardValue(region.market)}</p>
@@ -508,7 +509,7 @@ function renderNARegionalDetail(categoryId, overview) {
             <span>Market Size Trend</span>
             <h3>${escapeHtml(trend.title || "U.S. Power Adapter Market Size*")}</h3>
             <ul class="geo-core-list">
-              <li>Market size: $1.29B in 2024 (RMB 8.8B ÷ 6.8)</li>
+              <li>Market size: USD 1.29B in 2024</li>
               <li>Forecast CAGR: 3.9% from 2023 to 2033</li>
               <li>Demand is supported by replacement, travel and multi-device charging</li>
             </ul>
@@ -536,11 +537,7 @@ function renderNARegionalDetail(categoryId, overview) {
             "Official brand websites: 30% | Online e-commerce: 29%",
             "Amazon, major retailers and direct brand channels each play a distinct role"
           ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.channel.body)}</p><ul class="geo-driver-list">${detail.channel.representative.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div class="geo-na-detail-visual"><div id="geoNaChannelPlot" class="plot geo-detail-donut"></div></div></div>`)}
-          ${renderNADetailCard(4, detail.user, [
-            "68% of surveyed consumers purchased a power adapter themselves",
-            "Top expectations: multi-device compatibility, safety and fast charging",
-            "Portability, cable storage and charging speed remain key pain points"
-          ], `<div class="geo-na-detail-split"><div class="geo-na-detail-copy"><p>${escapeHtml(detail.user.body)}</p><div class="geo-user-kpi geo-user-kpi-compact"><strong>${escapeHtml(detail.user.selfPurchase)}</strong><span>Self-purchased</span></div><ul class="geo-driver-list"><li>Multi-device compatibility leads at 52%.</li><li>Intelligent safety protection follows at 50%.</li><li>Super-fast charging is expected by 48% of surveyed consumers.</li><li>${escapeHtml(detail.user.noMajorPainPoint)} report no major pain point.</li></ul></div><div class="geo-na-detail-visual geo-na-user-charts"><div class="geo-na-user-chart"><h4>Top Expectations</h4><div id="geoNaExpectationPlot" class="plot geo-small-plot"></div></div><div class="geo-na-user-chart"><h4>Main Pain Points</h4><div id="geoNaPainPlot" class="plot geo-small-plot"></div></div></div></div>`)}
+          ${renderNAUserResearchCard(4, detail.user)}
         </section>
 
         <article class="geo-detail-section geo-na-detail-card geo-na-policy-card">
@@ -561,6 +558,112 @@ function renderNARegionalDetail(categoryId, overview) {
   `;
 }
 
+function renderGeoRegionalDetail(categoryId, overview, regionId) {
+  const region = overview.regions.find((item) => item.id === regionId);
+  const detail = region?.detail;
+  if (!detail) return renderGeoOverviewModuleFallback(regionId);
+  const trend = detail.marketTrend || {};
+  const policyItems = detail.policy?.items || [];
+  const effectivePolicy = policyItems.filter((item) => item.status === "Effective");
+  const futurePolicy = policyItems.filter((item) => item.status !== "Effective");
+  return `
+    <section class="module-block">
+      <section class="geo-detail-view">
+        <header class="geo-detail-head">
+          <button class="ghost-button" type="button" data-action="geo-back">← Geo Overview</button>
+          <span>${escapeHtml(detail.eyebrow)}</span>
+          <h2>${escapeHtml(detail.title)}</h2>
+          <ul class="geo-na-takeaway-list">${(detail.opportunity?.corePoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </header>
+
+        <section class="geo-na-metrics">
+          ${(detail.metrics || []).slice(0, 4).map((metric) => `
+            <div class="geo-na-metric-card">
+              <span>${escapeHtml(metric.label)}</span>
+              <strong>${escapeHtml(metric.value)}</strong>
+              <small>${escapeHtml(metric.note || "")}</small>
+            </div>
+          `).join("")}
+        </section>
+
+        <section class="geo-na-market-trend">
+          <div class="geo-na-market-trend-copy">
+            <span>Market Size Trend</span>
+            <h3>${escapeHtml(trend.title || `${region.label} Power Adapter Market Size*`)}</h3>
+            <ul class="geo-core-list">${(trend.bullets || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          </div>
+          <div class="geo-na-market-trend-visual">
+            <span class="geo-na-virtual-note">${escapeHtml(trend.note || "* Modeled data based on the cited regional base.")}</span>
+            <div id="geo${escapeAttr(regionId)}MarketTrendPlot" class="plot geo-na-us-market-plot"></div>
+            ${(trend.references || []).length ? `<div class="geo-na-references"><strong>References</strong><ol>${trend.references.map((reference) => `<li>${reference.url ? `<a href="${escapeAttr(reference.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(reference.title)}</a>` : `<span>${escapeHtml(reference.title)}</span>`}<small>${escapeHtml(reference.note || "")}</small></li>`).join("")}</ol></div>` : ""}
+          </div>
+        </section>
+
+        <section class="geo-detail-grid">
+          ${renderGeoRegionalInsightCard(regionId, 1, "competitive", detail.competitive)}
+          ${renderGeoRegionalInsightCard(regionId, 2, "price", detail.price)}
+          ${renderGeoRegionalInsightCard(regionId, 3, "channel", detail.channel)}
+          ${renderGeoRegionalUserCard(4, detail.user)}
+        </section>
+
+        <article class="geo-detail-section geo-na-detail-card geo-na-policy-card">
+          <div class="geo-na-detail-summary">
+            <div class="geo-detail-section-head"><span>05</span><h3>${escapeHtml(detail.policy.title)}</h3></div>
+          </div>
+          <div class="geo-na-policy-summary">
+            <div><strong>Effective now</strong><p>${escapeHtml(detail.policy.effectiveSummary || detail.policy.body)}</p></div>
+            <div><strong>Future direction</strong><p>${escapeHtml(detail.policy.futureSummary || "Monitor future requirements.")}</p></div>
+          </div>
+          <details class="geo-na-card-disclosure">
+            <summary class="geo-details-trigger">Details</summary>
+            <div class="geo-na-detail-content"><div class="geo-na-policy-detail-list">${[...effectivePolicy, ...futurePolicy].map((item) => `<article><span class="geo-policy-status">${escapeHtml(item.status || "Policy")}</span><div><strong>${item.url ? `<a href="${escapeAttr(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>` : escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div></article>`).join("")}</div></div>
+          </details>
+        </article>
+      </section>
+    </section>
+  `;
+}
+
+function renderGeoRegionalInsightCard(regionId, index, key, section) {
+  if (!section) return "";
+  const charts = section.charts || (section.chart ? [section.chart] : []);
+  return `
+    <article class="geo-detail-section geo-na-detail-card">
+      <div class="geo-na-detail-summary">
+        <div class="geo-detail-section-head"><span>${String(index).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div>
+      </div>
+      <ul class="geo-core-list">${(section.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <details class="geo-na-card-disclosure">
+        <summary class="geo-details-trigger">Details</summary>
+        <div class="geo-na-detail-content">
+          <div class="geo-na-detail-split">
+            <div class="geo-na-detail-copy"><p>${escapeHtml(section.body || "")}</p><ul class="geo-driver-list">${(section.detailPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+            <div class="geo-na-detail-visual geo-regional-chart-grid">${charts.map((chart, chartIndex) => `<section class="geo-regional-chart"><h4>${escapeHtml(chart.title || "")}</h4><div id="geo${escapeAttr(regionId)}${escapeAttr(key)}Plot${chartIndex}" class="plot geo-detail-plot"></div></section>`).join("")}</div>
+          </div>
+        </div>
+      </details>
+    </article>
+  `;
+}
+
+function renderGeoRegionalUserCard(index, section) {
+  if (!section) return "";
+  const metricRow = (row) => `
+    <section class="geo-na-user-metric-row">
+      <h4>${escapeHtml(row.title)}</h4>
+      <div class="geo-na-user-metric-cards">${(row.items || []).map((item) => `<div class="geo-na-user-metric-card"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.valueLabel || `${item.value}%`)}</strong></div>`).join("")}</div>
+      <p>${escapeHtml(row.conclusion || "")}</p>
+    </section>
+  `;
+  return `
+    <article class="geo-detail-section geo-na-detail-card geo-na-user-static-card">
+      <div class="geo-na-detail-summary"><div class="geo-detail-section-head"><span>${String(index).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div></div>
+      <ul class="geo-core-list">${(section.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <div class="geo-na-user-metric-groups">${(section.rows || []).map(metricRow).join("")}</div>
+    </article>
+  `;
+}
+
 function renderNADetailCard(index, section, bullets, detailMarkup) {
   return `
     <article class="geo-detail-section geo-na-detail-card">
@@ -572,6 +675,40 @@ function renderNADetailCard(index, section, bullets, detailMarkup) {
         <summary class="geo-details-trigger">Details</summary>
         <div class="geo-na-detail-content">${detailMarkup}</div>
       </details>
+    </article>
+  `;
+}
+
+function renderNAUserResearchCard(index, section) {
+  const metricRow = (title, items, conclusion) => `
+    <section class="geo-na-user-metric-row">
+      <h4>${escapeHtml(title)}</h4>
+      <div class="geo-na-user-metric-cards">
+        ${(items || []).map((item) => `
+          <div class="geo-na-user-metric-card">
+            <span>${escapeHtml(item.label)}</span>
+            <strong>${escapeHtml(item.valueLabel || `${item.value}%`)}</strong>
+          </div>
+        `).join("")}
+      </div>
+      <p>${escapeHtml(conclusion)}</p>
+    </section>
+  `;
+
+  return `
+    <article class="geo-detail-section geo-na-detail-card geo-na-user-static-card">
+      <div class="geo-na-detail-summary">
+        <div class="geo-detail-section-head"><span>${String(index).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div>
+      </div>
+      <ul class="geo-core-list">
+        <li>68% self-purchase rate among surveyed U.S. consumers</li>
+        <li>Top needs: multi-device compatibility, safety protection and super-fast charging</li>
+        <li>Main pain points: portability, cable storage and charging speed</li>
+      </ul>
+      <div class="geo-na-user-metric-groups">
+        ${metricRow("Top Needs", section.expectations, "Multi-device compatibility, safety and charging speed are similarly important to U.S. consumers.")}
+        ${metricRow("Main Pain Points", section.painPoints, "Portability, cable storage and charging speed are equally reported pain points.")}
+      </div>
     </article>
   `;
 }
@@ -2482,7 +2619,9 @@ function drawMarketAnalysis(categoryId) {
     return;
   }
   if (state.marketModule === "geo") {
-    if (state.geoRegionDetail[categoryId] === "NA") drawNARegionalDetail(categoryId);
+    const selectedRegion = state.geoRegionDetail[categoryId];
+    if (selectedRegion === "NA") drawNARegionalDetail(categoryId);
+    else if (selectedRegion) drawGeoRegionalDetail(categoryId, selectedRegion);
     else drawGeoOverviewMaps();
     return;
   }
@@ -2571,18 +2710,32 @@ function drawNARegionalDetail(categoryId) {
   drawGeoShareDonut("geoNaCompetitivePlot", detail.competitive.share, "100%<br>Market Share");
   drawGeoShareDonut("geoNaPricePlot", detail.price.share, "100%<br>Purchases");
   drawGeoShareDonut("geoNaChannelPlot", detail.channel.share, "100%<br>Purchases");
-  drawGeoReportedShareBars("geoNaExpectationPlot", detail.user.expectations);
-  drawGeoReportedShareBars("geoNaPainPlot", detail.user.painPoints);
+}
+
+function drawGeoRegionalDetail(categoryId, regionId) {
+  const detail = marketStructureReport(categoryId)?.geoOverview?.regions?.find((region) => region.id === regionId)?.detail;
+  if (!detail) return;
+  drawGeoMarketTrend(`geo${regionId}MarketTrendPlot`, detail.marketTrend);
+  ["competitive", "price", "channel"].forEach((key) => {
+    const section = detail[key];
+    const charts = section?.charts || (section?.chart ? [section.chart] : []);
+    charts.forEach((chart, index) => drawGeoRegionalChart(`geo${regionId}${key}Plot${index}`, chart));
+  });
 }
 
 function drawNAUSMarketTrend(trend) {
+  drawGeoMarketTrend("geoNaUSMarketTrendPlot", trend);
+}
+
+function drawGeoMarketTrend(id, trend) {
   const items = trend?.items || [];
   if (!items.length) return;
   const years = items.map((item) => String(item.label));
   const values = items.map((item) => Number(item.value) || 0);
   const growth = values.map((value, index) => index === 0 ? null : ((value - values[index - 1]) / values[index - 1]) * 100);
   const maxValue = Math.max(...values, 1);
-  drawPlot("geoNaUSMarketTrendPlot", [
+  const growthMax = Math.max(...growth.filter((value) => Number.isFinite(value)), 1);
+  drawPlot(id, [
     {
       x: years,
       y: values,
@@ -2611,8 +2764,38 @@ function drawNAUSMarketTrend(trend) {
     barmode: "group",
     xaxis: { title: "Year", type: "category", tickfont: { size: 10 } },
     yaxis: { title: "Market Size (USD Billion)", ticksuffix: "B", tickprefix: "$", range: [0, maxValue * 1.22], titlefont: { size: 11 } },
-    yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false, range: [0, 5.2], titlefont: { size: 11 } },
+    yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false, range: [0, growthMax * 1.3], titlefont: { size: 11 } },
     legend: { orientation: "h", y: -0.26, x: 0 },
+  });
+}
+
+function drawGeoRegionalChart(id, chart) {
+  const items = chart?.items || [];
+  if (!items.length) return;
+  if (chart.type === "donut") {
+    drawGeoShareDonut(id, items, chart.center || "Share");
+    return;
+  }
+  const values = items.map((item) => Number(item.value) || 0);
+  const maxValue = Math.max(...values, 1);
+  const prefix = chart.prefix || "";
+  const suffix = chart.suffix || "";
+  drawPlot(id, [{
+    x: values,
+    y: items.map((item) => item.label),
+    type: "bar",
+    orientation: "h",
+    text: items.map((item) => item.valueLabel || `${prefix}${item.value}${suffix}`),
+    textposition: "outside",
+    cliponaxis: false,
+    marker: { color: items.map((_, index) => structureChartColor(index)) },
+    hovertemplate: `<b>%{y}</b><br>${escapeHtml(chart.hoverLabel || "Value")}: %{text}<extra></extra>`,
+    textfont: { size: 10, color: "#1f2328" },
+  }], {
+    margin: { l: 136, r: 48, t: 8, b: 34 },
+    showlegend: false,
+    xaxis: { title: chart.axisTitle || "", tickprefix: prefix, ticksuffix: suffix, range: [0, maxValue * 1.22], titlefont: { size: 10 }, tickfont: { size: 9 } },
+    yaxis: { autorange: "reversed", tickfont: { size: 10 } },
   });
 }
 

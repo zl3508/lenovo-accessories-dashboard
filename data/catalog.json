@@ -704,7 +704,7 @@
                 { "label": "Representative Country", "value": "USA", "note": "North America reference market" }
               ],
               "usaMetrics": [
-                { "label": "U.S. Market Size", "value": "$1.29B", "note": "RMB 8.8B ÷ 6.8, 2024" },
+                { "label": "U.S. Market Size", "value": "$1.29B", "note": "2024 · Converted at 6.8 RMB/USD" },
                 { "label": "2026 Forecast", "value": "$1.40B*", "note": "Forecast using 3.9% CAGR" },
                 { "label": "2026 YoY Growth", "value": "3.9%*", "note": "Fact.MR forecast CAGR" },
                 { "label": "Top Power Segment", "value": "65W-100W*", "note": "42.9% modeled share" }
@@ -727,7 +727,7 @@
                 "references": [
                   {
                     "title": "Lenovo PC Options Industry Analysis – Power Category Report",
-                    "note": "2024 U.S. adapter base: RMB 8.8B; converted at 6.8 RMB/USD."
+                    "note": "2024 U.S. adapter base converted to USD at 6.8 RMB/USD."
                   },
                   {
                     "title": "Fact.MR / GlobeNewswire – USB Charger Market Forecast",
@@ -826,7 +826,175 @@
             "market": "USD 1.83B | 21.3% global share",
             "characteristics": "USB-C Standardization | Safety | High ASP | Compliance",
             "representativeLabel": "Representatives",
-            "representativeCountry": "UK / Developed Europe | Saudi Arabia"
+            "representativeCountry": "UK / Developed Europe | Saudi Arabia",
+            "detail": {
+              "eyebrow": "EMEA Regional Overview",
+              "title": "EMEA Power Adapter Market",
+              "metrics": [
+                { "label": "EMEA Wall Charger Market", "value": "USD 1.83B", "note": "2025 regional market size" },
+                { "label": "2032 Forecast", "value": "USD 2.91B*", "note": "Constant-share model at 6.86% CAGR" },
+                { "label": "Europe / UK Mean Price", "value": "USD 77.05", "note": "Surveyed adapter purchase price" },
+                { "label": "Saudi Top Need", "value": "68%", "note": "Multi-port compatibility" }
+              ],
+              "marketTrend": {
+                "title": "2025–2032 EMEA Wall Charger Market Size*",
+                "note": "* Modeled from the USD 1.83B 2025 base at the 6.86% global category CAGR; not a regional source forecast.",
+                "bullets": [
+                  "Market size: USD 1.83B in 2025",
+                  "Modeled 2032 value: USD 2.91B*",
+                  "Developed Europe is premium and compliance-led, while Saudi demand is more performance-led"
+                ],
+                "items": [
+                  { "label": "2025", "value": 1.83, "type": "Base" },
+                  { "label": "2026", "value": 1.956, "type": "Forecast" },
+                  { "label": "2027", "value": 2.09, "type": "Forecast" },
+                  { "label": "2028", "value": 2.233, "type": "Forecast" },
+                  { "label": "2029", "value": 2.386, "type": "Forecast" },
+                  { "label": "2030", "value": 2.55, "type": "Forecast" },
+                  { "label": "2031", "value": 2.725, "type": "Forecast" },
+                  { "label": "2032", "value": 2.912, "type": "Forecast" }
+                ],
+                "references": [
+                  { "title": "Lenovo PC Options Industry Analysis – Power Category Report", "note": "Regional base, UK market structure and channel observations." },
+                  { "title": "Ipsos PC Accessories User Research – Power Adapters", "note": "Europe/UK and Saudi price, feature and channel indicators." }
+                ]
+              },
+              "competitive": {
+                "title": "Competitive Landscape",
+                "summaryPoints": [
+                  "Developed Europe rewards certification, stable output and trusted brand support",
+                  "Saudi competition is more performance-led, with multi-port demand at 68%",
+                  "Premium accessory brands compete through compact GaN design, power and retail execution"
+                ],
+                "body": "EMEA is not a single competitive market. Developed Europe supports premium pricing but expects certification, stable output and service credibility. Saudi Arabia shows stronger upgrade demand around multi-port and fast charging, creating room for performance-focused third-party brands.",
+                "detailPoints": [
+                  "Europe / UK has the highest surveyed mean adapter price at USD 77.05.",
+                  "Stable output is the strongest Europe / UK feature signal at 62%.",
+                  "Saudi Arabia is led by multi-port compatibility at 68% and protection at 63%."
+                ],
+                "chart": {
+                  "title": "Europe / UK Product Signals",
+                  "type": "bar",
+                  "suffix": "%",
+                  "axisTitle": "Reported Share",
+                  "hoverLabel": "Reported share",
+                  "items": [
+                    { "label": "Stable output", "value": 62, "valueLabel": "62%" },
+                    { "label": "Fast charging", "value": 58, "valueLabel": "58%" },
+                    { "label": "Multi-port", "value": 56, "valueLabel": "56%" },
+                    { "label": "Protection", "value": 52, "valueLabel": "52%" }
+                  ]
+                }
+              },
+              "price": {
+                "title": "Price Positioning",
+                "summaryPoints": [
+                  "Europe / UK mean surveyed price: USD 77.05",
+                  "Saudi mean surveyed price: USD 75.76",
+                  "Both representative markets can support premium, high-confidence product positioning"
+                ],
+                "body": "Europe / UK and Saudi Arabia both show high surveyed purchase prices, but the value story differs. Europe supports premium pricing through reliability and compliance, while Saudi buyers attach more value to multi-device performance and fast-charging upgrades.",
+                "detailPoints": [
+                  "Avoid one EMEA-wide price architecture; localize the value proposition by market.",
+                  "Europe should connect price to stability, certification and durable design.",
+                  "Saudi Arabia should connect price to ports, charging speed and protection."
+                ],
+                "chart": {
+                  "title": "Mean Surveyed Adapter Price",
+                  "type": "bar",
+                  "prefix": "$",
+                  "axisTitle": "USD",
+                  "hoverLabel": "Mean price",
+                  "items": [
+                    { "label": "Europe / UK", "value": 77.05, "valueLabel": "$77.05" },
+                    { "label": "Saudi Arabia", "value": 75.76, "valueLabel": "$75.76" }
+                  ]
+                }
+              },
+              "channel": {
+                "title": "Channel Structure",
+                "summaryPoints": [
+                  "Europe / UK is balanced across physical, brand-direct and ecommerce channels",
+                  "Saudi physical retail leads at 41%",
+                  "Local distributor and retail execution remain important alongside online content"
+                ],
+                "body": "Channel structure differs inside EMEA. Europe / UK is almost evenly split across physical stores, official brand websites and online commerce. Saudi Arabia is more retail-led, so product communication must work both on shelf and online.",
+                "detailPoints": [
+                  "Europe / UK: physical 35%, brand website 33%, online commerce 32%.",
+                  "Saudi Arabia: physical 41%, online commerce 32%, brand website 26%.",
+                  "A single online-only route would miss meaningful retail and service-led demand."
+                ],
+                "charts": [
+                  {
+                    "title": "Europe / UK Channel Mix",
+                    "type": "donut",
+                    "center": "Europe / UK",
+                    "items": [
+                      { "label": "Physical", "value": 35, "valueLabel": "35%" },
+                      { "label": "Brand Website", "value": 33, "valueLabel": "33%" },
+                      { "label": "Online", "value": 32, "valueLabel": "32%" }
+                    ]
+                  },
+                  {
+                    "title": "Saudi Channel Mix",
+                    "type": "donut",
+                    "center": "Saudi",
+                    "items": [
+                      { "label": "Physical", "value": 41, "valueLabel": "41%" },
+                      { "label": "Online", "value": 32, "valueLabel": "32%" },
+                      { "label": "Brand Website", "value": 26, "valueLabel": "26%" }
+                    ]
+                  }
+                ]
+              },
+              "user": {
+                "title": "User Research Insights",
+                "summaryPoints": [
+                  "Europe / UK users prioritize stable output, fast charging and multi-port compatibility",
+                  "Saudi users prioritize multi-port use, safety protection and charging speed",
+                  "Premium pricing is supported by reliability and performance rather than wattage alone"
+                ],
+                "rows": [
+                  {
+                    "title": "Europe / UK Top Needs",
+                    "items": [
+                      { "label": "Stable Output", "value": 62, "valueLabel": "62%" },
+                      { "label": "Fast Charging", "value": 58, "valueLabel": "58%" },
+                      { "label": "Multi-port", "value": 56, "valueLabel": "56%" }
+                    ],
+                    "conclusion": "Reliability, charging speed and device coverage are similarly important in developed Europe."
+                  },
+                  {
+                    "title": "Saudi Top Needs",
+                    "items": [
+                      { "label": "Multi-port", "value": 68, "valueLabel": "68%" },
+                      { "label": "Protection", "value": 63, "valueLabel": "63%" },
+                      { "label": "Fast Charging", "value": 56, "valueLabel": "56%" }
+                    ],
+                    "conclusion": "Saudi demand is centered on multi-device convenience, safety and fast-charging upgrades."
+                  }
+                ]
+              },
+              "policy": {
+                "title": "Policy & Standards",
+                "effectiveSummary": "EU laptop charger rules now reinforce USB-C interoperability, harmonized fast charging, safety and clear charging information.",
+                "futureSummary": "Portfolio governance should track efficiency, sustainability, labeling and local compliance requirements across Europe and the Middle East.",
+                "items": [
+                  { "title": "EU Common Charger Directive", "status": "Effective", "url": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro", "text": "Laptops entered the EU common-charger scope on 28 April 2026, reinforcing USB-C and harmonized fast charging." },
+                  { "title": "European Safety & Charging Disclosure", "status": "Effective", "text": "Product claims, charging characteristics, compatibility and certification evidence must be clear across packaging and ecommerce." },
+                  { "title": "Saudi Market Localization", "status": "Effective", "text": "Product, plug, labeling and importer requirements need market-specific review before launch." },
+                  { "title": "Efficiency & Sustainability Tracking", "status": "Future direction", "text": "Future portfolio planning should reserve space for tighter efficiency, material and lifecycle disclosure requirements." }
+                ]
+              },
+              "opportunity": {
+                "corePoints": [
+                  "Market: Premium, regulation-led and internally diverse",
+                  "Europe opportunity: Certified 65W-100W USB-C with stable output and service credibility",
+                  "Saudi opportunity: Multi-port, fast-charging products with visible protection",
+                  "Lenovo advantage: PC compatibility, trusted safety and localized channel execution"
+                ]
+              }
+            }
           },
           {
             "id": "AP",
@@ -835,7 +1003,171 @@
             "market": "USD 3.40B | 39.5% global share",
             "characteristics": "Largest Scale | Diverse Demand | Localization | Price Sensitivity",
             "representativeLabel": "Representatives",
-            "representativeCountry": "Japan | Indonesia | India"
+            "representativeCountry": "Japan | Indonesia | India",
+            "detail": {
+              "eyebrow": "AP Regional Overview",
+              "title": "Asia Pacific Power Adapter Market",
+              "metrics": [
+                { "label": "AP Wall Charger Market", "value": "USD 3.40B", "note": "2025 regional market size" },
+                { "label": "2032 Forecast", "value": "USD 5.41B*", "note": "Constant-share model at 6.86% CAGR" },
+                { "label": "Japan Safety Priority", "value": "58%", "note": "Top surveyed product signal" },
+                { "label": "India Fast Charging", "value": "79%", "note": "Strongest surveyed feature signal" }
+              ],
+              "marketTrend": {
+                "title": "2025–2032 AP Wall Charger Market Size*",
+                "note": "* Modeled from the USD 3.40B 2025 base at the 6.86% global category CAGR; not a regional source forecast.",
+                "bullets": [
+                  "Market size: USD 3.40B in 2025",
+                  "Modeled 2032 value: USD 5.41B*",
+                  "Japan is reliability-led, India is feature-intensive and Indonesia is value-sensitive"
+                ],
+                "items": [
+                  { "label": "2025", "value": 3.4, "type": "Base" },
+                  { "label": "2026", "value": 3.633, "type": "Forecast" },
+                  { "label": "2027", "value": 3.882, "type": "Forecast" },
+                  { "label": "2028", "value": 4.149, "type": "Forecast" },
+                  { "label": "2029", "value": 4.433, "type": "Forecast" },
+                  { "label": "2030", "value": 4.738, "type": "Forecast" },
+                  { "label": "2031", "value": 5.063, "type": "Forecast" },
+                  { "label": "2032", "value": 5.41, "type": "Forecast" }
+                ],
+                "references": [
+                  { "title": "Lenovo PC Options Industry Analysis – Power Category Report", "note": "Japan, India and Indonesia market and competitor observations." },
+                  { "title": "Ipsos PC Accessories User Research – Power Adapters", "note": "Japan and India price, feature and channel indicators." }
+                ]
+              },
+              "competitive": {
+                "title": "Competitive Landscape",
+                "summaryPoints": [
+                  "Japan has strong local brands and intense competition around compactness and reliability",
+                  "Anker represents approximately 18% of the Japan adapter market",
+                  "India and Indonesia require stronger value architecture and localized channel execution"
+                ],
+                "body": "AP combines mature, design-sensitive markets with fast-growing value markets. Japan rewards compactness, safety and refined execution. India rewards brand trust and technical clarity. Indonesia is highly price-sensitive, requiring disciplined price bands and local distribution.",
+                "detailPoints": [
+                  "Japan's leading accessory brands compete through design, trust and direct ecommerce execution.",
+                  "India gives unusually high weight to brand at 75% and fast charging at 79%.",
+                  "Indonesia should not be approached with a Japan-style premium-only portfolio."
+                ],
+                "chart": {
+                  "title": "Japan Adapter Brand Structure",
+                  "type": "donut",
+                  "center": "Japan",
+                  "items": [
+                    { "label": "Anker", "value": 18, "valueLabel": "18%" },
+                    { "label": "Other Brands", "value": 82, "valueLabel": "82%" }
+                  ]
+                }
+              },
+              "price": {
+                "title": "Price Positioning",
+                "summaryPoints": [
+                  "Japan mean surveyed price: USD 35.04",
+                  "India mean surveyed price: USD 41.10",
+                  "Localized product and price ladders are essential across AP"
+                ],
+                "body": "AP price positioning must reflect country maturity and use case. Japan is price restrained despite high expectations for refinement and safety. India accepts a somewhat higher mean price when brand, USB-C compatibility and charging performance are credible.",
+                "detailPoints": [
+                  "Japan should prioritize compact, reliable 45W-100W products rather than wattage escalation alone.",
+                  "India needs a value proposition that combines brand assurance with visible feature intensity.",
+                  "Indonesia needs selected price points, local promotions and strict portfolio discipline."
+                ],
+                "chart": {
+                  "title": "Mean Surveyed Adapter Price",
+                  "type": "bar",
+                  "prefix": "$",
+                  "axisTitle": "USD",
+                  "hoverLabel": "Mean price",
+                  "items": [
+                    { "label": "Japan", "value": 35.04, "valueLabel": "$35.04" },
+                    { "label": "India", "value": 41.1, "valueLabel": "$41.10" }
+                  ]
+                }
+              },
+              "channel": {
+                "title": "Channel Structure",
+                "summaryPoints": [
+                  "Japan online commerce leads at 47%",
+                  "India online commerce leads at 53%",
+                  "Indonesia depends more heavily on local agents, marketplaces and promotion calendars"
+                ],
+                "body": "Online commerce is central in Japan and India, but the execution model differs. Japan combines direct Amazon and Rakuten management with local retail credibility. India needs high-quality ecommerce specifications and trust signals. Indonesia relies more on local agents and marketplace promotion.",
+                "detailPoints": [
+                  "Japan: online 47%, physical 33%, brand website 20%.",
+                  "India: online 53%, physical 29%, brand website 18%.",
+                  "Country-specific retailer, agent and promotion plans are required across AP."
+                ],
+                "charts": [
+                  {
+                    "title": "Japan Channel Mix",
+                    "type": "donut",
+                    "center": "Japan",
+                    "items": [
+                      { "label": "Online", "value": 47, "valueLabel": "47%" },
+                      { "label": "Physical", "value": 33, "valueLabel": "33%" },
+                      { "label": "Brand Website", "value": 20, "valueLabel": "20%" }
+                    ]
+                  },
+                  {
+                    "title": "India Channel Mix",
+                    "type": "donut",
+                    "center": "India",
+                    "items": [
+                      { "label": "Online", "value": 53, "valueLabel": "53%" },
+                      { "label": "Physical", "value": 29, "valueLabel": "29%" },
+                      { "label": "Brand Website", "value": 18, "valueLabel": "18%" }
+                    ]
+                  }
+                ]
+              },
+              "user": {
+                "title": "User Research Insights",
+                "summaryPoints": [
+                  "Japan prioritizes protection, stable output and compact multi-device use",
+                  "India prioritizes fast charging, brand confidence and USB-C clarity",
+                  "AP demand must be localized by country rather than managed as one common portfolio"
+                ],
+                "rows": [
+                  {
+                    "title": "Japan Top Needs",
+                    "items": [
+                      { "label": "Protection", "value": 58, "valueLabel": "58%" },
+                      { "label": "Stable Output", "value": 56, "valueLabel": "56%" },
+                      { "label": "Multi-port", "value": 52, "valueLabel": "52%" }
+                    ],
+                    "conclusion": "Japan rewards safe, stable and compact charging more than aggressive wattage claims."
+                  },
+                  {
+                    "title": "India Top Needs",
+                    "items": [
+                      { "label": "Fast Charging", "value": 79, "valueLabel": "79%" },
+                      { "label": "Brand", "value": 75, "valueLabel": "75%" },
+                      { "label": "USB-C", "value": 65, "valueLabel": "65%" }
+                    ],
+                    "conclusion": "India buyers compare technical confidence and brand reassurance before purchase."
+                  }
+                ]
+              },
+              "policy": {
+                "title": "Policy & Standards",
+                "effectiveSummary": "Japan PSE and Australia MEPS requirements make safety, efficiency, importer responsibility and documentation launch-critical.",
+                "futureSummary": "RCM artwork governance and changing product-scope requirements should be reviewed early for future AP launches.",
+                "items": [
+                  { "title": "Japan PSE Framework", "status": "Effective", "url": "https://www.meti.go.jp/english/policy/economy/consumer/pse/index.html", "text": "Applicable AC/DC power supplies require technical compliance, inspection, importer responsibility and PSE labeling readiness." },
+                  { "title": "Australia External Power Supply MEPS", "status": "Effective", "url": "https://www.energyrating.gov.au/industry-information/products/external-power-supplies", "text": "Covered external power supplies require minimum energy performance and supporting efficiency evidence." },
+                  { "title": "Australia / New Zealand RCM", "status": "Future direction", "url": "https://www.eess.gov.au/rcm/marking-of-electrical-equipment/", "text": "Packaging and product artwork should reserve RCM placement and responsible-supplier traceability where applicable." },
+                  { "title": "Country Scope & Label Review", "status": "Future direction", "text": "India and Indonesia launches should include early local certification, importer, plug, label and marketplace checks." }
+                ]
+              },
+              "opportunity": {
+                "corePoints": [
+                  "Market: Largest regional scale with strong country-level divergence",
+                  "Japan opportunity: Compact 45W-100W USB-C with safety and stable output",
+                  "India / Indonesia opportunity: Trusted fast charging with disciplined value architecture",
+                  "Lenovo advantage: Localized PC compatibility, certification and channel execution"
+                ]
+              }
+            }
           },
           {
             "id": "LA",
@@ -844,7 +1176,163 @@
             "market": "USD 0.58B | 13.7% global laptop charger share",
             "characteristics": "Value-driven | Price-sensitive | Fast Charging | Multi-port",
             "representativeLabel": "Representatives",
-            "representativeCountry": "Brazil & Mexico"
+            "representativeCountry": "Brazil & Mexico",
+            "detail": {
+              "eyebrow": "LA Regional Overview",
+              "title": "Latin America Power Adapter Market",
+              "metrics": [
+                { "label": "LA Laptop Charger Market", "value": "USD 0.58B", "note": "2025 regional market size" },
+                { "label": "2032 Forecast", "value": "USD 0.92B*", "note": "Constant-share model at 6.86% CAGR" },
+                { "label": "BR + MEX Mean Price", "value": "USD 36.45", "note": "Surveyed adapter purchase price" },
+                { "label": "Fast Charging Priority", "value": "66%", "note": "Top surveyed feature signal" }
+              ],
+              "marketTrend": {
+                "title": "2025–2032 LA Laptop Charger Market Size*",
+                "note": "* Modeled from the USD 0.58B 2025 base at the 6.86% global category CAGR; not a regional source forecast.",
+                "bullets": [
+                  "Market size: USD 0.58B in 2025",
+                  "Modeled 2032 value: USD 0.92B*",
+                  "Demand is value-led but still requires fast charging, safety and portability"
+                ],
+                "items": [
+                  { "label": "2025", "value": 0.58, "type": "Base" },
+                  { "label": "2026", "value": 0.62, "type": "Forecast" },
+                  { "label": "2027", "value": 0.662, "type": "Forecast" },
+                  { "label": "2028", "value": 0.708, "type": "Forecast" },
+                  { "label": "2029", "value": 0.756, "type": "Forecast" },
+                  { "label": "2030", "value": 0.808, "type": "Forecast" },
+                  { "label": "2031", "value": 0.864, "type": "Forecast" },
+                  { "label": "2032", "value": 0.923, "type": "Forecast" }
+                ],
+                "references": [
+                  { "title": "Lenovo PC Options Industry Analysis – Power Category Report", "note": "Regional base and Brazil/Mexico market observations." },
+                  { "title": "Ipsos PC Accessories User Research – Power Adapters", "note": "Brazil/Mexico price, feature, motivation and channel indicators." }
+                ]
+              },
+              "competitive": {
+                "title": "Competitive Landscape",
+                "summaryPoints": [
+                  "The aftermarket is fragmented and highly sensitive to visible value",
+                  "Fast charging and protection remain required even at lower price points",
+                  "Compact USB-C products compete best when technical claims are easy to verify"
+                ],
+                "body": "Brazil and Mexico are value-driven markets where low price alone is insufficient. Buyers still expect credible charging speed, safety protection and multi-device coverage. Lenovo must make technical proof and compatibility visible while controlling entry price.",
+                "detailPoints": [
+                  "Travel and mobile work are the strongest purchase motivation at 44%.",
+                  "Convenient charging locations reach 38%, while multi-device demand reaches 34%.",
+                  "Local ecommerce execution and certification can differentiate branded products from fragmented value supply."
+                ],
+                "chart": {
+                  "title": "BR + MEX Purchase Motivations",
+                  "type": "bar",
+                  "suffix": "%",
+                  "axisTitle": "Reported Share",
+                  "hoverLabel": "Reported share",
+                  "items": [
+                    { "label": "Travel / mobile work", "value": 44, "valueLabel": "44%" },
+                    { "label": "Convenient locations", "value": 38, "valueLabel": "38%" },
+                    { "label": "Multi-device", "value": 34, "valueLabel": "34%" },
+                    { "label": "Original lacks fast charge", "value": 11, "valueLabel": "11%" }
+                  ]
+                }
+              },
+              "price": {
+                "title": "Price Segmentation",
+                "summaryPoints": [
+                  "Mean surveyed purchase price: USD 36.45",
+                  "69% of reported purchases are below USD 40",
+                  "USD 20-39.99 is the core price band at 49%"
+                ],
+                "body": "The Brazil/Mexico market is concentrated below USD 40, but the product still needs credible charging speed and protection. The core opportunity is a portable, branded USB-C adapter with clear performance proof in the USD 20-39.99 band.",
+                "detailPoints": [
+                  "Under USD 20 represents 20% of reported purchases.",
+                  "USD 20-39.99 is the largest band at 49%.",
+                  "Higher tiers should be reserved for visible upgrades in power, ports and portability."
+                ],
+                "chart": {
+                  "title": "BR + MEX Price Band",
+                  "type": "donut",
+                  "center": "Price Mix",
+                  "items": [
+                    { "label": "Under $20", "value": 20, "valueLabel": "20%" },
+                    { "label": "$20-$39.99", "value": 49, "valueLabel": "49%" },
+                    { "label": "$40-$59.99", "value": 21, "valueLabel": "21%" },
+                    { "label": "$60+", "value": 11, "valueLabel": "11%" }
+                  ]
+                }
+              },
+              "channel": {
+                "title": "Channel Structure",
+                "summaryPoints": [
+                  "Online ecommerce leads at 48%",
+                  "Physical stores remain meaningful at 31%",
+                  "Product pages need clear wattage, safety and compatibility proof"
+                ],
+                "body": "Online commerce is the leading Brazil/Mexico channel, but nearly one-third of purchases still come through physical stores. Portfolio planning therefore needs strong ecommerce content and locally compliant retail-ready packaging.",
+                "detailPoints": [
+                  "Online ecommerce accounts for 48% of surveyed purchases.",
+                  "Physical stores account for 31%, while official brand websites account for 21%.",
+                  "Local marketplaces, distributors and after-sales confidence remain important execution factors."
+                ],
+                "chart": {
+                  "title": "BR + MEX Channel Mix",
+                  "type": "donut",
+                  "center": "Channel Mix",
+                  "items": [
+                    { "label": "Online", "value": 48, "valueLabel": "48%" },
+                    { "label": "Physical", "value": 31, "valueLabel": "31%" },
+                    { "label": "Brand Website", "value": 21, "valueLabel": "21%" }
+                  ]
+                }
+              },
+              "user": {
+                "title": "User Research Insights",
+                "summaryPoints": [
+                  "63% of surveyed Brazil/Mexico users purchased an adapter themselves",
+                  "Top needs are fast charging, protection and multi-port compatibility",
+                  "Travel and mobile work make portability a central product requirement"
+                ],
+                "rows": [
+                  {
+                    "title": "Top Needs",
+                    "items": [
+                      { "label": "Fast Charging", "value": 66, "valueLabel": "66%" },
+                      { "label": "Protection", "value": 60, "valueLabel": "60%" },
+                      { "label": "Multi-port", "value": 59, "valueLabel": "59%" }
+                    ],
+                    "conclusion": "Value-tier products still need credible charging speed, safety and device coverage."
+                  },
+                  {
+                    "title": "Buying Context",
+                    "items": [
+                      { "label": "Self-purchased", "value": 63, "valueLabel": "63%" },
+                      { "label": "Stable Output", "value": 47, "valueLabel": "47%" },
+                      { "label": "Travel / Mobile Work", "value": 44, "valueLabel": "44%" }
+                    ],
+                    "conclusion": "Portable, reliable adapters fit the region's self-directed and mobile purchase context."
+                  }
+                ]
+              },
+              "policy": {
+                "title": "Policy & Standards",
+                "effectiveSummary": "Mexico energy-efficiency rules and Brazil Anatel conformity requirements make testing, labeling and local certification launch-critical.",
+                "futureSummary": "Future planning should monitor scope updates and reserve time for local homologation, importer and packaging changes.",
+                "items": [
+                  { "title": "Mexico NOM-029-ENER-2017", "status": "Effective", "url": "https://platiica.economia.gob.mx/normalizacion/nom-029-ener-2017/", "text": "External power supplies require energy-efficiency evidence, test methods, marking and label readiness." },
+                  { "title": "Brazil Anatel Act 5155", "status": "Effective", "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155", "text": "Covered chargers require conformity assessment, mechanical and thermal safety tests, and certification traceability." },
+                  { "title": "Local Homologation Planning", "status": "Future direction", "text": "Launch plans should reserve lead time for local testing, importer records and certification renewals." },
+                  { "title": "Label & Scope Monitoring", "status": "Future direction", "text": "Product and packaging teams should monitor changing USB power-interface scope and local disclosure requirements." }
+                ]
+              },
+              "opportunity": {
+                "corePoints": [
+                  "Market: Value-driven, price-sensitive and channel-fragmented",
+                  "Core opportunity: Portable USB-C adapters in the USD 20-39.99 band",
+                  "Winning product: Fast charging, protection and multi-port value",
+                  "Lenovo advantage: Trusted compatibility with clear certification and ecommerce proof"
+                ]
+              }
+            }
           }
         ]
       },
