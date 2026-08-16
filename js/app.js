@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260816-geo-regional-details";
+const DATA_VERSION = "20260816-user-research-details";
 
 const state = {
   categoryId: null,
@@ -659,7 +659,12 @@ function renderGeoRegionalUserCard(index, section) {
     <article class="geo-detail-section geo-na-detail-card geo-na-user-static-card">
       <div class="geo-na-detail-summary"><div class="geo-detail-section-head"><span>${String(index).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div></div>
       <ul class="geo-core-list">${(section.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      <div class="geo-na-user-metric-groups">${(section.rows || []).map(metricRow).join("")}</div>
+      <details class="geo-na-card-disclosure">
+        <summary class="geo-details-trigger">Details</summary>
+        <div class="geo-na-detail-content">
+          <div class="geo-na-user-metric-groups">${(section.rows || []).map(metricRow).join("")}</div>
+        </div>
+      </details>
     </article>
   `;
 }
@@ -705,10 +710,15 @@ function renderNAUserResearchCard(index, section) {
         <li>Top needs: multi-device compatibility, safety protection and super-fast charging</li>
         <li>Main pain points: portability, cable storage and charging speed</li>
       </ul>
-      <div class="geo-na-user-metric-groups">
-        ${metricRow("Top Needs", section.expectations, "Multi-device compatibility, safety and charging speed are similarly important to U.S. consumers.")}
-        ${metricRow("Main Pain Points", section.painPoints, "Portability, cable storage and charging speed are equally reported pain points.")}
-      </div>
+      <details class="geo-na-card-disclosure">
+        <summary class="geo-details-trigger">Details</summary>
+        <div class="geo-na-detail-content">
+          <div class="geo-na-user-metric-groups">
+            ${metricRow("Top Needs", section.expectations, "Multi-device compatibility, safety and charging speed are similarly important to U.S. consumers.")}
+            ${metricRow("Main Pain Points", section.painPoints, "Portability, cable storage and charging speed are equally reported pain points.")}
+          </div>
+        </div>
+      </details>
     </article>
   `;
 }

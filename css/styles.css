@@ -3457,8 +3457,6 @@ input[type="search"] {
 .geo-na-user-metric-groups {
   display: grid;
   gap: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
 }
 
 .geo-na-user-metric-row {
