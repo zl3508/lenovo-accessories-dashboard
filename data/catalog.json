@@ -437,7 +437,7 @@
       "title": "Adapter Market Structure",
       "overview": {
         "eyebrow": "Global Overview",
-        "heading": "Global Laptop Charger Market",
+        "heading": "Global Laptop Charger TAM Scope - Exclude Mobiles (Over 65W, PC Standard Output)",
         "subtitle": "Market Size, Region, Technology and Channel Summary",
         "body": "The global laptop charger market is expanding steadily, driven by USB-C PD standardization, demand for replacement and multi-device charging, and the adoption of compact GaN designs. Market growth is global, but product preferences and channel strategies remain highly localized.",
         "bullets": [
@@ -556,31 +556,34 @@
               "title": "2025 Region Share",
               "type": "donut",
               "center": "2025 Share",
+              "legendSide": "left",
+              "showLabels": false,
               "items": [
                 {
                   "label": "APAC",
-                  "value": 40.21,
-                  "valueLabel": "40.21%"
+                  "value": 1789.13,
+                  "valueLabel": "$1,789.13M"
                 },
                 {
                   "label": "North America",
-                  "value": 26.02,
-                  "valueLabel": "26.02%"
+                  "value": 1157.84,
+                  "valueLabel": "$1,157.84M"
                 },
                 {
                   "label": "Europe",
-                  "value": 22.8,
-                  "valueLabel": "22.80%"
+                  "value": 1014.58,
+                  "valueLabel": "$1,014.58M"
                 },
                 {
                   "label": "Latin America",
-                  "value": 6.49,
-                  "valueLabel": "6.49%"
+                  "value": 288.74,
+                  "valueLabel": "$288.74M"
                 },
                 {
                   "label": "MEA",
-                  "value": 4.49,
-                  "valueLabel": "4.49%"
+                  "value": 199.71,
+                  "valueLabel": "$199.71M",
+                  "description": "Middle East and Africa"
                 }
               ]
             }
@@ -605,18 +608,18 @@
                 "items": [
                   {
                     "label": "65W-100W",
-                    "value": 42.88,
-                    "valueLabel": "42.88%"
+                    "value": 1908.27,
+                    "valueLabel": "$1,908.27M"
                   },
                   {
                     "label": "Below 65W",
-                    "value": 41.09,
-                    "valueLabel": "41.09%"
+                    "value": 1828.29,
+                    "valueLabel": "$1,828.29M"
                   },
                   {
                     "label": "Above 100W",
-                    "value": 16.03,
-                    "valueLabel": "16.03%"
+                    "value": 713.44,
+                    "valueLabel": "$713.44M"
                   }
                 ]
               },
@@ -627,13 +630,13 @@
                 "items": [
                   {
                     "label": "Silicon Based",
-                    "value": 69.13,
-                    "valueLabel": "69.13%"
+                    "value": 3076.26,
+                    "valueLabel": "$3,076.26M"
                   },
                   {
                     "label": "GaN",
-                    "value": 30.87,
-                    "valueLabel": "30.87%"
+                    "value": 1373.74,
+                    "valueLabel": "$1,373.74M"
                   }
                 ]
               }
@@ -654,21 +657,26 @@
               "title": "2025 Channel Share",
               "type": "donut",
               "center": "2025 Share",
+              "legendSide": "right",
+              "showLabels": false,
               "items": [
                 {
                   "label": "Online Retail",
-                  "value": 58.28,
-                  "valueLabel": "58.28%"
+                  "value": 2593.62,
+                  "valueLabel": "$2,593.62M",
+                  "description": "E-commerce marketplaces and brand-owned online stores"
                 },
                 {
                   "label": "Offline Stores",
-                  "value": 24.69,
-                  "valueLabel": "24.69%"
+                  "value": 1098.49,
+                  "valueLabel": "$1,098.49M",
+                  "description": "Physical electronics retailers, distributors and resellers"
                 },
                 {
-                  "label": "Direct OEM",
-                  "value": 17.03,
-                  "valueLabel": "17.03%"
+                  "label": "Direct OEM Sales",
+                  "value": 757.89,
+                  "valueLabel": "$757.89M",
+                  "description": "PC-bundled or direct sales through device manufacturers"
                 }
               ]
             }

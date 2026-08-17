@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260816-user-research-details";
+const DATA_VERSION = "20260817-global-tam-structure";
 
 const state = {
   categoryId: null,
@@ -1357,13 +1357,33 @@ function renderMarketStructureOverview(report) {
 }
 
 function renderStructurePlotPanel(chart, chartId) {
+  const legendSide = chart.legendSide === "left" || chart.legendSide === "right" ? chart.legendSide : null;
+  const legendTotal = (chart.items || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+  const legend = legendSide ? `
+    <div class="structure-chart-legend" aria-label="${escapeAttr(chart.title || "Chart")} legend">
+      ${(chart.items || []).map((item, index) => `
+        <div class="structure-chart-legend-item">
+          <i style="--legend-color:${escapeAttr(structureChartColor(index))}"></i>
+          <div>
+            <strong>${escapeHtml(item.label)}</strong>
+            <span>${escapeHtml(item.valueLabel || fmtExactNumber(item.value))} · ${legendTotal ? ((Number(item.value) || 0) / legendTotal * 100).toFixed(2) : "0.00"}%</span>
+            ${item.description ? `<small>${escapeHtml(item.description)}</small>` : ""}
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  ` : "";
   return `
-    <div class="structure-mini-chart structure-plot-panel">
+    <div class="structure-mini-chart structure-plot-panel ${legendSide ? `has-side-legend legend-${legendSide}` : ""}">
       <div class="structure-mini-chart-head">
         <strong>${escapeHtml(chart.title || "Share")}</strong>
         <span>${escapeHtml(chart.center || "Selected period")}</span>
       </div>
-      <div id="structurePlot-${escapeAttr(chartId)}" class="plot structure-pie-plot"></div>
+      <div class="structure-pie-layout">
+        ${legendSide === "left" ? legend : ""}
+        <div id="structurePlot-${escapeAttr(chartId)}" class="plot structure-pie-plot"></div>
+        ${legendSide === "right" ? legend : ""}
+      </div>
     </div>
   `;
 }
@@ -2530,6 +2550,7 @@ function drawGlobalMarketTrend(trend) {
   const values = items.map((item) => (Number(item.value) || 0) / 1000);
   const growth = values.map((value, index) => (index === 0 ? null : ((value - values[index - 1]) / values[index - 1]) * 100));
   const labels = years.map((year, index) => ([2025, 2026, 2027, 2032].includes(year) ? `$${values[index].toFixed(2)}B` : ""));
+  const growthLabels = years.map((year, index) => ([2025, 2026].includes(year) ? `${growth[index].toFixed(2)}%` : ""));
   const forecastStart = years.indexOf(2026);
   const shapes = forecastStart >= 0
     ? [{
@@ -2575,7 +2596,10 @@ function drawGlobalMarketTrend(trend) {
         yaxis: "y2",
         name: "YoY Growth",
         type: "scatter",
-        mode: "lines+markers",
+        mode: "lines+markers+text",
+        text: growthLabels,
+        textposition: "top center",
+        textfont: { size: 11, color: "#1f2328" },
         line: { color: "#1f2328", width: 2.5 },
         marker: { size: 6, color: "#1f2328" },
         hovertemplate: "<b>%{x}</b><br>YoY Growth: %{y:.2f}%<extra></extra>",
@@ -2598,6 +2622,8 @@ function drawStructurePiePlot(id, chart) {
   if (!node || !chart?.items?.length || !window.Plotly) return;
   const items = chart.items;
   const total = items.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+  const showLabels = chart.showLabels !== false;
+  const hasSideLegend = chart.legendSide === "left" || chart.legendSide === "right";
   drawPlot(
     id,
     [{
@@ -2607,15 +2633,17 @@ function drawStructurePiePlot(id, chart) {
       hole: 0.56,
       sort: false,
       direction: "clockwise",
-      textinfo: "label+percent",
-      textposition: "outside",
-      texttemplate: "%{label}<br>%{percent:.1%}",
-      hovertemplate: "<b>%{label}</b><br>%{value:.2f}%<br>Share: %{percent:.1%}<extra></extra>",
+      textinfo: showLabels ? "text" : "none",
+      textposition: showLabels ? "outside" : "none",
+      text: items.map((item) => `${item.label}<br>${item.valueLabel || `$${Number(item.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`}`),
+      texttemplate: showLabels ? "%{text}<br>%{percent:.1%}" : "",
+      hovertemplate: "<b>%{customdata[0]}</b><br>Market Value: %{customdata[1]}<br>Share: %{percent:.2%}<extra></extra>",
       marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
-      customdata: items.map((item) => [item.label, item.value, total]),
+      customdata: items.map((item) => [item.label, item.valueLabel || `$${Number(item.value).toFixed(2)}M`, total]),
+      domain: hasSideLegend ? { x: chart.legendSide === "right" ? [0.16, 1] : [0.08, 0.92], y: [0.04, 0.96] } : undefined,
     }],
     {
-      margin: { l: 78, r: 78, t: 54, b: 38 },
+      margin: showLabels ? { l: 84, r: 84, t: 34, b: 32 } : { l: 18, r: 18, t: 16, b: 16 },
       showlegend: false,
       hoverlabel: { bgcolor: "#1f2328", font: { color: "#ffffff" } },
       uniformtext: { minsize: 10, mode: "hide" },
