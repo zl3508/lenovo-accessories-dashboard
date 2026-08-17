@@ -1,5 +1,281 @@
 {
   "adapter": {
+    "regions": [
+      {
+        "id": "NA",
+        "label": "NA",
+        "heading": "Mature Premium Market",
+        "iso3": ["USA", "CAN", "MEX"],
+        "projection": "natural earth",
+        "characteristics": "Mature | Premium | Brand-led | High-power",
+        "representatives": "USA",
+        "policyFocus": "Efficiency | Electrical safety | EMC | Channel compliance",
+        "summaryPoints": [
+          "North America is a mature, high-value adapter market where compatibility, safety and brand trust support premium positioning.",
+          "The core country view focuses on the USA, combining market scale, product demand, pricing, channel and user-research evidence.",
+          "Policy monitoring centers on external-power-supply efficiency, electromagnetic compliance and state-level requirements."
+        ],
+        "countryTabs": [
+          { "id": "US", "label": "USA", "countryId": "US" }
+        ],
+        "policies": {
+          "current": [
+            {
+              "title": "U.S. External Power Supplies Standards",
+              "summary": "DOE energy-conservation standards and test procedures apply to covered consumer external power supplies.",
+              "detail": "Covered products must be evaluated against the applicable efficiency, no-load power and DOE test-procedure requirements before launch. Technical files should connect the tested configuration to the marketed model and ratings.",
+              "affectedCountries": ["USA"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.energy.gov/eere/buildings/external-power-supplies"
+            },
+            {
+              "title": "FCC Electromagnetic Compliance",
+              "summary": "Digital and switching power products must meet applicable U.S. electromagnetic-emission authorization requirements.",
+              "detail": "The final product configuration, cable set and power-conversion electronics should be assessed for the applicable FCC equipment-authorization route. Claims and labeling must remain consistent with the tested configuration.",
+              "affectedCountries": ["USA"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.fcc.gov/oet/ea/rfdevice"
+            },
+            {
+              "title": "California Title 20 Appliance Efficiency",
+              "summary": "California appliance-efficiency rules influence external-power-supply compliance and retailer acceptance.",
+              "detail": "Models sold into California should be checked for covered-product scope, efficiency performance, certification and database obligations. National channel launches should account for California requirements early to avoid split inventory.",
+              "affectedCountries": ["USA - California"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.energy.ca.gov/programs-and-topics/topics/energy-efficiency"
+            }
+          ],
+          "future": [
+            {
+              "title": "U.S. EPS Rulemaking Watch",
+              "summary": "Future DOE test-procedure and efficiency revisions may change evidence, labeling and portfolio requirements.",
+              "detail": "Maintain a regulatory watch on DOE external-power-supply rulemaking and preserve model-level efficiency data so affected SKUs can be reassessed without rebuilding the compliance file from scratch.",
+              "affectedCountries": ["USA"],
+              "timing": "Future updates - monitor",
+              "sourceUrl": "https://www.energy.gov/eere/buildings/external-power-supplies"
+            },
+            {
+              "title": "Marketplace Compliance Verification",
+              "summary": "Retailers are increasing requests for traceable safety, efficiency and product-identity documentation.",
+              "detail": "Prepare a reusable channel evidence pack containing certificates, reports, model mapping, warranty terms and compatibility claims. This reduces launch delays when marketplaces tighten document verification.",
+              "affectedCountries": ["USA", "Canada"],
+              "timing": "Ongoing future impact"
+            }
+          ]
+        }
+      },
+      {
+        "id": "EMEA",
+        "label": "EMEA",
+        "heading": "Premium & Regulation-led Market",
+        "iso3": ["GBR", "DEU", "FRA", "ITA", "ESP", "NLD", "SWE", "SAU", "ARE", "ZAF"],
+        "projection": "natural earth",
+        "characteristics": "Premium | USB-C transition | Safety | Compliance-led",
+        "representatives": "UK / Developed Europe | Saudi Arabia",
+        "policyFocus": "Common charger | Product conformity | Ecodesign | Local certification",
+        "summaryPoints": [
+          "Developed Europe rewards certified safety, stable output and premium product quality, while online and distributor channels remain important.",
+          "Saudi Arabia shows stronger demand for multi-port capability, protection and visible fast-charging performance.",
+          "Regional execution requires separate European, UK and Gulf compliance paths rather than one EMEA-wide launch file."
+        ],
+        "countryTabs": [
+          { "id": "UK", "label": "UK / Developed Europe", "countryId": "UK" },
+          { "id": "SA", "label": "Saudi Arabia", "countryId": "SA" }
+        ],
+        "policies": {
+          "current": [
+            {
+              "title": "EU Common Charger Directive",
+              "summary": "Laptop computers enter the EU common-charger scope from 28 April 2026, reinforcing USB-C and harmonized charging requirements.",
+              "detail": "Covered laptop charging solutions should support the required USB-C interface and interoperable charging behavior. Product, packaging and consumer information must be aligned with the applicable implementation and technical standards.",
+              "affectedCountries": ["EU member states"],
+              "timing": "Laptop scope from 28 Apr 2026",
+              "sourceUrl": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro"
+            },
+            {
+              "title": "UK Product Conformity & Electrical Safety",
+              "summary": "UK launches require the correct conformity route, electrical-safety evidence and destination-specific labeling.",
+              "detail": "Confirm whether UKCA or recognized CE marking arrangements apply to the destination and product. Maintain safety, EMC, hazardous-substance and importer documentation that matches the exact marketed model.",
+              "affectedCountries": ["United Kingdom"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.gov.uk/guidance/using-the-ukca-marking"
+            },
+            {
+              "title": "Saudi SASO / SABER Conformity",
+              "summary": "Saudi market entry depends on applicable product certification, importer registration, labeling and plug requirements.",
+              "detail": "Validate the product classification with the local importer, complete the required SABER conformity process and align Arabic/English labeling, plug configuration and warranty information before channel shipment.",
+              "affectedCountries": ["Saudi Arabia"],
+              "timing": "Effective now",
+              "sourceUrl": "https://saber.sa/"
+            }
+          ],
+          "future": [
+            {
+              "title": "EU Ecodesign & Digital Product Information",
+              "summary": "Ecodesign implementation and digital product information will increase lifecycle-data and traceability expectations.",
+              "detail": "Portfolio planning should preserve material, repairability, efficiency and supply-chain evidence at model level so future delegated requirements and digital product-information obligations can be supported.",
+              "affectedCountries": ["EU member states"],
+              "timing": "Phased future implementation",
+              "sourceUrl": "https://commission.europa.eu/energy-climate-change-environment/standards-tools-and-labels/products-labelling-rules-and-requirements/ecodesign-sustainable-products-regulation_en"
+            },
+            {
+              "title": "UK Product Safety Reform Watch",
+              "summary": "Future UK product-safety and sustainability updates may change documentation and online-marketplace responsibilities.",
+              "detail": "Track UK reforms affecting responsible persons, online marketplaces, product traceability and sustainability claims. Reuse EU evidence where possible, but maintain a UK-specific compliance decision record.",
+              "affectedCountries": ["United Kingdom"],
+              "timing": "Future updates - monitor"
+            },
+            {
+              "title": "Saudi Digital Conformity & Efficiency Updates",
+              "summary": "SABER workflow, labeling and energy-efficiency requirements should be monitored for future launch impact.",
+              "detail": "Keep local certification ownership clear and prepare updated technical files, Arabic labeling and model mapping for platform or efficiency-rule changes.",
+              "affectedCountries": ["Saudi Arabia"],
+              "timing": "Future updates - monitor"
+            }
+          ]
+        }
+      },
+      {
+        "id": "AP",
+        "label": "AP",
+        "heading": "Largest & Most Diverse Market",
+        "iso3": ["JPN", "CHN", "KOR", "IND", "IDN", "SGP", "THA", "AUS", "NZL"],
+        "projection": "natural earth",
+        "characteristics": "Diverse demand | Localization | Fast growth | Value-to-premium range",
+        "representatives": "Japan | India | Indonesia",
+        "policyFocus": "PSE | BIS | SNI | Efficiency | Local labeling",
+        "summaryPoints": [
+          "AP combines premium reliability demand in Japan with feature-led value demand in India and rapid channel expansion in Indonesia.",
+          "Country-level price, channel and product expectations differ materially, so one regional SKU and message will not fit every market.",
+          "Certification, importer ownership and local-language evidence must be planned separately by country."
+        ],
+        "countryTabs": [
+          { "id": "JP", "label": "Japan", "countryId": "JP" },
+          { "id": "IN", "label": "India", "countryId": "IN" },
+          { "id": "ID", "label": "Indonesia", "countryId": "ID" }
+        ],
+        "policies": {
+          "current": [
+            {
+              "title": "Japan DENAN / PSE Framework",
+              "summary": "Applicable AC/DC power supply units require technical compliance, inspection, importer responsibility and PSE labeling readiness.",
+              "detail": "Confirm the product classification under Japan's Electrical Appliances and Materials Safety Act, identify the responsible importer and retain conformity, inspection and Japanese-labeling evidence for the exact model.",
+              "affectedCountries": ["Japan"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.meti.go.jp/english/policy/economy/consumer/pse/index.html"
+            },
+            {
+              "title": "India BIS Registration Scope",
+              "summary": "Applicable power adapters require BIS registration, local labeling and importer accountability before sale.",
+              "detail": "Confirm whether each adapter and bundled configuration falls within compulsory registration, keep the registered model mapping current and align importer, labeling and warranty information across channels.",
+              "affectedCountries": ["India"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.crsbis.in/BIS/"
+            },
+            {
+              "title": "Indonesia SNI & Product Registration",
+              "summary": "Launch planning must confirm applicable SNI scope, local importer, Bahasa labeling and product-registration obligations.",
+              "detail": "Work with the local importer to determine mandatory certification scope, validate plug and electrical-safety requirements and maintain localized warranty and after-sales documentation.",
+              "affectedCountries": ["Indonesia"],
+              "timing": "Effective now"
+            },
+            {
+              "title": "Australia External Power Supply MEPS",
+              "summary": "Covered external power supplies must meet GEMS minimum energy performance and registration requirements.",
+              "detail": "Confirm product coverage, test against the applicable standard and complete supplier/model registration before supply. RCM marking responsibilities should be aligned with the registered responsible supplier.",
+              "affectedCountries": ["Australia"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.energyrating.gov.au/industry-information/products/external-power-supplies"
+            }
+          ],
+          "future": [
+            {
+              "title": "India Common-Charging Roadmap",
+              "summary": "USB-C standardization and common-charging policy development may affect future interface and labeling decisions.",
+              "detail": "Track official implementation scope and dates before treating a roadmap as a mandatory product requirement. Keep USB-C PD interoperability and certification evidence ready for future adoption.",
+              "affectedCountries": ["India"],
+              "timing": "Future policy development - monitor"
+            },
+            {
+              "title": "Indonesia Local-content & Ecommerce Compliance Watch",
+              "summary": "Local-content, seller-verification and product-document rules may change channel-entry requirements.",
+              "detail": "Coordinate with the national distributor on product registration, local content, marketplace seller verification and document retention so channel changes do not interrupt supply.",
+              "affectedCountries": ["Indonesia"],
+              "timing": "Future updates - monitor"
+            },
+            {
+              "title": "AP Efficiency & Circularity Updates",
+              "summary": "Efficiency, recycling and resource-circulation rules are becoming more important across developed AP markets.",
+              "detail": "Maintain efficiency, material and end-of-life evidence for Japan and Australia, and monitor whether requirements expand to additional adapters, bundles or online-marketplace disclosures.",
+              "affectedCountries": ["Japan", "Australia", "New Zealand"],
+              "timing": "Phased future impact"
+            }
+          ]
+        }
+      },
+      {
+        "id": "LA",
+        "label": "LA",
+        "heading": "Value-driven Growth Market",
+        "iso3": ["MEX", "BRA", "ARG", "CHL", "COL", "PER"],
+        "projection": "natural earth",
+        "characteristics": "Value-driven | Price-sensitive | Fast charging | Multi-port",
+        "representatives": "Brazil + Mexico",
+        "policyFocus": "NOM | INMETRO / Anatel | Labeling | Importer compliance",
+        "summaryPoints": [
+          "Latin American demand is price-sensitive, but buyers still expect fast charging, protection and multi-port compatibility.",
+          "Brazil and Mexico are presented as one combined research view because the Ipsos source reports a shared sample rather than country-level incidence.",
+          "Local certification, importer documentation and language-specific labeling remain central to channel access."
+        ],
+        "countryTabs": [
+          { "id": "BRMEX", "label": "Brazil + Mexico", "countryId": "BR" }
+        ],
+        "policies": {
+          "current": [
+            {
+              "title": "Mexico NOM-029-ENER-2017",
+              "summary": "The standard covers energy-efficiency limits, test methods, marking and labeling for external power supplies.",
+              "detail": "Confirm product scope, test method, efficiency threshold and labeling requirements for each power supply placed on the Mexican market. Spanish documentation and importer responsibility should match the certified model.",
+              "affectedCountries": ["Mexico"],
+              "timing": "Effective now",
+              "sourceUrl": "https://platiica.economia.gob.mx/normalizacion/nom-029-ener-2017/"
+            },
+            {
+              "title": "Brazil INMETRO Product Conformity",
+              "summary": "Applicable adapter products require the correct Brazilian conformity route, local importer and Portuguese labeling.",
+              "detail": "Confirm the certification scope for PC adapters before launch. Keep safety reports, plug configuration, Portuguese labels, importer records and model identity aligned with the market authorization.",
+              "affectedCountries": ["Brazil"],
+              "timing": "Effective now",
+              "sourceUrl": "https://www.gov.br/inmetro/pt-br"
+            },
+            {
+              "title": "Brazil Anatel Charger Conformity Act 5155",
+              "summary": "Act 5155 updates conformity procedures for chargers used with mobile phones; applicability to each PC-oriented product must be confirmed.",
+              "detail": "Treat this as a scope-check item rather than assuming every PC adapter is covered. Products marketed for mobile-device charging or bundled use should be reviewed with the local certification owner.",
+              "affectedCountries": ["Brazil"],
+              "timing": "Effective from 14 Oct 2024",
+              "sourceUrl": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155"
+            }
+          ],
+          "future": [
+            {
+              "title": "Mexico NOM & Efficiency Revision Watch",
+              "summary": "Future updates may change test, efficiency, labeling or digital-document requirements.",
+              "detail": "Keep certified-model data and Spanish labels under change control so future NOM or energy-efficiency revisions can be assessed quickly with the local importer and certification body.",
+              "affectedCountries": ["Mexico"],
+              "timing": "Future updates - monitor"
+            },
+            {
+              "title": "Brazil Circularity & Ecommerce Compliance Watch",
+              "summary": "E-waste, circular-economy and marketplace-verification rules may increase post-market and documentation obligations.",
+              "detail": "Prepare Portuguese compliance files, importer traceability and end-of-life information for future channel checks. Monitor whether additional charger categories enter mandatory certification or disclosure scope.",
+              "affectedCountries": ["Brazil"],
+              "timing": "Future updates - monitor"
+            }
+          ]
+        }
+      }
+    ],
     "countries": [
       {
         "id": "US",

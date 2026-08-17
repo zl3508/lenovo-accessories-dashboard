@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260817-country-compact";
+const DATA_VERSION = "20260817-region-country-policy";
 
 const state = {
   categoryId: null,
@@ -34,6 +34,7 @@ const state = {
   structureBrand: {},
   structureMarket: {},
   geoRegionDetail: {},
+  geoCountryTab: {},
   summaryRevenueMetric: "orderRevenue",
   summaryQuantityMetric: "orderQty",
   summaryQuantityTrendMetric: "order",
@@ -436,35 +437,152 @@ function renderGeoOverviewModule(categoryId) {
       </section>
     `;
   }
-  const selectedCountry = state.geoRegionDetail[categoryId];
-  if (selectedCountry) return renderCountryDetail(categoryId, overview, selectedCountry);
+  const selectedRegion = state.geoRegionDetail[categoryId];
+  if (selectedRegion) return renderRegionCountryWorkspace(categoryId, overview, selectedRegion);
   return `
     <section class="module-block">
       <section class="geo-overview-module">
+        <div class="module-head country-overview-head">
+          <span>Country Overview</span>
+          <h2>Regional Entry Points</h2>
+          <p>Select a region to review its representative country markets and the regulations shaping current and future portfolio decisions.</p>
+        </div>
         <div class="geo-region-grid">
-          ${(overview.countries || []).map(renderCountryCard).join("")}
+          ${(overview.regions || []).map(renderRegionEntryCard).join("")}
         </div>
       </section>
     </section>
   `;
 }
 
-function renderCountryCard(country) {
+function renderRegionEntryCard(region) {
   return `
     <article class="geo-region-card">
       <header class="geo-region-card-head">
         <div>
-          <h3>${escapeHtml(country.label)} &mdash; ${escapeHtml(country.heading)}</h3>
+          <h3>${escapeHtml(region.label)} &mdash; ${escapeHtml(region.heading)}</h3>
         </div>
       </header>
-      <button class="geo-region-card-hit" type="button" data-action="country-detail" data-country-id="${escapeAttr(country.id)}" aria-label="Open ${escapeAttr(country.label)} country overview"></button>
-      <div class="geo-region-map" id="countryOverviewMap${escapeAttr(country.id)}" aria-label="${escapeAttr(country.label)} map"></div>
+      <button class="geo-region-card-hit" type="button" data-action="country-region" data-region-id="${escapeAttr(region.id)}" aria-label="Open ${escapeAttr(region.label)} country overview"></button>
+      <div class="geo-region-map" id="countryOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
       <div class="geo-region-summary">
-        <p><strong>Adapter Market:</strong> ${geoCardValue(country.market)}</p>
-        <p><strong>Characteristics:</strong> ${geoCardValue(country.characteristics)}</p>
+        <p><strong>Characteristics:</strong> ${geoCardValue(region.characteristics)}</p>
+        <p><strong>Representative Countries:</strong> ${geoCardValue(region.representatives)}</p>
+        <p><strong>Policy Focus:</strong> ${geoCardValue(region.policyFocus)}</p>
       </div>
-      <span class="country-card-action" aria-hidden="true">View country analysis <b>↗</b></span>
+      <span class="country-card-action" aria-hidden="true">View countries & policy <b>↗</b></span>
     </article>
+  `;
+}
+
+function renderRegionCountryWorkspace(categoryId, overview, regionId) {
+  const region = (overview.regions || []).find((item) => item.id === regionId);
+  if (!region) return renderGeoOverviewModuleFallback(regionId);
+  const tabs = [...(region.countryTabs || []), { id: "policy", label: "Policy & Standards" }];
+  const configuredTab = state.geoCountryTab[categoryId];
+  const activeTab = tabs.some((tab) => tab.id === configuredTab) ? configuredTab : tabs[0]?.id;
+  state.geoCountryTab[categoryId] = activeTab;
+  const tab = tabs.find((item) => item.id === activeTab);
+  const country = (overview.countries || []).find((item) => item.id === tab?.countryId);
+  return `
+    <section class="module-block">
+      <section class="geo-detail-view region-country-workspace">
+        <header class="geo-detail-head region-country-head">
+          <button class="ghost-button" type="button" data-action="country-back">← Country Overview</button>
+          <span>${escapeHtml(region.label)} Regional Overview</span>
+          <h2>${escapeHtml(region.label)} &mdash; ${escapeHtml(region.heading)}</h2>
+          <ul class="country-summary-list">${(region.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </header>
+        <nav class="country-region-tabs" aria-label="${escapeAttr(region.label)} country and policy views">
+          ${tabs.map((item) => `<button class="${item.id === activeTab ? "is-active" : ""}" type="button" data-action="country-tab" data-tab-id="${escapeAttr(item.id)}">${escapeHtml(item.label)}</button>`).join("")}
+        </nav>
+        ${activeTab === "policy"
+          ? renderRegionPolicyView(region)
+          : renderRegionCountryPanel(overview, country, tab?.label || country?.label)}
+      </section>
+    </section>
+  `;
+}
+
+function renderRegionCountryPanel(overview, country, displayLabel) {
+  if (!country) return `<section class="country-region-empty"><strong>Country detail unavailable</strong><p>No sourced market profile is configured for this country.</p></section>`;
+  const sections = (overview.insightSets?.[country.insightSet] || []).filter((section) => !/policy|standards/i.test(section.title || ""));
+  return `
+    <section class="country-region-panel">
+      <header class="country-panel-head">
+        <span>Representative Country</span>
+        <h3>${escapeHtml(displayLabel)} Adapter Market</h3>
+        <ul class="country-summary-list">${(country.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      </header>
+      <section class="geo-na-metrics">
+        ${(country.metrics || []).slice(0, 4).map((metric) => `
+          <div class="geo-na-metric-card">
+            <span>${escapeHtml(metric.label)}</span>
+            <strong>${escapeHtml(metric.value)}</strong>
+            <small>${escapeHtml(countryMetricNote(country, metric))}</small>
+          </div>
+        `).join("")}
+      </section>
+      ${country.research ? `
+        <section class="country-research-basis" aria-label="Research sample and methodology">
+          <div><span>Research Sample</span><strong>${escapeHtml(country.research.sampleLabel || "Not reported")}</strong></div>
+          <p>${escapeHtml(country.research.method || "Research methodology was not disclosed.")}</p>
+        </section>
+      ` : ""}
+      <section class="geo-detail-grid country-detail-grid">
+        ${sections.map((section, index) => renderCountryInsightCard(country, section, index)).join("")}
+      </section>
+    </section>
+  `;
+}
+
+function renderRegionPolicyView(region) {
+  const policies = region.policies || {};
+  return `
+    <section class="country-region-panel region-policy-panel">
+      <header class="country-panel-head">
+        <span>Regional Policy</span>
+        <h3>${escapeHtml(region.label)} Policy Impact</h3>
+        <p>Current requirements affect active market access and compliance work. Future items should be tracked in portfolio and launch planning.</p>
+      </header>
+      <div class="region-policy-grid country-region-policy-grid">
+        ${renderRegionPolicyBucket("Current Impact", "Requirements affecting products and channels now", policies.current || [])}
+        ${renderRegionPolicyBucket("Future Impact", "Rules and implementation changes to prepare for", policies.future || [])}
+      </div>
+    </section>
+  `;
+}
+
+function renderRegionPolicyBucket(title, subtitle, items) {
+  return `
+    <section class="region-policy-bucket">
+      <header class="country-policy-bucket-head"><span>${escapeHtml(title)}</span><p>${escapeHtml(subtitle)}</p></header>
+      <div class="region-row-list">
+        ${items.length ? items.map(renderRegionPolicyItem).join("") : `<div class="policy-empty"><strong>No sourced item loaded</strong><p>Add a confirmed regulation when the source is available.</p></div>`}
+      </div>
+    </section>
+  `;
+}
+
+function renderRegionPolicyItem(item) {
+  return `
+    <details class="region-policy-row country-region-policy-row">
+      <summary>
+        <div>
+          <h4>${escapeHtml(item.title)}</h4>
+          <p>${escapeHtml(item.summary)}</p>
+        </div>
+        <em>Details</em>
+      </summary>
+      <div class="region-policy-detail">
+        <p>${escapeHtml(item.detail)}</p>
+        <div class="policy-impact-meta">
+          <span><strong>Affected Countries</strong>${escapeHtml((item.affectedCountries || []).join(" · "))}</span>
+          <span><strong>Timing</strong>${escapeHtml(item.timing || "Monitor")}</span>
+        </div>
+        ${item.sourceUrl ? `<a href="${escapeAttr(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">Official reference ↗</a>` : ""}
+      </div>
+    </details>
   `;
 }
 
@@ -517,11 +635,8 @@ function countryMetricNote(country, metric) {
 }
 
 function renderCountryInsightCard(country, section, index) {
-  const isPolicy = Boolean(country.policy) && index === 3;
-  const displaySection = isPolicy
-    ? { ...section, title: "Policy & Standards", summaryPoints: country.policy.summaryPoints || [] }
-    : section;
-  const charts = isPolicy ? [] : section.charts || (section.chart ? [section.chart] : []);
+  const displaySection = section;
+  const charts = section.charts || (section.chart ? [section.chart] : []);
   const key = idFromText(section.title || `section-${index}`);
   return `
     <article class="geo-detail-section geo-na-detail-card">
@@ -535,12 +650,10 @@ function renderCountryInsightCard(country, section, index) {
           <em>Details</em>
         </summary>
         <div class="geo-na-detail-content">
-          ${isPolicy
-            ? renderCountryPolicyColumns(country.policy)
-            : `<div class="geo-na-detail-split ${charts.length ? "" : "is-copy-only"}">
+          <div class="geo-na-detail-split ${charts.length ? "" : "is-copy-only"}">
                 <div class="geo-na-detail-copy"><p>${escapeHtml(section.body || "")}</p><ul class="geo-driver-list">${(section.detailPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
                 ${charts.length ? `<div class="geo-na-detail-visual geo-regional-chart-grid">${charts.map((chart, chartIndex) => renderCountryChartPanel(country, section, chart, `country${country.id}${key}Plot${chartIndex}`)).join("")}</div>` : ""}
-              </div>`}
+              </div>
         </div>
       </details>
     </article>
@@ -2772,9 +2885,14 @@ function drawMarketAnalysis(categoryId) {
     return;
   }
   if (state.marketModule === "geo") {
-    const selectedCountry = state.geoRegionDetail[categoryId];
-    if (selectedCountry) drawCountryDetail(categoryId, selectedCountry);
-    else drawCountryOverviewMaps(categoryId);
+    const selectedRegion = state.geoRegionDetail[categoryId];
+    if (selectedRegion) {
+      const overview = data.countryMarkets?.[categoryId];
+      const region = overview?.regions?.find((item) => item.id === selectedRegion);
+      const tabId = state.geoCountryTab[categoryId] || region?.countryTabs?.[0]?.id;
+      const tab = region?.countryTabs?.find((item) => item.id === tabId);
+      if (tab?.countryId) drawCountryDetail(categoryId, tab.countryId);
+    } else drawCountryOverviewMaps(categoryId);
     return;
   }
   if (marketModules[state.marketModule]) {
@@ -2808,12 +2926,12 @@ function drawMarketAnalysis(categoryId) {
 }
 
 function drawCountryOverviewMaps(categoryId) {
-  const countries = data.countryMarkets?.[categoryId]?.countries || [];
-  countries.forEach((country) => {
-    const node = document.getElementById(`countryOverviewMap${country.id}`);
+  const regions = data.countryMarkets?.[categoryId]?.regions || [];
+  regions.forEach((region) => {
+    const node = document.getElementById(`countryOverviewMap${region.id}`);
     if (!node) return;
     if (!window.Plotly) {
-      node.innerHTML = `<div class="policy-map-fallback">${escapeHtml(country.label)}</div>`;
+      node.innerHTML = `<div class="policy-map-fallback">${escapeHtml(region.label)}</div>`;
       return;
     }
     Plotly.react(
@@ -2821,9 +2939,9 @@ function drawCountryOverviewMaps(categoryId) {
       [{
         type: "choropleth",
         locationmode: "ISO-3",
-        locations: country.iso3 || [],
-        z: (country.iso3 || []).map(() => 1),
-        text: (country.iso3 || []).map(() => country.label),
+        locations: region.iso3 || [],
+        z: (region.iso3 || []).map(() => 1),
+        text: (region.iso3 || []).map(() => region.label),
         hoverinfo: "skip",
         showscale: false,
         colorscale: [[0, "#e2231a"], [1, "#e2231a"]],
@@ -2834,7 +2952,7 @@ function drawCountryOverviewMaps(categoryId) {
         paper_bgcolor: "rgba(0,0,0,0)",
         plot_bgcolor: "rgba(0,0,0,0)",
         geo: {
-          projection: { type: country.projection || "mercator" },
+          projection: { type: region.projection || "natural earth" },
           fitbounds: "locations",
           showframe: false,
           showcoastlines: false,
@@ -5343,11 +5461,16 @@ function handleClick(event) {
   } else if (action === "module-view") {
     if (state.categoryView === "market") state.marketModule = button.dataset.module;
     render();
-  } else if (action === "country-detail") {
-    state.geoRegionDetail[state.categoryId] = button.dataset.countryId;
+  } else if (action === "country-region") {
+    state.geoRegionDetail[state.categoryId] = button.dataset.regionId;
+    delete state.geoCountryTab[state.categoryId];
     render();
   } else if (action === "country-back") {
     delete state.geoRegionDetail[state.categoryId];
+    delete state.geoCountryTab[state.categoryId];
+    render();
+  } else if (action === "country-tab") {
+    state.geoCountryTab[state.categoryId] = button.dataset.tabId;
     render();
   } else if (action === "geo-region") {
     state.geoRegionDetail[state.categoryId] = button.dataset.regionId;
