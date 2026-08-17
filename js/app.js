@@ -10,7 +10,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260817-global-tam-structure";
+const DATA_VERSION = "20260817-geo-pc-tam";
 
 const state = {
   categoryId: null,
@@ -442,12 +442,6 @@ function renderGeoOverviewModule(categoryId) {
   return `
     <section class="module-block">
       <section class="geo-overview-module">
-        <header class="geo-overview-head">
-          <div class="geo-overview-copy">
-            <h2>${escapeHtml(overview.heading || "Regional Market Summary")}</h2>
-          </div>
-          ${overview.summaryPoints?.length ? `<ol class="geo-overview-points">${overview.summaryPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>` : ""}
-        </header>
         <div class="geo-region-grid">
           ${(overview.regions || []).map(renderGeoRegionCard).join("")}
         </div>
@@ -467,9 +461,9 @@ function renderGeoRegionCard(region) {
       ${region.detail ? `<button class="geo-region-card-hit" type="button" data-action="geo-region" data-region-id="${escapeAttr(region.id)}" aria-label="Open ${escapeAttr(region.label)} regional overview"></button>` : ""}
       <div class="geo-region-map" id="geoOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
       <div class="geo-region-summary">
-        <p><strong>Market:</strong> ${geoCardValue(region.market)}</p>
+        <p><strong>PC Charger TAM Scope:</strong> ${geoCardValue(region.pcChargerTam || region.market)}</p>
+        <p><strong>Representative:</strong> ${geoCardValue(region.representativeCountry)}</p>
         <p><strong>Characteristics:</strong> ${geoCardValue(region.characteristics)}</p>
-        <p><strong>${escapeHtml(region.representativeLabel || "Representative")}:</strong> ${geoCardValue(region.representativeCountry)}</p>
       </div>
     </article>
   `;

@@ -2893,16 +2893,16 @@ input[type="search"] {
 
 .geo-region-summary {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .geo-region-summary p {
   position: relative;
-  padding-left: 14px;
+  padding-left: 16px;
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.48;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .geo-region-summary p::before {
@@ -2918,7 +2918,7 @@ input[type="search"] {
 
 .geo-region-summary p > strong:first-child {
   color: var(--ink);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 850;
 }
 
