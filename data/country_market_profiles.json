@@ -293,7 +293,7 @@
         ],
         "research": {
           "sampleLabel": "Ipsos USA sample: n=354",
-          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "method": "USA percentages use the local n=354 denominator. The multi-country study total is N=1,832 and is shown for context only.",
           "marketBasis": "Market-share estimate; respondent base was not disclosed in the market source."
         },
         "policy": {
@@ -325,7 +325,7 @@
         ],
         "research": {
           "sampleLabel": "Ipsos DE+UK+SE sample: n=295",
-          "method": "Combined-market online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "method": "DE + UK + SE percentages use the local n=295 denominator. The multi-country study total is N=1,832 and is shown for context only.",
           "marketBasis": "UK market estimate; respondent base was not disclosed in the market source."
         },
         "policy": {
@@ -357,7 +357,7 @@
         ],
         "research": {
           "sampleLabel": "Ipsos Saudi Arabia sample: n=320",
-          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "method": "Saudi Arabia percentages use the local n=320 denominator. The multi-country study total is N=1,832 and is shown for context only.",
           "marketBasis": "Country adapter TAM was not separately reported in the source set."
         },
         "policy": {
@@ -389,7 +389,7 @@
         ],
         "research": {
           "sampleLabel": "Ipsos Japan sample: n=378",
-          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "method": "Japan percentages use the local n=378 denominator. The multi-country study total is N=1,832 and is shown for context only.",
           "marketBasis": "Brand-share estimate; respondent base was not disclosed in the market source."
         },
         "policy": {
@@ -421,7 +421,7 @@
         ],
         "research": {
           "sampleLabel": "Ipsos India sample: n=262",
-          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "method": "India percentages use the local n=262 denominator. The multi-country study total is N=1,832 and is shown for context only.",
           "marketBasis": "Country adapter TAM was not separately reported in the source set."
         },
         "policy": {
@@ -485,7 +485,7 @@
         ],
         "research": {
           "sampleLabel": "Ipsos Brazil + Mexico sample: n=223",
-          "method": "Combined-market online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "method": "Brazil + Mexico percentages use the combined local n=223 denominator. The multi-country study total is N=1,832 and is shown for context only.",
           "marketBasis": "Country adapter TAM was not separately reported in the source set."
         },
         "policy": {
@@ -517,7 +517,7 @@
         ],
         "research": {
           "sampleLabel": "Ipsos Brazil + Mexico sample: n=223",
-          "method": "Combined-market online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "method": "Brazil + Mexico percentages use the combined local n=223 denominator. The multi-country study total is N=1,832 and is shown for context only.",
           "marketBasis": "Country adapter TAM was not separately reported in the source set."
         },
         "policy": {
@@ -551,14 +551,18 @@
           "chart": { "title": "Top Product Needs", "type": "bar", "suffix": "%", "hoverLabel": "Reported share", "items": [{ "label": "Multi-device", "value": 52, "valueLabel": "52%" }, { "label": "Protection", "value": 50, "valueLabel": "50%" }, { "label": "Fast charging", "value": 48, "valueLabel": "48%" }] }
         },
         {
-          "title": "Price & Channel",
-          "summaryPoints": ["USD 40-79.99 is the core price opportunity", "Physical stores, brand websites and ecommerce all remain relevant"],
-          "body": "The U.S. requires balanced omnichannel execution and a clear value ladder around branded USB-C and multi-port products.",
-          "detailPoints": ["Average surveyed purchase price is USD 65.18.", "Physical stores lead at 41%; brand websites represent 30%; ecommerce represents 29%."],
-          "charts": [
-            { "title": "Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 28, "valueLabel": "28%" }, { "label": "$40-$79.99", "value": 47, "valueLabel": "47%" }, { "label": "$80+", "value": 25, "valueLabel": "25%" }] },
-            { "title": "Purchase Channels", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 41, "valueLabel": "41%" }, { "label": "Brand Website", "value": 30, "valueLabel": "30%" }, { "label": "Online", "value": 29, "valueLabel": "29%" }] }
-          ]
+          "title": "Price Positioning",
+          "summaryPoints": ["USD 40-79.99 is the core price opportunity", "The surveyed mean purchase price is USD 65.18"],
+          "body": "The U.S. opportunity centers on a clear value ladder for branded USB-C and multi-port adapters.",
+          "detailPoints": ["Below USD 40 represents 28% of surveyed purchases.", "USD 40-79.99 represents 47%, while USD 80 and above represents 25%."],
+          "chart": { "title": "Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 28, "valueLabel": "28%" }, { "label": "$40-$79.99", "value": 47, "valueLabel": "47%" }, { "label": "$80+", "value": 25, "valueLabel": "25%" }] }
+        },
+        {
+          "title": "Channel Structure",
+          "summaryPoints": ["Physical stores lead surveyed purchases at 41%", "Brand-direct and third-party online channels are both material"],
+          "body": "Balanced omnichannel execution is required because U.S. buyers use physical retail, official brand sites and third-party ecommerce for different purchase needs.",
+          "detailPoints": ["Physical (41%): purchases completed through physical electronics stores and retail outlets.", "Brand Website (30%): purchases completed through official manufacturer or brand-owned websites.", "Online (29%): purchases completed through third-party ecommerce platforms and marketplaces."],
+          "chart": { "title": "Purchase Channels", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 41, "valueLabel": "41%" }, { "label": "Brand Website", "value": 30, "valueLabel": "30%" }, { "label": "Online", "value": 29, "valueLabel": "29%" }] }
         },
         {
           "title": "Policy & Standards",

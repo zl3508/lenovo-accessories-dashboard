@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260817-country-chart-layout";
+const DATA_VERSION = "20260818-country-detail-refine";
 
 const state = {
   categoryId: null,
@@ -487,12 +487,9 @@ function renderRegionCountryWorkspace(categoryId, overview, regionId) {
   return `
     <section class="module-block">
       <section class="geo-detail-view region-country-workspace">
-        <header class="geo-detail-head region-country-head">
+        <div class="region-country-toolbar">
           <button class="ghost-button" type="button" data-action="country-back">← Country Overview</button>
-          <span>${escapeHtml(region.label)} Regional Overview</span>
-          <h2>${escapeHtml(region.label)} &mdash; ${escapeHtml(region.heading)}</h2>
-          <ul class="country-summary-list">${(region.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-        </header>
+        </div>
         <nav class="country-region-tabs" aria-label="${escapeAttr(region.label)} country and policy views">
           ${tabs.map((item) => `<button class="${item.id === activeTab ? "is-active" : ""}" type="button" data-action="country-tab" data-tab-id="${escapeAttr(item.id)}">${escapeHtml(item.label)}</button>`).join("")}
         </nav>
@@ -669,7 +666,7 @@ function renderCountryChartPanel(country, section, chart, chartId) {
         <div id="${escapeAttr(chartId)}" class="plot geo-detail-plot"></div>
         ${isDonut ? "" : legend}
       </div>
-      ${method ? `<p class="country-chart-method">${escapeHtml(method)}</p>` : ""}
+      ${method ? `<p class="country-chart-method"><strong>Study context</strong> ${escapeHtml(method)}</p>` : ""}
     </section>
   `;
 }
