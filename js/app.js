@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260817-country-overview";
+const DATA_VERSION = "20260817-country-insights";
 
 const state = {
   categoryId: null,
@@ -479,7 +479,9 @@ function renderCountryDetail(categoryId, overview, countryId) {
           <button class="ghost-button" type="button" data-action="country-back">← Country Overview</button>
           <span>Country Overview</span>
           <h2>${escapeHtml(country.label)} Adapter Market</h2>
-          <p>${escapeHtml(country.summary)}</p>
+          ${country.summaryPoints?.length
+            ? `<ul class="country-summary-list">${country.summaryPoints.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+            : `<p>${escapeHtml(country.summary)}</p>`}
         </header>
 
         <section class="geo-na-metrics">
@@ -487,10 +489,17 @@ function renderCountryDetail(categoryId, overview, countryId) {
             <div class="geo-na-metric-card">
               <span>${escapeHtml(metric.label)}</span>
               <strong>${escapeHtml(metric.value)}</strong>
-              <small>${escapeHtml(metric.note || "")}</small>
+              <small>${escapeHtml(countryMetricNote(country, metric))}</small>
             </div>
           `).join("")}
         </section>
+
+        ${country.research ? `
+          <section class="country-research-basis" aria-label="Research sample and methodology">
+            <div><span>Research Sample</span><strong>${escapeHtml(country.research.sampleLabel || "Not reported")}</strong></div>
+            <p>${escapeHtml(country.research.method || "Research methodology was not disclosed.")}</p>
+          </section>
+        ` : ""}
 
         <section class="geo-detail-grid country-detail-grid">
           ${sections.map((section, index) => renderCountryInsightCard(country, section, index)).join("")}
@@ -500,25 +509,75 @@ function renderCountryDetail(categoryId, overview, countryId) {
   `;
 }
 
+function countryMetricNote(country, metric) {
+  if (/survey/i.test(metric.note || "") && country.research?.sampleLabel) {
+    return `Research basis · ${country.research.sampleLabel}`;
+  }
+  return metric.note || "";
+}
+
 function renderCountryInsightCard(country, section, index) {
-  const charts = section.charts || (section.chart ? [section.chart] : []);
+  const isPolicy = Boolean(country.policy) && index === 3;
+  const displaySection = isPolicy
+    ? { ...section, title: "Policy & Standards", summaryPoints: country.policy.summaryPoints || [] }
+    : section;
+  const charts = isPolicy ? [] : section.charts || (section.chart ? [section.chart] : []);
   const key = idFromText(section.title || `section-${index}`);
   return `
     <article class="geo-detail-section geo-na-detail-card">
       <div class="geo-na-detail-summary">
-        <div class="geo-detail-section-head"><span>${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div>
+        <div class="geo-detail-section-head"><span>${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(displaySection.title)}</h3></div>
       </div>
-      <ul class="geo-core-list">${(section.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <ul class="geo-core-list country-insight-points">${(displaySection.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
       <details class="geo-na-card-disclosure">
         <summary class="geo-details-trigger">Details</summary>
         <div class="geo-na-detail-content">
-          <div class="geo-na-detail-split ${charts.length ? "" : "is-copy-only"}">
-            <div class="geo-na-detail-copy"><p>${escapeHtml(section.body || "")}</p><ul class="geo-driver-list">${(section.detailPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
-            ${charts.length ? `<div class="geo-na-detail-visual geo-regional-chart-grid">${charts.map((chart, chartIndex) => `<section class="geo-regional-chart"><h4>${escapeHtml(chart.title || "")}</h4><div id="country${escapeAttr(country.id)}${escapeAttr(key)}Plot${chartIndex}" class="plot geo-detail-plot"></div></section>`).join("")}</div>` : ""}
-          </div>
+          ${isPolicy
+            ? renderCountryPolicyColumns(country.policy)
+            : `<div class="geo-na-detail-split ${charts.length ? "" : "is-copy-only"}">
+                <div class="geo-na-detail-copy"><p>${escapeHtml(section.body || "")}</p><ul class="geo-driver-list">${(section.detailPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+                ${charts.length ? `<div class="geo-na-detail-visual geo-regional-chart-grid">${charts.map((chart, chartIndex) => renderCountryChartPanel(country, section, chart, `country${country.id}${key}Plot${chartIndex}`)).join("")}</div>` : ""}
+              </div>`}
         </div>
       </details>
     </article>
+  `;
+}
+
+function renderCountryChartPanel(country, section, chart, chartId) {
+  const research = country.research || {};
+  const marketBased = /competitive|market scale/i.test(section.title || "");
+  const sampleLabel = chart.sampleLabel || (marketBased ? research.marketBasis : research.sampleLabel) || "Sample base not reported";
+  const method = marketBased ? "" : research.method || "";
+  return `
+    <section class="geo-regional-chart country-chart-panel">
+      <div class="country-chart-head">
+        <h4>${escapeHtml(chart.title || "")}</h4>
+        <small>${escapeHtml(sampleLabel)}</small>
+      </div>
+      <div id="${escapeAttr(chartId)}" class="plot geo-detail-plot"></div>
+      <div class="country-chart-legend" aria-label="${escapeAttr(chart.title || "Chart")} legend">
+        ${(chart.items || []).map((item, itemIndex) => `
+          <span><i style="--legend-color:${escapeAttr(structureChartColor(itemIndex))}"></i><b>${escapeHtml(item.label)}</b><em>${escapeHtml(item.valueLabel || String(item.value))}</em></span>
+        `).join("")}
+      </div>
+      ${method ? `<p class="country-chart-method">${escapeHtml(method)}</p>` : ""}
+    </section>
+  `;
+}
+
+function renderCountryPolicyColumns(policy) {
+  return `
+    <div class="country-policy-columns">
+      <section>
+        <span>Current Requirements</span>
+        <ul>${(policy.current || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      </section>
+      <section>
+        <span>Upcoming / Monitor</span>
+        <ul>${(policy.upcoming || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      </section>
+    </div>
   `;
 }
 

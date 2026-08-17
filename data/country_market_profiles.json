@@ -10,6 +10,21 @@
         "market": "USD 1.29B (2024, converted from RMB 8.8B at 6.8)",
         "characteristics": "Mature | Brand-led | High-power | Omnichannel",
         "summary": "The U.S. adapter market is mature and highly competitive. OEM compatibility and brand trust remain important, while third-party brands compete through compact GaN design, fast charging and multi-port convenience.",
+        "summaryPoints": [
+          "Mature premium market where OEM compatibility, safety and brand trust influence purchase.",
+          "Core opportunity centers on compact 65W-100W USB-C adapters for work, travel and multi-device charging.",
+          "Amazon, major retailers and brand-direct channels require coordinated omnichannel execution."
+        ],
+        "research": {
+          "sampleLabel": "Ipsos USA sample: n=354",
+          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "marketBasis": "Market-share estimate; respondent base was not disclosed in the market source."
+        },
+        "policy": {
+          "summaryPoints": ["Current market entry depends on electromagnetic compatibility, electrical safety and truthful product claims.", "Future readiness requires monitoring USB-C interoperability, standby-power and marketplace verification changes."],
+          "current": ["FCC electromagnetic-compliance requirements", "Applicable electrical-safety and energy-efficiency requirements", "Clear compatibility, warranty and protection disclosures"],
+          "upcoming": ["Monitor USB-C interoperability and labeling updates", "Track standby-power and efficiency rule changes", "Prepare for tighter marketplace compliance-document checks"]
+        },
         "metrics": [
           { "label": "Adapter Market", "value": "$1.29B", "note": "2024 · RMB 8.8B / 6.8" },
           { "label": "Annual Growth", "value": "~10%", "note": "2024 source estimate" },
@@ -27,6 +42,21 @@
         "market": "USD 0.12-0.15B (2024, converted from RMB 0.8-1.0B at 6.8)",
         "characteristics": "Premium | Stable output | Amazon-led | Compliance",
         "summary": "The UK represents developed European demand for reliable, certified and premium adapters. Stable output, fast charging and multi-port compatibility support higher price points, while Amazon and local distributors shape execution.",
+        "summaryPoints": [
+          "Premium developed-market demand rewards stable output, certified safety and durable design.",
+          "Fast charging and multi-port compatibility support a higher-value product ladder.",
+          "Amazon, official brand channels and local distributors all influence market execution."
+        ],
+        "research": {
+          "sampleLabel": "Ipsos DE+UK+SE sample: n=295",
+          "method": "Combined-market online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "marketBasis": "UK market estimate; respondent base was not disclosed in the market source."
+        },
+        "policy": {
+          "summaryPoints": ["Current requirements emphasize electrical safety, product conformity, eco-design and transparent labeling.", "Future planning should track UK regulatory updates and EU requirements for products sold across Europe."],
+          "current": ["Applicable UKCA/CE conformity route by destination market", "Electrical-safety, eco-design and hazardous-substance obligations", "USB-C and charger interoperability requirements where applicable"],
+          "upcoming": ["Monitor UK product-safety and sustainability rule revisions", "Track EU eco-design and digital product-information implementation", "Prepare reusable compliance evidence for cross-border ecommerce"]
+        },
         "metrics": [
           { "label": "Adapter Market", "value": "$0.12-0.15B", "note": "2024 · converted at 6.8" },
           { "label": "Annual Growth", "value": "10-15%", "note": "UK source range" },
@@ -44,6 +74,21 @@
         "market": "Adapter TAM not separately reported in the source set",
         "characteristics": "Multi-port | Safety-led | Fast charging | Retail-oriented",
         "summary": "Saudi demand is performance-led. Buyers place strong weight on multi-port compatibility, intelligent protection and fast charging, while physical retail and official brand channels remain important.",
+        "summaryPoints": [
+          "Performance-led demand prioritizes multi-port charging, protection and visible speed improvements.",
+          "The surveyed purchase level supports premium products when benefits are easy to understand.",
+          "Physical retail remains important alongside ecommerce and official brand channels."
+        ],
+        "research": {
+          "sampleLabel": "Ipsos Saudi Arabia sample: n=320",
+          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "marketBasis": "Country adapter TAM was not separately reported in the source set."
+        },
+        "policy": {
+          "summaryPoints": ["Current entry requires local conformity, importer documentation, plug compatibility and accurate safety claims.", "Future readiness depends on monitoring SASO/SABER updates and digital compliance-document requirements."],
+          "current": ["Applicable SASO/SABER conformity and importer registration", "Saudi plug, labeling and product-safety requirements", "Consistent warranty and protection evidence across channels"],
+          "upcoming": ["Monitor conformity-platform and energy-efficiency updates", "Track future labeling and ecommerce verification rules", "Maintain launch-ready Arabic and English compliance materials"]
+        },
         "metrics": [
           { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
           { "label": "Mean Purchase Price", "value": "$75.76", "note": "Ipsos survey" },
@@ -61,6 +106,21 @@
         "market": "USD 0.57B (2024, converted from RMB 3.9B at 6.8)",
         "characteristics": "Localized design | Reliability | Compactness | Online-led",
         "summary": "Japan combines strong local competition with high expectations for safety, stable output and compact design. Low replacement frequency makes deep product localization and trusted ecommerce execution especially important.",
+        "summaryPoints": [
+          "Reliability, stable output and compact form factors matter more than headline wattage alone.",
+          "Strong local accessory brands raise the bar for product localization and quality perception.",
+          "Online channels lead, but lower replacement frequency makes trust and differentiation essential."
+        ],
+        "research": {
+          "sampleLabel": "Ipsos Japan sample: n=378",
+          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "marketBasis": "Brand-share estimate; respondent base was not disclosed in the market source."
+        },
+        "policy": {
+          "summaryPoints": ["Current requirements center on applicable PSE safety scope, Japanese labeling and local electrical compatibility.", "Future preparation should follow efficiency, recycling and USB-C interoperability developments."],
+          "current": ["Confirm applicable DENAN/PSE product classification", "Japanese-language labeling and local plug compatibility", "Documented safety, thermal and output-stability performance"],
+          "upcoming": ["Monitor energy-efficiency and resource-circulation updates", "Track USB-C interoperability expectations across device categories", "Prepare updated technical files for marketplace verification"]
+        },
         "metrics": [
           { "label": "Adapter Market", "value": "$0.57B", "note": "2024 · RMB 3.9B / 6.8" },
           { "label": "Annual Growth", "value": "~10%", "note": "2024 source estimate" },
@@ -78,6 +138,21 @@
         "market": "Adapter TAM not separately reported in the source set",
         "characteristics": "Fast charging | Brand confidence | USB-C | Online-led",
         "summary": "India is a feature-intensive and value-conscious adapter market. Buyers compare charging speed, brand confidence, power range and USB-C compatibility, with ecommerce playing the leading purchase role.",
+        "summaryPoints": [
+          "Feature-intensive demand combines fast charging, USB-C compatibility and visible brand confidence.",
+          "Value remains important, but buyers reward credible protection and clearly defined power ranges.",
+          "Ecommerce leads purchase, increasing the importance of comparison-ready product content."
+        ],
+        "research": {
+          "sampleLabel": "Ipsos India sample: n=262",
+          "method": "Online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "marketBasis": "Country adapter TAM was not separately reported in the source set."
+        },
+        "policy": {
+          "summaryPoints": ["Current launch planning must confirm applicable BIS registration, labeling and importer obligations.", "Future readiness requires tracking USB-C standardization, efficiency rules and ecommerce compliance checks."],
+          "current": ["Confirm applicable BIS compulsory-registration scope", "Local labeling, importer and warranty documentation", "Verified electrical-safety and protection claims"],
+          "upcoming": ["Monitor USB-C and common-charging policy development", "Track energy-efficiency and e-waste rule updates", "Prepare structured compliance evidence for online marketplaces"]
+        },
         "metrics": [
           { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
           { "label": "Mean Purchase Price", "value": "$41.10", "note": "Ipsos survey" },
@@ -95,6 +170,21 @@
         "market": "Adapter TAM not separated; USD 0.25B* 2024 power-category proxy",
         "characteristics": "30%+ growth | Under-$30 demand | Fragmented retail | Agent-led",
         "summary": "Indonesia offers strong expansion potential but requires disciplined price architecture and local distribution. The report provides a broader power-category proxy rather than an adapter-only TAM, so the proxy is marked with an asterisk.",
+        "summaryPoints": [
+          "High-growth opportunity, but the available market value is a broader power-category proxy rather than adapter-only TAM.",
+          "Demand is concentrated in affordable tiers, requiring disciplined SKU and price architecture.",
+          "Fragmented retail makes local distributor, inventory and after-sales execution critical."
+        ],
+        "research": {
+          "sampleLabel": "Industry-report proxy: no Ipsos country sample",
+          "method": "Broader power-category market analysis; respondent sample was not disclosed; Ipsos total N=1,832 does not include Indonesia.",
+          "marketBasis": "Industry-report proxy; no respondent base was disclosed."
+        },
+        "policy": {
+          "summaryPoints": ["Current entry requires confirmation of applicable SNI, importer, labeling and product-registration obligations.", "Future planning should track local-content, ecommerce and energy-efficiency policy changes."],
+          "current": ["Confirm applicable SNI and product-registration scope", "Local importer, Bahasa labeling and warranty documentation", "Electrical-safety and plug-compatibility verification"],
+          "upcoming": ["Monitor local-content and certification-scope updates", "Track ecommerce seller and product-verification requirements", "Prepare for tighter efficiency and e-waste expectations"]
+        },
         "metrics": [
           { "label": "Power-category Proxy", "value": "$0.25B*", "note": "2024 · RMB 1.7B / 6.8" },
           { "label": "Annual Growth", "value": "30%+", "note": "Broader category estimate" },
@@ -112,6 +202,21 @@
         "market": "Adapter TAM not separately reported; BR + MEX survey signals used",
         "characteristics": "Value-led | Fast charging | Portability | Ecommerce",
         "summary": "Brazil is represented by the combined Brazil and Mexico Ipsos sample. The evidence points to a value-driven market where sub-$40 pricing, fast charging, safety and portable multi-device use are central.",
+        "summaryPoints": [
+          "Value-driven demand still requires credible fast charging, safety and multi-device compatibility.",
+          "The core surveyed price opportunity is below USD 40, with premium tiers requiring visible upgrades.",
+          "Results use the combined Brazil and Mexico sample and should not be interpreted as Brazil-only incidence."
+        ],
+        "research": {
+          "sampleLabel": "Ipsos Brazil + Mexico sample: n=223",
+          "method": "Combined-market online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "marketBasis": "Country adapter TAM was not separately reported in the source set."
+        },
+        "policy": {
+          "summaryPoints": ["Current launch planning must verify applicable INMETRO, plug, labeling and importer requirements.", "Future readiness should track efficiency, e-waste and marketplace compliance developments."],
+          "current": ["Confirm applicable INMETRO certification scope", "Brazilian plug, Portuguese labeling and importer documentation", "Transparent safety, warranty and compatibility claims"],
+          "upcoming": ["Monitor energy-efficiency and product-safety revisions", "Track e-waste and circular-economy implementation", "Prepare stronger ecommerce compliance documentation"]
+        },
         "metrics": [
           { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
           { "label": "Mean Purchase Price", "value": "$36.45", "note": "Combined BR + MEX survey" },
@@ -129,6 +234,21 @@
         "market": "Adapter TAM not separately reported; BR + MEX survey signals used",
         "characteristics": "Price-sensitive | Multi-port | Safety | Omnichannel",
         "summary": "Mexico is represented by the combined Brazil and Mexico Ipsos sample. Buyers balance price with credible charging speed, protection and device compatibility across ecommerce and physical channels.",
+        "summaryPoints": [
+          "Price-sensitive buyers balance affordability with charging speed, protection and device coverage.",
+          "Online and physical channels both matter, making consistent product claims and availability essential.",
+          "Results use the combined Brazil and Mexico sample and should not be interpreted as Mexico-only incidence."
+        ],
+        "research": {
+          "sampleLabel": "Ipsos Brazil + Mexico sample: n=223",
+          "method": "Combined-market online survey; ages 18-50; office workers and power-adapter users; total study N=1,832.",
+          "marketBasis": "Country adapter TAM was not separately reported in the source set."
+        },
+        "policy": {
+          "summaryPoints": ["Current entry requires applicable NOM safety, labeling, plug and importer compliance.", "Future planning should monitor energy-efficiency, digital labeling and marketplace verification changes."],
+          "current": ["Confirm applicable NOM safety and energy requirements", "Spanish labeling, plug compatibility and importer documentation", "Consistent warranty and protection evidence"],
+          "upcoming": ["Monitor NOM and energy-efficiency revisions", "Track digital labeling and ecommerce verification requirements", "Prepare updated technical files for channel partners"]
+        },
         "metrics": [
           { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
           { "label": "Mean Purchase Price", "value": "$36.45", "note": "Combined BR + MEX survey" },
