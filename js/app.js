@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260817-country-insights";
+const DATA_VERSION = "20260817-country-compact";
 
 const state = {
   categoryId: null,
@@ -525,12 +525,15 @@ function renderCountryInsightCard(country, section, index) {
   const key = idFromText(section.title || `section-${index}`);
   return `
     <article class="geo-detail-section geo-na-detail-card">
-      <div class="geo-na-detail-summary">
-        <div class="geo-detail-section-head"><span>${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(displaySection.title)}</h3></div>
-      </div>
-      <ul class="geo-core-list country-insight-points">${(displaySection.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
       <details class="geo-na-card-disclosure">
-        <summary class="geo-details-trigger">Details</summary>
+        <summary class="country-insight-summary">
+          <span class="country-insight-number">${String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <h3>${escapeHtml(displaySection.title)}</h3>
+            <ul class="country-insight-points">${(displaySection.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          </div>
+          <em>Details</em>
+        </summary>
         <div class="geo-na-detail-content">
           ${isPolicy
             ? renderCountryPolicyColumns(country.policy)
@@ -2947,12 +2950,12 @@ function drawGeoRegionalChart(id, chart) {
     cliponaxis: false,
     marker: { color: items.map((_, index) => structureChartColor(index)) },
     hovertemplate: `<b>%{y}</b><br>${escapeHtml(chart.hoverLabel || "Value")}: %{text}<extra></extra>`,
-    textfont: { size: 10, color: "#1f2328" },
+    textfont: { size: 11, color: "#1f2328" },
   }], {
     margin: { l: 136, r: 48, t: 8, b: 34 },
     showlegend: false,
     xaxis: { title: chart.axisTitle || "", tickprefix: prefix, ticksuffix: suffix, range: [0, maxValue * 1.22], titlefont: { size: 10 }, tickfont: { size: 9 } },
-    yaxis: { autorange: "reversed", tickfont: { size: 10 } },
+    yaxis: { autorange: "reversed", tickfont: { size: 11 } },
   });
 }
 
@@ -2968,12 +2971,12 @@ function drawGeoShareDonut(id, items, center) {
     texttemplate: "%{label}<br>%{percent:.0%}",
     marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
     hovertemplate: "<b>%{label}</b><br>%{value}%<extra></extra>",
-    textfont: { size: 10, color: "#1f2328" },
+    textfont: { size: 12, color: "#1f2328" },
   }], {
     margin: { l: 62, r: 62, t: 24, b: 20 },
     showlegend: false,
     uniformtext: { minsize: 10, mode: "hide" },
-    annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#1f2328" } }],
+    annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 14, color: "#1f2328" } }],
   });
 }
 
