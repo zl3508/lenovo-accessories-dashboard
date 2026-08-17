@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260817-region-country-policy";
+const DATA_VERSION = "20260817-country-chart-layout";
 
 const state = {
   categoryId: null,
@@ -523,12 +523,6 @@ function renderRegionCountryPanel(overview, country, displayLabel) {
           </div>
         `).join("")}
       </section>
-      ${country.research ? `
-        <section class="country-research-basis" aria-label="Research sample and methodology">
-          <div><span>Research Sample</span><strong>${escapeHtml(country.research.sampleLabel || "Not reported")}</strong></div>
-          <p>${escapeHtml(country.research.method || "Research methodology was not disclosed.")}</p>
-        </section>
-      ` : ""}
       <section class="geo-detail-grid country-detail-grid">
         ${sections.map((section, index) => renderCountryInsightCard(country, section, index)).join("")}
       </section>
@@ -612,13 +606,6 @@ function renderCountryDetail(categoryId, overview, countryId) {
           `).join("")}
         </section>
 
-        ${country.research ? `
-          <section class="country-research-basis" aria-label="Research sample and methodology">
-            <div><span>Research Sample</span><strong>${escapeHtml(country.research.sampleLabel || "Not reported")}</strong></div>
-            <p>${escapeHtml(country.research.method || "Research methodology was not disclosed.")}</p>
-          </section>
-        ` : ""}
-
         <section class="geo-detail-grid country-detail-grid">
           ${sections.map((section, index) => renderCountryInsightCard(country, section, index)).join("")}
         </section>
@@ -628,9 +615,6 @@ function renderCountryDetail(categoryId, overview, countryId) {
 }
 
 function countryMetricNote(country, metric) {
-  if (/survey/i.test(metric.note || "") && country.research?.sampleLabel) {
-    return `Research basis · ${country.research.sampleLabel}`;
-  }
   return metric.note || "";
 }
 
@@ -664,18 +648,26 @@ function renderCountryChartPanel(country, section, chart, chartId) {
   const research = country.research || {};
   const marketBased = /competitive|market scale/i.test(section.title || "");
   const sampleLabel = chart.sampleLabel || (marketBased ? research.marketBasis : research.sampleLabel) || "Sample base not reported";
+  const basisTitle = marketBased ? "Data basis" : "Research sample";
   const method = marketBased ? "" : research.method || "";
+  const isDonut = chart.type === "donut";
+  const legend = `
+    <div class="country-chart-legend" aria-label="${escapeAttr(chart.title || "Chart")} legend">
+      ${(chart.items || []).map((item, itemIndex) => `
+        <span><i style="--legend-color:${escapeAttr(structureChartColor(itemIndex))}"></i><b>${escapeHtml(item.label)}</b><em>${escapeHtml(item.valueLabel || String(item.value))}</em></span>
+      `).join("")}
+    </div>
+  `;
   return `
-    <section class="geo-regional-chart country-chart-panel">
+    <section class="geo-regional-chart country-chart-panel ${isDonut ? "is-donut" : "is-bar"}">
       <div class="country-chart-head">
         <h4>${escapeHtml(chart.title || "")}</h4>
-        <small>${escapeHtml(sampleLabel)}</small>
+        <small><strong>${basisTitle}</strong> ${escapeHtml(sampleLabel)}</small>
       </div>
-      <div id="${escapeAttr(chartId)}" class="plot geo-detail-plot"></div>
-      <div class="country-chart-legend" aria-label="${escapeAttr(chart.title || "Chart")} legend">
-        ${(chart.items || []).map((item, itemIndex) => `
-          <span><i style="--legend-color:${escapeAttr(structureChartColor(itemIndex))}"></i><b>${escapeHtml(item.label)}</b><em>${escapeHtml(item.valueLabel || String(item.value))}</em></span>
-        `).join("")}
+      <div class="country-chart-body">
+        ${isDonut ? legend : ""}
+        <div id="${escapeAttr(chartId)}" class="plot geo-detail-plot"></div>
+        ${isDonut ? "" : legend}
       </div>
       ${method ? `<p class="country-chart-method">${escapeHtml(method)}</p>` : ""}
     </section>
@@ -3051,7 +3043,7 @@ function drawGeoRegionalChart(id, chart) {
   const items = chart?.items || [];
   if (!items.length) return;
   if (chart.type === "donut") {
-    drawGeoShareDonut(id, items, chart.center || "Share");
+    drawGeoShareDonut(id, items, chart.center || "Share", { externalLegend: true });
     return;
   }
   const values = items.map((item) => Number(item.value) || 0);
@@ -3077,21 +3069,22 @@ function drawGeoRegionalChart(id, chart) {
   });
 }
 
-function drawGeoShareDonut(id, items, center) {
+function drawGeoShareDonut(id, items, center, options = {}) {
+  const externalLegend = Boolean(options.externalLegend);
   drawPlot(id, [{
     labels: items.map((item) => item.label),
     values: items.map((item) => Number(item.value) || 0),
     type: "pie",
     hole: 0.58,
     sort: false,
-    textinfo: "label+percent",
-    textposition: "outside",
-    texttemplate: "%{label}<br>%{percent:.0%}",
+    textinfo: externalLegend ? "none" : "label+percent",
+    textposition: externalLegend ? "inside" : "outside",
+    texttemplate: externalLegend ? undefined : "%{label}<br>%{percent:.0%}",
     marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
     hovertemplate: "<b>%{label}</b><br>%{value}%<extra></extra>",
     textfont: { size: 12, color: "#1f2328" },
   }], {
-    margin: { l: 62, r: 62, t: 24, b: 20 },
+    margin: externalLegend ? { l: 18, r: 18, t: 18, b: 18 } : { l: 62, r: 62, t: 24, b: 20 },
     showlegend: false,
     uniformtext: { minsize: 10, mode: "hide" },
     annotations: [{ text: center, x: 0.5, y: 0.5, xref: "paper", yref: "paper", showarrow: false, font: { size: 14, color: "#1f2328" } }],

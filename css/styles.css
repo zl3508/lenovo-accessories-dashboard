@@ -3546,8 +3546,8 @@ input[type="search"] {
   margin: 4px 0 0;
   padding-left: 18px;
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .country-insight-summary {
@@ -3567,7 +3567,7 @@ input[type="search"] {
 .country-insight-summary h3 {
   margin: 0;
   color: var(--ink);
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.25;
 }
 
@@ -3619,19 +3619,19 @@ input[type="search"] {
 }
 
 .country-detail-grid .geo-na-detail-split {
-  grid-template-columns: minmax(240px, 0.62fr) minmax(0, 1.38fr);
-  gap: 18px;
+  grid-template-columns: minmax(250px, 0.5fr) minmax(0, 1.5fr);
+  gap: 22px;
 }
 
 .country-detail-grid .geo-na-detail-copy p {
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .country-detail-grid .geo-na-detail-copy .geo-driver-list {
-  gap: 7px;
-  font-size: 13px;
-  line-height: 1.48;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .geo-na-detail-copy {
@@ -3817,6 +3817,11 @@ input[type="search"] {
   gap: 10px;
 }
 
+.country-detail-grid .geo-regional-chart-grid {
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 14px;
+}
+
 .geo-regional-chart {
   min-width: 0;
   padding: 9px 10px 4px;
@@ -3832,30 +3837,69 @@ input[type="search"] {
 
 .country-chart-head {
   display: grid;
-  gap: 3px;
+  gap: 5px;
 }
 
 .country-chart-head small {
   color: var(--muted);
-  font-size: 11px;
-  line-height: 1.35;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.country-chart-head small strong {
+  margin-right: 5px;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.country-chart-body {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+  min-width: 0;
+}
+
+.country-chart-panel.is-donut .country-chart-body {
+  grid-template-columns: minmax(150px, 0.68fr) minmax(260px, 1.32fr);
+}
+
+.country-chart-panel.is-bar .country-chart-body {
+  grid-template-columns: minmax(300px, 1.42fr) minmax(150px, 0.58fr);
 }
 
 .country-chart-legend {
   display: grid;
-  gap: 4px;
-  padding-top: 7px;
-  border-top: 1px solid var(--line);
+  gap: 0;
+  align-content: center;
+  min-width: 0;
+  padding: 2px 0;
+  border: 0;
+}
+
+.country-chart-panel.is-donut .country-chart-legend {
+  padding-right: 14px;
+  border-right: 1px solid var(--line);
+}
+
+.country-chart-panel.is-bar .country-chart-legend {
+  padding-left: 14px;
+  border-left: 1px solid var(--line);
 }
 
 .country-chart-legend > span {
   display: grid;
   grid-template-columns: 8px minmax(0, 1fr) auto;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
+}
+
+.country-chart-legend > span:last-child {
+  border-bottom: 0;
 }
 
 .country-chart-legend i {
@@ -3877,10 +3921,12 @@ input[type="search"] {
 }
 
 .country-chart-method {
-  margin: 7px 0 0;
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 10px;
-  line-height: 1.35;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 .country-policy-columns {
@@ -3919,15 +3965,15 @@ input[type="search"] {
 }
 
 .country-chart-panel {
-  padding: 12px 14px 8px;
+  padding: 14px 16px 10px;
 }
 
 .country-chart-panel .country-chart-head h4 {
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .country-chart-panel .plot.geo-detail-plot {
-  height: 270px;
+  height: 300px;
 }
 
 .geo-na-policy-detail-list a {
@@ -5716,6 +5762,24 @@ input[type="search"] {
 
   .country-detail-grid .geo-na-detail-split {
     grid-template-columns: 1fr;
+  }
+
+  .country-detail-grid .geo-regional-chart-grid,
+  .country-chart-panel.is-donut .country-chart-body,
+  .country-chart-panel.is-bar .country-chart-body {
+    grid-template-columns: 1fr;
+  }
+
+  .country-chart-panel.is-donut .country-chart-legend,
+  .country-chart-panel.is-bar .country-chart-legend {
+    padding: 8px 0 0;
+    border-top: 1px solid var(--line);
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .country-chart-panel.is-donut .country-chart-legend {
+    order: 2;
   }
 
   .geo-na-policy-summary > div + div {
