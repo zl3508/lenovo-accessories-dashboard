@@ -7,16 +7,17 @@ const DATA_FILES = {
   competitorProducts: "data/competitor_products.json",
   supplyChain: "data/supply_chain.json",
   consumerInsights: "data/consumer_insights.json",
+  countryMarkets: "data/country_market_profiles.json",
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260817-geo-pc-tam";
+const DATA_VERSION = "20260817-country-overview";
 
 const state = {
   categoryId: null,
   productId: null,
   categoryView: "market",
-  marketModule: "policy",
+  marketModule: "global",
   granularity: "quarter",
   detailGranularity: "quarter",
   selectedPeriod: { category: null, detail: null },
@@ -82,7 +83,7 @@ const categoryViews = {
 
 const marketModules = {
   global: "Global Overview",
-  geo: "Geo Overview",
+  geo: "Country Overview",
 };
 
 const marketRegionModules = {
@@ -190,7 +191,7 @@ async function init() {
     app.addEventListener("input", handleInput);
     app.addEventListener("toggle", (event) => {
       if (event.target.matches(".geo-na-card-disclosure") && event.target.open) {
-        requestAnimationFrame(() => drawNARegionalDetail(state.categoryId));
+        requestAnimationFrame(() => drawMarketAnalysis(state.categoryId));
       }
     }, true);
     topNav.addEventListener("click", handleClick);
@@ -423,48 +424,100 @@ function renderMarketAnalysis(categoryId) {
 }
 
 function renderGeoOverviewModule(categoryId) {
-  const report = marketStructureReport(categoryId);
-  const overview = report?.geoOverview;
+  const overview = data.countryMarkets?.[categoryId];
   if (!overview) {
     return `
       <section class="module-block">
         <div class="module-head">
-          <span>Geo Overview</span>
-          <h2>Regional Market Summary</h2>
-          <p>No regional market summary has been configured for this category yet.</p>
+          <span>Country Overview</span>
+          <h2>Country Market Summary</h2>
+          <p>No country market summary has been configured for this category yet.</p>
         </div>
       </section>
     `;
   }
-  const selectedRegion = state.geoRegionDetail[categoryId];
-  if (selectedRegion === "NA") return renderNARegionalDetail(categoryId, overview);
-  if (selectedRegion) return renderGeoRegionalDetail(categoryId, overview, selectedRegion);
+  const selectedCountry = state.geoRegionDetail[categoryId];
+  if (selectedCountry) return renderCountryDetail(categoryId, overview, selectedCountry);
   return `
     <section class="module-block">
       <section class="geo-overview-module">
         <div class="geo-region-grid">
-          ${(overview.regions || []).map(renderGeoRegionCard).join("")}
+          ${(overview.countries || []).map(renderCountryCard).join("")}
         </div>
       </section>
     </section>
   `;
 }
 
-function renderGeoRegionCard(region) {
+function renderCountryCard(country) {
   return `
     <article class="geo-region-card">
       <header class="geo-region-card-head">
         <div>
-          <h3>${escapeHtml(region.label)} &mdash; ${escapeHtml(region.heading)}</h3>
+          <h3>${escapeHtml(country.label)} &mdash; ${escapeHtml(country.heading)}</h3>
         </div>
       </header>
-      ${region.detail ? `<button class="geo-region-card-hit" type="button" data-action="geo-region" data-region-id="${escapeAttr(region.id)}" aria-label="Open ${escapeAttr(region.label)} regional overview"></button>` : ""}
-      <div class="geo-region-map" id="geoOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
+      <button class="geo-region-card-hit" type="button" data-action="country-detail" data-country-id="${escapeAttr(country.id)}" aria-label="Open ${escapeAttr(country.label)} country overview"></button>
+      <div class="geo-region-map" id="countryOverviewMap${escapeAttr(country.id)}" aria-label="${escapeAttr(country.label)} map"></div>
       <div class="geo-region-summary">
-        <p><strong>PC Charger TAM Scope:</strong> ${geoCardValue(region.pcChargerTam || region.market)}</p>
-        <p><strong>Representative:</strong> ${geoCardValue(region.representativeCountry)}</p>
-        <p><strong>Characteristics:</strong> ${geoCardValue(region.characteristics)}</p>
+        <p><strong>Adapter Market:</strong> ${geoCardValue(country.market)}</p>
+        <p><strong>Characteristics:</strong> ${geoCardValue(country.characteristics)}</p>
       </div>
+      <span class="country-card-action" aria-hidden="true">View country analysis <b>↗</b></span>
+    </article>
+  `;
+}
+
+function renderCountryDetail(categoryId, overview, countryId) {
+  const country = (overview.countries || []).find((item) => item.id === countryId);
+  if (!country) return renderGeoOverviewModuleFallback(countryId);
+  const sections = overview.insightSets?.[country.insightSet] || [];
+  return `
+    <section class="module-block">
+      <section class="geo-detail-view">
+        <header class="geo-detail-head country-detail-head">
+          <button class="ghost-button" type="button" data-action="country-back">← Country Overview</button>
+          <span>Country Overview</span>
+          <h2>${escapeHtml(country.label)} Adapter Market</h2>
+          <p>${escapeHtml(country.summary)}</p>
+        </header>
+
+        <section class="geo-na-metrics">
+          ${(country.metrics || []).slice(0, 4).map((metric) => `
+            <div class="geo-na-metric-card">
+              <span>${escapeHtml(metric.label)}</span>
+              <strong>${escapeHtml(metric.value)}</strong>
+              <small>${escapeHtml(metric.note || "")}</small>
+            </div>
+          `).join("")}
+        </section>
+
+        <section class="geo-detail-grid country-detail-grid">
+          ${sections.map((section, index) => renderCountryInsightCard(country, section, index)).join("")}
+        </section>
+      </section>
+    </section>
+  `;
+}
+
+function renderCountryInsightCard(country, section, index) {
+  const charts = section.charts || (section.chart ? [section.chart] : []);
+  const key = idFromText(section.title || `section-${index}`);
+  return `
+    <article class="geo-detail-section geo-na-detail-card">
+      <div class="geo-na-detail-summary">
+        <div class="geo-detail-section-head"><span>${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(section.title)}</h3></div>
+      </div>
+      <ul class="geo-core-list">${(section.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <details class="geo-na-card-disclosure">
+        <summary class="geo-details-trigger">Details</summary>
+        <div class="geo-na-detail-content">
+          <div class="geo-na-detail-split ${charts.length ? "" : "is-copy-only"}">
+            <div class="geo-na-detail-copy"><p>${escapeHtml(section.body || "")}</p><ul class="geo-driver-list">${(section.detailPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+            ${charts.length ? `<div class="geo-na-detail-visual geo-regional-chart-grid">${charts.map((chart, chartIndex) => `<section class="geo-regional-chart"><h4>${escapeHtml(chart.title || "")}</h4><div id="country${escapeAttr(country.id)}${escapeAttr(key)}Plot${chartIndex}" class="plot geo-detail-plot"></div></section>`).join("")}</div>` : ""}
+          </div>
+        </div>
+      </details>
     </article>
   `;
 }
@@ -482,7 +535,7 @@ function renderNARegionalDetail(categoryId, overview) {
     <section class="module-block">
       <section class="geo-detail-view">
         <header class="geo-detail-head">
-          <button class="ghost-button" type="button" data-action="geo-back">← Geo Overview</button>
+          <button class="ghost-button" type="button" data-action="geo-back">← Country Overview</button>
           <span>${escapeHtml(detail.eyebrow)}</span>
           <h2>${escapeHtml(detail.title)}</h2>
           <ul class="geo-na-takeaway-list">${(detail.opportunity.corePoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
@@ -564,7 +617,7 @@ function renderGeoRegionalDetail(categoryId, overview, regionId) {
     <section class="module-block">
       <section class="geo-detail-view">
         <header class="geo-detail-head">
-          <button class="ghost-button" type="button" data-action="geo-back">← Geo Overview</button>
+          <button class="ghost-button" type="button" data-action="geo-back">← Country Overview</button>
           <span>${escapeHtml(detail.eyebrow)}</span>
           <h2>${escapeHtml(detail.title)}</h2>
           <ul class="geo-na-takeaway-list">${(detail.opportunity?.corePoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
@@ -718,7 +771,7 @@ function renderNAUserResearchCard(index, section) {
 }
 
 function renderGeoOverviewModuleFallback(regionId) {
-  return `<section class="module-block"><div class="module-head"><span>Geo Overview</span><h2>${escapeHtml(regionId)} Regional Overview</h2><p>No regional detail is configured yet.</p></div></section>`;
+  return `<section class="module-block"><div class="module-head"><span>Country Overview</span><h2>${escapeHtml(regionId)} Country Overview</h2><p>No country detail is configured yet.</p></div></section>`;
 }
 
 function geoPolicyIcon(icon) {
@@ -2616,6 +2669,12 @@ function drawStructurePiePlot(id, chart) {
   if (!node || !chart?.items?.length || !window.Plotly) return;
   const items = chart.items;
   const total = items.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+  const hoverText = items.map((item) => {
+    const value = Number(item.value) || 0;
+    const share = total ? value / total * 100 : 0;
+    const description = item.description ? `<br>${item.description}` : "";
+    return `<b>${item.label}</b><br>Market Value: ${item.valueLabel || `$${value.toFixed(2)}M`}<br>Share: ${share.toFixed(2)}%${description}`;
+  });
   const showLabels = chart.showLabels !== false;
   const hasSideLegend = chart.legendSide === "left" || chart.legendSide === "right";
   drawPlot(
@@ -2631,9 +2690,9 @@ function drawStructurePiePlot(id, chart) {
       textposition: showLabels ? "outside" : "none",
       text: items.map((item) => `${item.label}<br>${item.valueLabel || `$${Number(item.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`}`),
       texttemplate: showLabels ? "%{text}<br>%{percent:.1%}" : "",
-      hovertemplate: "<b>%{customdata[0]}</b><br>Market Value: %{customdata[1]}<br>Share: %{percent:.2%}<extra></extra>",
+      hovertext: hoverText,
+      hovertemplate: "%{hovertext}<extra></extra>",
       marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
-      customdata: items.map((item) => [item.label, item.valueLabel || `$${Number(item.value).toFixed(2)}M`, total]),
       domain: hasSideLegend ? { x: chart.legendSide === "right" ? [0.16, 1] : [0.08, 0.92], y: [0.04, 0.96] } : undefined,
     }],
     {
@@ -2651,10 +2710,9 @@ function drawMarketAnalysis(categoryId) {
     return;
   }
   if (state.marketModule === "geo") {
-    const selectedRegion = state.geoRegionDetail[categoryId];
-    if (selectedRegion === "NA") drawNARegionalDetail(categoryId);
-    else if (selectedRegion) drawGeoRegionalDetail(categoryId, selectedRegion);
-    else drawGeoOverviewMaps();
+    const selectedCountry = state.geoRegionDetail[categoryId];
+    if (selectedCountry) drawCountryDetail(categoryId, selectedCountry);
+    else drawCountryOverviewMaps(categoryId);
     return;
   }
   if (marketModules[state.marketModule]) {
@@ -2687,30 +2745,26 @@ function drawMarketAnalysis(categoryId) {
   drawScenarioDonut(categoryId, selectedRows);
 }
 
-function drawGeoOverviewMaps() {
-  if (!window.Plotly) {
-    policyRegions.forEach((region) => {
-      const node = document.getElementById(`geoOverviewMap${region.id}`);
-      if (node) node.innerHTML = `<div class="policy-map-fallback">${escapeHtml(region.label)}</div>`;
-    });
-    return;
-  }
-  const colors = { NA: "#e2231a", EMEA: "#e2231a", AP: "#e2231a", LA: "#e2231a" };
-  policyRegions.forEach((region) => {
-    const node = document.getElementById(`geoOverviewMap${region.id}`);
-    const map = policyRegionMaps[region.id];
-    if (!node || !map) return;
+function drawCountryOverviewMaps(categoryId) {
+  const countries = data.countryMarkets?.[categoryId]?.countries || [];
+  countries.forEach((country) => {
+    const node = document.getElementById(`countryOverviewMap${country.id}`);
+    if (!node) return;
+    if (!window.Plotly) {
+      node.innerHTML = `<div class="policy-map-fallback">${escapeHtml(country.label)}</div>`;
+      return;
+    }
     Plotly.react(
       node,
       [{
         type: "choropleth",
         locationmode: "ISO-3",
-        locations: map.countries,
-        z: map.countries.map(() => 1),
-        text: map.labels,
+        locations: country.iso3 || [],
+        z: (country.iso3 || []).map(() => 1),
+        text: (country.iso3 || []).map(() => country.label),
         hoverinfo: "skip",
         showscale: false,
-        colorscale: [[0, colors[region.id] || "#e2231a"], [1, colors[region.id] || "#e2231a"]],
+        colorscale: [[0, "#e2231a"], [1, "#e2231a"]],
         marker: { line: { color: "#ffffff", width: 0.6 } },
       }],
       {
@@ -2718,7 +2772,7 @@ function drawGeoOverviewMaps() {
         paper_bgcolor: "rgba(0,0,0,0)",
         plot_bgcolor: "rgba(0,0,0,0)",
         geo: {
-          projection: { type: map.projection },
+          projection: { type: country.projection || "mercator" },
           fitbounds: "locations",
           showframe: false,
           showcoastlines: false,
@@ -2732,6 +2786,18 @@ function drawGeoOverviewMaps() {
       },
       { displayModeBar: false, staticPlot: true, responsive: false },
     );
+  });
+}
+
+function drawCountryDetail(categoryId, countryId) {
+  const overview = data.countryMarkets?.[categoryId];
+  const country = overview?.countries?.find((item) => item.id === countryId);
+  const sections = overview?.insightSets?.[country?.insightSet] || [];
+  if (!country) return;
+  sections.forEach((section, sectionIndex) => {
+    const key = idFromText(section.title || `section-${sectionIndex}`);
+    const charts = section.charts || (section.chart ? [section.chart] : []);
+    charts.forEach((chart, chartIndex) => drawGeoRegionalChart(`country${country.id}${key}Plot${chartIndex}`, chart));
   });
 }
 
@@ -5214,6 +5280,12 @@ function handleClick(event) {
     render();
   } else if (action === "module-view") {
     if (state.categoryView === "market") state.marketModule = button.dataset.module;
+    render();
+  } else if (action === "country-detail") {
+    state.geoRegionDetail[state.categoryId] = button.dataset.countryId;
+    render();
+  } else if (action === "country-back") {
+    delete state.geoRegionDetail[state.categoryId];
     render();
   } else if (action === "geo-region") {
     state.geoRegionDetail[state.categoryId] = button.dataset.regionId;

@@ -437,7 +437,7 @@
       "title": "Adapter Market Structure",
       "overview": {
         "eyebrow": "Global Overview",
-        "heading": "Global Laptop Charger TAM Scope - Exclude Mobiles (Over 65W, PC Standard Output)",
+        "heading": "Global Laptop Charger TAM Scope",
         "subtitle": "Market Size, Region, Technology and Channel Summary",
         "body": "The global laptop charger market is expanding steadily, driven by USB-C PD standardization, demand for replacement and multi-device charging, and the adoption of compact GaN designs. Market growth is global, but product preferences and channel strategies remain highly localized.",
         "bullets": [
@@ -562,28 +562,32 @@
                 {
                   "label": "APAC",
                   "value": 1789.13,
-                  "valueLabel": "$1,789.13M"
+                  "valueLabel": "$1,789.13M",
+                  "description": "China, Japan, India, South Korea and Southeast Asia"
                 },
                 {
                   "label": "North America",
                   "value": 1157.84,
-                  "valueLabel": "$1,157.84M"
+                  "valueLabel": "$1,157.84M",
+                  "description": "USA, Canada and Mexico"
                 },
                 {
                   "label": "Europe",
                   "value": 1014.58,
-                  "valueLabel": "$1,014.58M"
+                  "valueLabel": "$1,014.58M",
+                  "description": "UK, Germany, France, Italy and Spain"
                 },
                 {
                   "label": "Latin America",
                   "value": 288.74,
-                  "valueLabel": "$288.74M"
+                  "valueLabel": "$288.74M",
+                  "description": "Brazil, Mexico, Argentina and Chile"
                 },
                 {
                   "label": "MEA",
                   "value": 199.71,
                   "valueLabel": "$199.71M",
-                  "description": "Middle East and Africa"
+                  "description": "Middle East and Africa: Saudi Arabia, UAE, South Africa and Egypt"
                 }
               ]
             }
@@ -684,7 +688,7 @@
         ]
       },
       "geoOverview": {
-        "eyebrow": "Geo Overview",
+        "eyebrow": "Country Overview",
         "heading": "Regional Market Summary",
         "body": "Regional demand for chargers and power banks varies significantly in market maturity, purchasing power, product preference and channel structure. Asia Pacific is the global scale and growth engine, while North America and developed Europe concentrate more premium demand for high-power, GaN and multi-device products. Latin America and other emerging markets remain more price-sensitive, with affordability, durability and channel reach playing a larger role. Across regions, USB-C adoption and the convergence of laptop and mobile-device charging are creating opportunities for localized 65W-140W product portfolios.",
         "summaryPoints": [

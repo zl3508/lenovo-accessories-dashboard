@@ -2836,6 +2836,7 @@ input[type="search"] {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
+  grid-template-rows: auto 190px auto auto;
 }
 
 .geo-region-card-hit {
@@ -2870,6 +2871,7 @@ input[type="search"] {
 .geo-region-card-head h3 {
   margin: 0;
   font-size: 18px;
+  line-height: 1.25;
 }
 
 .geo-region-card-arrow {
@@ -2903,6 +2905,24 @@ input[type="search"] {
   color: var(--muted);
   font-size: 15px;
   line-height: 1.5;
+}
+
+.country-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.country-card-action b {
+  color: var(--red);
+  font-size: 15px;
 }
 
 .geo-region-summary p::before {
@@ -3290,6 +3310,18 @@ input[type="search"] {
   grid-template-columns: minmax(180px, 0.78fr) minmax(0, 1.22fr);
   gap: 14px;
   align-items: start;
+}
+
+.geo-na-detail-split.is-copy-only {
+  grid-template-columns: 1fr;
+}
+
+.country-detail-head > p {
+  max-width: 1180px;
+}
+
+.country-detail-grid .geo-na-detail-card {
+  min-height: 228px;
 }
 
 .geo-na-detail-copy {

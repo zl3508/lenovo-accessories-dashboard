@@ -1,0 +1,353 @@
+{
+  "adapter": {
+    "countries": [
+      {
+        "id": "US",
+        "label": "USA",
+        "heading": "Mature Premium Market",
+        "iso3": ["USA"],
+        "projection": "natural earth",
+        "market": "USD 1.29B (2024, converted from RMB 8.8B at 6.8)",
+        "characteristics": "Mature | Brand-led | High-power | Omnichannel",
+        "summary": "The U.S. adapter market is mature and highly competitive. OEM compatibility and brand trust remain important, while third-party brands compete through compact GaN design, fast charging and multi-port convenience.",
+        "metrics": [
+          { "label": "Adapter Market", "value": "$1.29B", "note": "2024 · RMB 8.8B / 6.8" },
+          { "label": "Annual Growth", "value": "~10%", "note": "2024 source estimate" },
+          { "label": "Mean Purchase Price", "value": "$65.18", "note": "Ipsos survey" },
+          { "label": "Self-purchase", "value": "68%", "note": "Ipsos survey" }
+        ],
+        "insightSet": "US"
+      },
+      {
+        "id": "UK",
+        "label": "UK",
+        "heading": "Premium & Regulation-led",
+        "iso3": ["GBR"],
+        "projection": "mercator",
+        "market": "USD 0.12-0.15B (2024, converted from RMB 0.8-1.0B at 6.8)",
+        "characteristics": "Premium | Stable output | Amazon-led | Compliance",
+        "summary": "The UK represents developed European demand for reliable, certified and premium adapters. Stable output, fast charging and multi-port compatibility support higher price points, while Amazon and local distributors shape execution.",
+        "metrics": [
+          { "label": "Adapter Market", "value": "$0.12-0.15B", "note": "2024 · converted at 6.8" },
+          { "label": "Annual Growth", "value": "10-15%", "note": "UK source range" },
+          { "label": "Mean Purchase Price", "value": "$77.05", "note": "DE + UK + SE survey" },
+          { "label": "Stable Output", "value": "62%", "note": "Top surveyed product signal" }
+        ],
+        "insightSet": "UK"
+      },
+      {
+        "id": "SA",
+        "label": "Saudi Arabia",
+        "heading": "Fast-charging Premium Market",
+        "iso3": ["SAU"],
+        "projection": "mercator",
+        "market": "Adapter TAM not separately reported in the source set",
+        "characteristics": "Multi-port | Safety-led | Fast charging | Retail-oriented",
+        "summary": "Saudi demand is performance-led. Buyers place strong weight on multi-port compatibility, intelligent protection and fast charging, while physical retail and official brand channels remain important.",
+        "metrics": [
+          { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
+          { "label": "Mean Purchase Price", "value": "$75.76", "note": "Ipsos survey" },
+          { "label": "Multi-port Priority", "value": "68%", "note": "Top surveyed need" },
+          { "label": "Physical Store", "value": "41%", "note": "Purchase channel" }
+        ],
+        "insightSet": "SA"
+      },
+      {
+        "id": "JP",
+        "label": "Japan",
+        "heading": "Localized Reliability Market",
+        "iso3": ["JPN"],
+        "projection": "mercator",
+        "market": "USD 0.57B (2024, converted from RMB 3.9B at 6.8)",
+        "characteristics": "Localized design | Reliability | Compactness | Online-led",
+        "summary": "Japan combines strong local competition with high expectations for safety, stable output and compact design. Low replacement frequency makes deep product localization and trusted ecommerce execution especially important.",
+        "metrics": [
+          { "label": "Adapter Market", "value": "$0.57B", "note": "2024 · RMB 3.9B / 6.8" },
+          { "label": "Annual Growth", "value": "~10%", "note": "2024 source estimate" },
+          { "label": "Mean Purchase Price", "value": "$35.04", "note": "Ipsos survey" },
+          { "label": "Online Channel", "value": "47%", "note": "Purchase channel" }
+        ],
+        "insightSet": "JP"
+      },
+      {
+        "id": "IN",
+        "label": "India",
+        "heading": "Feature-intensive Value Market",
+        "iso3": ["IND"],
+        "projection": "mercator",
+        "market": "Adapter TAM not separately reported in the source set",
+        "characteristics": "Fast charging | Brand confidence | USB-C | Online-led",
+        "summary": "India is a feature-intensive and value-conscious adapter market. Buyers compare charging speed, brand confidence, power range and USB-C compatibility, with ecommerce playing the leading purchase role.",
+        "metrics": [
+          { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
+          { "label": "Mean Purchase Price", "value": "$41.10", "note": "Ipsos survey" },
+          { "label": "Fast Charging", "value": "79%", "note": "Top surveyed need" },
+          { "label": "Online Channel", "value": "53%", "note": "Purchase channel" }
+        ],
+        "insightSet": "IN"
+      },
+      {
+        "id": "ID",
+        "label": "Indonesia",
+        "heading": "Distributor-led Growth Market",
+        "iso3": ["IDN"],
+        "projection": "mercator",
+        "market": "Adapter TAM not separated; USD 0.25B* 2024 power-category proxy",
+        "characteristics": "30%+ growth | Under-$30 demand | Fragmented retail | Agent-led",
+        "summary": "Indonesia offers strong expansion potential but requires disciplined price architecture and local distribution. The report provides a broader power-category proxy rather than an adapter-only TAM, so the proxy is marked with an asterisk.",
+        "metrics": [
+          { "label": "Power-category Proxy", "value": "$0.25B*", "note": "2024 · RMB 1.7B / 6.8" },
+          { "label": "Annual Growth", "value": "30%+", "note": "Broader category estimate" },
+          { "label": "SEA Share", "value": "~60%", "note": "Broader category proxy" },
+          { "label": "Core Price Signal", "value": "Under $30", "note": "Affordability-led demand" }
+        ],
+        "insightSet": "ID"
+      },
+      {
+        "id": "BR",
+        "label": "Brazil",
+        "heading": "Value-driven Online Market",
+        "iso3": ["BRA"],
+        "projection": "mercator",
+        "market": "Adapter TAM not separately reported; BR + MEX survey signals used",
+        "characteristics": "Value-led | Fast charging | Portability | Ecommerce",
+        "summary": "Brazil is represented by the combined Brazil and Mexico Ipsos sample. The evidence points to a value-driven market where sub-$40 pricing, fast charging, safety and portable multi-device use are central.",
+        "metrics": [
+          { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
+          { "label": "Mean Purchase Price", "value": "$36.45", "note": "Combined BR + MEX survey" },
+          { "label": "Fast Charging", "value": "66%", "note": "Combined BR + MEX survey" },
+          { "label": "Online Channel", "value": "48%", "note": "Combined BR + MEX survey" }
+        ],
+        "insightSet": "BRMEX"
+      },
+      {
+        "id": "MX",
+        "label": "Mexico",
+        "heading": "Value-driven Omnichannel Market",
+        "iso3": ["MEX"],
+        "projection": "mercator",
+        "market": "Adapter TAM not separately reported; BR + MEX survey signals used",
+        "characteristics": "Price-sensitive | Multi-port | Safety | Omnichannel",
+        "summary": "Mexico is represented by the combined Brazil and Mexico Ipsos sample. Buyers balance price with credible charging speed, protection and device compatibility across ecommerce and physical channels.",
+        "metrics": [
+          { "label": "Adapter TAM", "value": "Not reported", "note": "Country TAM unavailable" },
+          { "label": "Mean Purchase Price", "value": "$36.45", "note": "Combined BR + MEX survey" },
+          { "label": "Multi-port", "value": "59%", "note": "Combined BR + MEX survey" },
+          { "label": "Physical Store", "value": "31%", "note": "Combined BR + MEX survey" }
+        ],
+        "insightSet": "BRMEX"
+      }
+    ],
+    "insightSets": {
+      "US": [
+        {
+          "title": "Competitive Landscape",
+          "summaryPoints": ["OEM compatibility and trust remain important purchase drivers", "Anker and other premium brands compete through compact, high-power design"],
+          "body": "The market remains fragmented. PC manufacturers benefit from compatibility and official support, while third-party brands win through GaN, multiple ports and fast charging.",
+          "detailPoints": ["Anker held approximately 17% of the U.S. adapter market in the source estimate.", "The remaining market spans PC OEMs and multiple accessory brands."],
+          "chart": { "title": "U.S. Adapter Brand Structure", "type": "donut", "center": "Market Share", "items": [{ "label": "Anker", "value": 17, "valueLabel": "17%" }, { "label": "Other Brands & PC OEMs", "value": 83, "valueLabel": "83%" }] }
+        },
+        {
+          "title": "Product Priorities",
+          "summaryPoints": ["Multi-device compatibility, safety and speed carry similar weight", "Compact 65W-100W USB-C products fit the core opportunity"],
+          "body": "U.S. buyers expect one dependable adapter to charge laptops and personal devices while remaining portable and safe.",
+          "detailPoints": ["Multi-device compatibility reaches 52%.", "Intelligent protection reaches 50% and fast charging reaches 48%."],
+          "chart": { "title": "Top Product Needs", "type": "bar", "suffix": "%", "hoverLabel": "Reported share", "items": [{ "label": "Multi-device", "value": 52, "valueLabel": "52%" }, { "label": "Protection", "value": 50, "valueLabel": "50%" }, { "label": "Fast charging", "value": 48, "valueLabel": "48%" }] }
+        },
+        {
+          "title": "Price & Channel",
+          "summaryPoints": ["USD 40-79.99 is the core price opportunity", "Physical stores, brand websites and ecommerce all remain relevant"],
+          "body": "The U.S. requires balanced omnichannel execution and a clear value ladder around branded USB-C and multi-port products.",
+          "detailPoints": ["Average surveyed purchase price is USD 65.18.", "Physical stores lead at 41%; brand websites represent 30%; ecommerce represents 29%."],
+          "charts": [
+            { "title": "Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 28, "valueLabel": "28%" }, { "label": "$40-$79.99", "value": 47, "valueLabel": "47%" }, { "label": "$80+", "value": 25, "valueLabel": "25%" }] },
+            { "title": "Purchase Channels", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 41, "valueLabel": "41%" }, { "label": "Brand Website", "value": 30, "valueLabel": "30%" }, { "label": "Online", "value": 29, "valueLabel": "29%" }] }
+          ]
+        },
+        {
+          "title": "Policy & Standards",
+          "summaryPoints": ["FCC, electrical safety and efficiency requirements are market-entry conditions", "Compatibility, warranty and protection claims strengthen trust"],
+          "body": "Compliance should be treated as a product requirement rather than a marketing add-on.",
+          "detailPoints": ["Validate electromagnetic compatibility and applicable electrical safety requirements.", "Track USB-C interoperability, standby power and energy-efficiency updates."]
+        }
+      ],
+      "UK": [
+        {
+          "title": "Product Priorities",
+          "summaryPoints": ["Stable output is the strongest signal at 62%", "Fast charging and multi-port use remain close behind"],
+          "body": "Developed European users reward reliable performance, device coverage and durable design more than wattage claims alone.",
+          "detailPoints": ["Stable output: 62%.", "Fast charging: 58%; multi-port compatibility: 56%."],
+          "chart": { "title": "DE + UK + SE Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Stable output", "value": 62, "valueLabel": "62%" }, { "label": "Fast charging", "value": 58, "valueLabel": "58%" }, { "label": "Multi-port", "value": 56, "valueLabel": "56%" }] }
+        },
+        {
+          "title": "Price Positioning",
+          "summaryPoints": ["Mean surveyed purchase price is USD 77.05", "Premium pricing must be tied to certification, stability and service"],
+          "body": "The UK supports a higher-confidence price architecture when reliability and regulatory compliance are visible.",
+          "detailPoints": ["42% of reported purchases are below USD 40.", "33% are USD 80 or above, supporting a meaningful premium tier."],
+          "chart": { "title": "DE + UK + SE Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 42, "valueLabel": "42%" }, { "label": "$40-$79.99", "value": 25, "valueLabel": "25%" }, { "label": "$80+", "value": 33, "valueLabel": "33%" }] }
+        },
+        {
+          "title": "Channel Structure",
+          "summaryPoints": ["Amazon dominates online execution", "Physical, brand-direct and ecommerce channels remain balanced"],
+          "body": "Online activity centers on Amazon, while fragmented offline retail makes local distributor relationships important.",
+          "detailPoints": ["Physical stores: 35%.", "Official brand websites: 33%; ecommerce: 32%."],
+          "chart": { "title": "DE + UK + SE Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 35, "valueLabel": "35%" }, { "label": "Brand Website", "value": 33, "valueLabel": "33%" }, { "label": "Online", "value": 32, "valueLabel": "32%" }] }
+        },
+        {
+          "title": "Policy & Standards",
+          "summaryPoints": ["USB-C standardization and product safety shape portfolio requirements", "Environmental compliance supports premium positioning"],
+          "body": "UK and European execution requires clear certification, stable output and sustainability evidence.",
+          "detailPoints": ["Track UKCA and applicable electrical safety requirements.", "For EU sales, align laptop charging products with common-charger and environmental requirements."]
+        }
+      ],
+      "SA": [
+        {
+          "title": "Product Priorities",
+          "summaryPoints": ["Multi-port compatibility leads at 68%", "Protection and fast charging are also high-priority needs"],
+          "body": "Saudi buyers favor visible performance upgrades that support several devices without compromising safety.",
+          "detailPoints": ["Protection reaches 63%.", "Fast charging reaches 56%."],
+          "chart": { "title": "Saudi Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Multi-port", "value": 68, "valueLabel": "68%" }, { "label": "Protection", "value": 63, "valueLabel": "63%" }, { "label": "Fast charging", "value": 56, "valueLabel": "56%" }] }
+        },
+        {
+          "title": "Price Positioning",
+          "summaryPoints": ["Mean surveyed purchase price is USD 75.76", "Higher tiers can compete through ports, speed and protection"],
+          "body": "The market can support premium adapters when the product benefit is immediately visible.",
+          "detailPoints": ["24% of reported purchases are below USD 40.", "Approximately 43% are USD 80 or above, subject to rounding in the source table."],
+          "chart": { "title": "Saudi Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 24, "valueLabel": "24%" }, { "label": "$40-$79.99", "value": 35, "valueLabel": "35%" }, { "label": "$80+", "value": 43, "valueLabel": "43%" }] }
+        },
+        {
+          "title": "Channel Structure",
+          "summaryPoints": ["Physical retail leads at 41%", "Online and official brand channels are both material"],
+          "body": "Retail visibility and distributor support should complement ecommerce product content.",
+          "detailPoints": ["Online ecommerce: 32%.", "Official brand websites: 26%."],
+          "chart": { "title": "Saudi Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 41, "valueLabel": "41%" }, { "label": "Online", "value": 32, "valueLabel": "32%" }, { "label": "Brand Website", "value": 26, "valueLabel": "26%" }] }
+        },
+        {
+          "title": "Policy & Standards",
+          "summaryPoints": ["Local conformity and plug requirements must be validated before launch", "Safety claims should be supported by visible certification evidence"],
+          "body": "Country-specific compliance and importer documentation are essential for market entry.",
+          "detailPoints": ["Validate current Saudi conformity, labeling and plug requirements with the local importer.", "Keep protection, warranty and compatibility evidence consistent across retail and online channels."]
+        }
+      ],
+      "JP": [
+        {
+          "title": "Competitive Landscape",
+          "summaryPoints": ["Local accessory and electronics brands remain strong", "Anker represented approximately 18% of the adapter market"],
+          "body": "Global brands compete with local specialists through design, ecommerce execution and trust.",
+          "detailPoints": ["Strong local names include Cheero, CIO, ELECOM and Sony.", "Low replacement frequency increases the importance of localization."],
+          "chart": { "title": "Japan Adapter Brand Structure", "type": "donut", "center": "Market Share", "items": [{ "label": "Anker", "value": 18, "valueLabel": "18%" }, { "label": "Other Brands", "value": 82, "valueLabel": "82%" }] }
+        },
+        {
+          "title": "Product Priorities",
+          "summaryPoints": ["Protection and stable output lead product expectations", "Compact multi-device design supports localization"],
+          "body": "Japan rewards safe, stable and compact charging more than aggressive wattage escalation.",
+          "detailPoints": ["Protection: 58%.", "Stable output: 56%; multi-port: 52%."],
+          "chart": { "title": "Japan Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Protection", "value": 58, "valueLabel": "58%" }, { "label": "Stable output", "value": 56, "valueLabel": "56%" }, { "label": "Multi-port", "value": 52, "valueLabel": "52%" }] }
+        },
+        {
+          "title": "Price & Channel",
+          "summaryPoints": ["Mean surveyed purchase price is USD 35.04", "Online ecommerce leads at 47%"],
+          "body": "A compact, reliable value proposition fits the core market, supported by strong ecommerce presentation.",
+          "detailPoints": ["78% of reported purchases are below USD 40.", "Physical stores represent 33%; brand websites represent 20%."],
+          "charts": [
+            { "title": "Japan Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 78, "valueLabel": "78%" }, { "label": "$40-$79.99", "value": 21, "valueLabel": "21%" }, { "label": "$80+", "value": 2, "valueLabel": "2%" }] },
+            { "title": "Japan Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Online", "value": 47, "valueLabel": "47%" }, { "label": "Physical", "value": 33, "valueLabel": "33%" }, { "label": "Brand Website", "value": 20, "valueLabel": "20%" }] }
+          ]
+        },
+        {
+          "title": "Standards & Localization",
+          "summaryPoints": ["Safety and reliability evidence are central to trust", "Minimal, compact design should be localized for Japanese preferences"],
+          "body": "Certification, product quality and local-language content should reinforce a simple and dependable positioning.",
+          "detailPoints": ["Validate applicable PSE and electrical safety requirements.", "Use localized packaging, ecommerce content and after-sales information."]
+        }
+      ],
+      "IN": [
+        {
+          "title": "Product Priorities",
+          "summaryPoints": ["Fast charging leads at 79%", "Brand confidence and USB-C clarity are major purchase signals"],
+          "body": "Indian buyers compare technical performance with brand reassurance in a market containing mixed-quality supply.",
+          "detailPoints": ["Brand consideration: 75%.", "USB-C preference: 65%; charging power range: 63%."],
+          "chart": { "title": "India Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Fast charging", "value": 79, "valueLabel": "79%" }, { "label": "Brand", "value": 75, "valueLabel": "75%" }, { "label": "USB-C", "value": 65, "valueLabel": "65%" }] }
+        },
+        {
+          "title": "Price Positioning",
+          "summaryPoints": ["Mean surveyed purchase price is USD 41.10", "The market requires visible value rather than low price alone"],
+          "body": "A tiered portfolio should connect higher prices to charging speed, trusted protection and power-range clarity.",
+          "detailPoints": ["62% of reported purchases are below USD 40.", "29% are USD 40-79.99 and approximately 9% are USD 80 or above."],
+          "chart": { "title": "India Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 62, "valueLabel": "62%" }, { "label": "$40-$79.99", "value": 29, "valueLabel": "29%" }, { "label": "$80+", "value": 9, "valueLabel": "9%" }] }
+        },
+        {
+          "title": "Channel Structure",
+          "summaryPoints": ["Online ecommerce leads at 53%", "Physical retail remains relevant at 29%"],
+          "body": "Strong online comparison content should be supported by channel partners and clear warranty coverage.",
+          "detailPoints": ["Official brand websites represent 18%.", "Product pages should make wattage, protocol, ports and safety easy to compare."],
+          "chart": { "title": "India Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Online", "value": 53, "valueLabel": "53%" }, { "label": "Physical", "value": 29, "valueLabel": "29%" }, { "label": "Brand Website", "value": 18, "valueLabel": "18%" }] }
+        },
+        {
+          "title": "Standards & Portfolio",
+          "summaryPoints": ["USB-C transition and local certification should shape the roadmap", "A disciplined 65W-100W ladder can cover laptop and multi-device needs"],
+          "body": "Local compliance and a clear price-performance ladder are required to compete with mixed-quality supply.",
+          "detailPoints": ["Validate applicable BIS and product-category requirements before launch.", "Use brand trust, safety and warranty as visible differentiators."]
+        }
+      ],
+      "ID": [
+        {
+          "title": "Market Scale & Growth",
+          "summaryPoints": ["Indonesia represents about 60% of the reported Southeast Asia power-category proxy", "Annual growth is estimated above 30%"],
+          "body": "The source provides a broader power-category estimate, not an adapter-only TAM. The converted values therefore remain marked as proxy data.",
+          "detailPoints": ["Southeast Asia proxy: RMB 2.8B, or about USD 0.41B at 6.8.", "Indonesia proxy: RMB 1.7B, or about USD 0.25B at 6.8."],
+          "chart": { "title": "2024 Power-category Proxy*", "type": "bar", "prefix": "$", "suffix": "B", "items": [{ "label": "Southeast Asia", "value": 0.41, "valueLabel": "$0.41B*" }, { "label": "Indonesia", "value": 0.25, "valueLabel": "$0.25B*" }] }
+        },
+        {
+          "title": "Competitive Structure",
+          "summaryPoints": ["The market is concentrated among leading brands but retail remains fragmented", "Distributor control is critical for execution"],
+          "body": "The source estimates a concentrated top tier alongside a decentralized retail system.",
+          "detailPoints": ["Top brand proxy: about 50%.", "Second and third brand proxies: about 30% and 10%."],
+          "chart": { "title": "Reported Competitive Proxy*", "type": "donut", "center": "Share", "items": [{ "label": "Top 1", "value": 50, "valueLabel": "~50%*" }, { "label": "Top 2", "value": 30, "valueLabel": "~30%*" }, { "label": "Top 3", "value": 10, "valueLabel": "~10%*" }, { "label": "Others", "value": 10, "valueLabel": "~10%*" }] }
+        },
+        {
+          "title": "Price & Channel",
+          "summaryPoints": ["Demand is concentrated below USD 30", "Offline retail and ecommerce are both highly decentralized"],
+          "body": "Affordability and local availability are essential. Brands depend heavily on local agents to coordinate fragmented channels.",
+          "detailPoints": ["Build a focused entry and mainstream price ladder.", "Support distributors with localized promotions, inventory planning and after-sales processes."]
+        },
+        {
+          "title": "Portfolio Direction",
+          "summaryPoints": ["Prioritize durable value products over premium-only expansion", "Keep fast charging, safety and compatibility claims simple and visible"],
+          "body": "Indonesia needs a localized portfolio that balances affordability, reliability and channel reach.",
+          "detailPoints": ["Use selected USB-C wattage tiers and avoid excessive SKU complexity.", "Validate local certification, importer and labeling requirements before launch."]
+        }
+      ],
+      "BRMEX": [
+        {
+          "title": "Product Priorities",
+          "summaryPoints": ["Fast charging leads at 66%", "Protection and multi-port compatibility remain essential"],
+          "body": "The combined Brazil and Mexico sample shows that value-tier products still need credible speed, safety and device coverage.",
+          "detailPoints": ["Protection reaches 60%.", "Multi-port compatibility reaches 59%."],
+          "chart": { "title": "BR + MEX Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Fast charging", "value": 66, "valueLabel": "66%" }, { "label": "Protection", "value": 60, "valueLabel": "60%" }, { "label": "Multi-port", "value": 59, "valueLabel": "59%" }] }
+        },
+        {
+          "title": "Price Positioning",
+          "summaryPoints": ["Mean surveyed purchase price is USD 36.45", "69% of reported purchases are below USD 40"],
+          "body": "The core opportunity sits below USD 40, with higher tiers reserved for visible upgrades in power, ports and portability.",
+          "detailPoints": ["Under USD 20 represents 20%.", "USD 20-39.99 represents 49%."],
+          "chart": { "title": "BR + MEX Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 69, "valueLabel": "69%" }, { "label": "$40-$59.99", "value": 21, "valueLabel": "21%" }, { "label": "$60+", "value": 11, "valueLabel": "11%" }] }
+        },
+        {
+          "title": "Channel Structure",
+          "summaryPoints": ["Online ecommerce leads at 48%", "Physical stores remain meaningful at 31%"],
+          "body": "Local marketplaces, distributors and clear product content remain important for conversion and trust.",
+          "detailPoints": ["Official brand websites represent 21%.", "Product pages should make wattage, protection and compatibility easy to verify."],
+          "chart": { "title": "BR + MEX Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Online", "value": 48, "valueLabel": "48%" }, { "label": "Physical", "value": 31, "valueLabel": "31%" }, { "label": "Brand Website", "value": 21, "valueLabel": "21%" }] }
+        },
+        {
+          "title": "Buying Context",
+          "summaryPoints": ["63% of surveyed users purchased an adapter themselves", "Travel and mobile work make portability a central requirement"],
+          "body": "The combined sample reflects self-directed purchases for mobile work, convenient locations and multi-device use.",
+          "detailPoints": ["Travel or mobile work reaches 44%.", "Convenient locations reach 38%; multi-device charging reaches 34%."],
+          "chart": { "title": "BR + MEX Purchase Motivations", "type": "bar", "suffix": "%", "items": [{ "label": "Travel / mobile work", "value": 44, "valueLabel": "44%" }, { "label": "Convenient locations", "value": 38, "valueLabel": "38%" }, { "label": "Multi-device", "value": 34, "valueLabel": "34%" }] }
+        }
+      ]
+    }
+  }
+}
