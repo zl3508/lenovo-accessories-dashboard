@@ -79,7 +79,7 @@
           "Regional execution requires separate European, UK and Gulf compliance paths rather than one EMEA-wide launch file."
         ],
         "countryTabs": [
-          { "id": "UK", "label": "UK / Developed Europe", "countryId": "UK" },
+          { "id": "UK", "label": "DE + UK + SE", "countryId": "UK" },
           { "id": "SA", "label": "Saudi Arabia", "countryId": "SA" }
         ],
         "policies": {
@@ -312,21 +312,22 @@
       },
       {
         "id": "UK",
-        "label": "UK",
+        "label": "DE + UK + SE",
         "heading": "Premium & Regulation-led",
-        "iso3": ["GBR"],
+        "iso3": ["DEU", "GBR", "SWE"],
         "projection": "mercator",
         "market": "USD 0.12-0.15B (2024, converted from RMB 0.8-1.0B at 6.8)",
         "characteristics": "Premium | Stable output | Amazon-led | Compliance",
         "summary": "The UK represents developed European demand for reliable, certified and premium adapters. Stable output, fast charging and multi-port compatibility support higher price points, while Amazon and local distributors shape execution.",
         "summaryPoints": [
-          "Premium developed-market demand rewards stable output, certified safety and durable design.",
-          "Fast charging and multi-port compatibility support a higher-value product ladder.",
-          "Amazon, official brand channels and local distributors all influence market execution."
+          "Market profile: A mature, reliability-led market where stable output is the strongest feature consideration, followed by fast charging and multi-device compatibility.",
+          "Price positioning: A mean self-purchase price of USD 77.05 and a meaningful USD 80+ tier indicate room for premium products.",
+          "Channel structure: Purchase channels are balanced across physical retail, brand websites and third-party e-commerce.",
+          "Data basis: Consumer findings come from an Ipsos online survey of 295 users, including 135 self-purchasers."
         ],
         "research": {
           "sampleLabel": "Ipsos DE+UK+SE sample: n=295",
-          "method": "DE + UK + SE percentages use the local n=295 denominator. The multi-country study total is N=1,832 and is shown for context only.",
+          "method": "",
           "marketBasis": "UK market estimate; respondent base was not disclosed in the market source."
         },
         "policy": {
@@ -352,13 +353,14 @@
         "characteristics": "Multi-port | Safety-led | Fast charging | Retail-oriented",
         "summary": "Saudi demand is performance-led. Buyers place strong weight on multi-port compatibility, intelligent protection and fast charging, while physical retail and official brand channels remain important.",
         "summaryPoints": [
-          "Performance-led demand prioritizes multi-port charging, protection and visible speed improvements.",
-          "The surveyed purchase level supports premium products when benefits are easy to understand.",
-          "Physical retail remains important alongside ecommerce and official brand channels."
+          "Market profile: A performance-led market where multi-device compatibility, intelligent protection and fast charging are the leading product considerations.",
+          "Price positioning: A mean self-purchase price of USD 75.76 and a substantial USD 80+ tier indicate room for premium products.",
+          "Channel structure: Physical retail leads, while third-party e-commerce and official brand websites remain important.",
+          "Data basis: Consumer findings come from an Ipsos online survey of 320 users, including 193 self-purchasers."
         ],
         "research": {
           "sampleLabel": "Ipsos Saudi Arabia sample: n=320",
-          "method": "Saudi Arabia percentages use the local n=320 denominator. The multi-country study total is N=1,832 and is shown for context only.",
+          "method": "",
           "marketBasis": "Country adapter TAM was not separately reported in the source set."
         },
         "policy": {
@@ -575,24 +577,24 @@
       "UK": [
         {
           "title": "Product Priorities",
-          "summaryPoints": ["Stable output is the strongest signal at 62%", "Fast charging and multi-port use remain close behind"],
-          "body": "Developed European users reward reliable performance, device coverage and durable design more than wattage claims alone.",
-          "detailPoints": ["Stable output: 62%.", "Fast charging: 58%; multi-port compatibility: 56%."],
-          "chart": { "title": "DE + UK + SE Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Stable output", "value": 62, "valueLabel": "62%" }, { "label": "Fast charging", "value": 58, "valueLabel": "58%" }, { "label": "Multi-port", "value": 56, "valueLabel": "56%" }] }
+          "summaryPoints": ["Stable output leads feature considerations at 62%.", "Fast charging and multi-device compatibility follow closely at 58% and 56%."],
+          "body": "Among respondents who prioritize features and user experience, stable output ranks first, followed closely by fast charging and multi-device compatibility. The narrow gap indicates the need to balance reliability, speed and device coverage.",
+          "detailPoints": ["Stable output: 62%.", "Fast charging: 58%.", "Multi-device compatibility: 56%."],
+          "chart": { "title": "DE + UK + SE Top Feature Considerations", "type": "bar", "suffix": "%", "basisTitle": "Research base", "sampleLabel": "Respondents selecting features / user experience, n=130", "method": "", "items": [{ "label": "Stable Output", "value": 62, "valueLabel": "62%" }, { "label": "Fast Charging", "value": 58, "valueLabel": "58%" }, { "label": "Multi-device Compatibility", "value": 56, "valueLabel": "56%" }] }
         },
         {
           "title": "Price Positioning",
-          "summaryPoints": ["Mean surveyed purchase price is USD 77.05", "Premium pricing must be tied to certification, stability and service"],
-          "body": "The UK supports a higher-confidence price architecture when reliability and regulatory compliance are visible.",
-          "detailPoints": ["42% of reported purchases are below USD 40.", "33% are USD 80 or above, supporting a meaningful premium tier."],
-          "chart": { "title": "DE + UK + SE Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 42, "valueLabel": "42%" }, { "label": "$40-$79.99", "value": 25, "valueLabel": "25%" }, { "label": "$80+", "value": 33, "valueLabel": "33%" }] }
+          "summaryPoints": ["The mean purchase price among self-purchasers is USD 77.05.", "One-third of purchases fall into the USD 80+ premium tier."],
+          "body": "The DE + UK + SE survey shows a broad price distribution, with a mean purchase price of USD 77.05. The USD 80+ segment represents 33%, indicating meaningful room for a premium tier.",
+          "detailPoints": ["Entry - Below USD 40: 42%.", "Core - USD 40-79.99: 25%.", "Premium - USD 80+: 33%.", "Premium products should clearly communicate reliability, safety and service benefits."],
+          "chart": { "title": "DE + UK + SE Purchase Price Bands", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=135", "method": "", "items": [{ "label": "Entry - Below USD 40", "value": 42, "valueLabel": "42%" }, { "label": "Core - USD 40-79.99", "value": 25, "valueLabel": "25%" }, { "label": "Premium - USD 80+", "value": 33, "valueLabel": "33%" }] }
         },
         {
           "title": "Channel Structure",
-          "summaryPoints": ["Amazon dominates online execution", "Physical, brand-direct and ecommerce channels remain balanced"],
-          "body": "Online activity centers on Amazon, while fragmented offline retail makes local distributor relationships important.",
-          "detailPoints": ["Physical stores: 35%.", "Official brand websites: 33%; ecommerce: 32%."],
-          "chart": { "title": "DE + UK + SE Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 35, "valueLabel": "35%" }, { "label": "Brand Website", "value": 33, "valueLabel": "33%" }, { "label": "Online", "value": 32, "valueLabel": "32%" }] }
+          "summaryPoints": ["Physical stores lead at 35%, but the three major channels remain closely balanced.", "Brand websites and third-party e-commerce account for 33% and 32%, respectively."],
+          "body": "The combined DE + UK + SE survey shows a balanced omnichannel purchase pattern. Separately, UK expert interviews identify Amazon as the core online marketplace and local distributors as important for offline execution.",
+          "detailPoints": ["Physical Stores (35%): purchases completed through electronics retailers and other physical outlets.", "Brand Websites (33%): purchases completed through official manufacturer or accessory-brand online stores.", "Third-party E-commerce (32%): purchases completed through independent marketplaces and online retailers."],
+          "chart": { "title": "DE + UK + SE Purchase Channels", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=135", "method": "", "items": [{ "label": "Physical Stores", "value": 35, "valueLabel": "35%" }, { "label": "Brand Websites", "value": 33, "valueLabel": "33%" }, { "label": "Third-party E-commerce", "value": 32, "valueLabel": "32%" }] }
         },
         {
           "title": "Policy & Standards",
@@ -604,24 +606,24 @@
       "SA": [
         {
           "title": "Product Priorities",
-          "summaryPoints": ["Multi-port compatibility leads at 68%", "Protection and fast charging are also high-priority needs"],
-          "body": "Saudi buyers favor visible performance upgrades that support several devices without compromising safety.",
-          "detailPoints": ["Protection reaches 63%.", "Fast charging reaches 56%."],
-          "chart": { "title": "Saudi Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Multi-port", "value": 68, "valueLabel": "68%" }, { "label": "Protection", "value": 63, "valueLabel": "63%" }, { "label": "Fast charging", "value": 56, "valueLabel": "56%" }] }
+          "summaryPoints": ["Multi-device compatibility leads feature considerations at 68%.", "Intelligent protection and fast charging follow at 63% and 56%."],
+          "body": "Among respondents who prioritize features and user experience, multi-device compatibility ranks first, followed by intelligent protection and fast charging. The results indicate strong demand for visible performance improvements without compromising safety.",
+          "detailPoints": ["Multi-device compatibility: 68%.", "Intelligent protection: 63%.", "Fast charging: 56%."],
+          "chart": { "title": "Saudi Arabia Top Feature Considerations", "type": "bar", "suffix": "%", "basisTitle": "Research base", "sampleLabel": "Saudi Arabia online survey, n=320", "method": "Base: Saudi Arabia respondents selecting features / user experience; n=159.", "items": [{ "label": "Multi-device Compatibility", "value": 68, "valueLabel": "68%" }, { "label": "Intelligent Protection", "value": 63, "valueLabel": "63%" }, { "label": "Fast Charging", "value": 56, "valueLabel": "56%" }] }
         },
         {
           "title": "Price Positioning",
-          "summaryPoints": ["Mean surveyed purchase price is USD 75.76", "Higher tiers can compete through ports, speed and protection"],
-          "body": "The market can support premium adapters when the product benefit is immediately visible.",
-          "detailPoints": ["24% of reported purchases are below USD 40.", "Approximately 43% are USD 80 or above, subject to rounding in the source table."],
-          "chart": { "title": "Saudi Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 24, "valueLabel": "24%" }, { "label": "$40-$79.99", "value": 35, "valueLabel": "35%" }, { "label": "$80+", "value": 43, "valueLabel": "43%" }] }
+          "summaryPoints": ["The mean purchase price among self-purchasers is USD 75.76.", "Approximately 43% of purchases fall into the USD 80+ premium tier."],
+          "body": "Saudi Arabia shows meaningful premium-price potential, with a mean purchase price of USD 75.76 and approximately 43% of purchases in the USD 80+ tier. Premium products should communicate clear functional benefits in charging speed, device compatibility and protection.",
+          "detailPoints": ["Entry - Below USD 40: 22%.", "Core - USD 40-79.99: 35%.", "Premium - USD 80+: approximately 43%."],
+          "chart": { "title": "Saudi Arabia Purchase Price Bands", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=193", "method": "", "items": [{ "label": "Entry - Below USD 40", "value": 22, "valueLabel": "22%" }, { "label": "Core - USD 40-79.99", "value": 35, "valueLabel": "35%" }, { "label": "Premium - USD 80+", "value": 43, "valueLabel": "43%" }] }
         },
         {
           "title": "Channel Structure",
-          "summaryPoints": ["Physical retail leads at 41%", "Online and official brand channels are both material"],
-          "body": "Retail visibility and distributor support should complement ecommerce product content.",
-          "detailPoints": ["Online ecommerce: 32%.", "Official brand websites: 26%."],
-          "chart": { "title": "Saudi Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 41, "valueLabel": "41%" }, { "label": "Online", "value": 32, "valueLabel": "32%" }, { "label": "Brand Website", "value": 26, "valueLabel": "26%" }] }
+          "summaryPoints": ["Physical stores lead surveyed purchases at 41%.", "Third-party e-commerce and official brand websites account for 32% and 26%, respectively."],
+          "body": "Saudi Arabia requires balanced execution across physical retail, third-party e-commerce and official brand websites. Physical retail leads, but online channels collectively remain material.",
+          "detailPoints": ["Physical Stores (41%): purchases completed through electronics retailers and other physical outlets.", "Third-party E-commerce (32%): purchases completed through independent marketplaces and online retailers.", "Official Brand Websites (26%): purchases completed through official manufacturer or accessory-brand online stores."],
+          "chart": { "title": "Saudi Arabia Purchase Channels", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=193", "method": "", "items": [{ "label": "Physical Stores", "value": 41, "valueLabel": "41%" }, { "label": "Third-party E-commerce", "value": 32, "valueLabel": "32%" }, { "label": "Official Brand Websites", "value": 26, "valueLabel": "26%" }] }
         },
         {
           "title": "Policy & Standards",

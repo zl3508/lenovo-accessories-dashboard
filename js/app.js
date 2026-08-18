@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260818-usa-country-detail-refine";
+const DATA_VERSION = "20260818-emea-country-detail-refine";
 
 const state = {
   categoryId: null,
@@ -629,7 +629,7 @@ function renderCountryChartPanel(country, section, chart, chartId) {
   const research = country.research || {};
   const marketBased = /competitive|market scale/i.test(section.title || "");
   const sampleLabel = chart.sampleLabel || (marketBased ? research.marketBasis : research.sampleLabel) || "Sample base not reported";
-  const basisTitle = marketBased ? "Data basis" : "Research sample";
+  const basisTitle = chart.basisTitle || (marketBased ? "Data basis" : "Research sample");
   const method = marketBased ? "" : (chart.method ?? research.method ?? "");
   const isDonut = chart.type === "donut";
   const legend = `
