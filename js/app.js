@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260818-country-detail-refine";
+const DATA_VERSION = "20260818-region-entry-refine";
 
 const state = {
   categoryId: null,
@@ -103,8 +103,8 @@ const policyRegions = [
 
 const policyRegionMaps = {
   NA: {
-    countries: ["USA", "CAN", "MEX"],
-    labels: ["United States", "Canada", "Mexico"],
+    countries: ["USA", "CAN"],
+    labels: ["United States", "Canada"],
     projection: "natural earth",
   },
   LA: {
@@ -442,11 +442,6 @@ function renderGeoOverviewModule(categoryId) {
   return `
     <section class="module-block">
       <section class="geo-overview-module">
-        <div class="module-head country-overview-head">
-          <span>Country Overview</span>
-          <h2>Regional Entry Points</h2>
-          <p>Select a region to review its representative country markets and the regulations shaping current and future portfolio decisions.</p>
-        </div>
         <div class="geo-region-grid">
           ${(overview.regions || []).map(renderRegionEntryCard).join("")}
         </div>
@@ -467,8 +462,8 @@ function renderRegionEntryCard(region) {
       <div class="geo-region-map" id="countryOverviewMap${escapeAttr(region.id)}" aria-label="${escapeAttr(region.label)} map"></div>
       <div class="geo-region-summary">
         <p><strong>Characteristics:</strong> ${geoCardValue(region.characteristics)}</p>
-        <p><strong>Representative Countries:</strong> ${geoCardValue(region.representatives)}</p>
-        <p><strong>Policy Focus:</strong> ${geoCardValue(region.policyFocus)}</p>
+        <p><strong>Representative Markets:</strong> ${geoCardValue(region.representatives)}</p>
+        <p><strong>Key Compliance:</strong> ${geoCardValue(region.policyFocus)}</p>
       </div>
       <span class="country-card-action" aria-hidden="true">View countries & policy <b>↗</b></span>
     </article>
