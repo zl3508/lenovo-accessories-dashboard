@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260818-region-entry-refine";
+const DATA_VERSION = "20260818-usa-country-detail-refine";
 
 const state = {
   categoryId: null,
@@ -502,19 +502,9 @@ function renderRegionCountryPanel(overview, country, displayLabel) {
   return `
     <section class="country-region-panel">
       <header class="country-panel-head">
-        <span>Representative Country</span>
         <h3>${escapeHtml(displayLabel)} Adapter Market</h3>
-        <ul class="country-summary-list">${(country.summaryPoints || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        ${renderCountrySummaryList(country.summaryPoints || [])}
       </header>
-      <section class="geo-na-metrics">
-        ${(country.metrics || []).slice(0, 4).map((metric) => `
-          <div class="geo-na-metric-card">
-            <span>${escapeHtml(metric.label)}</span>
-            <strong>${escapeHtml(metric.value)}</strong>
-            <small>${escapeHtml(countryMetricNote(country, metric))}</small>
-          </div>
-        `).join("")}
-      </section>
       <section class="geo-detail-grid country-detail-grid">
         ${sections.map((section, index) => renderCountryInsightCard(country, section, index)).join("")}
       </section>
@@ -584,19 +574,9 @@ function renderCountryDetail(categoryId, overview, countryId) {
           <span>Country Overview</span>
           <h2>${escapeHtml(country.label)} Adapter Market</h2>
           ${country.summaryPoints?.length
-            ? `<ul class="country-summary-list">${country.summaryPoints.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+            ? renderCountrySummaryList(country.summaryPoints)
             : `<p>${escapeHtml(country.summary)}</p>`}
         </header>
-
-        <section class="geo-na-metrics">
-          ${(country.metrics || []).slice(0, 4).map((metric) => `
-            <div class="geo-na-metric-card">
-              <span>${escapeHtml(metric.label)}</span>
-              <strong>${escapeHtml(metric.value)}</strong>
-              <small>${escapeHtml(countryMetricNote(country, metric))}</small>
-            </div>
-          `).join("")}
-        </section>
 
         <section class="geo-detail-grid country-detail-grid">
           ${sections.map((section, index) => renderCountryInsightCard(country, section, index)).join("")}
@@ -606,8 +586,17 @@ function renderCountryDetail(categoryId, overview, countryId) {
   `;
 }
 
-function countryMetricNote(country, metric) {
-  return metric.note || "";
+function renderCountrySummaryList(items) {
+  return `<ul class="country-summary-list">${items.map((item) => `<li>${countrySummaryPointHtml(item)}</li>`).join("")}</ul>`;
+}
+
+function countrySummaryPointHtml(item) {
+  const escaped = escapeHtml(item);
+  const colonIndex = escaped.indexOf(":");
+  const label = colonIndex >= 0 ? `<strong>${escaped.slice(0, colonIndex + 1)}</strong>` : "";
+  const body = colonIndex >= 0 ? escaped.slice(colonIndex + 1) : escaped;
+  const highlightedBody = body.replace(/\b\d+(?:\.\d+)?(?:%|B|M|W)?(?![\w%])/g, "<strong>$&</strong>");
+  return `${label}${highlightedBody}`;
 }
 
 function renderCountryInsightCard(country, section, index) {
@@ -641,7 +630,7 @@ function renderCountryChartPanel(country, section, chart, chartId) {
   const marketBased = /competitive|market scale/i.test(section.title || "");
   const sampleLabel = chart.sampleLabel || (marketBased ? research.marketBasis : research.sampleLabel) || "Sample base not reported";
   const basisTitle = marketBased ? "Data basis" : "Research sample";
-  const method = marketBased ? "" : research.method || "";
+  const method = marketBased ? "" : (chart.method ?? research.method ?? "");
   const isDonut = chart.type === "donut";
   const legend = `
     <div class="country-chart-legend" aria-label="${escapeAttr(chart.title || "Chart")} legend">
@@ -661,7 +650,7 @@ function renderCountryChartPanel(country, section, chart, chartId) {
         <div id="${escapeAttr(chartId)}" class="plot geo-detail-plot"></div>
         ${isDonut ? "" : legend}
       </div>
-      ${method ? `<p class="country-chart-method"><strong>Study context</strong> ${escapeHtml(method)}</p>` : ""}
+      ${method ? `<p class="country-chart-method">${method.startsWith("Base:") ? escapeHtml(method) : `<strong>Study context</strong> ${escapeHtml(method)}`}</p>` : ""}
     </section>
   `;
 }

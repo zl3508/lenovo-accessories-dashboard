@@ -287,13 +287,14 @@
         "characteristics": "Mature | Brand-led | High-power | Omnichannel",
         "summary": "The U.S. adapter market is mature and highly competitive. OEM compatibility and brand trust remain important, while third-party brands compete through compact GaN design, fast charging and multi-port convenience.",
         "summaryPoints": [
-          "Mature premium market where OEM compatibility, safety and brand trust influence purchase.",
-          "Core opportunity centers on compact 65W-100W USB-C adapters for work, travel and multi-device charging.",
-          "Amazon, major retailers and brand-direct channels require coordinated omnichannel execution."
+          "Market: A mature and competitive market, estimated at USD 1.29B in 2024 with approximately 10% annual growth, where OEM compatibility, safety and brand trust influence purchase.",
+          "Product opportunity: The source identifies 60W–80W as the mainstream range in North America, supporting opportunities for compact 65W–100W USB-C adapters for work, travel and multi-device use.",
+          "Buyer profile: 68% of U.S. respondents self-purchased their work adapter, with a mean purchase price of USD 65.18 among self-purchasers.",
+          "Data basis: Market data are based on desk research and expert interviews. Consumer data are based on an Ipsos U.S. survey of 354 users, including 242 self-purchasers."
         ],
         "research": {
-          "sampleLabel": "Ipsos USA sample: n=354",
-          "method": "USA percentages use the local n=354 denominator. The multi-country study total is N=1,832 and is shown for context only.",
+          "sampleLabel": "Ipsos USA adapter-user sample: n=354",
+          "method": "",
           "marketBasis": "Market-share estimate; respondent base was not disclosed in the market source."
         },
         "policy": {
@@ -538,31 +539,31 @@
       "US": [
         {
           "title": "Competitive Landscape",
-          "summaryPoints": ["OEM compatibility and trust remain important purchase drivers", "Anker and other premium brands compete through compact, high-power design"],
-          "body": "The market remains fragmented. PC manufacturers benefit from compatibility and official support, while third-party brands win through GaN, multiple ports and fast charging.",
-          "detailPoints": ["Anker held approximately 17% of the U.S. adapter market in the source estimate.", "The remaining market spans PC OEMs and multiple accessory brands."],
-          "chart": { "title": "U.S. Adapter Brand Structure", "type": "donut", "center": "Market Share", "items": [{ "label": "Anker", "value": 17, "valueLabel": "17%" }, { "label": "Other Brands & PC OEMs", "value": 83, "valueLabel": "83%" }] }
+          "summaryPoints": ["PC OEMs retain an advantage through compatibility, official support and brand trust.", "Third-party brands differentiate through compact GaN designs, multiple ports and fast-charging performance."],
+          "body": "The market remains fragmented. PC manufacturers are stronger in bundled and replacement demand through compatibility and official support, while third-party brands compete in portable and multi-device use cases.",
+          "detailPoints": ["Anker was estimated to hold approximately 17%–18% of the North American adapter market, used here as a proxy for the U.S. market.", "Other PC OEMs and accessory brands collectively represent approximately 82%–83%."],
+          "chart": { "title": "North America Adapter Brand Structure — U.S. Proxy", "type": "donut", "center": "Market Share", "sampleLabel": "North America estimate used as a U.S. proxy; respondent base not disclosed", "items": [{ "label": "Anker", "value": 17.5, "valueLabel": "17%–18%" }, { "label": "Other Brands & PC OEMs", "value": 82.5, "valueLabel": "82%–83%" }] }
         },
         {
           "title": "Product Priorities",
-          "summaryPoints": ["Multi-device compatibility, safety and speed carry similar weight", "Compact 65W-100W USB-C products fit the core opportunity"],
-          "body": "U.S. buyers expect one dependable adapter to charge laptops and personal devices while remaining portable and safe.",
-          "detailPoints": ["Multi-device compatibility reaches 52%.", "Intelligent protection reaches 50% and fast charging reaches 48%."],
-          "chart": { "title": "Top Product Needs", "type": "bar", "suffix": "%", "hoverLabel": "Reported share", "items": [{ "label": "Multi-device", "value": 52, "valueLabel": "52%" }, { "label": "Protection", "value": 50, "valueLabel": "50%" }, { "label": "Fast charging", "value": 48, "valueLabel": "48%" }] }
+          "summaryPoints": ["Multiple ports and device compatibility, intelligent protection and super-fast charging are the top three expectations.", "No single requirement dominates, indicating the need to balance compatibility, safety and speed."],
+          "body": "U.S. buyers expect one dependable adapter to charge laptops and personal devices across work, travel and mobile scenarios. The small gap between the top three results indicates balanced product expectations.",
+          "detailPoints": ["Multiple ports and device compatibility: 52%.", "Intelligent protection: 50%.", "Super-fast charging: 48%."],
+          "chart": { "title": "U.S. Adapter Product Priorities", "type": "bar", "suffix": "%", "hoverLabel": "Reported share", "sampleLabel": "Ipsos USA adapter-user sample: n=354", "method": "", "items": [{ "label": "Multiple ports & compatibility", "value": 52, "valueLabel": "52%" }, { "label": "Intelligent protection", "value": 50, "valueLabel": "50%" }, { "label": "Super-fast charging", "value": 48, "valueLabel": "48%" }] }
         },
         {
           "title": "Price Positioning",
-          "summaryPoints": ["USD 40-79.99 is the core price opportunity", "The surveyed mean purchase price is USD 65.18"],
-          "body": "The U.S. opportunity centers on a clear value ladder for branded USB-C and multi-port adapters.",
-          "detailPoints": ["Below USD 40 represents 28% of surveyed purchases.", "USD 40-79.99 represents 47%, while USD 80 and above represents 25%."],
-          "chart": { "title": "Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 28, "valueLabel": "28%" }, { "label": "$40-$79.99", "value": 47, "valueLabel": "47%" }, { "label": "$80+", "value": 25, "valueLabel": "25%" }] }
+          "summaryPoints": ["USD 40–79.99 is the core purchase band, accounting for 47% of U.S. self-purchases.", "The mean purchase price of USD 65.18 falls within this core range."],
+          "body": "U.S. purchases concentrate in the mid-price range, while entry-level and premium demand remain meaningful. The distribution supports a clear three-tier price structure.",
+          "detailPoints": ["Entry: Below USD 40 — 28%.", "Core: USD 40–79.99 — 47%.", "Premium: USD 80+ — 25%."],
+          "chart": { "title": "U.S. Adapter Purchase Price Bands", "type": "donut", "center": "Purchases", "sampleLabel": "Ipsos USA self-purchaser sample: n=242", "method": "Base: U.S. respondents who personally purchased a power adapter for work.", "items": [{ "label": "Entry · Below USD 40", "value": 28, "valueLabel": "28%" }, { "label": "Core · USD 40–79.99", "value": 47, "valueLabel": "47%" }, { "label": "Premium · USD 80+", "value": 25, "valueLabel": "25%" }] }
         },
         {
           "title": "Channel Structure",
-          "summaryPoints": ["Physical stores lead surveyed purchases at 41%", "Brand-direct and third-party online channels are both material"],
-          "body": "Balanced omnichannel execution is required because U.S. buyers use physical retail, official brand sites and third-party ecommerce for different purchase needs.",
-          "detailPoints": ["Physical (41%): purchases completed through physical electronics stores and retail outlets.", "Brand Website (30%): purchases completed through official manufacturer or brand-owned websites.", "Online (29%): purchases completed through third-party ecommerce platforms and marketplaces."],
-          "chart": { "title": "Purchase Channels", "type": "donut", "center": "Purchases", "items": [{ "label": "Physical", "value": 41, "valueLabel": "41%" }, { "label": "Brand Website", "value": 30, "valueLabel": "30%" }, { "label": "Online", "value": 29, "valueLabel": "29%" }] }
+          "summaryPoints": ["Physical stores lead surveyed purchases at 41%.", "Brand websites and third-party e-commerce contribute a comparable 30% and 29%, respectively."],
+          "body": "U.S. buyers demonstrate a balanced omnichannel purchase pattern. Physical retail remains important, while brand-direct and third-party online channels together account for the majority of surveyed purchases.",
+          "detailPoints": ["Physical Stores (41%): purchases completed through electronics retailers, office-supply stores and other physical retail outlets.", "Brand Websites (30%): purchases completed through official PC manufacturer or accessory-brand online stores.", "Third-party E-commerce (29%): purchases completed through marketplaces and online retailers operated independently from the product brand.", "Expert interviews identify Amazon as the core online marketplace, while the consumer survey shows that physical stores lead overall purchase incidence."],
+          "chart": { "title": "U.S. Adapter Purchase Channels", "type": "donut", "center": "Purchases", "sampleLabel": "Ipsos USA self-purchaser sample: n=242", "method": "", "items": [{ "label": "Physical Stores", "value": 41, "valueLabel": "41%" }, { "label": "Brand Websites", "value": 30, "valueLabel": "30%" }, { "label": "Third-party E-commerce", "value": 29, "valueLabel": "29%" }] }
         },
         {
           "title": "Policy & Standards",
