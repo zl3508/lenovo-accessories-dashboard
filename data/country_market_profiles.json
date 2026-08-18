@@ -386,13 +386,14 @@
         "characteristics": "Localized design | Reliability | Compactness | Online-led",
         "summary": "Japan combines strong local competition with high expectations for safety, stable output and compact design. Low replacement frequency makes deep product localization and trusted ecommerce execution especially important.",
         "summaryPoints": [
-          "Reliability, stable output and compact form factors matter more than headline wattage alone.",
-          "Strong local accessory brands raise the bar for product localization and quality perception.",
-          "Online channels lead, but lower replacement frequency makes trust and differentiation essential."
+          "Market profile: Reliability, stable output and compact design matter more than aggressive wattage expansion.",
+          "Competitive landscape: Strong local accessory brands raise expectations for localization, design and product quality.",
+          "Price & channel: The mean self-purchase price is USD 35.04, while third-party e-commerce leads at 47%.",
+          "Data basis: Consumer findings come from an Ipsos survey of 378 users, including 218 self-purchasers; competitive estimates are based on expert interviews and desk research."
         ],
         "research": {
           "sampleLabel": "Ipsos Japan sample: n=378",
-          "method": "Japan percentages use the local n=378 denominator. The multi-country study total is N=1,832 and is shown for context only.",
+          "method": "",
           "marketBasis": "Brand-share estimate; respondent base was not disclosed in the market source."
         },
         "policy": {
@@ -418,13 +419,14 @@
         "characteristics": "Fast charging | Brand confidence | USB-C | Online-led",
         "summary": "India is a feature-intensive and value-conscious adapter market. Buyers compare charging speed, brand confidence, power range and USB-C compatibility, with ecommerce playing the leading purchase role.",
         "summaryPoints": [
-          "Feature-intensive demand combines fast charging, USB-C compatibility and visible brand confidence.",
-          "Value remains important, but buyers reward credible protection and clearly defined power ranges.",
-          "Ecommerce leads purchase, increasing the importance of comparison-ready product content."
+          "Market profile: India is a feature-intensive and brand-sensitive market where technical performance must be supported by visible trust and safety.",
+          "Product priorities: Fast charging leads feature considerations, followed by multi-device compatibility and charging-power range.",
+          "Price & channel: The mean self-purchase price is USD 41.10, while third-party e-commerce leads at 53%.",
+          "Data basis: Consumer findings come from an Ipsos survey of 262 users, including 159 self-purchasers."
         ],
         "research": {
           "sampleLabel": "Ipsos India sample: n=262",
-          "method": "India percentages use the local n=262 denominator. The multi-country study total is N=1,832 and is shown for context only.",
+          "method": "",
           "marketBasis": "Country adapter TAM was not separately reported in the source set."
         },
         "policy": {
@@ -450,13 +452,14 @@
         "characteristics": "30%+ growth | Under-$30 demand | Fragmented retail | Agent-led",
         "summary": "Indonesia offers strong expansion potential but requires disciplined price architecture and local distribution. The report provides a broader power-category proxy rather than an adapter-only TAM, so the proxy is marked with an asterisk.",
         "summaryPoints": [
-          "High-growth opportunity, but the available market value is a broader power-category proxy rather than adapter-only TAM.",
-          "Demand is concentrated in affordable tiers, requiring disciplined SKU and price architecture.",
-          "Fragmented retail makes local distributor, inventory and after-sales execution critical."
+          "Market proxy: The industry source estimates the broader Southeast Asia charging category at USD 0.4B, with Indonesia representing approximately USD 0.24B.",
+          "Growth outlook: Indonesia represents approximately 60% of the reported Southeast Asia proxy and is estimated to grow above 30% annually.",
+          "Market structure: Demand is value-oriented, while fragmented online and offline retail increases reliance on local distributors.",
+          "Data basis: Figures are based on industry desk research and expert interviews and should be treated as broader charging-category proxies, not adapter-only TAM."
         ],
         "research": {
           "sampleLabel": "Industry-report proxy: no Ipsos country sample",
-          "method": "Broader power-category market analysis; respondent sample was not disclosed; Ipsos total N=1,832 does not include Indonesia.",
+          "method": "",
           "marketBasis": "Industry-report proxy; no respondent base was disclosed."
         },
         "policy": {
@@ -635,27 +638,31 @@
       "JP": [
         {
           "title": "Competitive Landscape",
-          "summaryPoints": ["Local accessory and electronics brands remain strong", "Anker represented approximately 18% of the adapter market"],
-          "body": "Global brands compete with local specialists through design, ecommerce execution and trust.",
-          "detailPoints": ["Strong local names include Cheero, CIO, ELECOM and Sony.", "Low replacement frequency increases the importance of localization."],
-          "chart": { "title": "Japan Adapter Brand Structure", "type": "donut", "center": "Market Share", "items": [{ "label": "Anker", "value": 18, "valueLabel": "18%" }, { "label": "Other Brands", "value": 82, "valueLabel": "82%" }] }
+          "summaryPoints": ["Local accessory and electronics brands maintain strong market positions.", "Anker was estimated to hold approximately 18% of Japan's adapter market."],
+          "body": "Japan combines strong local brands with international accessory and PC manufacturers. Local players compete through localized design, quality and channel presence, while international brands compete through trust, portability and e-commerce execution.",
+          "detailPoints": ["Leading local names include Cheero, CIO, ELECOM and Sony.", "Anker's estimated share is approximately 18%, with other brands representing approximately 82%."],
+          "chart": { "title": "Japan Adapter Brand Structure - Source Estimate", "type": "donut", "center": "Market Share", "basisTitle": "Data basis", "sampleLabel": "Expert-interview and desk-research estimate; no survey respondent base", "items": [{ "label": "Anker", "value": 18, "valueLabel": "18%" }, { "label": "Other Brands & PC OEMs", "value": 82, "valueLabel": "82%" }] }
         },
         {
           "title": "Product Priorities",
-          "summaryPoints": ["Protection and stable output lead product expectations", "Compact multi-device design supports localization"],
-          "body": "Japan rewards safe, stable and compact charging more than aggressive wattage escalation.",
-          "detailPoints": ["Protection: 58%.", "Stable output: 56%; multi-port: 52%."],
-          "chart": { "title": "Japan Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Protection", "value": 58, "valueLabel": "58%" }, { "label": "Stable output", "value": 56, "valueLabel": "56%" }, { "label": "Multi-port", "value": 52, "valueLabel": "52%" }] }
+          "summaryPoints": ["Intelligent protection leads feature considerations at 58%.", "Stable output and multi-device compatibility follow at 56% and 52%."],
+          "body": "Among feature-focused respondents, intelligent protection and stable output rank highest, with multi-device compatibility close behind. The results support a reliability-led product strategy.",
+          "detailPoints": ["Intelligent protection: 58%.", "Stable output: 56%.", "Multi-device compatibility: 52%."],
+          "chart": { "title": "Japan Top Feature Considerations", "type": "bar", "suffix": "%", "basisTitle": "Research base", "sampleLabel": "Feature-focused respondents, n=187", "method": "", "items": [{ "label": "Intelligent Protection", "value": 58, "valueLabel": "58%" }, { "label": "Stable Output", "value": 56, "valueLabel": "56%" }, { "label": "Multi-device Compatibility", "value": 52, "valueLabel": "52%" }] }
         },
         {
-          "title": "Price & Channel",
-          "summaryPoints": ["Mean surveyed purchase price is USD 35.04", "Online ecommerce leads at 47%"],
-          "body": "A compact, reliable value proposition fits the core market, supported by strong ecommerce presentation.",
-          "detailPoints": ["78% of reported purchases are below USD 40.", "Physical stores represent 33%; brand websites represent 20%."],
-          "charts": [
-            { "title": "Japan Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 78, "valueLabel": "78%" }, { "label": "$40-$79.99", "value": 21, "valueLabel": "21%" }, { "label": "$80+", "value": 2, "valueLabel": "2%" }] },
-            { "title": "Japan Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Online", "value": 47, "valueLabel": "47%" }, { "label": "Physical", "value": 33, "valueLabel": "33%" }, { "label": "Brand Website", "value": 20, "valueLabel": "20%" }] }
-          ]
+          "title": "Price Positioning",
+          "summaryPoints": ["The mean purchase price among self-purchasers is USD 35.04.", "Approximately 78% of purchases fall below USD 40."],
+          "body": "Japan's surveyed purchases are concentrated in the value tier. Premium positioning therefore requires a clear improvement in compactness, reliability, design or service.",
+          "detailPoints": ["Entry - Below USD 40: 78%.", "Core - USD 40-79.99: 21%.", "Premium - USD 80+: approximately 2%."],
+          "chart": { "title": "Japan Purchase Price Bands", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=218", "method": "", "items": [{ "label": "Entry - Below USD 40", "value": 78, "valueLabel": "78%" }, { "label": "Core - USD 40-79.99", "value": 21, "valueLabel": "21%" }, { "label": "Premium - USD 80+", "value": 2, "valueLabel": "2%" }] }
+        },
+        {
+          "title": "Channel Structure",
+          "summaryPoints": ["Third-party e-commerce leads at 47%.", "Physical stores and official brand websites account for 33% and 20%."],
+          "body": "Japan shows an online-led purchase pattern, while physical retail and official brand websites remain relevant for trust and product access.",
+          "detailPoints": ["Third-party E-commerce (47%): independent marketplaces and online retailers.", "Physical Stores (33%): electronics retailers and other physical outlets.", "Brand Websites (20%): official manufacturer or accessory-brand online stores."],
+          "chart": { "title": "Japan Purchase Channels", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=218", "method": "", "items": [{ "label": "Third-party E-commerce", "value": 47, "valueLabel": "47%" }, { "label": "Physical Stores", "value": 33, "valueLabel": "33%" }, { "label": "Brand Websites", "value": 20, "valueLabel": "20%" }] }
         },
         {
           "title": "Standards & Localization",
@@ -667,24 +674,24 @@
       "IN": [
         {
           "title": "Product Priorities",
-          "summaryPoints": ["Fast charging leads at 79%", "Brand confidence and USB-C clarity are major purchase signals"],
-          "body": "Indian buyers compare technical performance with brand reassurance in a market containing mixed-quality supply.",
-          "detailPoints": ["Brand consideration: 75%.", "USB-C preference: 65%; charging power range: 63%."],
-          "chart": { "title": "India Product Signals", "type": "bar", "suffix": "%", "items": [{ "label": "Fast charging", "value": 79, "valueLabel": "79%" }, { "label": "Brand", "value": 75, "valueLabel": "75%" }, { "label": "USB-C", "value": 65, "valueLabel": "65%" }] }
+          "summaryPoints": ["Fast charging leads feature considerations at 79%.", "Multi-device compatibility and charging-power range follow at 64% and 63%."],
+          "body": "Among feature-focused respondents, Indian buyers prioritize fast charging, multi-device compatibility and clearly defined power ranges. These results support comparison-ready product communication.",
+          "detailPoints": ["Fast charging: 79%.", "Multi-device compatibility: 64%.", "Charging power range: 63%.", "Separately, 75% of all India respondents consider brand when choosing a power adapter."],
+          "chart": { "title": "India Top Feature Considerations", "type": "bar", "suffix": "%", "basisTitle": "Research base", "sampleLabel": "Feature-focused respondents, n=183", "method": "", "items": [{ "label": "Fast Charging", "value": 79, "valueLabel": "79%" }, { "label": "Multi-device Compatibility", "value": 64, "valueLabel": "64%" }, { "label": "Charging Power Range", "value": 63, "valueLabel": "63%" }] }
         },
         {
           "title": "Price Positioning",
-          "summaryPoints": ["Mean surveyed purchase price is USD 41.10", "The market requires visible value rather than low price alone"],
-          "body": "A tiered portfolio should connect higher prices to charging speed, trusted protection and power-range clarity.",
-          "detailPoints": ["62% of reported purchases are below USD 40.", "29% are USD 40-79.99 and approximately 9% are USD 80 or above."],
-          "chart": { "title": "India Price Bands", "type": "donut", "center": "Purchases", "items": [{ "label": "Below $40", "value": 62, "valueLabel": "62%" }, { "label": "$40-$79.99", "value": 29, "valueLabel": "29%" }, { "label": "$80+", "value": 9, "valueLabel": "9%" }] }
+          "summaryPoints": ["The mean purchase price among self-purchasers is USD 41.10.", "Below-USD 40 products account for 62% of purchases."],
+          "body": "India remains concentrated in value-oriented price bands, while a smaller mid-to-premium segment supports differentiated products with visible functional benefits.",
+          "detailPoints": ["Below USD 40: 62%.", "USD 40-79.99: 29%.", "USD 80+: 9%."],
+          "chart": { "title": "India Purchase Price Bands", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=159", "method": "", "items": [{ "label": "Below USD 40", "value": 62, "valueLabel": "62%" }, { "label": "USD 40-79.99", "value": 29, "valueLabel": "29%" }, { "label": "USD 80+", "value": 9, "valueLabel": "9%" }] }
         },
         {
           "title": "Channel Structure",
-          "summaryPoints": ["Online ecommerce leads at 53%", "Physical retail remains relevant at 29%"],
-          "body": "Strong online comparison content should be supported by channel partners and clear warranty coverage.",
-          "detailPoints": ["Official brand websites represent 18%.", "Product pages should make wattage, protocol, ports and safety easy to compare."],
-          "chart": { "title": "India Channel Mix", "type": "donut", "center": "Purchases", "items": [{ "label": "Online", "value": 53, "valueLabel": "53%" }, { "label": "Physical", "value": 29, "valueLabel": "29%" }, { "label": "Brand Website", "value": 18, "valueLabel": "18%" }] }
+          "summaryPoints": ["Third-party e-commerce leads at 53%.", "Physical stores and official brand websites account for 29% and 18%."],
+          "body": "India is an online-led market, making product comparison, specifications, warranty information and trust signals especially important.",
+          "detailPoints": ["Third-party E-commerce (53%): independent marketplaces and online retailers.", "Physical Stores (29%): electronics retailers and other physical outlets.", "Brand Websites (18%): official manufacturer or accessory-brand online stores.", "Product pages should make wattage, protocol, ports and safety easy to compare."],
+          "chart": { "title": "India Purchase Channels", "type": "donut", "center": "Purchases", "basisTitle": "Research base", "sampleLabel": "Self-purchasers, n=159", "method": "", "items": [{ "label": "Third-party E-commerce", "value": 53, "valueLabel": "53%" }, { "label": "Physical Stores", "value": 29, "valueLabel": "29%" }, { "label": "Brand Websites", "value": 18, "valueLabel": "18%" }] }
         },
         {
           "title": "Standards & Portfolio",
@@ -696,29 +703,29 @@
       "ID": [
         {
           "title": "Market Scale & Growth",
-          "summaryPoints": ["Indonesia represents about 60% of the reported Southeast Asia power-category proxy", "Annual growth is estimated above 30%"],
-          "body": "The source provides a broader power-category estimate, not an adapter-only TAM. The converted values therefore remain marked as proxy data.",
-          "detailPoints": ["Southeast Asia proxy: RMB 2.8B, or about USD 0.41B at 6.8.", "Indonesia proxy: RMB 1.7B, or about USD 0.25B at 6.8."],
-          "chart": { "title": "2024 Power-category Proxy*", "type": "bar", "prefix": "$", "suffix": "B", "items": [{ "label": "Southeast Asia", "value": 0.41, "valueLabel": "$0.41B*" }, { "label": "Indonesia", "value": 0.25, "valueLabel": "$0.25B*" }] }
+          "summaryPoints": ["Indonesia represents approximately 60% of the reported Southeast Asia charging-category proxy.", "Annual growth is estimated above 30%."],
+          "body": "The source provides a broader charging-category estimate rather than an adapter-only TAM. All displayed values therefore remain explicitly marked as proxy data.",
+          "detailPoints": ["Southeast Asia charging-category proxy: approximately USD 0.40B*.", "Indonesia charging-category proxy: approximately USD 0.24B*."],
+          "chart": { "title": "2024 Charging-category Market Proxy*", "type": "bar", "prefix": "$", "suffix": "B", "basisTitle": "Data basis", "sampleLabel": "Industry desk research and expert interviews; not adapter-only TAM", "items": [{ "label": "Southeast Asia Proxy", "value": 0.4, "valueLabel": "$0.40B*" }, { "label": "Indonesia Proxy", "value": 0.24, "valueLabel": "$0.24B*" }] }
         },
         {
           "title": "Competitive Structure",
-          "summaryPoints": ["The market is concentrated among leading brands but retail remains fragmented", "Distributor control is critical for execution"],
-          "body": "The source estimates a concentrated top tier alongside a decentralized retail system.",
-          "detailPoints": ["Top brand proxy: about 50%.", "Second and third brand proxies: about 30% and 10%."],
-          "chart": { "title": "Reported Competitive Proxy*", "type": "donut", "center": "Share", "items": [{ "label": "Top 1", "value": 50, "valueLabel": "~50%*" }, { "label": "Top 2", "value": 30, "valueLabel": "~30%*" }, { "label": "Top 3", "value": 10, "valueLabel": "~10%*" }, { "label": "Others", "value": 10, "valueLabel": "~10%*" }] }
+          "summaryPoints": ["Leading brands hold a concentrated share of the broader category.", "Fragmented retail makes distributor control critical for execution."],
+          "body": "The source indicates a concentrated top tier alongside a highly decentralized retail system. These figures should be interpreted as broader charging-category proxies rather than adapter-only shares.",
+          "detailPoints": ["Top brand proxy: approximately 50%.", "Second brand proxy: approximately 30%.", "Third brand proxy: approximately 10%.", "Others: approximately 10%."],
+          "chart": { "title": "Reported Charging-category Brand Structure*", "type": "donut", "center": "Proxy Share", "basisTitle": "Data basis", "sampleLabel": "Industry proxy; no survey respondent base", "items": [{ "label": "Top Brand Proxy", "value": 50, "valueLabel": "~50%*" }, { "label": "Second Brand Proxy", "value": 30, "valueLabel": "~30%*" }, { "label": "Third Brand Proxy", "value": 10, "valueLabel": "~10%*" }, { "label": "Others", "value": 10, "valueLabel": "~10%*" }] }
         },
         {
           "title": "Price & Channel",
-          "summaryPoints": ["Demand is concentrated below USD 30", "Offline retail and ecommerce are both highly decentralized"],
-          "body": "Affordability and local availability are essential. Brands depend heavily on local agents to coordinate fragmented channels.",
+          "summaryPoints": ["Demand is concentrated in products priced below USD 30.", "Both online and offline retail remain highly fragmented."],
+          "body": "Affordability and local availability are critical. Brands rely heavily on local distributors to coordinate inventory, promotions and after-sales execution across fragmented channels.",
           "detailPoints": ["Build a focused entry and mainstream price ladder.", "Support distributors with localized promotions, inventory planning and after-sales processes."]
         },
         {
           "title": "Portfolio Direction",
-          "summaryPoints": ["Prioritize durable value products over premium-only expansion", "Keep fast charging, safety and compatibility claims simple and visible"],
-          "body": "Indonesia needs a localized portfolio that balances affordability, reliability and channel reach.",
-          "detailPoints": ["Use selected USB-C wattage tiers and avoid excessive SKU complexity.", "Validate local certification, importer and labeling requirements before launch."]
+          "summaryPoints": ["Prioritize durable value products over premium-only expansion.", "Keep fast-charging, safety and compatibility claims simple and visible."],
+          "body": "Indonesia requires a localized portfolio that balances affordability, reliability and channel reach.",
+          "detailPoints": ["Focus on selected USB-C wattage tiers and avoid excessive SKU complexity.", "Validate local certification, importer and labeling requirements before launch."]
         }
       ],
       "BRMEX": [

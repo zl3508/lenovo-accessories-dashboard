@@ -11,7 +11,7 @@ const DATA_FILES = {
   metadata: "data/metadata.json",
 };
 
-const DATA_VERSION = "20260818-emea-country-detail-refine";
+const DATA_VERSION = "20260818-ap-country-detail-refine";
 
 const state = {
   categoryId: null,
