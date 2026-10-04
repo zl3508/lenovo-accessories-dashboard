@@ -9,9 +9,10 @@ const DATA_FILES = {
   consumerInsights: "data/consumer_insights.json",
   countryMarkets: "data/country_market_profiles.json",
   metadata: "data/metadata.json",
+  powerHome: "data/iso_power/home_dashboard.json",
 };
 
-const DATA_VERSION = "20260818-ap-country-detail-refine";
+const DATA_VERSION = "20260929-accessory-power-landing";
 
 const state = {
   categoryId: null,
@@ -21,6 +22,8 @@ const state = {
   granularity: "quarter",
   detailGranularity: "quarter",
   selectedPeriod: { category: null, detail: null },
+  selectedCategoryPeriods: [],
+  categoryPeriodMenuOpen: false,
   dimension: "segment",
   segmentFilter: "all",
   partNumber: "all",
@@ -56,6 +59,17 @@ const state = {
   detailSelectedGeo: {},
   industrySlides: {},
   variantId: "all",
+  homeView: "landing",
+  homePowerScope: "total",
+  homeTopModelFilters: { geo: "all", segment: "all", dib: "all", channel: "all" },
+  homeTopPartnerFilters: { geo: "all", segment: "all", dib: "all" },
+  categoryOverviewMetrics: {},
+  categoryOverviewProducts: {},
+  categoryProductSelectorOpen: false,
+  categoryTrendProducts: {},
+  categoryTrendProductSelectorOpen: false,
+  categoryTrendMode: {},
+  categoryGeoSelected: {},
 };
 
 const data = {};
@@ -186,13 +200,25 @@ async function init() {
       syncRouteFromHash();
       render();
     });
-    homeButton.addEventListener("click", () => routeTo());
+    homeButton.addEventListener("click", () => {
+      state.homeView = "landing";
+      routeTo();
+    });
     app.addEventListener("click", handleClick);
     app.addEventListener("change", handleChange);
     app.addEventListener("input", handleInput);
     app.addEventListener("toggle", (event) => {
       if (event.target.matches(".geo-na-card-disclosure") && event.target.open) {
         requestAnimationFrame(() => drawMarketAnalysis(state.categoryId));
+      }
+      if (event.target.matches(".period-multi-select")) {
+        state.categoryPeriodMenuOpen = event.target.open;
+      }
+      if (event.target.matches(".category-contribution-product-selector")) {
+        state.categoryProductSelectorOpen = event.target.open;
+      }
+      if (event.target.matches(".category-trend-product-selector")) {
+        state.categoryTrendProductSelectorOpen = event.target.open;
       }
     }, true);
     topNav.addEventListener("click", handleClick);
@@ -258,15 +284,7 @@ function render() {
 }
 
 function renderSourceStatus() {
-  const source = data.metadata?.source;
-  if (!source) return;
-  const periodMeta = data.catalog?.periodMeta || [];
-  const range = periodMeta.length
-    ? `${periodMeta[0].quarterLabel || periodMeta[0].date} to ${periodMeta.at(-1).quarterLabel || periodMeta.at(-1).date}`
-    : source.sourceDateRange
-      ? `${source.sourceDateRange[0].slice(0, 7)} to ${source.sourceDateRange[1].slice(0, 7)}`
-      : "modeled";
-  sourceStatus.textContent = `${range} · ${source.sourceMode || "static JSON"} · * modeled/non-Excel data`;
+  sourceStatus.textContent = "Power Go Big Business";
 }
 
 function renderTopNav() {
@@ -279,36 +297,31 @@ function renderTopNav() {
 }
 
 function renderHome() {
-  const latest = data.catalog.periods.at(-1);
-  const allRows = data.productMetrics.filter((row) => row.date === latest);
-  const totalSummary = summarizeProductRows(allRows);
+  if (state.homeView === "overall") {
+    app.innerHTML = `
+      <div class="view-stack power-overall-view">
+        <nav class="power-overall-back" aria-label="Power dashboard navigation">
+          <button class="ghost-button" type="button" data-action="power-home">← Accessory Power</button>
+          <span>Power Overall</span>
+        </nav>
+        ${renderPowerHomeDashboard()}
+      </div>
+    `;
+    drawPowerHomeDashboard();
+    return;
+  }
+
   app.innerHTML = `
-    <div class="view-stack">
-      <section class="hero-band">
-        <div class="hero-copy">
-          <p class="eyebrow">Static GitHub Pages Dashboard</p>
-          <h1>Lenovo Product Data Visualization</h1>
-        </div>
-        <div class="hero-stats">
-          <div class="stat-tile">
-            <span>Products</span>
-            <strong>${data.catalog.products.length}</strong>
-            <small>Current model count with room for future categories.</small>
-          </div>
-          <div class="stat-tile">
-            <span>Latest Order_Rev</span>
-            <strong>${fmtExactCurrency(totalSummary.orderRevenue || totalSummary.revenueNet)}</strong>
-            <small>${formatPeriod(latest, "quarter")}</small>
-          </div>
-        </div>
-      </section>
+    <div class="view-stack home-view">
+      ${renderAccessoryPowerHero()}
+      ${renderAccessoryPowerKpis()}
 
       <section class="section-head">
         <div>
           <p class="eyebrow">Product Categories</p>
           <h2>Select a Category</h2>
         </div>
-        <p>Each category includes filters, model comparison, product detail views, and fiscal quarter / fiscal year aggregation.</p>
+        <p class="metric-definition"><span>Revenue refers to Ship Rev</span><span>Updated 2026/9/28</span></p>
       </section>
 
       <section class="category-grid">
@@ -322,10 +335,471 @@ function renderHome() {
   `;
 }
 
+function renderAccessoryPowerHero() {
+  const dashboard = data.powerHome;
+  return `
+    <section class="accessory-power-hero" aria-labelledby="accessory-power-title">
+      <img src="assets/hero/accessory-power.png" alt="Lenovo accessory power portfolio with chargers, power banks, cables, and laptops">
+      <div class="accessory-power-hero-shade"></div>
+      <div class="accessory-power-hero-copy">
+        <p class="eyebrow">Lenovo Power Portfolio</p>
+        <h1 id="accessory-power-title">Accessories<br>Power</h1>
+        <button class="accessory-power-overall-button" type="button" data-action="power-overall">
+          Power Overall <span aria-hidden="true">→</span>
+        </button>
+        <div class="accessory-power-category-links" aria-label="Power product categories">
+          ${data.catalog.categories.map((category) => `<button type="button" data-route-category="${category.id}"><span>${escapeHtml(category.label)}</span><span aria-hidden="true">→</span></button>`).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderAccessoryPowerKpis() {
+  const dashboard = data.powerHome;
+  const kpis = dashboard?.executiveKpis || [];
+  if (!kpis.length) return "";
+  const order = ["full-year-revenue", "full-year-standalone", "quarter-revenue", "quarter-standalone"];
+  const orderedKpis = [...kpis].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  return `
+    <section class="accessory-kpi-section" aria-labelledby="accessory-kpi-heading">
+      <header>
+        <div>
+          <p class="eyebrow">Executive Snapshot</p>
+          <h2 id="accessory-kpi-heading">Revenue Performance</h2>
+        </div>
+        <p class="metric-definition"><span>Revenue refers to Ship Rev</span><span>Updated 2026/9/28</span></p>
+      </header>
+      <div class="accessory-kpi-grid">
+        ${orderedKpis.map(renderAccessoryPowerKpi).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderAccessoryPowerKpi(item) {
+  const isUp = (item.yoy || 0) >= 0;
+  const titles = {
+    "full-year-revenue": "Power Total",
+    "full-year-standalone": "Standalone w/o DIB",
+    "quarter-revenue": "Power Total",
+    "quarter-standalone": "Standalone w/o DIB",
+  };
+  const periodLabel = item.id.startsWith("full-year") ? "FY2627" : "FY2627 Q2";
+  const priorLabel = `$${formatPowerKpiAmount(item.priorActualM)}M`;
+  return `
+    <article class="accessory-kpi-card ${isUp ? "is-up" : "is-down"}">
+      <header>
+        <div>
+          <span>${escapeHtml(titles[item.id] || item.label)}</span>
+          <small>${periodLabel}</small>
+        </div>
+        <div class="accessory-kpi-trend ${isUp ? "is-up" : "is-down"}">
+          <strong>${formatSignedPercent(item.yoy)}</strong>
+          <span aria-hidden="true">${isUp ? "↑" : "↓"}</span>
+        </div>
+      </header>
+      <div class="accessory-kpi-compare">
+        <div>
+          <small>Current</small>
+          <strong>$${formatPowerKpiAmount(item.actualM)}M</strong>
+        </div>
+        <div>
+          <small>${escapeHtml(item.priorPeriod || "Previous")}</small>
+          <strong>${priorLabel}</strong>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderPowerHomeDashboard() {
+  const dashboard = data.powerHome;
+  if (!dashboard?.meta) {
+    return `<section class="power-home-shell"><div class="plot-fallback">Power dashboard data is unavailable.</div></section>`;
+  }
+  return `
+    <section class="power-home-shell" aria-label="Power executive performance dashboard">
+      <header class="power-home-head">
+        <div>
+          <p class="eyebrow">Power Category</p>
+          <h1>${escapeHtml(dashboard.meta.period)} Performance</h1>
+          <p>Executive shipment view for the Power portfolio.</p>
+        </div>
+        <dl class="power-home-meta">
+          <div><dt>Updated</dt><dd>${escapeHtml(dashboard.meta.dataCutoff)}</dd></div>
+          <div><dt>Unit</dt><dd>${escapeHtml(dashboard.meta.unit)}</dd></div>
+          <div><dt>Scope</dt><dd>${escapeHtml(dashboard.meta.newBusiness)}</dd></div>
+        </dl>
+      </header>
+
+      <div class="power-kpi-grid">
+        ${dashboard.kpis.map(renderPowerKpi).join("")}
+      </div>
+
+      <div class="power-analysis-grid power-analysis-grid-four">
+        ${renderPowerChartCard({
+          title: "Power YTD MT Attain",
+          subtitle: "By quarter",
+          id: "power-quarter-attain",
+          control: renderHomeSelect("home-power-scope", state.homePowerScope, [
+            ["total", "Total"], ["consumer", "Consumer"], ["commercial", "Commercial"],
+          ], "Scope"),
+        })}
+        ${renderPowerChartCard({
+          title: "Power YoY Comparison",
+          subtitle: "FY2526 Q2 vs FY2627 Q2",
+          id: "power-geo-yoy",
+        })}
+        ${renderPowerRankingCard("model")}
+        ${renderPowerRankingCard("partner")}
+      </div>
+
+      <div class="power-analysis-grid power-analysis-grid-three">
+        ${renderPowerChartCard({
+          title: "YoY Growth % Comparison",
+          subtitle: "By week · w/o New Biz",
+          id: "power-weekly-yoy",
+        })}
+        ${renderPowerChartCard({
+          title: "QTD MT Attain",
+          subtitle: "By Geo · w/o New Biz",
+          id: "power-geo-attain",
+        })}
+        ${renderPowerChartCard({
+          title: "QTD MT Attain",
+          subtitle: "By Segment · w/o New Biz",
+          id: "power-segment-attain",
+        })}
+      </div>
+
+      <p class="power-modeled-note">* Modeled estimate where the workbook does not expose a Power-specific quarter MT target.</p>
+    </section>
+  `;
+}
+
+function renderPowerKpi(item) {
+  const isUp = (item.yoy || 0) >= 0;
+  const marker = item.modeled ? "*" : "";
+  return `
+    <article class="power-kpi-card ${isUp ? "is-up" : "is-down"}">
+      <div>
+        <span>${escapeHtml(item.label)}</span>
+        <small>${escapeHtml(item.period)}</small>
+      </div>
+      <strong>$${formatCompactDecimal(item.valueM)}M${marker}</strong>
+      <p><span aria-hidden="true">${isUp ? "↑" : "↓"}</span> ${formatSignedPercent(item.yoy)} YoY</p>
+    </article>
+  `;
+}
+
+function renderPowerChartCard({ title, subtitle, id, control = "" }) {
+  return `
+    <article class="power-chart-card">
+      <header>
+        <div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(subtitle)}</p></div>
+        ${control}
+      </header>
+      <div class="power-plot" id="${escapeAttr(id)}"></div>
+    </article>
+  `;
+}
+
+function renderPowerRankingCard(type) {
+  const isModel = type === "model";
+  const title = isModel ? "Top Model" : "Top Partner";
+  const filters = isModel ? state.homeTopModelFilters : state.homeTopPartnerFilters;
+  const prefix = isModel ? "home-model" : "home-partner";
+  const rows = isModel ? data.powerHome.topModels : data.powerHome.topPartners;
+  const geoValues = isModel ? ["NA", "AP", "LA", "EMEA"] : ["EUROPE", "NA", "META", "AP", "LA"];
+  return `
+    <article class="power-chart-card power-ranking-card">
+      <header>
+        <div><h3>${title}</h3><p>${escapeHtml(data.powerHome.meta.period)} · Ship Rev</p></div>
+        <details class="power-filter-menu">
+          <summary>Choose</summary>
+          <div class="power-filter-popover">
+            ${renderHomeSelect(`${prefix}-geo`, filters.geo, [["all", "All Geo"], ...geoValues.map((value) => [value, value])], "Geo")}
+            ${renderHomeSelect(`${prefix}-segment`, filters.segment, [["all", "All Segment"], ...orderedPowerValues(rows, "segment", ["REL", "SMB", "CON", "OTHERS"]).map((value) => [value, value])], "Segment")}
+            ${renderHomeSelect(`${prefix}-dib`, filters.dib, [["all", "All DIB"], ...orderedPowerValues(rows, "dib", isModel ? ["w/o DIB", "DIB Only"] : ["Stand-Alone", "DIB"]).map((value) => [value, value])], "DIB")}
+            ${isModel ? renderHomeSelect(`${prefix}-channel`, filters.channel, [["all", "All Channel"], ...orderedPowerValues(rows, "channel", ["Indirect", "Direct", "Ecomm", "Others", "(blank)"]).map((value) => [value, value])], "Channel") : ""}
+          </div>
+        </details>
+      </header>
+      <div class="power-plot" id="power-top-${type}"></div>
+    </article>
+  `;
+}
+
+function renderHomeSelect(action, selected, options, label) {
+  return `
+    <label class="power-inline-select">
+      <span>${escapeHtml(label)}</span>
+      <select data-action="${escapeAttr(action)}">
+        ${options.map(([value, text]) => `<option value="${escapeAttr(value)}" ${value === selected ? "selected" : ""}>${escapeHtml(text)}</option>`).join("")}
+      </select>
+    </label>
+  `;
+}
+
+function orderedPowerValues(rows, field, preferred = []) {
+  const values = unique(rows.map((row) => row[field]).filter(Boolean));
+  return [...preferred.filter((value) => values.includes(value)), ...values.filter((value) => !preferred.includes(value)).sort()];
+}
+
+function formatCompactDecimal(value) {
+  if (!Number.isFinite(value)) return "0.0";
+  return value >= 100 ? value.toFixed(0) : value.toFixed(1);
+}
+
+function formatPowerKpiAmount(value) {
+  return Number.isFinite(value) ? value.toFixed(1) : "0.0";
+}
+
+function formatSignedPercent(value) {
+  if (!Number.isFinite(value)) return "N/A";
+  return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(1)}%`;
+}
+
+function drawPowerHomeDashboard() {
+  if (!data.powerHome?.meta) return;
+  drawPowerQuarterAttain();
+  drawPowerGeoYoy();
+  drawPowerRanking("model");
+  drawPowerRanking("partner");
+  drawPowerWeeklyYoy();
+  drawPowerAttainBreakdowns();
+}
+
+function powerChartLayout(overrides = {}) {
+  return {
+    margin: { l: 42, r: 14, t: 28, b: 46 },
+    font: { family: "Inter, system-ui, sans-serif", size: 11, color: "#283449" },
+    legend: { orientation: "h", y: 1.15, x: 0, font: { size: 10 } },
+    hovermode: "closest",
+    bargap: 0.26,
+    ...overrides,
+  };
+}
+
+function drawPowerQuarterAttain() {
+  const scope = data.powerHome.quarterAttain[state.homePowerScope] || data.powerHome.quarterAttain.total;
+  const rows = [
+    { quarter: "Total", ...scope.total, actualAvailable: true },
+    ...scope.quarters,
+  ];
+  const labels = rows.map((row) => row.quarter);
+  const annotations = rows
+    .filter((row) => row.actualAvailable && Number.isFinite(row.attain))
+    .map((row) => ({
+      x: row.quarter,
+      y: Math.max(row.targetM, row.actualM) * 1.12,
+      text: `<b>${(row.attain * 100).toFixed(0)}%</b>`,
+      showarrow: false,
+      font: { color: row.attain >= 1 ? "#138a4b" : "#d92d20", size: 11 },
+      bgcolor: row.attain >= 1 ? "#e6f6ed" : "#fdebea",
+      borderpad: 4,
+    }));
+  drawPlot("power-quarter-attain", [
+    {
+      type: "bar",
+      name: "FY2627 MT",
+      x: labels,
+      y: rows.map((row) => row.targetM),
+      marker: { color: "#a9d1e7" },
+      text: rows.map((row) => `${row.targetM.toFixed(1)}${row.targetModeled ? "*" : ""}`),
+      textposition: "outside",
+      cliponaxis: false,
+      hovertemplate: "%{x}<br>MT: $%{y:.2f}M<extra></extra>",
+    },
+    {
+      type: "bar",
+      name: "FY2627 Actual",
+      x: labels,
+      y: rows.map((row) => row.actualAvailable ? row.actualM : 0),
+      marker: { color: "#b45573" },
+      text: rows.map((row) => row.actualAvailable ? row.actualM.toFixed(1) : ""),
+      textposition: "outside",
+      cliponaxis: false,
+      hovertemplate: "%{x}<br>Actual: $%{y:.2f}M<extra></extra>",
+    },
+  ], powerChartLayout({
+    barmode: "group",
+    annotations,
+    yaxis: { title: "M$", rangemode: "tozero", gridcolor: "#edf0f3" },
+    xaxis: { tickfont: { size: 11 } },
+  }));
+}
+
+function drawPowerGeoYoy() {
+  const rows = data.powerHome.geoYoy;
+  drawPlot("power-geo-yoy", [
+    {
+      type: "bar",
+      name: "FY2526 Q2",
+      x: rows.map((row) => row.geo),
+      y: rows.map((row) => row.previousM),
+      marker: { color: "#6a70d6" },
+      text: rows.map((row) => row.previousM.toFixed(1)),
+      textposition: "outside",
+      cliponaxis: false,
+      hovertemplate: "%{x}<br>FY2526 Q2: $%{y:.2f}M<extra></extra>",
+    },
+    {
+      type: "bar",
+      name: "FY2627 Q2",
+      x: rows.map((row) => row.geo),
+      y: rows.map((row) => row.currentM),
+      marker: { color: "#9ba6e5" },
+      text: rows.map((row) => `${row.currentM.toFixed(1)}<br>${formatSignedPercent(row.yoy)}`),
+      textfont: { color: rows.map((row) => row.yoy >= 0 ? "#138a4b" : "#d92d20") },
+      textposition: "outside",
+      cliponaxis: false,
+      hovertemplate: "%{x}<br>FY2627 Q2: $%{y:.2f}M<extra></extra>",
+    },
+  ], powerChartLayout({
+    barmode: "group",
+    yaxis: { title: "M$", rangemode: "tozero", gridcolor: "#edf0f3" },
+  }));
+}
+
+function selectedPowerRankingRows(type) {
+  const isModel = type === "model";
+  const rows = isModel ? data.powerHome.topModels : data.powerHome.topPartners;
+  const filters = isModel ? state.homeTopModelFilters : state.homeTopPartnerFilters;
+  const filtered = rows.filter((row) => Object.entries(filters).every(([field, value]) => value === "all" || row[field] === value));
+  const grouped = new Map();
+  for (const row of filtered) grouped.set(row.name, (grouped.get(row.name) || 0) + row.shipRevenueM);
+  return [...grouped.entries()]
+    .map(([name, shipRevenueM]) => ({ name, shipRevenueM }))
+    .sort((a, b) => b.shipRevenueM - a.shipRevenueM)
+    .slice(0, 10);
+}
+
+function drawPowerRanking(type) {
+  const rows = selectedPowerRankingRows(type).reverse();
+  const id = `power-top-${type}`;
+  if (!rows.length) {
+    drawPlot(id, []);
+    return;
+  }
+  drawPlot(id, [{
+    type: "bar",
+    orientation: "h",
+    x: rows.map((row) => row.shipRevenueM),
+    y: rows.map((row) => shortenPowerLabel(row.name, type === "partner" ? 24 : 22)),
+    customdata: rows.map((row) => row.name),
+    marker: { color: rows.map((_, index) => index === rows.length - 1 ? "#e2231a" : "#e98b85") },
+    text: rows.map((row) => `$${row.shipRevenueM.toFixed(2)}M`),
+    textposition: "outside",
+    cliponaxis: false,
+    hovertemplate: "%{customdata}<br>Ship Rev: $%{x:.3f}M<extra></extra>",
+  }], powerChartLayout({
+    margin: { l: 128, r: 42, t: 8, b: 34 },
+    showlegend: false,
+    xaxis: { title: "M$", rangemode: "tozero", gridcolor: "#edf0f3" },
+    yaxis: { automargin: true, tickfont: { size: 9 } },
+  }));
+}
+
+function shortenPowerLabel(value, maxLength) {
+  const text = String(value || "");
+  return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
+}
+
+function drawPowerWeeklyYoy() {
+  const rows = data.powerHome.weeklyYoy;
+  drawPlot("power-weekly-yoy", [
+    {
+      type: "bar",
+      name: "FY2526 Q2 ACT",
+      x: rows.map((row) => row.week),
+      y: rows.map((row) => row.previousM),
+      marker: { color: "#a9adb4" },
+      hovertemplate: "%{x}<br>FY2526 Q2: $%{y:.2f}M<extra></extra>",
+    },
+    {
+      type: "bar",
+      name: "FY2627 Q2",
+      x: rows.map((row) => row.week),
+      y: rows.map((row) => row.currentM),
+      marker: { color: "#a93170" },
+      text: rows.map((row) => formatSignedPercent(row.yoy)),
+      textfont: { color: rows.map((row) => row.yoy >= 0 ? "#16a05d" : "#d92d20"), size: 9 },
+      textposition: "outside",
+      cliponaxis: false,
+      hovertemplate: "%{x}<br>FY2627 Q2: $%{y:.2f}M<br>YoY: %{text}<extra></extra>",
+    },
+  ], powerChartLayout({
+    barmode: "group",
+    margin: { l: 42, r: 10, t: 22, b: 42 },
+    yaxis: { title: "M$", rangemode: "tozero", gridcolor: "#edf0f3" },
+    xaxis: { tickfont: { size: 9 } },
+  }));
+}
+
+function drawPowerAttainBreakdowns() {
+  const total = data.powerHome.quarterAttain.total.quarters.find((row) => row.quarter === "Q2");
+  const previousTotal = data.powerHome.geoYoy.reduce((sum, row) => sum + row.previousM, 0);
+  drawPowerAttainChart("power-geo-attain", data.powerHome.geoAttain.map((row) => ({ label: row.geo, ...row })));
+  drawPowerAttainChart("power-segment-attain", [
+    { label: "Q2 Total", previousM: previousTotal, targetM: total.targetM, currentM: total.actualM, attain: total.attain },
+    ...data.powerHome.segmentAttain.map((row) => ({ label: row.segment, ...row })),
+  ]);
+}
+
+function drawPowerAttainChart(id, rows) {
+  const maxValue = Math.max(...rows.flatMap((row) => [row.previousM, row.targetM, row.currentM]).filter(Number.isFinite), 0);
+  drawPlot(id, [
+    {
+      type: "bar",
+      name: "FY2526 Q2 ACT",
+      x: rows.map((row) => row.label),
+      y: rows.map((row) => row.previousM),
+      marker: { color: "#7a7d82" },
+      hovertemplate: "%{x}<br>Prior: $%{y:.2f}M<extra></extra>",
+    },
+    {
+      type: "bar",
+      name: "FY2627 Q2 MT",
+      x: rows.map((row) => row.label),
+      y: rows.map((row) => row.targetM),
+      marker: { color: "#9fcce4" },
+      hovertemplate: "%{x}<br>MT: $%{y:.2f}M<extra></extra>",
+    },
+    {
+      type: "bar",
+      name: "FY2627 Q2 Actual",
+      x: rows.map((row) => row.label),
+      y: rows.map((row) => row.currentM),
+      marker: { color: "#b45573" },
+      text: rows.map((row) => `${(row.attain * 100).toFixed(0)}%`),
+      textfont: { color: rows.map((row) => row.attain >= 1 ? "#138a4b" : "#d92d20") },
+      textposition: "outside",
+      cliponaxis: false,
+      hovertemplate: "%{x}<br>Actual: $%{y:.2f}M<br>Attain: %{text}<extra></extra>",
+    },
+  ], powerChartLayout({
+    barmode: "group",
+    margin: { l: 42, r: 10, t: 50, b: 44 },
+    legend: { orientation: "h", y: 1.17, x: 0, font: { size: 9 } },
+    yaxis: { title: "M$", range: [0, maxValue * 1.22], gridcolor: "#edf0f3" },
+    xaxis: { tickfont: { size: 10 } },
+  }));
+}
+
 function renderCategoryCard(category) {
   const rows = data.productMetrics.filter((row) => row.categoryId === category.id);
-  const summary = summarizeProductRows(rows);
   const productCount = data.catalog.products.filter((product) => product.categoryId === category.id).length;
+  const descriptions = {
+    adapter: "65W+ high-power chargers.",
+    power_bank: "High-power power bank.",
+    power_cable: "High-power cables.",
+  };
+  const fiscalYearTotal = summarizeCategoryYtd(rows, "FY2627", "Q2");
+  const priorFiscalYearTotal = summarizeCategoryYtd(rows, "FY2526", "Q2");
+  const quarterTotal = summarizeCategoryPeriod(rows, "FY2627", "Q2");
+  const priorQuarterTotal = summarizeCategoryPeriod(rows, "FY2526", "Q2");
   return `
     <button class="category-card" type="button" style="--accent:${category.accent}" data-route-category="${category.id}">
       <header>
@@ -335,14 +809,86 @@ function renderCategoryCard(category) {
         </div>
         <span class="tag">${productCount} models</span>
       </header>
-      <p>${escapeHtml(category.description)}</p>
-      <div class="category-metrics">
-        <div><span>Total Order_Qty</span><strong>${fmtExactNumber(summary.orderQty || summary.unitsNet)}</strong></div>
-        <div><span>Total Order_Rev</span><strong>${fmtExactCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
-        <div><span>Avg Ship_AUR</span><strong>${fmtExactCurrency(summary.shipAUR)}</strong></div>
+      <p>${escapeHtml(descriptions[category.id] || category.description)}</p>
+      <div class="category-metrics category-metrics--ship-revenue">
+        ${renderCategoryShipRevenue("Current", fiscalYearTotal.shipRevenue, "FY2526 YTD", priorFiscalYearTotal.shipRevenue)}
+        ${renderCategoryShipRevenue("FY2627 Q2", quarterTotal.shipRevenue, "FY2526 Q2", priorQuarterTotal.shipRevenue)}
       </div>
     </button>
   `;
+}
+
+function summarizeCategoryYtd(rows, fiscalYear, throughQuarter) {
+  const quarterLimit = Number(String(throughQuarter).replace(/\D/g, "")) || 4;
+  return rows
+    .filter((row) => {
+      const quarter = Number(String(row.fiscalQuarter).replace(/\D/g, ""));
+      return row.fiscalYear === fiscalYear && quarter >= 1 && quarter <= quarterLimit;
+    })
+    .reduce((summary, row) => {
+      summary.orderRevenue += Number(row.orderRevenue || 0);
+      summary.shipRevenue += Number(row.shipRevenue || 0);
+      summary.orderQty += Number(row.orderQty || 0);
+      summary.shipQty += Number(row.shipQty || 0);
+      return summary;
+    }, { orderRevenue: 0, shipRevenue: 0, orderQty: 0, shipQty: 0 });
+}
+
+function renderCategoryShipRevenue(period, value, priorPeriod, priorValue) {
+  const hasPrior = priorValue > 0;
+  const yoy = hasPrior ? (value - priorValue) / priorValue : null;
+  const trendClass = !hasPrior ? "is-new" : yoy >= 0 ? "is-up" : "is-down";
+  const trendLabel = !hasPrior ? "New" : `${formatSignedPercent(yoy)} ${yoy >= 0 ? "↑" : "↓"}`;
+  return `
+    <div class="category-ship-revenue">
+      <header>
+        <span>Revenue</span>
+        <strong class="${trendClass}">${trendLabel}</strong>
+      </header>
+      <div class="category-ship-values">
+        <span><small>${escapeHtml(period)}</small><strong>${formatCategoryRevenueM(value)}</strong></span>
+        <span><small>${escapeHtml(priorPeriod)}</small><strong>${formatCategoryRevenueM(priorValue)}</strong></span>
+      </div>
+    </div>
+  `;
+}
+
+function summarizeCategoryPeriod(rows, fiscalYear, fiscalQuarter) {
+  return rows
+    .filter((row) => row.fiscalYear === fiscalYear && row.fiscalQuarter === fiscalQuarter)
+    .reduce((summary, row) => {
+      summary.orderRevenue += Number(row.orderRevenue || 0);
+      summary.shipRevenue += Number(row.shipRevenue || 0);
+      summary.orderQty += Number(row.orderQty || 0);
+      summary.shipQty += Number(row.shipQty || 0);
+      return summary;
+    }, { orderRevenue: 0, shipRevenue: 0, orderQty: 0, shipQty: 0 });
+}
+
+function renderCategoryMetricComparison(label, current, prior, type) {
+  const hasPrior = prior > 0;
+  const yoy = hasPrior ? (current - prior) / prior : null;
+  const trendClass = !hasPrior ? "is-new" : yoy >= 0 ? "is-up" : "is-down";
+  const trendLabel = !hasPrior ? "New" : formatSignedPercent(yoy);
+  const formatValue = (value) => type === "revenue" ? formatCategoryRevenueM(value) : fmtExactNumber(value);
+  return `
+    <div class="category-metric-comparison">
+      <header>
+        <span>${escapeHtml(label)}</span>
+        <strong class="${trendClass}">${trendLabel}${hasPrior ? ` ${yoy >= 0 ? "↑" : "↓"}` : ""}</strong>
+      </header>
+      <div class="category-metric-values">
+        <span><small>FY2627 Q2</small><strong>${formatValue(current)}</strong></span>
+        <span><small>FY2526 Q2</small><strong>${formatValue(prior)}</strong></span>
+      </div>
+    </div>
+  `;
+}
+
+function formatCategoryRevenueM(value) {
+  const amount = Number(value || 0);
+  if (Math.abs(amount) >= 1_000_000) return `$${(amount / 1_000_000).toFixed(2)}M`;
+  return fmtExactCurrency(amount);
 }
 
 function renderCategory(categoryId) {
@@ -372,12 +918,10 @@ function renderCategory(categoryId) {
     drawCompetitiveAnalysis(categoryId);
   } else if (state.categoryView === "overview") {
     mount.innerHTML = renderCategoryOverview(categoryId);
-    const visibleProducts = getFilteredProducts(categoryId);
-    const selectedIds = getSelectedModelIds(categoryId, visibleProducts);
-    drawProductMatrix(categoryId, visibleProducts, selectedIds);
-    drawCategoryCharts(categoryId, selectedIds);
-    drawFeedbackModule(categoryId, selectedIds);
-    drawDecisionModule(categoryId, selectedIds);
+    const overviewProducts = data.catalog.products.filter((product) => product.categoryId === categoryId);
+    drawPerformanceRevenueTrend(categoryId, overviewProducts);
+    drawPerformanceContribution(categoryId, overviewProducts);
+    drawCategoryGeoContribution(categoryId, overviewProducts);
   } else if (state.categoryView === "products") {
     mount.innerHTML = renderProductListPage(categoryId);
   } else {
@@ -2106,30 +2650,551 @@ function renderCompetitorEmptyState(product, country) {
 }
 
 function renderCategoryOverview(categoryId) {
-  const visibleProducts = getFilteredProducts(categoryId);
-  const selectedIds = getSelectedModelIds(categoryId, visibleProducts);
-  const metricRows = data.productMetrics.filter((row) => row.categoryId === categoryId && selectedIds.includes(row.modelId));
-  const latestRows = metricRows.filter((row) => rowInSelectedPeriod(row));
-  const latestSummary = summarizeProductRows(latestRows);
+  const visibleProducts = data.catalog.products.filter((product) => product.categoryId === categoryId);
   return `
     <div class="view-stack category-overview-stack">
-      ${renderCategoryFilters(categoryId, { compact: true })}
-      <section class="module-block">
-        <div class="module-head">
-          <span>Overview Module</span>
-          <h2>Product Summary</h2>
-        </div>
-        ${renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSummary)}
+      <section class="module-block category-performance-content">
+        ${renderPerformanceOverview(categoryId, visibleProducts)}
       </section>
       <section class="module-block">
         <div class="module-head">
           <span>Overview Module</span>
-          <h2>Product Performance</h2>
-          <p>Compare product contribution, revenue, quantity, geo, and country performance under the selected filters.</p>
+          <h2>Geo Contribution</h2>
+          <p>Compare selected-period revenue share by geo and track the selected geo across fiscal quarters.</p>
         </div>
-        ${renderProductPerformanceMatrix(categoryId, visibleProducts, selectedIds)}
+        ${renderCategoryGeoContribution(categoryId, visibleProducts)}
       </section>
     </div>
+  `;
+}
+
+function categoryGeoContributionData(categoryId, products) {
+  const productIds = new Set(products.map((product) => product.id));
+  const selectedPeriods = new Set(ensureSelectedCategoryPeriods());
+  const totals = new Map();
+
+  (data.geoMetrics || []).forEach((row) => {
+    const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+    if (row.categoryId !== categoryId || !productIds.has(row.modelId) || !selectedPeriods.has(period)) return;
+    const geo = row.geo || "Unassigned";
+    totals.set(geo, (totals.get(geo) || 0) + Number(row.shipRevenue || 0));
+  });
+
+  return [...totals.entries()]
+    .map(([geo, value]) => ({ geo, value }))
+    .filter((item) => item.value > 0)
+    .sort((a, b) => b.value - a.value);
+}
+
+function selectedCategoryGeo(categoryId, options) {
+  const stored = state.categoryGeoSelected[categoryId];
+  if (stored && options.some((item) => item.geo === stored)) return stored;
+  const fallback = options[0]?.geo || "Unassigned";
+  state.categoryGeoSelected[categoryId] = fallback;
+  return fallback;
+}
+
+function renderCategoryGeoContribution(categoryId, products) {
+  const contribution = categoryGeoContributionData(categoryId, products);
+  const selectedGeo = selectedCategoryGeo(categoryId, contribution);
+  const periodLabel = selectedCategoryPeriodsLabel(ensureSelectedCategoryPeriods());
+  return `
+    <div class="geo-contribution-grid">
+      <article class="geo-contribution-panel">
+        <div class="geo-contribution-panel-head">
+          <div>
+            <span>Ship Revenue</span>
+            <h3>Revenue Share by Geo</h3>
+            <p>${escapeHtml(periodLabel)}</p>
+          </div>
+        </div>
+        <div id="categoryGeoContributionPlot" class="plot geo-contribution-plot"></div>
+      </article>
+      <article class="geo-contribution-panel">
+        <div class="geo-contribution-panel-head">
+          <div>
+            <span>Ship Revenue</span>
+            <h3>${escapeHtml(displayLocationLabel(selectedGeo))} Revenue Trend</h3>
+            <p>All available fiscal quarters</p>
+          </div>
+          <label class="geo-contribution-select">
+            <span>Geo</span>
+            <select data-action="category-geo-select">
+              ${contribution
+                .map((item) => `<option value="${escapeAttr(item.geo)}" ${item.geo === selectedGeo ? "selected" : ""}>${escapeHtml(displayLocationLabel(item.geo))}</option>`)
+                .join("")}
+            </select>
+          </label>
+        </div>
+        <div id="categoryGeoTrendPlot" class="plot geo-contribution-plot"></div>
+      </article>
+    </div>
+  `;
+}
+
+const categoryOverviewMetricOptions = [
+  { field: "shipRevenue", label: "Ship Rev", kind: "revenue" },
+  { field: "orderRevenue", label: "Order Rev", kind: "revenue" },
+  { field: "backlogRevenue", label: "Bklg Rev", kind: "revenue" },
+  { field: "shipQty", label: "Ship Qty", kind: "quantity" },
+  { field: "orderQty", label: "Order Qty", kind: "quantity" },
+  { field: "backlogQty", label: "Bklg Qty", kind: "quantity" },
+];
+
+function categoryOverviewMetric(categoryId, panel) {
+  return state.categoryOverviewMetrics[`${categoryId}:${panel}`] || "shipRevenue";
+}
+
+function categoryOverviewMetricOption(categoryId, panel) {
+  const field = categoryOverviewMetric(categoryId, panel);
+  return categoryOverviewMetricOptions.find((option) => option.field === field) || categoryOverviewMetricOptions[0];
+}
+
+function renderCategoryMetricSettings(categoryId, panel) {
+  const current = categoryOverviewMetric(categoryId, panel);
+  return `
+    <details class="category-metric-settings">
+      <summary title="Choose metric" aria-label="Choose metric">
+        <span class="metric-toggle-icon" aria-hidden="true"><i></i><i></i></span>
+      </summary>
+      <div class="category-metric-menu">
+        ${categoryOverviewMetricOptions.map((option) => `
+          <button
+            class="${current === option.field ? "is-active" : ""}"
+            type="button"
+            data-action="category-overview-metric"
+            data-panel="${escapeAttr(panel)}"
+            data-metric="${escapeAttr(option.field)}"
+          >${escapeHtml(option.label)}</button>
+        `).join("")}
+      </div>
+    </details>
+  `;
+}
+
+function renderPerformanceOverview(categoryId, products) {
+  const categoryLabel = indexes.categories.get(categoryId)?.label || "Product";
+  const period = categoryPerformancePeriod(categoryId, products);
+  return `
+    <section class="performance-overview">
+      <div class="performance-overview-top">
+        ${renderPerformanceRevenuePanel(categoryId, products, "power", period)}
+        ${renderPerformanceRanking(categoryId, products, "ranking", `${categoryLabel} Ranking`, period)}
+      </div>
+      <div class="module-head performance-contribution-head">
+        <span>Overview Module</span>
+        <h2>Products Contribution</h2>
+      </div>
+      <div class="products-contribution-stack">
+        ${renderPerformanceContributionPanel(categoryId, products, "contribution", period)}
+        ${renderPerformanceRevenueTrendPanel(categoryId, products, "trend")}
+      </div>
+    </section>
+  `;
+}
+
+function categoryOverviewSelectedProductIds(categoryId, products) {
+  const availableIds = products.map((product) => product.id);
+  const selected = state.categoryOverviewProducts[categoryId];
+  if (!Array.isArray(selected)) return availableIds;
+  return availableIds.filter((productId) => selected.includes(productId));
+}
+
+function renderCategoryProductSelector(categoryId, products) {
+  const selectedIds = categoryOverviewSelectedProductIds(categoryId, products);
+  const hasExplicitSelection = Array.isArray(state.categoryOverviewProducts[categoryId]);
+  const checkedIds = selectedIds;
+  const allSelected = !hasExplicitSelection || selectedIds.length === products.length;
+  const groups = [
+    {
+      label: "65W Chargers",
+      products: products.filter((product) => Number(product.attributes?.wattage || 0) < 100),
+    },
+    {
+      label: "100W+ Chargers",
+      products: products.filter((product) => Number(product.attributes?.wattage || 0) >= 100),
+    },
+  ].filter((group) => group.products.length);
+  return `
+    <details class="category-product-selector category-contribution-product-selector" ${state.categoryProductSelectorOpen ? "open" : ""}>
+      <summary title="Choose chargers" aria-label="Choose chargers">
+        <span class="charger-selector-icon" aria-hidden="true"></span>
+        <span>Products</span>
+        <small>${allSelected ? "All" : `${selectedIds.length}/${products.length}`}</small>
+      </summary>
+      <div class="category-product-menu">
+        <button
+          class="category-product-all"
+          type="button"
+          data-action="category-overview-product-all"
+          aria-pressed="${allSelected}"
+        >
+          <span class="category-product-check ${allSelected ? "is-checked" : ""}" aria-hidden="true"></span>
+          <span class="category-product-all-icon" aria-hidden="true"></span>
+          <span>All products</span>
+        </button>
+        ${groups.map((group) => `
+          <section class="category-product-group">
+            <h4>${escapeHtml(group.label)}</h4>
+            ${group.products.map((product) => `
+              <label>
+                <input
+                  type="checkbox"
+                  data-action="category-overview-product"
+                  value="${escapeAttr(product.id)}"
+                  ${checkedIds.includes(product.id) ? "checked" : ""}
+                >
+                <img
+                  src="${escapeAttr(productImageItems(product)[0]?.src || "")}"
+                  alt=""
+                  loading="lazy"
+                >
+                <span>${escapeHtml(product.name)}</span>
+              </label>
+            `).join("")}
+          </section>
+        `).join("")}
+      </div>
+    </details>
+  `;
+}
+
+function categoryTrendSelectedProductIds(categoryId, products) {
+  const availableIds = products.map((product) => product.id);
+  const selected = state.categoryTrendProducts[categoryId];
+  if (!Array.isArray(selected)) return availableIds;
+  return availableIds.filter((productId) => selected.includes(productId));
+}
+
+function categoryTrendMode(categoryId) {
+  return state.categoryTrendMode[categoryId] === "breakdown" ? "breakdown" : "overall";
+}
+
+function renderCategoryTrendModeControl(categoryId) {
+  const mode = categoryTrendMode(categoryId);
+  return `
+    <div class="category-trend-mode" role="group" aria-label="Trend display mode">
+      <button
+        class="${mode === "overall" ? "is-active" : ""}"
+        type="button"
+        data-action="category-trend-mode"
+        data-trend-mode="overall"
+        title="Overall: combine selected products into one line"
+        aria-label="Show selected products as one combined line"
+        aria-pressed="${mode === "overall"}"
+      >
+        <span class="trend-mode-icon trend-mode-icon-overall" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+      <button
+        class="${mode === "breakdown" ? "is-active" : ""}"
+        type="button"
+        data-action="category-trend-mode"
+        data-trend-mode="breakdown"
+        title="Breakdown: show one line per selected product"
+        aria-label="Show one line per selected product"
+        aria-pressed="${mode === "breakdown"}"
+      >
+        <span class="trend-mode-icon trend-mode-icon-breakdown" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+    </div>
+  `;
+}
+
+function renderCategoryTrendProductSelector(categoryId, products) {
+  const selectedIds = categoryTrendSelectedProductIds(categoryId, products);
+  const hasExplicitSelection = Array.isArray(state.categoryTrendProducts[categoryId]);
+  const checkedIds = hasExplicitSelection ? selectedIds : products.map((product) => product.id);
+  const allSelected = selectedIds.length === products.length;
+  const groups = [
+    {
+      label: "65W Chargers",
+      products: products.filter((product) => Number(product.attributes?.wattage || 0) < 100),
+    },
+    {
+      label: "100W+ Chargers",
+      products: products.filter((product) => Number(product.attributes?.wattage || 0) >= 100),
+    },
+  ].filter((group) => group.products.length);
+  return `
+    <details class="category-product-selector category-trend-product-selector" ${state.categoryTrendProductSelectorOpen ? "open" : ""}>
+      <summary title="Choose products" aria-label="Choose products">
+        <span class="charger-selector-icon" aria-hidden="true"></span>
+        <span>Products</span>
+        <small>${allSelected ? "All" : `${selectedIds.length}/${products.length}`}</small>
+      </summary>
+      <div class="category-product-menu">
+        <button
+          class="category-product-all"
+          type="button"
+          data-action="category-trend-product-all"
+          aria-pressed="${allSelected}"
+        >
+          <span class="category-product-check ${allSelected ? "is-checked" : ""}" aria-hidden="true"></span>
+          <span class="category-product-all-icon" aria-hidden="true"></span>
+          <span>All products</span>
+        </button>
+        ${groups.map((group) => `
+          <section class="category-product-group">
+            <h4>${escapeHtml(group.label)}</h4>
+            ${group.products.map((product) => `
+              <label>
+                <input
+                  type="checkbox"
+                  data-action="category-trend-product"
+                  value="${escapeAttr(product.id)}"
+                  ${checkedIds.includes(product.id) ? "checked" : ""}
+                >
+                <img
+                  src="${escapeAttr(productImageItems(product)[0]?.src || "")}"
+                  alt=""
+                  loading="lazy"
+                >
+                <span>${escapeHtml(product.name)}</span>
+              </label>
+            `).join("")}
+          </section>
+        `).join("")}
+      </div>
+    </details>
+  `;
+}
+
+function renderPerformanceRevenueTrendPanel(categoryId, products, panel) {
+  const option = categoryOverviewMetricOption(categoryId, panel);
+  const metricTitle = option.kind === "quantity" ? "Quantity" : "Revenue";
+  return `
+    <article class="performance-trend-panel">
+      <header>
+        <div>
+          <span>${escapeHtml(option.label)}</span>
+          <h3>Adapter ${metricTitle} Trend <small>w/o DIB</small></h3>
+        </div>
+        <div class="performance-trend-controls">
+          ${renderCategoryTrendProductSelector(categoryId, products)}
+          ${renderCategoryTrendModeControl(categoryId)}
+          ${renderCategoryMetricSettings(categoryId, panel)}
+        </div>
+      </header>
+      <div id="performanceRevenueTrendPlot" class="performance-revenue-trend-plot" aria-label="Adapter ${metricTitle.toLowerCase()} trend"></div>
+    </article>
+  `;
+}
+
+function parseFiscalPeriodLabel(period) {
+  const match = String(period || "").match(/^(FY\d{4})(?:\s+(Q[1-4]))?$/);
+  return match ? { fiscalYear: match[1], fiscalQuarter: match[2] || null } : null;
+}
+
+function priorFiscalYear(fiscalYear) {
+  const match = String(fiscalYear || "").match(/^FY(\d{4})$/);
+  if (!match) return fiscalYear;
+  return `FY${String(Number(match[1]) - 101).padStart(4, "0")}`;
+}
+
+function availableCategoryQuarters(categoryId, products, fiscalYear) {
+  const productIds = new Set(products.map((product) => product.id));
+  return [...new Set(data.productMetrics
+    .filter((row) => row.categoryId === categoryId && productIds.has(row.modelId) && row.fiscalYear === fiscalYear)
+    .map((row) => row.fiscalQuarter))]
+    .filter(Boolean)
+    .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+}
+
+function categoryPerformancePeriod(categoryId, products) {
+  if (state.granularity === "quarter") {
+    const selected = ensureSelectedCategoryPeriods();
+    const parsed = selected.map(parseFiscalPeriodLabel).filter(Boolean);
+    const fiscalYear = parsed.at(-1)?.fiscalYear || parseFiscalPeriodLabel(selectedPeriod())?.fiscalYear;
+    const quarters = [...new Set(parsed
+      .filter((period) => period.fiscalYear === fiscalYear)
+      .map((period) => period.fiscalQuarter))]
+      .filter(Boolean)
+      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+    const priorYear = priorFiscalYear(fiscalYear);
+    const quarterText = quarters.join(" + ");
+    return {
+      fiscalYear,
+      priorYear,
+      quarters,
+      label: `${fiscalYear} ${quarterText}`,
+      priorLabel: `${priorYear} ${quarterText}`,
+    };
+  }
+
+  const fiscalYear = selectedPeriod();
+  const priorYear = priorFiscalYear(fiscalYear);
+  const quarters = availableCategoryQuarters(categoryId, products, fiscalYear);
+  const isCompleteYear = ["Q1", "Q2", "Q3", "Q4"].every((quarter) => quarters.includes(quarter));
+  return {
+    fiscalYear,
+    priorYear,
+    quarters,
+    label: isCompleteYear ? fiscalYear : `${fiscalYear} YTD`,
+    priorLabel: isCompleteYear ? priorYear : `${priorYear} YTD`,
+  };
+}
+
+function categoryOverviewRows(categoryId, productIds, fiscalYear, quarters) {
+  return data.productMetrics.filter((row) =>
+    row.categoryId === categoryId
+    && productIds.includes(row.modelId)
+    && row.fiscalYear === fiscalYear
+    && quarters.includes(row.fiscalQuarter),
+  );
+}
+
+function categoryMetricHasData(rows, field) {
+  return rows.some((row) =>
+    Object.prototype.hasOwnProperty.call(row, field)
+    && Number.isFinite(Number(row[field]))
+    && Number(row[field]) !== 0,
+  );
+}
+
+function categoryMetricTotal(rows, field) {
+  return rows.reduce((sum, row) => sum + Number(row[field] || 0), 0);
+}
+
+function categoryMetricDisplay(value, available = true, option = categoryOverviewMetricOptions[0]) {
+  if (!available) return "blank *";
+  return option.kind === "quantity" ? fmtExactNumber(value) : formatCategoryRevenueM(value);
+}
+
+function categoryMetricTrend(current, prior, available = true) {
+  if (!available) return `<span class="is-blank">blank *</span>`;
+  if (!prior) return current ? `<span class="is-new">New</span>` : `<span class="is-flat">0.0%</span>`;
+  const change = (current - prior) / Math.abs(prior);
+  const trendClass = change >= 0 ? "is-up" : "is-down";
+  return `<span class="${trendClass}">${formatSignedPercent(change)} ${change >= 0 ? "↑" : "↓"}</span>`;
+}
+
+function renderPerformanceRevenuePanel(categoryId, products, panel, period) {
+  const option = categoryOverviewMetricOption(categoryId, panel);
+  const metricTitle = option.kind === "quantity" ? "Quantity" : "Revenue";
+  const productIds = products.map((product) => product.id);
+  const currentRows = categoryOverviewRows(categoryId, productIds, period.fiscalYear, period.quarters);
+  const priorRows = categoryOverviewRows(categoryId, productIds, period.priorYear, period.quarters);
+  const available = categoryMetricHasData(currentRows, option.field);
+  const current = categoryMetricTotal(currentRows, option.field);
+  const prior = categoryMetricTotal(priorRows, option.field);
+  return `
+    <article class="performance-revenue-panel">
+      <header>
+        <div>
+          <span>${escapeHtml(option.label)}</span>
+          <h3>Adapter ${metricTitle} <small>w/o DIB</small></h3>
+        </div>
+        ${renderCategoryMetricSettings(categoryId, panel)}
+      </header>
+      <div class="performance-comparison-body">
+        <div class="performance-period-heading">
+          <span>${escapeHtml(period.label)}</span>
+          ${categoryMetricTrend(current, prior, available)}
+        </div>
+        <div class="performance-comparison-values">
+          <section>
+            <small>Current</small>
+            <strong>${categoryMetricDisplay(current, available, option)}</strong>
+          </section>
+          <section>
+            <small>${escapeHtml(period.priorLabel)}</small>
+            <strong>${categoryMetricDisplay(prior, available, option)}</strong>
+          </section>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderPerformanceContributionPanel(categoryId, products, panel, period) {
+  const option = categoryOverviewMetricOption(categoryId, panel);
+  const metricTitle = option.kind === "quantity" ? "Quantity" : "Revenue";
+  return `
+    <article class="performance-contribution-panel">
+      <header>
+        <div>
+          <span>${escapeHtml(option.label)}</span>
+          <h3>Adapter ${metricTitle} Contribution <small>w/o DIB</small></h3>
+          <p>${escapeHtml(period.label)}</p>
+        </div>
+        <div class="performance-contribution-controls">
+          ${renderCategoryProductSelector(categoryId, products)}
+          ${renderCategoryMetricSettings(categoryId, panel)}
+        </div>
+      </header>
+      <div id="performanceContributionPlot" class="performance-contribution-plot" aria-label="Adapter ${metricTitle.toLowerCase()} contribution"></div>
+    </article>
+  `;
+}
+
+function productRevenueRanking(categoryId, products, field, currentYear, priorYear, quarters) {
+  return products.map((product) => {
+    const currentRows = categoryOverviewRows(categoryId, [product.id], currentYear, quarters);
+    const priorRows = categoryOverviewRows(categoryId, [product.id], priorYear, quarters);
+    return {
+      product,
+      current: categoryMetricTotal(currentRows, field),
+      prior: categoryMetricTotal(priorRows, field),
+      available: categoryMetricHasData(currentRows, field),
+    };
+  }).sort((a, b) => b.current - a.current);
+}
+
+function renderPerformanceRanking(categoryId, products, panel, title, period) {
+  const option = categoryOverviewMetricOption(categoryId, panel);
+  const rows = productRevenueRanking(
+    categoryId,
+    products,
+    option.field,
+    period.fiscalYear,
+    period.priorYear,
+    period.quarters,
+  );
+  return `
+    <article class="performance-ranking-panel">
+      <header>
+        <div>
+          <h3>${escapeHtml(title)}</h3>
+          <span>${escapeHtml(option.label)} · ${escapeHtml(period.label)}</span>
+        </div>
+        <div class="performance-ranking-controls">
+          ${renderCategoryMetricSettings(categoryId, panel)}
+        </div>
+      </header>
+      <div class="performance-ranking-list" tabindex="0">
+        ${rows.length ? rows.map((row, index) => `
+          <div class="performance-ranking-row">
+            <span class="performance-rank">${index + 1}</span>
+            <div class="performance-rank-product">
+              <strong>${escapeHtml(row.product.name)}</strong>
+              <small>vs ${escapeHtml(period.priorLabel)}</small>
+            </div>
+            <figure class="performance-rank-image">
+              <img
+                src="${escapeAttr(productImageItems(row.product)[0]?.src || "")}"
+                alt="${escapeAttr(row.product.name)}"
+                loading="lazy"
+              />
+            </figure>
+            <span class="performance-rank-value">
+              <small>${escapeHtml(period.label)}</small>
+              <strong>${categoryMetricDisplay(row.current, row.available, option)}</strong>
+            </span>
+            <span class="performance-rank-value performance-rank-prior">
+              <small>${escapeHtml(period.priorLabel)}</small>
+              <strong>${categoryMetricDisplay(row.prior, row.available, option)}</strong>
+            </span>
+            <span class="performance-rank-trend">${categoryMetricTrend(row.current, row.prior, row.available)}</span>
+            <button
+              class="ghost-button compact-button performance-detail-button"
+              type="button"
+              data-route-category="${escapeAttr(categoryId)}"
+              data-route-product="${escapeAttr(row.product.id)}"
+            >Details</button>
+          </div>
+        `).join("") : `<div class="performance-ranking-empty">blank *</div>`}
+      </div>
+    </article>
   `;
 }
 
@@ -2166,46 +3231,6 @@ function renderProductMatrix(categoryId, visibleProducts, selectedIds, latestSum
         )}
       </section>
       ${renderProductBrowser(visibleProducts, selectedIds)}
-    </section>
-  `;
-}
-
-function renderProductPerformanceMatrix(categoryId, visibleProducts, selectedIds) {
-  const productIds = selectedIds.length ? selectedIds : visibleProducts.map((product) => product.id);
-  const selectedGeo = state.summarySelectedGeo[categoryId];
-  return `
-    <section class="product-matrix">
-      <div class="chart-grid">
-        ${chartShellWithControls(
-          "matrixRevenueSharePlot",
-          "Product Revenue Contribution",
-          selectedPeriod(),
-          renderMetricSelect("summary-revenue-metric", state.summaryRevenueMetric, revenueMetricOptions),
-        )}
-        ${chartShellWithControls(
-          "matrixUnitSharePlot",
-          "Product Quantity Contribution",
-          selectedPeriod(),
-          renderMetricSelect("summary-quantity-metric", state.summaryQuantityMetric, quantityMetricOptions),
-        )}
-        ${chartShellWithControls(
-          "matrixGeoUnitsPlot",
-          `Geo ${flowMetricLabel(state.summaryGeoMetric)} Revenue + Quantity by Product`,
-          "click a geo to filter country chart",
-          `${renderMetricSelect("summary-geo-metric", state.summaryGeoMetric, flowMetricOptions)}
-          ${renderProductCheckboxList("summary-geo-product-toggle", categoryId, visibleProducts, getSummaryProductIds("summaryGeoProducts", categoryId, productIds))}`,
-          true,
-        )}
-        ${chartShellWithControls(
-          "matrixCountryUnitsPlot",
-          `Country ${flowMetricLabel(state.summaryCountryMetric)} Revenue + Quantity by Product`,
-          selectedGeo ? `Geo: ${displayLocationLabel(selectedGeo)}` : "all geos",
-          `${renderMetricSelect("summary-country-metric", state.summaryCountryMetric, flowMetricOptions)}
-          ${renderProductCheckboxList("summary-country-product-toggle", categoryId, visibleProducts, getSummaryProductIds("summaryCountryProducts", categoryId, productIds))}
-          ${selectedGeo ? `<button class="ghost-button compact-button" type="button" data-action="clear-summary-geo">All Geo</button>` : ""}`,
-          true,
-        )}
-      </div>
     </section>
   `;
 }
@@ -3429,6 +4454,312 @@ function drawProductMatrix(categoryId, visibleProducts, selectedIds) {
   drawCategoryCountryUnitsChart("matrixCountryUnitsPlot", categoryId, getSummaryProductIds("summaryCountryProducts", categoryId, productIds), state.summaryCountryMetric, {
     geo: state.summarySelectedGeo[categoryId],
   });
+}
+
+function drawPerformanceContribution(categoryId, products) {
+  const option = categoryOverviewMetricOption(categoryId, "contribution");
+  const period = categoryPerformancePeriod(categoryId, products);
+  const selectedIds = categoryOverviewSelectedProductIds(categoryId, products);
+  const selectedProducts = products.filter((product) => selectedIds.includes(product.id));
+  const rows = productRevenueRanking(
+    categoryId,
+    selectedProducts,
+    option.field,
+    period.fiscalYear,
+    period.priorYear,
+    period.quarters,
+  ).filter((row) => row.available && row.current > 0);
+  const total = rows.reduce((sum, row) => sum + row.current, 0);
+  const totalDisplay = categoryMetricDisplay(total, rows.length > 0, option);
+  const chartLabels = rows.map((row) => row.product.name);
+  const legendLabels = rows.map((row) => `${row.product.name} · ${categoryMetricDisplay(row.current, true, option)}`);
+  drawPlot(
+    "performanceContributionPlot",
+    rows.length
+      ? [{
+          labels: legendLabels,
+          values: rows.map((row) => row.current),
+          customdata: rows.map((row) => categoryMetricDisplay(row.current, true, option)),
+          type: "pie",
+          hole: 0.54,
+          sort: false,
+          domain: { x: [0.08, 0.43], y: [0.1, 0.9] },
+          text: chartLabels,
+          textinfo: "none",
+          texttemplate: "%{text}<br>%{percent}",
+          textposition: "outside",
+          textfont: { size: 11, color: "#1f2328" },
+          automargin: true,
+          hovertemplate: `<b>%{text}</b><br>${escapeHtml(option.label)}: %{customdata}<br>Share: %{percent}<extra></extra>`,
+          marker: { colors: rows.map((_, index) => palette[index % palette.length]) },
+        }]
+      : [],
+    {
+      height: 286,
+      margin: { l: 20, r: 20, t: 10, b: 10 },
+      showlegend: true,
+      legend: {
+        orientation: "v",
+        x: 0.62,
+        xanchor: "left",
+        y: 0.5,
+        yanchor: "middle",
+        font: { size: 13, color: "#1f2328" },
+        itemwidth: 38,
+      },
+      annotations: rows.length
+        ? [{
+            x: 0.255,
+            y: 0.5,
+            xref: "paper",
+            yref: "paper",
+            text: `<b>${totalDisplay}</b><br>Total`,
+            showarrow: false,
+            align: "center",
+            xanchor: "center",
+            yanchor: "middle",
+            font: { size: 12, color: "#1f2328" },
+          }]
+        : [],
+    },
+  );
+}
+
+function drawCategoryGeoContribution(categoryId, products) {
+  const contribution = categoryGeoContributionData(categoryId, products);
+  const selectedGeo = selectedCategoryGeo(categoryId, contribution);
+  const total = contribution.reduce((sum, item) => sum + item.value, 0);
+  const colors = contribution.map((_, index) => palette[index % palette.length]);
+
+  drawPlot(
+    "categoryGeoContributionPlot",
+    contribution.length
+      ? [{
+          labels: contribution.map((item) => displayLocationLabel(item.geo)),
+          values: contribution.map((item) => item.value),
+          customdata: contribution.map((item) => formatCategoryRevenueM(item.value)),
+          type: "pie",
+          hole: 0.56,
+          sort: false,
+          texttemplate: "%{label}<br>%{percent}",
+          textposition: "outside",
+          textfont: { size: 12, color: "#1f2328" },
+          automargin: true,
+          hovertemplate: "<b>%{label}</b><br>Ship Revenue: %{customdata}<br>Share: %{percent}<extra></extra>",
+          marker: { colors, line: { color: "#fff", width: 2 } },
+        }]
+      : [],
+    {
+      height: 330,
+      margin: { l: 44, r: 44, t: 12, b: 12 },
+      showlegend: false,
+      annotations: contribution.length
+        ? [{
+            x: 0.5,
+            y: 0.5,
+            xref: "paper",
+            yref: "paper",
+            text: `<b>${formatCategoryRevenueM(total)}</b><br>Total`,
+            showarrow: false,
+            font: { size: 14, color: "#1f2328" },
+          }]
+        : [],
+    },
+  );
+
+  const contributionPlot = document.querySelector("#categoryGeoContributionPlot");
+  if (contributionPlot?.on) {
+    contributionPlot.removeAllListeners?.("plotly_click");
+    contributionPlot.on("plotly_click", (event) => {
+      const pointIndex = event.points?.[0]?.pointNumber;
+      const nextGeo = contribution[pointIndex]?.geo;
+      if (!nextGeo || nextGeo === state.categoryGeoSelected[categoryId]) return;
+      state.categoryGeoSelected[categoryId] = nextGeo;
+      render();
+    });
+  }
+
+  const productIds = new Set(products.map((product) => product.id));
+  const valuesByPeriod = new Map();
+  (data.geoMetrics || []).forEach((row) => {
+    if (
+      row.categoryId !== categoryId
+      || !productIds.has(row.modelId)
+      || (row.geo || "Unassigned") !== selectedGeo
+    ) return;
+    const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+    valuesByPeriod.set(period, (valuesByPeriod.get(period) || 0) + Number(row.shipRevenue || 0));
+  });
+  const periods = sortedPeriods([...valuesByPeriod.keys()]);
+  const values = periods.map((period) => valuesByPeriod.get(period) || 0);
+
+  drawPlot(
+    "categoryGeoTrendPlot",
+    periods.length
+      ? [{
+          x: periods,
+          y: values,
+          type: "scatter",
+          mode: "lines+markers+text",
+          name: displayLocationLabel(selectedGeo),
+          line: { color: indexes.categories.get(categoryId)?.accent || "#e2231a", width: 3 },
+          marker: { size: 8 },
+          text: values.map((value) => formatCategoryRevenueM(value)),
+          textposition: "top center",
+          textfont: { size: 10 },
+          cliponaxis: false,
+          customdata: values.map((value) => formatCategoryRevenueM(value)),
+          hovertemplate: `<b>${escapeHtml(displayLocationLabel(selectedGeo))}</b><br>%{x}<br>Ship Revenue: %{customdata}<extra></extra>`,
+        }]
+      : [],
+    {
+      height: 330,
+      margin: { l: 72, r: 28, t: 28, b: 72 },
+      showlegend: false,
+      xaxis: { title: "Fiscal Quarter", tickangle: -28, automargin: true },
+      yaxis: {
+        title: "Ship Revenue (USD)",
+        tickprefix: "$",
+        tickformat: "~s",
+        automargin: true,
+        rangemode: "tozero",
+      },
+    },
+  );
+}
+
+function drawPerformanceRevenueTrend(categoryId, products) {
+  const option = categoryOverviewMetricOption(categoryId, "trend");
+  const mode = categoryTrendMode(categoryId);
+  const selectedIds = categoryTrendSelectedProductIds(categoryId, products);
+  const selectedIdSet = new Set(selectedIds);
+  const selectedProducts = products.filter((product) => selectedIdSet.has(product.id));
+  const metricRows = data.productMetrics.filter((row) =>
+    row.categoryId === categoryId && selectedIdSet.has(row.modelId),
+  );
+  const periods = sortedPeriods([...new Set(metricRows.map((row) => `${row.fiscalYear} ${row.fiscalQuarter}`))]);
+  let traces = [];
+
+  if (mode === "breakdown") {
+    const labelPositions = [
+      "top left",
+      "top center",
+      "top right",
+      "middle left",
+      "middle right",
+      "bottom left",
+      "bottom right",
+    ];
+    traces = selectedProducts.map((product, index) => {
+      const valuesByPeriod = new Map();
+      metricRows
+        .filter((row) => row.modelId === product.id)
+        .forEach((row) => {
+          const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+          valuesByPeriod.set(period, (valuesByPeriod.get(period) || 0) + Number(row[option.field] || 0));
+        });
+      const values = periods.map((period) => valuesByPeriod.has(period) ? valuesByPeriod.get(period) : null);
+      const displayValues = values.map((value) =>
+        value === null || Math.abs(value) < Number.EPSILON
+          ? ""
+          : categoryMetricDisplay(value, true, option),
+      );
+      const isDenseBreakdown = selectedProducts.length > 4;
+      const dashStyles = ["solid", "dash", "dot", "dashdot", "longdash", "longdashdot", "solid"];
+      return {
+        x: periods,
+        y: values,
+        type: "scatter",
+        mode: isDenseBreakdown ? "lines+markers" : "lines+markers+text",
+        name: product.name,
+        line: {
+          color: palette[index % palette.length],
+          width: isDenseBreakdown ? 2.8 : 2.5,
+          dash: dashStyles[index % dashStyles.length],
+        },
+        marker: { color: palette[index % palette.length], size: 7 },
+        text: isDenseBreakdown ? undefined : displayValues,
+        textposition: isDenseBreakdown
+          ? undefined
+          : periods.map((_, periodIndex) =>
+              labelPositions[(index + periodIndex) % labelPositions.length],
+            ),
+        textfont: { size: 9, color: palette[index % palette.length] },
+        cliponaxis: false,
+        customdata: displayValues,
+        hovertemplate: `<b>${escapeHtml(product.name)}</b><br>%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
+      };
+    }).filter((trace) => trace.y.some((value) => value !== null));
+  } else {
+    const totals = new Map();
+    metricRows.forEach((row) => {
+      const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+      totals.set(period, (totals.get(period) || 0) + Number(row[option.field] || 0));
+    });
+    const values = periods.map((period) => totals.get(period) || 0);
+    const displayValues = values.map((value) => categoryMetricDisplay(value, true, option));
+    traces = periods.length
+      ? [{
+          x: periods,
+          y: values,
+          type: "scatter",
+          mode: "lines+markers+text",
+          name: "Selected products total",
+          line: { color: "#e2231a", width: 3 },
+          marker: { color: "#e2231a", size: 7 },
+          text: displayValues,
+          textposition: "top center",
+          textfont: { size: 10, color: "#991b1b" },
+          cliponaxis: false,
+          customdata: displayValues,
+          hovertemplate: `<b>Selected products total</b><br>%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
+        }]
+      : [];
+  }
+
+  drawPlot(
+    "performanceRevenueTrendPlot",
+    traces,
+    {
+      height: mode === "breakdown" ? 440 : 300,
+      margin: { l: 78, r: mode === "breakdown" ? 390 : 30, t: 40, b: mode === "breakdown" ? 92 : 64 },
+      showlegend: mode === "breakdown",
+      legend: mode === "breakdown"
+        ? {
+            orientation: "v",
+            x: 1.01,
+            xanchor: "left",
+            y: 1,
+            yanchor: "top",
+            font: { size: 11, color: "#1f2328" },
+            itemsizing: "constant",
+            tracegroupgap: 7,
+          }
+        : undefined,
+      xaxis: {
+        title: { text: "Fiscal Quarter", standoff: 20 },
+        type: "category",
+        tickmode: "array",
+        tickvals: periods,
+        ticktext: periods,
+        automargin: true,
+        tickangle: mode === "breakdown" ? -32 : 0,
+        tickfont: { size: mode === "breakdown" ? 10 : 11 },
+      },
+      yaxis: {
+        title: option.kind === "quantity" ? option.label : `${option.label} (USD)`,
+        rangemode: "tozero",
+        automargin: true,
+        autorange: true,
+      },
+      hovermode: mode === "breakdown" ? "x unified" : "closest",
+      hoverlabel: {
+        bgcolor: "#ffffff",
+        bordercolor: "#d9d4cc",
+        font: { color: "#1f2328", size: 12 },
+      },
+    },
+  );
 }
 
 function drawProductSharePie(id, summaries, field, label) {
@@ -5301,6 +6632,13 @@ function drawPlot(id, traces, layout = {}) {
 function renderGranularityButtons(active, scope) {
   const selected = ensureSelectedPeriod(scope, active);
   const options = getPeriodOptions(active);
+  const periodControl = scope === "category" && active === "quarter" && state.categoryView === "overview"
+    ? renderCategoryQuarterSelector(options)
+    : `
+      <select class="period-select" data-action="period-select" data-scope="${scope}" aria-label="${scope} period">
+        ${options.map((period) => `<option value="${escapeAttr(period)}" ${period === selected ? "selected" : ""}>${escapeHtml(period)}</option>`).join("")}
+      </select>
+    `;
   return `
     <div class="time-control">
       <div class="segmented" aria-label="${scope} time granularity">
@@ -5308,10 +6646,71 @@ function renderGranularityButtons(active, scope) {
           .map(([key, label]) => `<button type="button" class="${active === key ? "is-active" : ""}" data-action="granularity" data-scope="${scope}" data-granularity="${key}">${label}</button>`)
           .join("")}
       </div>
-      <select class="period-select" data-action="period-select" data-scope="${scope}" aria-label="${scope} period">
-        ${options.map((period) => `<option value="${escapeAttr(period)}" ${period === selected ? "selected" : ""}>${escapeHtml(period)}</option>`).join("")}
-      </select>
+      ${periodControl}
     </div>
+  `;
+}
+
+function ensureSelectedCategoryPeriods() {
+  const options = getPeriodOptions("quarter");
+  const valid = state.selectedCategoryPeriods.filter((period) => options.includes(period));
+  if (!valid.length) {
+    const fallback = options.includes(state.selectedPeriod.category)
+      ? state.selectedPeriod.category
+      : options.at(-1);
+    state.selectedCategoryPeriods = fallback ? [fallback] : [];
+  } else {
+    state.selectedCategoryPeriods = sortedPeriods(valid);
+  }
+  if (state.selectedCategoryPeriods.length) {
+    state.selectedPeriod.category = state.selectedCategoryPeriods.at(-1);
+  }
+  return state.selectedCategoryPeriods;
+}
+
+function selectedCategoryPeriodsLabel(periods) {
+  const parsed = periods.map(parseFiscalPeriodLabel).filter(Boolean);
+  const fiscalYears = [...new Set(parsed.map((period) => period.fiscalYear))];
+  if (periods.length === 1) return periods[0];
+  if (fiscalYears.length === 1) {
+    const quarters = parsed.map((period) => period.fiscalQuarter).filter(Boolean).join(" + ");
+    return `${fiscalYears[0]} ${quarters}`;
+  }
+  return `${periods.length} quarters selected`;
+}
+
+function renderCategoryQuarterSelector(options) {
+  const selected = ensureSelectedCategoryPeriods();
+  const selectedSet = new Set(selected);
+  const groups = [...new Set(options.map((period) => parseFiscalPeriodLabel(period)?.fiscalYear).filter(Boolean))].reverse();
+  return `
+    <details class="period-multi-select" ${state.categoryPeriodMenuOpen ? "open" : ""}>
+      <summary aria-label="Choose one or more fiscal quarters">
+        <span>${escapeHtml(selectedCategoryPeriodsLabel(selected))}</span>
+        <span aria-hidden="true">⌄</span>
+      </summary>
+      <div class="period-multi-menu">
+        ${groups.map((fiscalYear) => `
+          <fieldset>
+            <legend>${escapeHtml(fiscalYear)}</legend>
+            ${options
+              .filter((period) => period.startsWith(`${fiscalYear} `))
+              .reverse()
+              .map((period) => `
+                <label>
+                  <input
+                    type="checkbox"
+                    data-action="category-quarter-period"
+                    value="${escapeAttr(period)}"
+                    ${selectedSet.has(period) ? "checked" : ""}
+                  >
+                  <span>${escapeHtml(parseFiscalPeriodLabel(period)?.fiscalQuarter || period)}</span>
+                </label>
+              `).join("")}
+          </fieldset>
+        `).join("")}
+      </div>
+    </details>
   `;
 }
 
@@ -5419,6 +6818,7 @@ function handleClick(event) {
 
   const routeCategory = button.dataset.routeCategory;
   if (routeCategory) {
+    state.homeView = "landing";
     if (!button.dataset.routeProduct) state.categoryView = button.dataset.routeView || "market";
     routeTo(routeCategory, button.dataset.routeProduct);
     return;
@@ -5428,7 +6828,16 @@ function handleClick(event) {
   if (!action) return;
 
   if (action === "home") {
+    state.homeView = "landing";
     routeTo();
+  } else if (action === "power-overall") {
+    state.homeView = "overall";
+    renderHome();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  } else if (action === "power-home") {
+    state.homeView = "landing";
+    renderHome();
+    window.scrollTo({ top: 0, behavior: "instant" });
   } else if (action === "category-view") {
     state.categoryView = button.dataset.view;
     render();
@@ -5465,6 +6874,10 @@ function handleClick(event) {
     if (scope === "detail") state.detailGranularity = button.dataset.granularity;
     else state.granularity = button.dataset.granularity;
     state.selectedPeriod[scope] = getPeriodOptions(button.dataset.granularity).at(-1);
+    if (scope === "category" && button.dataset.granularity === "quarter") {
+      state.selectedCategoryPeriods = state.selectedPeriod.category ? [state.selectedPeriod.category] : [];
+    }
+    if (scope === "category") state.categoryPeriodMenuOpen = false;
     render();
   } else if (action === "reset-category-filters") {
     state.filters[state.categoryId] = {};
@@ -5479,6 +6892,26 @@ function handleClick(event) {
   } else if (action === "select-visible-models") {
     const visible = getFilteredProducts(state.categoryId);
     state.selectedModels[state.categoryId] = new Set(visible.map((product) => product.id));
+    render();
+  } else if (action === "category-overview-product-all") {
+    state.categoryProductSelectorOpen = true;
+    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
+    const selectedIds = categoryOverviewSelectedProductIds(state.categoryId, products);
+    if (selectedIds.length === products.length) state.categoryOverviewProducts[state.categoryId] = [];
+    else delete state.categoryOverviewProducts[state.categoryId];
+    render();
+  } else if (action === "category-trend-product-all") {
+    state.categoryTrendProductSelectorOpen = true;
+    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
+    const selectedIds = categoryTrendSelectedProductIds(state.categoryId, products);
+    if (selectedIds.length === products.length) state.categoryTrendProducts[state.categoryId] = [];
+    else delete state.categoryTrendProducts[state.categoryId];
+    render();
+  } else if (action === "category-overview-metric") {
+    state.categoryOverviewMetrics[`${state.categoryId}:${button.dataset.panel}`] = button.dataset.metric;
+    render();
+  } else if (action === "category-trend-mode") {
+    state.categoryTrendMode[state.categoryId] = button.dataset.trendMode === "breakdown" ? "breakdown" : "overall";
     render();
   } else if (action === "dimension") {
     state.dimension = button.dataset.dimension;
@@ -5577,8 +7010,83 @@ function industrySlideTotal(carouselId) {
 
 function handleChange(event) {
   const target = event.target;
+  if (target.dataset.action === "category-geo-select") {
+    state.categoryGeoSelected[state.categoryId] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "home-power-scope") {
+    state.homePowerScope = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-overview-product") {
+    state.categoryProductSelectorOpen = true;
+    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
+    const availableIds = products.map((product) => product.id);
+    let selectedIds = Array.isArray(state.categoryOverviewProducts[state.categoryId])
+      ? [...state.categoryOverviewProducts[state.categoryId]]
+      : [...availableIds];
+    if (target.checked) {
+      selectedIds = [...new Set([...selectedIds, target.value])];
+    } else {
+      selectedIds = selectedIds.filter((productId) => productId !== target.value);
+    }
+    const validIds = availableIds.filter((productId) => selectedIds.includes(productId));
+    if (validIds.length === availableIds.length) delete state.categoryOverviewProducts[state.categoryId];
+    else state.categoryOverviewProducts[state.categoryId] = validIds;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-trend-product") {
+    state.categoryTrendProductSelectorOpen = true;
+    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
+    const availableIds = products.map((product) => product.id);
+    let selectedIds = Array.isArray(state.categoryTrendProducts[state.categoryId])
+      ? [...state.categoryTrendProducts[state.categoryId]]
+      : [...availableIds];
+    if (target.checked) {
+      selectedIds = [...new Set([...selectedIds, target.value])];
+    } else {
+      selectedIds = selectedIds.filter((productId) => productId !== target.value);
+    }
+    const validIds = availableIds.filter((productId) => selectedIds.includes(productId));
+    if (validIds.length === availableIds.length) delete state.categoryTrendProducts[state.categoryId];
+    else state.categoryTrendProducts[state.categoryId] = validIds;
+    render();
+    return;
+  }
+  if (target.dataset.action?.startsWith("home-model-")) {
+    state.homeTopModelFilters[target.dataset.action.replace("home-model-", "")] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action?.startsWith("home-partner-")) {
+    state.homeTopPartnerFilters[target.dataset.action.replace("home-partner-", "")] = target.value;
+    render();
+    return;
+  }
   if (target.dataset.action === "period-select") {
     state.selectedPeriod[target.dataset.scope] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-quarter-period") {
+    const selectedPeriodValue = target.value;
+    const selectedFiscalYear = parseFiscalPeriodLabel(selectedPeriodValue)?.fiscalYear;
+    let selected = ensureSelectedCategoryPeriods();
+    if (target.checked) {
+      selected = selected.filter((period) => parseFiscalPeriodLabel(period)?.fiscalYear === selectedFiscalYear);
+      if (!selected.includes(selectedPeriodValue)) selected.push(selectedPeriodValue);
+    } else if (selected.length > 1) {
+      selected = selected.filter((period) => period !== selectedPeriodValue);
+    } else {
+      target.checked = true;
+      return;
+    }
+    state.selectedCategoryPeriods = sortedPeriods(selected);
+    state.selectedPeriod.category = state.selectedCategoryPeriods.at(-1);
+    state.categoryPeriodMenuOpen = true;
     render();
     return;
   }

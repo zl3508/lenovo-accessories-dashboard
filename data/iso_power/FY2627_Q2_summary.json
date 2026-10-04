@@ -1,0 +1,729 @@
+{
+  "source_file": "FY2627'Q2-ACC ISO Dashboard 9:28.xlsx",
+  "shipments": {
+    "cache": 6,
+    "source_rows": 449559,
+    "power_rows": 42225,
+    "power_filter": "KEY Category exact normalized match to 'Power'",
+    "fields": [
+      "Old Geo",
+      "Sub Geo",
+      "Country",
+      "Segment",
+      "BU Segment",
+      "BPC Segment",
+      "Sub-Segment",
+      "Category 1",
+      "Category 2",
+      "Category 3",
+      "Part Number",
+      "Model",
+      "Description",
+      "DIB",
+      "Fiscal Year",
+      "Fiscal Quarter",
+      "Distribution_channel",
+      "Ship_Rev",
+      "Ship_Qty",
+      "Ship_AUR",
+      "Non-Dock",
+      "KEY Category",
+      "Quarter",
+      "Half Year",
+      "Ship_Rev (M)",
+      "Ship_Qty (K)",
+      "YOGA(过程列)",
+      "YOGA",
+      "New Biz",
+      "Geo",
+      "New SubGeo",
+      "New Sub-Segment",
+      "New Channel",
+      "AUR"
+    ],
+    "export_fields": [
+      "Fiscal Year",
+      "Fiscal Quarter",
+      "Quarter",
+      "Half Year",
+      "Geo",
+      "New SubGeo",
+      "Country",
+      "Segment",
+      "BU Segment",
+      "BPC Segment",
+      "Sub-Segment",
+      "New Sub-Segment",
+      "Distribution_channel",
+      "New Channel",
+      "Category 1",
+      "Category 2",
+      "Category 3",
+      "KEY Category",
+      "Part Number",
+      "Model",
+      "Description",
+      "DIB",
+      "New Biz",
+      "Ship_Rev",
+      "Ship_Qty",
+      "Ship_AUR"
+    ],
+    "periods": [
+      {
+        "period": "FY2425'Q1",
+        "ship_rev": 14201109.650000008,
+        "ship_qty": 486229.0,
+        "rows": 3383,
+        "ship_aur": 29.206628255410532
+      },
+      {
+        "period": "FY2425'Q2",
+        "ship_rev": 16505162.550000016,
+        "ship_qty": 560027.0,
+        "rows": 3489,
+        "ship_aur": 29.472083578113224
+      },
+      {
+        "period": "FY2425'Q3",
+        "ship_rev": 13766757.529999973,
+        "ship_qty": 488151.0,
+        "rows": 3172,
+        "ship_aur": 28.2018423192823
+      },
+      {
+        "period": "FY2425'Q4",
+        "ship_rev": 22410922.699999996,
+        "ship_qty": 515203.0,
+        "rows": 4373,
+        "ship_aur": 43.499208467341994
+      },
+      {
+        "period": "FY2526'Q1",
+        "ship_rev": 17538791.110000007,
+        "ship_qty": 480642.0,
+        "rows": 3446,
+        "ship_aur": 36.490342312989725
+      },
+      {
+        "period": "FY2526'Q2",
+        "ship_rev": 17062051.19999999,
+        "ship_qty": 451823.0,
+        "rows": 3681,
+        "ship_aur": 37.76268848642055
+      },
+      {
+        "period": "FY2526'Q3",
+        "ship_rev": 18901939.62,
+        "ship_qty": 491118.0,
+        "rows": 4023,
+        "ship_aur": 38.48757247749014
+      },
+      {
+        "period": "FY2526'Q4",
+        "ship_rev": 21343428.849999998,
+        "ship_qty": 555665.0,
+        "rows": 4635,
+        "ship_aur": 38.410605040806956
+      },
+      {
+        "period": "FY2627'Q1",
+        "ship_rev": 25413737.000000022,
+        "ship_qty": 692653.0,
+        "rows": 4863,
+        "ship_aur": 36.69043085065685
+      },
+      {
+        "period": "FY2627'Q2",
+        "ship_rev": 31482931.391399965,
+        "ship_qty": 730162.0,
+        "rows": 7160,
+        "ship_aur": 43.1177346827142
+      }
+    ],
+    "category_2_breakdown": [
+      {
+        "category": "SBB Power Adapter",
+        "ship_rev": 104875117.7878998,
+        "ship_qty": 4216261.0,
+        "rows": 23568
+      },
+      {
+        "category": "Power Adapter",
+        "ship_rev": 72743934.9152003,
+        "ship_qty": 1076564.0,
+        "rows": 12529
+      },
+      {
+        "category": "DT DIB POWER",
+        "ship_rev": 6642351.6286999965,
+        "ship_qty": 0.0,
+        "rows": 1266
+      },
+      {
+        "category": "Power Bank",
+        "ship_rev": 6622245.652199995,
+        "ship_qty": 103480.0,
+        "rows": 2423
+      },
+      {
+        "category": "Unassigned",
+        "ship_rev": 3652535.5695000053,
+        "ship_qty": 109.0,
+        "rows": 1111
+      },
+      {
+        "category": "DIB POWER CORD",
+        "ship_rev": 2598445.4313000026,
+        "ship_qty": 0.0,
+        "rows": 892
+      },
+      {
+        "category": "POWER",
+        "ship_rev": 1315399.3557999993,
+        "ship_qty": 50606.0,
+        "rows": 261
+      },
+      {
+        "category": "Power Charger",
+        "ship_rev": 175638.69080000004,
+        "ship_qty": 4541.0,
+        "rows": 170
+      },
+      {
+        "category": "Others",
+        "ship_rev": 1162.57,
+        "ship_qty": 112.0,
+        "rows": 5
+      }
+    ],
+    "unique_part_numbers": 686,
+    "blank_part_number_rows": 0,
+    "ship_aur_validation_failures": 0,
+    "geo_breakdown": [
+      {
+        "geo": "NA",
+        "ship_rev": 83832963.51860008,
+        "ship_qty": 1450141.0,
+        "rows": 6696
+      },
+      {
+        "geo": "EMEA",
+        "ship_rev": 72829852.96069996,
+        "ship_qty": 2376677.0,
+        "rows": 23772
+      },
+      {
+        "geo": "AP",
+        "ship_rev": 37660451.41060006,
+        "ship_qty": 1519897.0,
+        "rows": 9528
+      },
+      {
+        "geo": "LA",
+        "ship_rev": 4303563.711500015,
+        "ship_qty": 104958.0,
+        "rows": 2229
+      }
+    ],
+    "top_countries_by_ship_rev": [
+      {
+        "country": "United States of America",
+        "ship_rev": 73833959.46820025,
+        "ship_qty": 1244674.0,
+        "rows": 4390
+      },
+      {
+        "country": "India",
+        "ship_rev": 13644976.733300015,
+        "ship_qty": 932352.0,
+        "rows": 737
+      },
+      {
+        "country": "United Kingdom of Great Britain and Northern Ireland",
+        "ship_rev": 10208772.704800013,
+        "ship_qty": 293215.0,
+        "rows": 1573
+      },
+      {
+        "country": "Canada",
+        "ship_rev": 9999004.050399981,
+        "ship_qty": 205467.0,
+        "rows": 2306
+      },
+      {
+        "country": "Germany",
+        "ship_rev": 9711706.341999993,
+        "ship_qty": 277838.0,
+        "rows": 2277
+      },
+      {
+        "country": "Japan",
+        "ship_rev": 7527293.569900011,
+        "ship_qty": 249325.0,
+        "rows": 1814
+      },
+      {
+        "country": "France",
+        "ship_rev": 7154482.589800012,
+        "ship_qty": 270906.0,
+        "rows": 1571
+      },
+      {
+        "country": "Australia",
+        "ship_rev": 5029363.376099998,
+        "ship_qty": 115242.0,
+        "rows": 1140
+      },
+      {
+        "country": "Spain",
+        "ship_rev": 4308888.568499999,
+        "ship_qty": 178810.0,
+        "rows": 1067
+      },
+      {
+        "country": "Sweden",
+        "ship_rev": 3758296.9146999912,
+        "ship_qty": 113831.0,
+        "rows": 1346
+      },
+      {
+        "country": "United Arab Emirates",
+        "ship_rev": 3568585.5519,
+        "ship_qty": 164287.0,
+        "rows": 335
+      },
+      {
+        "country": "Poland",
+        "ship_rev": 3467593.5835999995,
+        "ship_qty": 95884.0,
+        "rows": 548
+      },
+      {
+        "country": "Denmark",
+        "ship_rev": 3115306.8814999964,
+        "ship_qty": 96001.0,
+        "rows": 1649
+      },
+      {
+        "country": "Italy",
+        "ship_rev": 3053094.1901999977,
+        "ship_qty": 67979.0,
+        "rows": 988
+      },
+      {
+        "country": "Netherlands",
+        "ship_rev": 2671620.9848000016,
+        "ship_qty": 86934.0,
+        "rows": 1040
+      },
+      {
+        "country": "Switzerland",
+        "ship_rev": 2499832.0985999997,
+        "ship_qty": 64592.0,
+        "rows": 981
+      },
+      {
+        "country": "Belgium",
+        "ship_rev": 1947028.0825999998,
+        "ship_qty": 39348.0,
+        "rows": 797
+      },
+      {
+        "country": "Czechia",
+        "ship_rev": 1929359.2879000008,
+        "ship_qty": 110842.0,
+        "rows": 546
+      },
+      {
+        "country": "Singapore",
+        "ship_rev": 1768820.2852000017,
+        "ship_qty": 44439.0,
+        "rows": 927
+      },
+      {
+        "country": "Israel",
+        "ship_rev": 1735700.5858000002,
+        "ship_qty": 54639.0,
+        "rows": 476
+      },
+      {
+        "country": "Hong Kong",
+        "ship_rev": 1642886.2064000003,
+        "ship_qty": 71822.0,
+        "rows": 987
+      },
+      {
+        "country": "Turkey",
+        "ship_rev": 1619659.3456000013,
+        "ship_qty": 79416.0,
+        "rows": 301
+      },
+      {
+        "country": "Indonesia",
+        "ship_rev": 1597427.7984999996,
+        "ship_qty": 12125.0,
+        "rows": 330
+      },
+      {
+        "country": "Korea",
+        "ship_rev": 1478941.3605999993,
+        "ship_qty": 30138.0,
+        "rows": 807
+      },
+      {
+        "country": "Thailand",
+        "ship_rev": 1357444.009,
+        "ship_qty": 9394.0,
+        "rows": 504
+      },
+      {
+        "country": "Romania",
+        "ship_rev": 1124977.4926999994,
+        "ship_qty": 47439.0,
+        "rows": 300
+      },
+      {
+        "country": "South Africa",
+        "ship_rev": 1066873.4198,
+        "ship_qty": 39984.0,
+        "rows": 329
+      },
+      {
+        "country": "Finland",
+        "ship_rev": 1022947.0726000007,
+        "ship_qty": 24711.0,
+        "rows": 874
+      },
+      {
+        "country": "Portugal",
+        "ship_rev": 1002212.5992000003,
+        "ship_qty": 42821.0,
+        "rows": 623
+      },
+      {
+        "country": "Mexico",
+        "ship_rev": 977863.1810000003,
+        "ship_qty": 13828.0,
+        "rows": 446
+      }
+    ]
+  },
+  "partner_sales": {
+    "cache": 5,
+    "filter": "Key Category exact normalized match to 'Power'",
+    "row_count": 16301,
+    "fields": [
+      "Fiscal Year",
+      "Fiscal Qtr",
+      "Segment",
+      "BU_Segment",
+      "Channel",
+      "Distribution Channel",
+      "Geo",
+      "Category 1",
+      "Category 2",
+      "Category 3",
+      "Category 4",
+      "Model",
+      "PN",
+      "Ship CA",
+      "Ship Rev",
+      "AUR",
+      "Partner",
+      "SoldtoCustomer",
+      "SoldtoPartnerType",
+      "GA Name",
+      "DIB",
+      "AR%",
+      "PR%",
+      "Ship Rev (M)",
+      "Ship CA (K)",
+      "Key Category",
+      "New Geo",
+      "New Sub-Segment"
+    ],
+    "periods": [
+      {
+        "period": "FY2627'Q2",
+        "ship_rev": 29467588.569699947,
+        "ship_qty": 663653.0,
+        "rows": 16301
+      }
+    ],
+    "top_partners_by_rows": [
+      [
+        "Unassigned",
+        1177
+      ],
+      [
+        "Lenovo Campus",
+        53
+      ],
+      [
+        "Japan one time customer",
+        48
+      ],
+      [
+        "TD SYNNEX Service GmbH EURO PLAZA, Gebau",
+        46
+      ],
+      [
+        "Hong Kong one time customer",
+        44
+      ],
+      [
+        "Lenovo eComm DE",
+        44
+      ],
+      [
+        "Singapore one time customer",
+        43
+      ],
+      [
+        "Lenovo eComm UK",
+        43
+      ],
+      [
+        "ALSO A/S",
+        43
+      ],
+      [
+        "Korea one time customer",
+        42
+      ],
+      [
+        "ATComputers, a.s.",
+        42
+      ],
+      [
+        "SWS A.S.",
+        42
+      ],
+      [
+        "Australia  one time customer",
+        41
+      ],
+      [
+        "Lenovo eComm ES",
+        41
+      ],
+      [
+        "Lenovo eComm FR",
+        41
+      ],
+      [
+        "Lenovo eComm NL",
+        40
+      ],
+      [
+        "Api GmbH",
+        39
+      ],
+      [
+        "INGRAM MICRO Distribution GmbH",
+        39
+      ],
+      [
+        "Lenovo eComm BE",
+        38
+      ],
+      [
+        "Australia one time customer",
+        37
+      ]
+    ],
+    "partner_types_by_rows": [
+      [
+        "T1_D",
+        9496
+      ],
+      [
+        "RELM",
+        2586
+      ],
+      [
+        "TRAN",
+        1775
+      ],
+      [
+        "T1_R",
+        1625
+      ],
+      [
+        "Unassigned",
+        387
+      ],
+      [
+        "LNVO",
+        161
+      ],
+      [
+        "TRT1",
+        147
+      ],
+      [
+        "T2_R",
+        120
+      ],
+      [
+        "OEMD",
+        4
+      ]
+    ]
+  },
+  "adoption_rate": {
+    "cache": 2,
+    "filter": "Category exact match to Power / < Power > AR",
+    "row_count": 360,
+    "fields": [
+      "GEO",
+      "Segment",
+      "Category",
+      "Quarter",
+      "Rate"
+    ],
+    "sample": [
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q1",
+        "Rate": 0.0564329254565877
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q2",
+        "Rate": 0.0451924770967453
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q3",
+        "Rate": 0.0596326401102091
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q4",
+        "Rate": 0.0643664114823827
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q1",
+        "Rate": 0.0552782029796119
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q2",
+        "Rate": 0.0399442395531343
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q3",
+        "Rate": 0.0479456934301944
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q4",
+        "Rate": 0.0805173445789894
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "All Segment",
+        "Category": "< Power > AR",
+        "Quarter": "FY2627'Q1",
+        "Rate": 0.10517926559975
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q1",
+        "Rate": 0.0920527666488582
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q2",
+        "Rate": 0.0730289459311363
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q3",
+        "Rate": 0.0975006415505034
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q4",
+        "Rate": 0.0962153733829058
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q1",
+        "Rate": 0.101624201850426
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q2",
+        "Rate": 0.0614488013497177
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q3",
+        "Rate": 0.070843819482126
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2526'Q4",
+        "Rate": 0.0620978907408842
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "SMB",
+        "Category": "< Power > AR",
+        "Quarter": "FY2627'Q1",
+        "Rate": 0.0897061426621511
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "REL",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q1",
+        "Rate": 0.0550723527860761
+      },
+      {
+        "GEO": "EMEA",
+        "Segment": "REL",
+        "Category": "< Power > AR",
+        "Quarter": "FY2425'Q2",
+        "Rate": 0.0533225244518172
+      }
+    ]
+  }
+}
