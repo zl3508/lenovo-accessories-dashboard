@@ -65,6 +65,7 @@ const state = {
   homeTopPartnerFilters: { geo: "all", segment: "all", dib: "all" },
   categoryOverviewMetrics: {},
   categoryOverviewProducts: {},
+  categoryContributionGeo: {},
   categoryProductSelectorOpen: false,
   categoryTrendProducts: {},
   categoryTrendProductSelectorOpen: false,
@@ -3118,6 +3119,7 @@ function renderPerformanceContributionPanel(categoryId, products, panel, period)
           <p>${escapeHtml(period.label)}</p>
         </div>
         <div class="performance-contribution-controls">
+          ${categoryId === "adapter" ? renderContributionGeoSelector(categoryId) : ""}
           ${renderCategoryProductSelector(categoryId, products)}
           ${renderCategoryMetricSettings(categoryId, panel)}
         </div>
@@ -3125,6 +3127,47 @@ function renderPerformanceContributionPanel(categoryId, products, panel, period)
       <div id="performanceContributionPlot" class="performance-contribution-plot" aria-label="Adapter ${metricTitle.toLowerCase()} contribution"></div>
     </article>
   `;
+}
+
+function contributionGeoOptions(categoryId) {
+  return [...new Set((data.geoMetrics || [])
+    .filter((row) => row.categoryId === categoryId)
+    .map((row) => row.geo || "Unassigned"))].sort();
+}
+
+function selectedContributionGeo(categoryId) {
+  const selected = state.categoryContributionGeo[categoryId];
+  return contributionGeoOptions(categoryId).includes(selected) ? selected : "all";
+}
+
+function renderContributionGeoSelector(categoryId) {
+  const selected = selectedContributionGeo(categoryId);
+  return `
+    <label class="contribution-geo-control">
+      <span>Geo</span>
+      <select data-action="contribution-geo-select" aria-label="Contribution Geo">
+        <option value="all" ${selected === "all" ? "selected" : ""}>All Geos</option>
+        ${contributionGeoOptions(categoryId).map((geo) => `<option value="${escapeAttr(geo)}" ${selected === geo ? "selected" : ""}>${escapeHtml(geo)}</option>`).join("")}
+      </select>
+    </label>
+  `;
+}
+
+function performanceContributionRows(categoryId, products, field, period) {
+  const geo = selectedContributionGeo(categoryId);
+  if (geo === "all") {
+    return productRevenueRanking(categoryId, products, field, period.fiscalYear, period.priorYear, period.quarters)
+      .filter((row) => row.available && row.current > 0);
+  }
+  const totals = new Map();
+  for (const row of data.geoMetrics || []) {
+    if (row.categoryId !== categoryId || row.fiscalYear !== period.fiscalYear
+      || !period.quarters.includes(row.fiscalQuarter) || (row.geo || "Unassigned") !== geo) continue;
+    totals.set(row.modelId, (totals.get(row.modelId) || 0) + Number(row[field] || 0));
+  }
+  return products.map((product) => ({ product, current: totals.get(product.id) || 0 }))
+    .filter((row) => row.current > 0)
+    .sort((a, b) => b.current - a.current);
 }
 
 function productRevenueRanking(categoryId, products, field, currentYear, priorYear, quarters) {
@@ -4461,14 +4504,7 @@ function drawPerformanceContribution(categoryId, products) {
   const period = categoryPerformancePeriod(categoryId, products);
   const selectedIds = categoryOverviewSelectedProductIds(categoryId, products);
   const selectedProducts = products.filter((product) => selectedIds.includes(product.id));
-  const rows = productRevenueRanking(
-    categoryId,
-    selectedProducts,
-    option.field,
-    period.fiscalYear,
-    period.priorYear,
-    period.quarters,
-  ).filter((row) => row.available && row.current > 0);
+  const rows = performanceContributionRows(categoryId, selectedProducts, option.field, period);
   const total = rows.reduce((sum, row) => sum + row.current, 0);
   const totalDisplay = categoryMetricDisplay(total, rows.length > 0, option);
   const chartLabels = rows.map((row) => row.product.name);
@@ -7010,6 +7046,11 @@ function industrySlideTotal(carouselId) {
 
 function handleChange(event) {
   const target = event.target;
+  if (target.dataset.action === "contribution-geo-select") {
+    state.categoryContributionGeo[state.categoryId] = target.value;
+    render();
+    return;
+  }
   if (target.dataset.action === "category-geo-select") {
     state.categoryGeoSelected[state.categoryId] = target.value;
     render();
