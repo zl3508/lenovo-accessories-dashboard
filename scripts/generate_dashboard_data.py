@@ -2355,6 +2355,28 @@ def related_models(category_id: str, component: str) -> list[str]:
 
 REAL_PRODUCT_SPECS = [
     {
+        "id": "adapter_65w_usbc_dc",
+        "categoryId": "adapter",
+        "sourceFile": "Lenovo 65W USB-C DC Adapter.xlsx",
+        "name": "Lenovo 65W USB-C DC Adapter",
+        "shortName": "65W USB-C DC",
+        "image": "assets/products/adapter-65w-usbc-dc.png",
+        "listPrice": 49.99,
+        "costRatio": 0.46,
+        "attributes": {
+            "wattage": 65,
+            "wattageBand": "45W to 99W",
+            "features": ["USB-C", "DC", "vehicle"],
+            "compatibility": "laptop",
+            "powerMode": "Wired",
+            "ports": 1,
+            "portCountBand": "1 port",
+            "interfaceProtocols": ["USB-C PD"],
+            "scenarios": ["vehicle", "travel", "commercial"],
+            "isTwoInOne": False,
+        },
+    },
+    {
         "id": "adapter_multi_port_150w_gan",
         "categoryId": "adapter",
         "sourceFile": "Lenovo Multi-port USB-C 150W Laptop GaN Charger.xlsx",
@@ -2522,7 +2544,7 @@ REAL_PRODUCT_SPECS = [
         "sourceFile": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
         "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
         "shortName": "Hybrid 140W 10.2K",
-        "image": "assets/products/bank-hybrid-2in1-140w-10200.png",
+        "image": "assets/products/bank-hybrid-2in1-140w-10200-source.png",
         "listPrice": 99,
         "costRatio": 0.58,
         "attributes": {
@@ -2599,6 +2621,14 @@ def fiscal_date(fiscal_year: str, fiscal_quarter: str) -> str:
     if quarter == 3:
         return f"{start_year}-10-01"
     return f"{start_year + 1}-01-01"
+
+
+def fiscal_month_date(fiscal_year: str, month: Any) -> str:
+    """Return the calendar month represented by a Lenovo fiscal-year row."""
+    start_year = 2000 + int(str(fiscal_year)[2:4])
+    month_number = int(float(month))
+    calendar_year = start_year if month_number >= 4 else start_year + 1
+    return f"{calendar_year:04d}-{month_number:02d}-01"
 
 
 def fiscal_sort_value(fiscal_year: str, fiscal_quarter: str) -> int:
@@ -2682,6 +2712,95 @@ def real_source_available(source_dir: Path) -> bool:
     return all((source_dir / spec["sourceFile"]).exists() for spec in REAL_PRODUCT_SPECS)
 
 
+def consolidated_real_source_available(source_file: Path) -> bool:
+    return bool(pd is not None and source_file.exists() and source_file.is_file())
+
+
+def spec_for_part_number(part_number: str) -> dict[str, Any] | None:
+    pn = clean_cell(part_number).upper()
+    mappings = [
+        (("40AK0065WW",), "adapter_65w_usbc_dc"),
+        (("40AW150", "G0A6150"), "adapter_multi_port_150w_gan"),
+        (("40AW100", "G0A6100"), "adapter_multi_port_100w_gan"),
+        (("40AW0065WW", "G0A6N065WW"), "adapter_65w_usbc_ac_travel"),
+        (("4X21", "GX21"), "adapter_65w_usbc_wall"),
+        (("40AW65", "G0A665"), "adapter_65w_mini_gan"),
+        (("40AW065", "G0A6065"), "adapter_dual_usbc_65w_gan"),
+        (("40AWGN", "G0A6GN"), "adapter_gan_nano_65w"),
+        (("40AL140WWW", "G0A3140WWW"), "bank_140w_smart_laptop"),
+        (("G0A3140WNA",), "bank_hybrid_2in1_140w_10200"),
+        (("GX91V57058", "GX91V57059"), "cable_240w_usb_c_retractable"),
+    ]
+    by_id = {spec["id"]: spec for spec in REAL_PRODUCT_SPECS}
+    for prefixes, spec_id in mappings:
+        if any(pn.startswith(prefix) for prefix in prefixes):
+            return by_id[spec_id]
+    return None
+
+
+def read_consolidated_real_sales(source_file: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    df = pd.read_excel(source_file, sheet_name="Export", engine="openpyxl")
+    required = {"Fiscal Year", "Fiscal Quarter", "Month", "Part Number", "Model"}
+    missing = sorted(required.difference(df.columns))
+    if missing:
+        raise ValueError(f"Missing required columns in {source_file.name}: {', '.join(missing)}")
+    valid = (
+        df["Fiscal Year"].astype(str).str.fullmatch(r"FY\d{4}", na=False)
+        & df["Fiscal Quarter"].astype(str).str.fullmatch(r"Q[1-4]", na=False)
+        & pd.to_numeric(df["Month"], errors="coerce").between(1, 12)
+        & df["Part Number"].notna()
+    )
+    df = df[valid].copy()
+    numeric_fields = ["Order_Rev", "Ship_Rev", "Bklg_Rev", "Order_Qty", "Ship_Qty", "Bklg_Qty"]
+    for field in numeric_fields:
+        if field not in df:
+            df[field] = 0
+        df[field] = pd.to_numeric(df[field], errors="coerce").fillna(0)
+    rows: list[dict[str, Any]] = []
+    unmapped: set[str] = set()
+    for record in df.to_dict(orient="records"):
+        part_number = clean_cell(record.get("Part Number"))
+        spec = spec_for_part_number(part_number)
+        if not spec:
+            unmapped.add(part_number)
+            continue
+        fiscal_year = clean_cell(record.get("Fiscal Year"))
+        fiscal_quarter = clean_cell(record.get("Fiscal Quarter"))
+        month = int(float(record.get("Month")))
+        country = clean_cell(record.get("Country"))
+        geo = clean_cell(record.get("Geo")) or infer_geo_from_country(country)
+        rows.append({
+            "date": fiscal_month_date(fiscal_year, month),
+            "fiscalYear": fiscal_year,
+            "fiscalQuarter": fiscal_quarter,
+            "fiscalMonth": month,
+            "modelId": spec["id"],
+            "categoryId": spec["categoryId"],
+            "partNumber": part_number,
+            "sourceModel": clean_cell(record.get("Model")) or spec["name"],
+            "segment": (clean_cell(record.get("Segment")) or "Consumer").title(),
+            "geo": geo,
+            "country": country,
+            "orderRevenue": float(record["Order_Rev"]),
+            "shipRevenue": float(record["Ship_Rev"]),
+            "backlogRevenue": float(record["Bklg_Rev"]),
+            "orderQty": float(record["Order_Qty"]),
+            "shipQty": float(record["Ship_Qty"]),
+            "backlogQty": float(record["Bklg_Qty"]),
+            "shipAUR": float(record["Ship_Rev"] / record["Ship_Qty"]) if record["Ship_Qty"] else 0,
+        })
+    if unmapped:
+        raise ValueError(f"Unmapped part numbers: {', '.join(sorted(unmapped))}")
+    meta = {
+        "sourceFile": str(source_file),
+        "sourceFiles": [source_file.name],
+        "sourceMode": "consolidated_real_product_excel",
+        "sourceRows": len(rows),
+        "sourceNotes": "Observed monthly product sell-in/order data loaded from the consolidated Lenovo accessory workbook.",
+    }
+    return rows, meta
+
+
 def read_real_sales(source_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     files_read = []
@@ -2734,20 +2853,22 @@ def read_real_sales(source_dir: Path) -> tuple[list[dict[str, Any]], dict[str, A
 def build_real_periods(sales_rows: list[dict[str, Any]]) -> tuple[list[str], list[dict[str, Any]]]:
     period_map = {}
     for row in sales_rows:
-        key = (row["fiscalYear"], row["fiscalQuarter"])
+        key = (row["fiscalYear"], row["fiscalQuarter"], row.get("fiscalMonth", int(row["date"][5:7])))
         period_map[key] = row["date"]
-    ordered = sorted(period_map.items(), key=lambda item: fiscal_sort_value(item[0][0], item[0][1]))
+    ordered = sorted(period_map.items(), key=lambda item: item[1])
     periods = [date for (_, date) in ordered]
     period_meta = [
         {
             "date": date,
             "fiscalYear": fy,
             "fiscalQuarter": fq,
+            "fiscalMonth": month,
             "quarterLabel": f"{fy} {fq}",
             "yearLabel": fy,
-            "sortIndex": fiscal_sort_value(fy, fq),
+            "monthLabel": date[:7],
+            "sortIndex": int(date[:4]) * 100 + int(date[5:7]),
         }
-        for (fy, fq), date in ordered
+        for (fy, fq, month), date in ordered
     ]
     return periods, period_meta
 
@@ -2763,6 +2884,7 @@ def build_real_products_and_variants(sales_rows: list[dict[str, Any]]) -> tuple[
     variants = []
     for spec in REAL_PRODUCT_SPECS:
         part_numbers = sorted(variants_by_model.get(spec["id"], []))
+        source_models = sorted({row["sourceModel"] for row in sales_rows if row["modelId"] == spec["id"] and row["sourceModel"]})
         variant_ids = []
         for pn in part_numbers:
             variant_id = f"{spec['id']}_{safe_id(pn)}"
@@ -2782,6 +2904,9 @@ def build_real_products_and_variants(sales_rows: list[dict[str, Any]]) -> tuple[
         product = {k: v for k, v in spec.items() if k not in {"sourceFile", "costRatio"}}
         product["variants"] = variant_ids
         product["partNumbers"] = part_numbers
+        product["sourceModels"] = source_models
+        if len(source_models) == 1:
+            product["name"] = source_models[0]
         product["tags"] = [product["attributes"].get("compatibility") or product["attributes"].get("retractable"), *product["attributes"].get("features", [])][:3]
         products.append(product)
     return products, variants
@@ -2883,6 +3008,7 @@ def build_real_product_metrics(sales_rows: list[dict[str, Any]], periods: list[s
                             "month": int(date[5:7]),
                             "fiscalYear": fiscal_source["fiscalYear"],
                             "fiscalQuarter": fiscal_source["fiscalQuarter"],
+                            "fiscalMonth": fiscal_source.get("fiscalMonth", int(date[5:7])),
                             "categoryId": product["categoryId"],
                             "modelId": product["id"],
                             "variantId": variant["id"],
@@ -2954,6 +3080,7 @@ def build_real_geo_metrics(sales_rows: list[dict[str, Any]], products: list[dict
                 "month": int(date[5:7]),
                 "fiscalYear": bucket["fiscalYear"],
                 "fiscalQuarter": bucket["fiscalQuarter"],
+                "fiscalMonth": int(date[5:7]),
                 "categoryId": product["categoryId"],
                 "modelId": model_id,
                 "partNumber": part_number,
@@ -3009,9 +3136,9 @@ def seasonality_from_real_metrics(product_metrics: list[dict[str, Any]], periods
     return [max(0.65, min(1.35, total / mean_units if mean_units else 1)) for total in totals]
 
 
-def build_real_dashboard(source_dir: Path, output_dir: Path) -> dict[str, Any]:
+def build_real_dashboard(source_path: Path, output_dir: Path, consolidated: bool = False) -> dict[str, Any]:
     global PRODUCTS
-    sales_rows, source_meta = read_real_sales(source_dir)
+    sales_rows, source_meta = read_consolidated_real_sales(source_path) if consolidated else read_real_sales(source_path)
     periods, period_meta = build_real_periods(sales_rows)
     products, variants = build_real_products_and_variants(sales_rows)
     PRODUCTS = products
@@ -3152,13 +3279,20 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-xlsx", default=DEFAULT_SOURCE, help="Optional sample workbook used for month cadence.")
     parser.add_argument("--source-dir", default=DEFAULT_REAL_SOURCE_DIR, help="Directory containing real product Excel exports.")
+    parser.add_argument("--real-source-xlsx", help="Consolidated real product Excel export with a Month column.")
     parser.add_argument("--output-dir", default="data", help="Directory for static JSON outputs.")
     parser.add_argument("--allow-modeled-fallback", action="store_true", help="Allow generating the legacy modeled demo dataset when real product Excel files are unavailable.")
     args = parser.parse_args()
 
     source = Path(args.source_xlsx).expanduser() if args.source_xlsx else None
     source_dir = Path(args.source_dir).expanduser() if args.source_dir else None
+    real_source = Path(args.real_source_xlsx).expanduser() if args.real_source_xlsx else None
     output_dir = Path(args.output_dir)
+
+    if real_source and consolidated_real_source_available(real_source):
+        metadata = build_real_dashboard(real_source, output_dir, consolidated=True)
+        print(json.dumps(metadata, ensure_ascii=False, indent=2))
+        return
 
     if source_dir and real_source_available(source_dir):
         metadata = build_real_dashboard(source_dir, output_dir)

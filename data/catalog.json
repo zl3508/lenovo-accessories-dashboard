@@ -1,97 +1,348 @@
 {
-  "generatedAt": "2026-07-17T09:37:21Z",
+  "generatedAt": "2026-10-18T14:09:41Z",
   "periods": [
     "2024-04-01",
+    "2024-05-01",
+    "2024-06-01",
     "2024-07-01",
+    "2024-08-01",
+    "2024-09-01",
     "2024-10-01",
+    "2024-11-01",
+    "2024-12-01",
     "2025-01-01",
+    "2025-02-01",
+    "2025-03-01",
     "2025-04-01",
+    "2025-05-01",
+    "2025-06-01",
     "2025-07-01",
+    "2025-08-01",
+    "2025-09-01",
     "2025-10-01",
+    "2025-11-01",
+    "2025-12-01",
     "2026-01-01",
+    "2026-02-01",
+    "2026-03-01",
     "2026-04-01",
-    "2026-07-01"
+    "2026-05-01",
+    "2026-06-01",
+    "2026-07-01",
+    "2026-08-01",
+    "2026-09-01",
+    "2026-10-01"
   ],
   "periodMeta": [
     {
       "date": "2024-04-01",
       "fiscalYear": "FY2425",
       "fiscalQuarter": "Q1",
+      "fiscalMonth": 4,
       "quarterLabel": "FY2425 Q1",
       "yearLabel": "FY2425",
-      "sortIndex": 24251
+      "monthLabel": "2024-04",
+      "sortIndex": 202404
+    },
+    {
+      "date": "2024-05-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q1",
+      "fiscalMonth": 5,
+      "quarterLabel": "FY2425 Q1",
+      "yearLabel": "FY2425",
+      "monthLabel": "2024-05",
+      "sortIndex": 202405
+    },
+    {
+      "date": "2024-06-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q1",
+      "fiscalMonth": 6,
+      "quarterLabel": "FY2425 Q1",
+      "yearLabel": "FY2425",
+      "monthLabel": "2024-06",
+      "sortIndex": 202406
     },
     {
       "date": "2024-07-01",
       "fiscalYear": "FY2425",
       "fiscalQuarter": "Q2",
+      "fiscalMonth": 7,
       "quarterLabel": "FY2425 Q2",
       "yearLabel": "FY2425",
-      "sortIndex": 24252
+      "monthLabel": "2024-07",
+      "sortIndex": 202407
+    },
+    {
+      "date": "2024-08-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q2",
+      "fiscalMonth": 8,
+      "quarterLabel": "FY2425 Q2",
+      "yearLabel": "FY2425",
+      "monthLabel": "2024-08",
+      "sortIndex": 202408
+    },
+    {
+      "date": "2024-09-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q2",
+      "fiscalMonth": 9,
+      "quarterLabel": "FY2425 Q2",
+      "yearLabel": "FY2425",
+      "monthLabel": "2024-09",
+      "sortIndex": 202409
     },
     {
       "date": "2024-10-01",
       "fiscalYear": "FY2425",
       "fiscalQuarter": "Q3",
+      "fiscalMonth": 10,
       "quarterLabel": "FY2425 Q3",
       "yearLabel": "FY2425",
-      "sortIndex": 24253
+      "monthLabel": "2024-10",
+      "sortIndex": 202410
+    },
+    {
+      "date": "2024-11-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q3",
+      "fiscalMonth": 11,
+      "quarterLabel": "FY2425 Q3",
+      "yearLabel": "FY2425",
+      "monthLabel": "2024-11",
+      "sortIndex": 202411
+    },
+    {
+      "date": "2024-12-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q3",
+      "fiscalMonth": 12,
+      "quarterLabel": "FY2425 Q3",
+      "yearLabel": "FY2425",
+      "monthLabel": "2024-12",
+      "sortIndex": 202412
     },
     {
       "date": "2025-01-01",
       "fiscalYear": "FY2425",
       "fiscalQuarter": "Q4",
+      "fiscalMonth": 1,
       "quarterLabel": "FY2425 Q4",
       "yearLabel": "FY2425",
-      "sortIndex": 24254
+      "monthLabel": "2025-01",
+      "sortIndex": 202501
+    },
+    {
+      "date": "2025-02-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q4",
+      "fiscalMonth": 2,
+      "quarterLabel": "FY2425 Q4",
+      "yearLabel": "FY2425",
+      "monthLabel": "2025-02",
+      "sortIndex": 202502
+    },
+    {
+      "date": "2025-03-01",
+      "fiscalYear": "FY2425",
+      "fiscalQuarter": "Q4",
+      "fiscalMonth": 3,
+      "quarterLabel": "FY2425 Q4",
+      "yearLabel": "FY2425",
+      "monthLabel": "2025-03",
+      "sortIndex": 202503
     },
     {
       "date": "2025-04-01",
       "fiscalYear": "FY2526",
       "fiscalQuarter": "Q1",
+      "fiscalMonth": 4,
       "quarterLabel": "FY2526 Q1",
       "yearLabel": "FY2526",
-      "sortIndex": 25261
+      "monthLabel": "2025-04",
+      "sortIndex": 202504
+    },
+    {
+      "date": "2025-05-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q1",
+      "fiscalMonth": 5,
+      "quarterLabel": "FY2526 Q1",
+      "yearLabel": "FY2526",
+      "monthLabel": "2025-05",
+      "sortIndex": 202505
+    },
+    {
+      "date": "2025-06-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q1",
+      "fiscalMonth": 6,
+      "quarterLabel": "FY2526 Q1",
+      "yearLabel": "FY2526",
+      "monthLabel": "2025-06",
+      "sortIndex": 202506
     },
     {
       "date": "2025-07-01",
       "fiscalYear": "FY2526",
       "fiscalQuarter": "Q2",
+      "fiscalMonth": 7,
       "quarterLabel": "FY2526 Q2",
       "yearLabel": "FY2526",
-      "sortIndex": 25262
+      "monthLabel": "2025-07",
+      "sortIndex": 202507
+    },
+    {
+      "date": "2025-08-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q2",
+      "fiscalMonth": 8,
+      "quarterLabel": "FY2526 Q2",
+      "yearLabel": "FY2526",
+      "monthLabel": "2025-08",
+      "sortIndex": 202508
+    },
+    {
+      "date": "2025-09-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q2",
+      "fiscalMonth": 9,
+      "quarterLabel": "FY2526 Q2",
+      "yearLabel": "FY2526",
+      "monthLabel": "2025-09",
+      "sortIndex": 202509
     },
     {
       "date": "2025-10-01",
       "fiscalYear": "FY2526",
       "fiscalQuarter": "Q3",
+      "fiscalMonth": 10,
       "quarterLabel": "FY2526 Q3",
       "yearLabel": "FY2526",
-      "sortIndex": 25263
+      "monthLabel": "2025-10",
+      "sortIndex": 202510
+    },
+    {
+      "date": "2025-11-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q3",
+      "fiscalMonth": 11,
+      "quarterLabel": "FY2526 Q3",
+      "yearLabel": "FY2526",
+      "monthLabel": "2025-11",
+      "sortIndex": 202511
+    },
+    {
+      "date": "2025-12-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q3",
+      "fiscalMonth": 12,
+      "quarterLabel": "FY2526 Q3",
+      "yearLabel": "FY2526",
+      "monthLabel": "2025-12",
+      "sortIndex": 202512
     },
     {
       "date": "2026-01-01",
       "fiscalYear": "FY2526",
       "fiscalQuarter": "Q4",
+      "fiscalMonth": 1,
       "quarterLabel": "FY2526 Q4",
       "yearLabel": "FY2526",
-      "sortIndex": 25264
+      "monthLabel": "2026-01",
+      "sortIndex": 202601
+    },
+    {
+      "date": "2026-02-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q4",
+      "fiscalMonth": 2,
+      "quarterLabel": "FY2526 Q4",
+      "yearLabel": "FY2526",
+      "monthLabel": "2026-02",
+      "sortIndex": 202602
+    },
+    {
+      "date": "2026-03-01",
+      "fiscalYear": "FY2526",
+      "fiscalQuarter": "Q4",
+      "fiscalMonth": 3,
+      "quarterLabel": "FY2526 Q4",
+      "yearLabel": "FY2526",
+      "monthLabel": "2026-03",
+      "sortIndex": 202603
     },
     {
       "date": "2026-04-01",
       "fiscalYear": "FY2627",
       "fiscalQuarter": "Q1",
+      "fiscalMonth": 4,
       "quarterLabel": "FY2627 Q1",
       "yearLabel": "FY2627",
-      "sortIndex": 26271
+      "monthLabel": "2026-04",
+      "sortIndex": 202604
+    },
+    {
+      "date": "2026-05-01",
+      "fiscalYear": "FY2627",
+      "fiscalQuarter": "Q1",
+      "fiscalMonth": 5,
+      "quarterLabel": "FY2627 Q1",
+      "yearLabel": "FY2627",
+      "monthLabel": "2026-05",
+      "sortIndex": 202605
+    },
+    {
+      "date": "2026-06-01",
+      "fiscalYear": "FY2627",
+      "fiscalQuarter": "Q1",
+      "fiscalMonth": 6,
+      "quarterLabel": "FY2627 Q1",
+      "yearLabel": "FY2627",
+      "monthLabel": "2026-06",
+      "sortIndex": 202606
     },
     {
       "date": "2026-07-01",
       "fiscalYear": "FY2627",
       "fiscalQuarter": "Q2",
+      "fiscalMonth": 7,
       "quarterLabel": "FY2627 Q2",
       "yearLabel": "FY2627",
-      "sortIndex": 26272
+      "monthLabel": "2026-07",
+      "sortIndex": 202607
+    },
+    {
+      "date": "2026-08-01",
+      "fiscalYear": "FY2627",
+      "fiscalQuarter": "Q2",
+      "fiscalMonth": 8,
+      "quarterLabel": "FY2627 Q2",
+      "yearLabel": "FY2627",
+      "monthLabel": "2026-08",
+      "sortIndex": 202608
+    },
+    {
+      "date": "2026-09-01",
+      "fiscalYear": "FY2627",
+      "fiscalQuarter": "Q2",
+      "fiscalMonth": 9,
+      "quarterLabel": "FY2627 Q2",
+      "yearLabel": "FY2627",
+      "monthLabel": "2026-09",
+      "sortIndex": 202609
+    },
+    {
+      "date": "2026-10-01",
+      "fiscalYear": "FY2627",
+      "fiscalQuarter": "Q3",
+      "fiscalMonth": 10,
+      "quarterLabel": "FY2627 Q3",
+      "yearLabel": "FY2627",
+      "monthLabel": "2026-10",
+      "sortIndex": 202610
     }
   ],
   "categories": [
@@ -183,8 +434,8 @@
   "filterValues": {
     "adapter": {
       "wattageBand": [
-        "100W and above",
-        "45W to 99W"
+        "45W to 99W",
+        "100W and above"
       ],
       "compatibility": [
         "mobile",
@@ -431,2857 +682,6 @@
         "impact": "Future LA cable bundles should validate whether included charging accessories trigger local homologation evidence or packaging claims review."
       }
     ]
-  },
-  "marketStructureReports": {
-    "adapter": {
-      "title": "Adapter Market Structure",
-      "overview": {
-        "eyebrow": "Global Overview",
-        "heading": "Global Laptop Charger TAM Scope",
-        "subtitle": "Market Size, Region, Technology and Channel Summary",
-        "body": "The global laptop charger market is expanding steadily, driven by USB-C PD standardization, demand for replacement and multi-device charging, and the adoption of compact GaN designs. Market growth is global, but product preferences and channel strategies remain highly localized.",
-        "bullets": [
-          "Growth is not a short spike: the market moves from $3.45B in 2020 to $7.08B in 2032, with 2025-2032 CAGR at 6.85%.",
-          "APAC is the largest structural block at 40.21%, while North America and Europe together remain the key premium and enterprise demand pools.",
-          "65W-100W is the mainstream power band, but 100W+ becomes strategically important as USB-C PD 3.1 and high-performance laptops expand.",
-          "Online retail leads globally, but country-level execution still requires different balances of online, offline, OEM, and brand-owned channels."
-        ],
-        "metrics": [
-          {
-            "label": "Global laptop charger market",
-            "value": "$4.45B",
-            "note": "2025 market size"
-          },
-          {
-            "label": "2026 Forecast",
-            "value": "$4.94B",
-            "note": "2026 market size"
-          },
-          {
-            "label": "2026 YoY Growth",
-            "value": "10.97%",
-            "note": "2025 to 2026"
-          },
-          {
-            "label": "Top Power Segment",
-            "value": "65W-100W",
-            "note": "42.88% share"
-          }
-        ],
-        "trend": {
-          "eyebrow": "Market Size Trend",
-          "title": "2020–2032 Global Laptop Charger Market Size",
-          "note": "The market recovered after a temporary decline in 2022 and is projected to expand from $4.45 billion in 2025 to $7.08 billion by 2032. Growth remains positive throughout the forecast period, although annual growth rates vary significantly.",
-          "items": [
-            {
-              "label": "2020",
-              "value": 3450.2,
-              "valueLabel": "$3.45B"
-            },
-            {
-              "label": "2021",
-              "value": 3753.68,
-              "valueLabel": "$3.75B"
-            },
-            {
-              "label": "2022",
-              "value": 3534.93,
-              "valueLabel": "$3.53B"
-            },
-            {
-              "label": "2023",
-              "value": 3736.81,
-              "valueLabel": "$3.74B"
-            },
-            {
-              "label": "2024",
-              "value": 4156.65,
-              "valueLabel": "$4.16B"
-            },
-            {
-              "label": "2025",
-              "value": 4450,
-              "valueLabel": "$4.45B"
-            },
-            {
-              "label": "2026",
-              "value": 4938.32,
-              "valueLabel": "$4.94B"
-            },
-            {
-              "label": "2027",
-              "value": 5006.36,
-              "valueLabel": "$5.01B"
-            },
-            {
-              "label": "2028",
-              "value": 5405.9,
-              "valueLabel": "$5.41B"
-            },
-            {
-              "label": "2029",
-              "value": 5756.41,
-              "valueLabel": "$5.76B"
-            },
-            {
-              "label": "2030",
-              "value": 6254.99,
-              "valueLabel": "$6.25B"
-            },
-            {
-              "label": "2031",
-              "value": 6843.2,
-              "valueLabel": "$6.84B"
-            },
-            {
-              "label": "2032",
-              "value": 7075.9,
-              "valueLabel": "$7.08B"
-            }
-          ]
-        },
-        "conclusions": [
-          {
-            "title": "Regional Summary",
-            "body": "APAC leads the market by scale, while North America and Europe together contribute 48.82% of global value and remain important premium and enterprise markets.",
-            "summaryPoints": [
-              "APAC leads the market by scale, supported by a large consumer base and electronics manufacturing ecosystem.",
-              "North America and Europe together contribute 48.82% of global value and remain important premium and enterprise markets."
-            ],
-            "points": [
-              "APAC accounts for more than 40% of the global market, supported by its large consumer base and established electronics manufacturing ecosystem.",
-              "Regional execution remains highly differentiated, requiring localized product, pricing and channel strategies."
-            ],
-            "chart": {
-              "title": "2025 Region Share",
-              "type": "donut",
-              "center": "2025 Share",
-              "legendSide": "left",
-              "showLabels": false,
-              "items": [
-                {
-                  "label": "APAC",
-                  "value": 1789.13,
-                  "valueLabel": "$1,789.13M",
-                  "description": "China, Japan, India, South Korea and Southeast Asia"
-                },
-                {
-                  "label": "North America",
-                  "value": 1157.84,
-                  "valueLabel": "$1,157.84M",
-                  "description": "USA, Canada and Mexico"
-                },
-                {
-                  "label": "Europe",
-                  "value": 1014.58,
-                  "valueLabel": "$1,014.58M",
-                  "description": "UK, Germany, France, Italy and Spain"
-                },
-                {
-                  "label": "Latin America",
-                  "value": 288.74,
-                  "valueLabel": "$288.74M",
-                  "description": "Brazil, Mexico, Argentina and Chile"
-                },
-                {
-                  "label": "MEA",
-                  "value": 199.71,
-                  "valueLabel": "$199.71M",
-                  "description": "Middle East and Africa: Saudi Arabia, UAE, South Africa and Egypt"
-                }
-              ]
-            }
-          },
-          {
-            "title": "Product & Technology Structure Summary",
-            "body": "The market is concentrated below 100W, with the 65W–100W segment leading narrowly. GaN has reached meaningful scale, although silicon-based chargers still dominate total market value.",
-            "summaryPoints": [
-              "The market is concentrated below 100W, with the 65W–100W segment leading narrowly.",
-              "GaN has reached meaningful scale, although silicon-based chargers still dominate total market value."
-            ],
-            "points": [
-              "65W–100W represents the largest power segment, but below-65W products remain almost equally important.",
-              "Above-100W chargers remain a smaller, high-performance segment serving premium laptops, gaming devices and workstations.",
-              "GaN supports smaller and more efficient form factors, while silicon remains dominant due to cost and supply-chain maturity."
-            ],
-            "charts": [
-              {
-                "title": "2025 Power Output Share",
-                "type": "donut",
-                "center": "2025 Power",
-                "items": [
-                  {
-                    "label": "65W-100W",
-                    "value": 1908.27,
-                    "valueLabel": "$1,908.27M"
-                  },
-                  {
-                    "label": "Below 65W",
-                    "value": 1828.29,
-                    "valueLabel": "$1,828.29M"
-                  },
-                  {
-                    "label": "Above 100W",
-                    "value": 713.44,
-                    "valueLabel": "$713.44M"
-                  }
-                ]
-              },
-              {
-                "title": "2025 Technology Mix",
-                "type": "donut",
-                "center": "2025 Mix",
-                "items": [
-                  {
-                    "label": "Silicon Based",
-                    "value": 3076.26,
-                    "valueLabel": "$3,076.26M"
-                  },
-                  {
-                    "label": "GaN",
-                    "value": 1373.74,
-                    "valueLabel": "$1,373.74M"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Channel Summary",
-            "body": "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery. Offline and OEM channels remain relevant where buyers value immediate service, warranty support, product compatibility and direct brand relationships.",
-            "summaryPoints": [
-              "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery.",
-              "Offline and OEM channels remain relevant where buyers value immediate service, warranty support, compatibility and direct brand relationships."
-            ],
-            "points": [
-              "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery.",
-              "Offline and OEM channels remain relevant where buyers value immediate service, warranty support, product compatibility and direct brand relationships."
-            ],
-            "chart": {
-              "title": "2025 Channel Share",
-              "type": "donut",
-              "center": "2025 Share",
-              "legendSide": "right",
-              "showLabels": false,
-              "items": [
-                {
-                  "label": "Online Retail",
-                  "value": 2593.62,
-                  "valueLabel": "$2,593.62M",
-                  "description": "E-commerce marketplaces and brand-owned online stores"
-                },
-                {
-                  "label": "Offline Stores",
-                  "value": 1098.49,
-                  "valueLabel": "$1,098.49M",
-                  "description": "Physical electronics retailers, distributors and resellers"
-                },
-                {
-                  "label": "Direct OEM Sales",
-                  "value": 757.89,
-                  "valueLabel": "$757.89M",
-                  "description": "PC-bundled or direct sales through device manufacturers"
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "geoOverview": {
-        "eyebrow": "Country Overview",
-        "heading": "Regional Market Summary",
-        "body": "Regional demand for chargers and power banks varies significantly in market maturity, purchasing power, product preference and channel structure. Asia Pacific is the global scale and growth engine, while North America and developed Europe concentrate more premium demand for high-power, GaN and multi-device products. Latin America and other emerging markets remain more price-sensitive, with affordability, durability and channel reach playing a larger role. Across regions, USB-C adoption and the convergence of laptop and mobile-device charging are creating opportunities for localized 65W-140W product portfolios.",
-        "summaryPoints": [
-          "AP: Largest scale and fastest growth, with clear country-level differences.",
-          "NA: Mature, high-value and highly competitive, with premium demand.",
-          "EMEA: Premium and regulation-led, with stronger fast-charging demand in the Middle East.",
-          "LA: Value-driven growth, balancing affordability with fast charging and safety."
-        ],
-        "regions": [
-          {
-            "id": "NA",
-            "label": "NA",
-            "heading": "Mature Premium Market",
-            "pcChargerTam": "USD 0.68B* (2025) | 26.02% of global 65W+ scope*",
-            "characteristics": "Mature | Premium | Brand-led | High-power",
-            "representativeCountry": "USA TAM Scope: USD 0.46B* (2025) | 67.65% of NA*",
-            "detail": {
-              "eyebrow": "NA Regional Overview",
-              "title": "North America Power Adapter Market",
-              "summary": "North America is a mature and highly competitive power adapter market. Strong purchasing power supports demand for branded, high-power and portable products, while PC manufacturers retain an advantage through device compatibility and consumer trust. Success depends on premium product positioning, strong retail coverage and reliable after-sales support.",
-              "metrics": [
-                { "label": "North America Wall Charger Market", "value": "USD 2.27B", "note": "2025 market size" },
-                { "label": "Global Market Share", "value": "26.4%", "note": "2025 regional share" },
-                { "label": "Representative Country", "value": "USA", "note": "North America reference market" }
-              ],
-              "usaMetrics": [
-                { "label": "U.S. Market Size", "value": "$1.29B", "note": "2024 · Converted at 6.8 RMB/USD" },
-                { "label": "2026 Forecast", "value": "$1.40B*", "note": "Forecast using 3.9% CAGR" },
-                { "label": "2026 YoY Growth", "value": "3.9%*", "note": "Fact.MR forecast CAGR" },
-                { "label": "Top Power Segment", "value": "65W-100W*", "note": "42.9% modeled share" }
-              ],
-              "usMarketTrend": {
-                "title": "2024–2033 U.S. Power Adapter Market Size*",
-                "note": "* 2024 base converted at 6.8 RMB/USD; 2025–2033 forecast at 3.9% CAGR.",
-                "items": [
-                  { "label": "2024", "value": 1.294, "type": "Base" },
-                  { "label": "2025", "value": 1.345, "type": "Forecast" },
-                  { "label": "2026", "value": 1.397, "type": "Forecast" },
-                  { "label": "2027", "value": 1.452, "type": "Forecast" },
-                  { "label": "2028", "value": 1.508, "type": "Forecast" },
-                  { "label": "2029", "value": 1.567, "type": "Forecast" },
-                  { "label": "2030", "value": 1.628, "type": "Forecast" },
-                  { "label": "2031", "value": 1.692, "type": "Forecast" },
-                  { "label": "2032", "value": 1.758, "type": "Forecast" },
-                  { "label": "2033", "value": 1.826, "type": "Forecast" }
-                ],
-                "references": [
-                  {
-                    "title": "Lenovo PC Options Industry Analysis – Power Category Report",
-                    "note": "2024 U.S. adapter base converted to USD at 6.8 RMB/USD."
-                  },
-                  {
-                    "title": "Fact.MR / GlobeNewswire – USB Charger Market Forecast",
-                    "url": "https://www.globenewswire.com/news-release/2023/10/11/2758434/0/en/USB-Charger-Market-to-Cross-US-53-3-Billion-at-6-6-CAGR-at-2033-Fact-MR-Analysis.html",
-                    "note": "U.S. USB charger market forecast CAGR: 3.9% for 2023–2033."
-                  }
-                ]
-              },
-              "marketSize": {
-                "title": "Market Size & Growth",
-                "marketValue": "$1.29B",
-                "growth": "~10%",
-                "body": "A mature replacement market supported by additional adapters for home, office and travel. High-power USB-C adapters are benefiting from the growing convergence of laptop and mobile-device charging.",
-                "drivers": ["Replacement of damaged or lost original adapters", "Additional adapters for home, office and travel", "Growing demand for high-power USB-C charging", "Increasing need to charge multiple devices"]
-              },
-              "competitive": {
-                "title": "Competitive Landscape",
-                "body": "The U.S. market is highly competitive and fragmented. PC manufacturers retain an advantage because consumers associate original adapters with better compatibility, quality and safety. Leading third-party competitors include Anker, Belkin and other premium accessory brands. Anker held approximately 17% of the U.S. power adapter market in 2024, while the remaining market is fragmented across PC OEMs and other brands.",
-                "share": [
-                  { "label": "Anker", "value": 17, "valueLabel": "17%" },
-                  { "label": "Other Brands & PC OEMs", "value": 83, "valueLabel": "83%" }
-                ],
-                "groups": [
-                  { "title": "PC Manufacturers", "items": ["Compatibility", "Brand trust", "Official support", "PC ecosystem"] },
-                  { "title": "Third-party Brands", "items": ["Compact design", "GaN technology", "Multiple ports", "Fast charging"] }
-                ]
-              },
-              "price": {
-                "title": "Price Segmentation",
-                "body": "U.S. consumers demonstrate relatively strong purchasing power, with an average surveyed adapter purchase price of USD 65.18. The USD 40-79.99 segment is the largest price tier and represents the core opportunity for branded 65W-100W USB-C and multi-port adapters.",
-                "share": [
-                  { "label": "Below USD 40", "value": 28, "valueLabel": "28%" },
-                  { "label": "USD 40-79.99", "value": 47, "valueLabel": "47%" },
-                  { "label": "USD 80+", "value": 25, "valueLabel": "25%" }
-                ],
-                "average": "USD 65.18"
-              },
-              "channel": {
-                "title": "Channel Structure",
-                "body": "The U.S. market requires balanced online and offline channel execution. Physical stores represented 41% of surveyed purchases, while official brand websites and online e-commerce platforms accounted for 30% and 29%, respectively.",
-                "share": [
-                  { "label": "Physical Stores", "value": 41, "valueLabel": "41%" },
-                  { "label": "Official Brand Websites", "value": 30, "valueLabel": "30%" },
-                  { "label": "Online E-commerce Platforms", "value": 29, "valueLabel": "29%" }
-                ],
-                "representative": ["Amazon - core online platform", "Walmart and Target - major offline retailers", "Official Brand Websites - important direct-sales channel", "TikTok Shop and Temu - emerging e-commerce opportunities"]
-              },
-              "user": {
-                "title": "User Research Insights",
-                "body": "U.S. consumers demonstrate strong aftermarket demand, with 68% of surveyed users having purchased a power adapter themselves. Their main expectations focus on multi-device charging, intelligent safety protection and faster charging.",
-                "selfPurchase": "68%",
-                "expectations": [
-                  { "label": "Multi-device Compatibility", "value": 52, "valueLabel": "52%" },
-                  { "label": "Intelligent Safety Protection", "value": 50, "valueLabel": "50%" },
-                  { "label": "Super-fast Charging", "value": 48, "valueLabel": "48%" }
-                ],
-                "painPoints": [
-                  { "label": "Heavy or Bulky", "value": 21, "valueLabel": "21%" },
-                  { "label": "Difficult Cable Storage", "value": 21, "valueLabel": "21%" },
-                  { "label": "Slow Charging", "value": 21, "valueLabel": "21%" }
-                ],
-                "noMajorPainPoint": "32%",
-                "implication": "U.S. consumers expect one compact and reliable adapter to safely charge laptops, smartphones and other personal devices."
-              },
-              "policy": {
-                "title": "Policy & Standards",
-                "body": "Compliance is a basic requirement for entering the U.S. power adapter market. Products must meet applicable electromagnetic compatibility, electrical safety and energy-efficiency requirements. Clearly communicated compatibility, safety protection and warranty support can further strengthen consumer trust.",
-                "effectiveSummary": "FCC electromagnetic compatibility, electrical safety and energy-efficiency requirements are active entry conditions for U.S. power adapters.",
-                "futureSummary": "USB-C interoperability, efficiency and protection expectations are likely to tighten as laptop and mobile charging ecosystems converge.",
-                "items": [
-                  { "title": "FCC Compliance", "status": "Effective", "text": "Meet applicable electromagnetic compatibility requirements for the U.S. market.", "icon": "signal" },
-                  { "title": "Electrical Safety", "status": "Effective", "text": "Provide protection against overheating, overvoltage, overcurrent and short circuits.", "icon": "shield" },
-                  { "title": "Energy Efficiency", "status": "Effective", "text": "Maintain efficient power conversion and low standby power consumption.", "icon": "leaf" },
-                  { "title": "Warranty & Compatibility", "status": "Effective", "text": "Clearly communicate device compatibility, warranty coverage and after-sales support.", "icon": "check" },
-                  { "title": "USB-C Interoperability", "status": "Future direction", "text": "Track evolving interoperability expectations as USB-C becomes the common charging interface across devices.", "icon": "signal" },
-                  { "title": "Efficiency Updates", "status": "Future direction", "text": "Monitor future efficiency and standby-power requirements that may affect product design and certification.", "icon": "leaf" }
-                ]
-              },
-              "opportunity": {
-                "title": "Key Takeaway",
-                "body": "The U.S. opportunity is concentrated in branded 65W-100W USB-C power adapters priced between USD 40 and USD 80. Products should combine fast charging, compact design, multiple ports and reliable safety protection. Lenovo can leverage its PC compatibility and brand trust while strengthening execution across Amazon, major retailers and official online channels.",
-                "corePoints": [
-                  "Market: Mature, high-value and highly competitive",
-                  "Core opportunity: Branded 65W-100W USB-C adapters in the USD 40-80 range",
-                  "Winning product: Fast charging, compact form factor, multiple ports and reliable safety protection",
-                  "Lenovo advantage: PC compatibility and brand trust, supported by strong retail and online execution"
-                ],
-                "steps": ["65W-100W", "USD 40-80", "USB-C / Multi-port", "Compact & Safe", "Core NA Opportunity"]
-              }
-            }
-          },
-          {
-            "id": "EMEA",
-            "label": "EMEA",
-            "heading": "Premium & Regulation-led Market",
-            "pcChargerTam": "USD 0.72B* (2025) | 27.29% of global 65W+ scope*",
-            "characteristics": "USB-C Standardization | Safety | High ASP | Compliance",
-            "representativeCountry": "UK TAM Scope: USD 0.15B* (2025) | 21.62% of EMEA*",
-            "detail": {
-              "eyebrow": "EMEA Regional Overview",
-              "title": "EMEA Power Adapter Market",
-              "metrics": [
-                { "label": "EMEA Wall Charger Market", "value": "USD 1.83B", "note": "2025 regional market size" },
-                { "label": "2032 Forecast", "value": "USD 2.91B*", "note": "Constant-share model at 6.86% CAGR" },
-                { "label": "Europe / UK Mean Price", "value": "USD 77.05", "note": "Surveyed adapter purchase price" },
-                { "label": "Saudi Top Need", "value": "68%", "note": "Multi-port compatibility" }
-              ],
-              "marketTrend": {
-                "title": "2025–2032 EMEA Wall Charger Market Size*",
-                "note": "* Modeled from the USD 1.83B 2025 base at the 6.86% global category CAGR; not a regional source forecast.",
-                "bullets": [
-                  "Market size: USD 1.83B in 2025",
-                  "Modeled 2032 value: USD 2.91B*",
-                  "Developed Europe is premium and compliance-led, while Saudi demand is more performance-led"
-                ],
-                "items": [
-                  { "label": "2025", "value": 1.83, "type": "Base" },
-                  { "label": "2026", "value": 1.956, "type": "Forecast" },
-                  { "label": "2027", "value": 2.09, "type": "Forecast" },
-                  { "label": "2028", "value": 2.233, "type": "Forecast" },
-                  { "label": "2029", "value": 2.386, "type": "Forecast" },
-                  { "label": "2030", "value": 2.55, "type": "Forecast" },
-                  { "label": "2031", "value": 2.725, "type": "Forecast" },
-                  { "label": "2032", "value": 2.912, "type": "Forecast" }
-                ],
-                "references": [
-                  { "title": "Lenovo PC Options Industry Analysis – Power Category Report", "note": "Regional base, UK market structure and channel observations." },
-                  { "title": "Ipsos PC Accessories User Research – Power Adapters", "note": "Europe/UK and Saudi price, feature and channel indicators." }
-                ]
-              },
-              "competitive": {
-                "title": "Competitive Landscape",
-                "summaryPoints": [
-                  "Developed Europe rewards certification, stable output and trusted brand support",
-                  "Saudi competition is more performance-led, with multi-port demand at 68%",
-                  "Premium accessory brands compete through compact GaN design, power and retail execution"
-                ],
-                "body": "EMEA is not a single competitive market. Developed Europe supports premium pricing but expects certification, stable output and service credibility. Saudi Arabia shows stronger upgrade demand around multi-port and fast charging, creating room for performance-focused third-party brands.",
-                "detailPoints": [
-                  "Europe / UK has the highest surveyed mean adapter price at USD 77.05.",
-                  "Stable output is the strongest Europe / UK feature signal at 62%.",
-                  "Saudi Arabia is led by multi-port compatibility at 68% and protection at 63%."
-                ],
-                "chart": {
-                  "title": "Europe / UK Product Signals",
-                  "type": "bar",
-                  "suffix": "%",
-                  "axisTitle": "Reported Share",
-                  "hoverLabel": "Reported share",
-                  "items": [
-                    { "label": "Stable output", "value": 62, "valueLabel": "62%" },
-                    { "label": "Fast charging", "value": 58, "valueLabel": "58%" },
-                    { "label": "Multi-port", "value": 56, "valueLabel": "56%" },
-                    { "label": "Protection", "value": 52, "valueLabel": "52%" }
-                  ]
-                }
-              },
-              "price": {
-                "title": "Price Positioning",
-                "summaryPoints": [
-                  "Europe / UK mean surveyed price: USD 77.05",
-                  "Saudi mean surveyed price: USD 75.76",
-                  "Both representative markets can support premium, high-confidence product positioning"
-                ],
-                "body": "Europe / UK and Saudi Arabia both show high surveyed purchase prices, but the value story differs. Europe supports premium pricing through reliability and compliance, while Saudi buyers attach more value to multi-device performance and fast-charging upgrades.",
-                "detailPoints": [
-                  "Avoid one EMEA-wide price architecture; localize the value proposition by market.",
-                  "Europe should connect price to stability, certification and durable design.",
-                  "Saudi Arabia should connect price to ports, charging speed and protection."
-                ],
-                "chart": {
-                  "title": "Mean Surveyed Adapter Price",
-                  "type": "bar",
-                  "prefix": "$",
-                  "axisTitle": "USD",
-                  "hoverLabel": "Mean price",
-                  "items": [
-                    { "label": "Europe / UK", "value": 77.05, "valueLabel": "$77.05" },
-                    { "label": "Saudi Arabia", "value": 75.76, "valueLabel": "$75.76" }
-                  ]
-                }
-              },
-              "channel": {
-                "title": "Channel Structure",
-                "summaryPoints": [
-                  "Europe / UK is balanced across physical, brand-direct and ecommerce channels",
-                  "Saudi physical retail leads at 41%",
-                  "Local distributor and retail execution remain important alongside online content"
-                ],
-                "body": "Channel structure differs inside EMEA. Europe / UK is almost evenly split across physical stores, official brand websites and online commerce. Saudi Arabia is more retail-led, so product communication must work both on shelf and online.",
-                "detailPoints": [
-                  "Europe / UK: physical 35%, brand website 33%, online commerce 32%.",
-                  "Saudi Arabia: physical 41%, online commerce 32%, brand website 26%.",
-                  "A single online-only route would miss meaningful retail and service-led demand."
-                ],
-                "charts": [
-                  {
-                    "title": "Europe / UK Channel Mix",
-                    "type": "donut",
-                    "center": "Europe / UK",
-                    "items": [
-                      { "label": "Physical", "value": 35, "valueLabel": "35%" },
-                      { "label": "Brand Website", "value": 33, "valueLabel": "33%" },
-                      { "label": "Online", "value": 32, "valueLabel": "32%" }
-                    ]
-                  },
-                  {
-                    "title": "Saudi Channel Mix",
-                    "type": "donut",
-                    "center": "Saudi",
-                    "items": [
-                      { "label": "Physical", "value": 41, "valueLabel": "41%" },
-                      { "label": "Online", "value": 32, "valueLabel": "32%" },
-                      { "label": "Brand Website", "value": 26, "valueLabel": "26%" }
-                    ]
-                  }
-                ]
-              },
-              "user": {
-                "title": "User Research Insights",
-                "summaryPoints": [
-                  "Europe / UK users prioritize stable output, fast charging and multi-port compatibility",
-                  "Saudi users prioritize multi-port use, safety protection and charging speed",
-                  "Premium pricing is supported by reliability and performance rather than wattage alone"
-                ],
-                "rows": [
-                  {
-                    "title": "Europe / UK Top Needs",
-                    "items": [
-                      { "label": "Stable Output", "value": 62, "valueLabel": "62%" },
-                      { "label": "Fast Charging", "value": 58, "valueLabel": "58%" },
-                      { "label": "Multi-port", "value": 56, "valueLabel": "56%" }
-                    ],
-                    "conclusion": "Reliability, charging speed and device coverage are similarly important in developed Europe."
-                  },
-                  {
-                    "title": "Saudi Top Needs",
-                    "items": [
-                      { "label": "Multi-port", "value": 68, "valueLabel": "68%" },
-                      { "label": "Protection", "value": 63, "valueLabel": "63%" },
-                      { "label": "Fast Charging", "value": 56, "valueLabel": "56%" }
-                    ],
-                    "conclusion": "Saudi demand is centered on multi-device convenience, safety and fast-charging upgrades."
-                  }
-                ]
-              },
-              "policy": {
-                "title": "Policy & Standards",
-                "effectiveSummary": "EU laptop charger rules now reinforce USB-C interoperability, harmonized fast charging, safety and clear charging information.",
-                "futureSummary": "Portfolio governance should track efficiency, sustainability, labeling and local compliance requirements across Europe and the Middle East.",
-                "items": [
-                  { "title": "EU Common Charger Directive", "status": "Effective", "url": "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_ro", "text": "Laptops entered the EU common-charger scope on 28 April 2026, reinforcing USB-C and harmonized fast charging." },
-                  { "title": "European Safety & Charging Disclosure", "status": "Effective", "text": "Product claims, charging characteristics, compatibility and certification evidence must be clear across packaging and ecommerce." },
-                  { "title": "Saudi Market Localization", "status": "Effective", "text": "Product, plug, labeling and importer requirements need market-specific review before launch." },
-                  { "title": "Efficiency & Sustainability Tracking", "status": "Future direction", "text": "Future portfolio planning should reserve space for tighter efficiency, material and lifecycle disclosure requirements." }
-                ]
-              },
-              "opportunity": {
-                "corePoints": [
-                  "Market: Premium, regulation-led and internally diverse",
-                  "Europe opportunity: Certified 65W-100W USB-C with stable output and service credibility",
-                  "Saudi opportunity: Multi-port, fast-charging products with visible protection",
-                  "Lenovo advantage: PC compatibility, trusted safety and localized channel execution"
-                ]
-              }
-            }
-          },
-          {
-            "id": "AP",
-            "label": "AP",
-            "heading": "Largest & Most Diverse Market",
-            "pcChargerTam": "USD 1.05B* (2025) | 40.21% of global 65W+ scope*",
-            "characteristics": "Largest Scale | Diverse Demand | Localization | Price Sensitivity",
-            "representativeCountry": "Japan TAM Scope: USD 0.19B* (2025) | 18.27% of AP*",
-            "detail": {
-              "eyebrow": "AP Regional Overview",
-              "title": "Asia Pacific Power Adapter Market",
-              "metrics": [
-                { "label": "AP Wall Charger Market", "value": "USD 3.40B", "note": "2025 regional market size" },
-                { "label": "2032 Forecast", "value": "USD 5.41B*", "note": "Constant-share model at 6.86% CAGR" },
-                { "label": "Japan Safety Priority", "value": "58%", "note": "Top surveyed product signal" },
-                { "label": "India Fast Charging", "value": "79%", "note": "Strongest surveyed feature signal" }
-              ],
-              "marketTrend": {
-                "title": "2025–2032 AP Wall Charger Market Size*",
-                "note": "* Modeled from the USD 3.40B 2025 base at the 6.86% global category CAGR; not a regional source forecast.",
-                "bullets": [
-                  "Market size: USD 3.40B in 2025",
-                  "Modeled 2032 value: USD 5.41B*",
-                  "Japan is reliability-led, India is feature-intensive and Indonesia is value-sensitive"
-                ],
-                "items": [
-                  { "label": "2025", "value": 3.4, "type": "Base" },
-                  { "label": "2026", "value": 3.633, "type": "Forecast" },
-                  { "label": "2027", "value": 3.882, "type": "Forecast" },
-                  { "label": "2028", "value": 4.149, "type": "Forecast" },
-                  { "label": "2029", "value": 4.433, "type": "Forecast" },
-                  { "label": "2030", "value": 4.738, "type": "Forecast" },
-                  { "label": "2031", "value": 5.063, "type": "Forecast" },
-                  { "label": "2032", "value": 5.41, "type": "Forecast" }
-                ],
-                "references": [
-                  { "title": "Lenovo PC Options Industry Analysis – Power Category Report", "note": "Japan, India and Indonesia market and competitor observations." },
-                  { "title": "Ipsos PC Accessories User Research – Power Adapters", "note": "Japan and India price, feature and channel indicators." }
-                ]
-              },
-              "competitive": {
-                "title": "Competitive Landscape",
-                "summaryPoints": [
-                  "Japan has strong local brands and intense competition around compactness and reliability",
-                  "Anker represents approximately 18% of the Japan adapter market",
-                  "India and Indonesia require stronger value architecture and localized channel execution"
-                ],
-                "body": "AP combines mature, design-sensitive markets with fast-growing value markets. Japan rewards compactness, safety and refined execution. India rewards brand trust and technical clarity. Indonesia is highly price-sensitive, requiring disciplined price bands and local distribution.",
-                "detailPoints": [
-                  "Japan's leading accessory brands compete through design, trust and direct ecommerce execution.",
-                  "India gives unusually high weight to brand at 75% and fast charging at 79%.",
-                  "Indonesia should not be approached with a Japan-style premium-only portfolio."
-                ],
-                "chart": {
-                  "title": "Japan Adapter Brand Structure",
-                  "type": "donut",
-                  "center": "Japan",
-                  "items": [
-                    { "label": "Anker", "value": 18, "valueLabel": "18%" },
-                    { "label": "Other Brands", "value": 82, "valueLabel": "82%" }
-                  ]
-                }
-              },
-              "price": {
-                "title": "Price Positioning",
-                "summaryPoints": [
-                  "Japan mean surveyed price: USD 35.04",
-                  "India mean surveyed price: USD 41.10",
-                  "Localized product and price ladders are essential across AP"
-                ],
-                "body": "AP price positioning must reflect country maturity and use case. Japan is price restrained despite high expectations for refinement and safety. India accepts a somewhat higher mean price when brand, USB-C compatibility and charging performance are credible.",
-                "detailPoints": [
-                  "Japan should prioritize compact, reliable 45W-100W products rather than wattage escalation alone.",
-                  "India needs a value proposition that combines brand assurance with visible feature intensity.",
-                  "Indonesia needs selected price points, local promotions and strict portfolio discipline."
-                ],
-                "chart": {
-                  "title": "Mean Surveyed Adapter Price",
-                  "type": "bar",
-                  "prefix": "$",
-                  "axisTitle": "USD",
-                  "hoverLabel": "Mean price",
-                  "items": [
-                    { "label": "Japan", "value": 35.04, "valueLabel": "$35.04" },
-                    { "label": "India", "value": 41.1, "valueLabel": "$41.10" }
-                  ]
-                }
-              },
-              "channel": {
-                "title": "Channel Structure",
-                "summaryPoints": [
-                  "Japan online commerce leads at 47%",
-                  "India online commerce leads at 53%",
-                  "Indonesia depends more heavily on local agents, marketplaces and promotion calendars"
-                ],
-                "body": "Online commerce is central in Japan and India, but the execution model differs. Japan combines direct Amazon and Rakuten management with local retail credibility. India needs high-quality ecommerce specifications and trust signals. Indonesia relies more on local agents and marketplace promotion.",
-                "detailPoints": [
-                  "Japan: online 47%, physical 33%, brand website 20%.",
-                  "India: online 53%, physical 29%, brand website 18%.",
-                  "Country-specific retailer, agent and promotion plans are required across AP."
-                ],
-                "charts": [
-                  {
-                    "title": "Japan Channel Mix",
-                    "type": "donut",
-                    "center": "Japan",
-                    "items": [
-                      { "label": "Online", "value": 47, "valueLabel": "47%" },
-                      { "label": "Physical", "value": 33, "valueLabel": "33%" },
-                      { "label": "Brand Website", "value": 20, "valueLabel": "20%" }
-                    ]
-                  },
-                  {
-                    "title": "India Channel Mix",
-                    "type": "donut",
-                    "center": "India",
-                    "items": [
-                      { "label": "Online", "value": 53, "valueLabel": "53%" },
-                      { "label": "Physical", "value": 29, "valueLabel": "29%" },
-                      { "label": "Brand Website", "value": 18, "valueLabel": "18%" }
-                    ]
-                  }
-                ]
-              },
-              "user": {
-                "title": "User Research Insights",
-                "summaryPoints": [
-                  "Japan prioritizes protection, stable output and compact multi-device use",
-                  "India prioritizes fast charging, brand confidence and USB-C clarity",
-                  "AP demand must be localized by country rather than managed as one common portfolio"
-                ],
-                "rows": [
-                  {
-                    "title": "Japan Top Needs",
-                    "items": [
-                      { "label": "Protection", "value": 58, "valueLabel": "58%" },
-                      { "label": "Stable Output", "value": 56, "valueLabel": "56%" },
-                      { "label": "Multi-port", "value": 52, "valueLabel": "52%" }
-                    ],
-                    "conclusion": "Japan rewards safe, stable and compact charging more than aggressive wattage claims."
-                  },
-                  {
-                    "title": "India Top Needs",
-                    "items": [
-                      { "label": "Fast Charging", "value": 79, "valueLabel": "79%" },
-                      { "label": "Brand", "value": 75, "valueLabel": "75%" },
-                      { "label": "USB-C", "value": 65, "valueLabel": "65%" }
-                    ],
-                    "conclusion": "India buyers compare technical confidence and brand reassurance before purchase."
-                  }
-                ]
-              },
-              "policy": {
-                "title": "Policy & Standards",
-                "effectiveSummary": "Japan PSE and Australia MEPS requirements make safety, efficiency, importer responsibility and documentation launch-critical.",
-                "futureSummary": "RCM artwork governance and changing product-scope requirements should be reviewed early for future AP launches.",
-                "items": [
-                  { "title": "Japan PSE Framework", "status": "Effective", "url": "https://www.meti.go.jp/english/policy/economy/consumer/pse/index.html", "text": "Applicable AC/DC power supplies require technical compliance, inspection, importer responsibility and PSE labeling readiness." },
-                  { "title": "Australia External Power Supply MEPS", "status": "Effective", "url": "https://www.energyrating.gov.au/industry-information/products/external-power-supplies", "text": "Covered external power supplies require minimum energy performance and supporting efficiency evidence." },
-                  { "title": "Australia / New Zealand RCM", "status": "Future direction", "url": "https://www.eess.gov.au/rcm/marking-of-electrical-equipment/", "text": "Packaging and product artwork should reserve RCM placement and responsible-supplier traceability where applicable." },
-                  { "title": "Country Scope & Label Review", "status": "Future direction", "text": "India and Indonesia launches should include early local certification, importer, plug, label and marketplace checks." }
-                ]
-              },
-              "opportunity": {
-                "corePoints": [
-                  "Market: Largest regional scale with strong country-level divergence",
-                  "Japan opportunity: Compact 45W-100W USB-C with safety and stable output",
-                  "India / Indonesia opportunity: Trusted fast charging with disciplined value architecture",
-                  "Lenovo advantage: Localized PC compatibility, certification and channel execution"
-                ]
-              }
-            }
-          },
-          {
-            "id": "LA",
-            "label": "LA",
-            "heading": "Value-driven Growth Market",
-            "pcChargerTam": "USD 0.17B* (2025) | 6.49% of global 65W+ scope*",
-            "characteristics": "Value-driven | Price-sensitive | Fast Charging | Multi-port",
-            "representativeCountry": "Brazil TAM Scope: USD 0.06B* (2025) | 34.62% of LA*",
-            "detail": {
-              "eyebrow": "LA Regional Overview",
-              "title": "Latin America Power Adapter Market",
-              "metrics": [
-                { "label": "LA Laptop Charger Market", "value": "USD 0.58B", "note": "2025 regional market size" },
-                { "label": "2032 Forecast", "value": "USD 0.92B*", "note": "Constant-share model at 6.86% CAGR" },
-                { "label": "BR + MEX Mean Price", "value": "USD 36.45", "note": "Surveyed adapter purchase price" },
-                { "label": "Fast Charging Priority", "value": "66%", "note": "Top surveyed feature signal" }
-              ],
-              "marketTrend": {
-                "title": "2025–2032 LA Laptop Charger Market Size*",
-                "note": "* Modeled from the USD 0.58B 2025 base at the 6.86% global category CAGR; not a regional source forecast.",
-                "bullets": [
-                  "Market size: USD 0.58B in 2025",
-                  "Modeled 2032 value: USD 0.92B*",
-                  "Demand is value-led but still requires fast charging, safety and portability"
-                ],
-                "items": [
-                  { "label": "2025", "value": 0.58, "type": "Base" },
-                  { "label": "2026", "value": 0.62, "type": "Forecast" },
-                  { "label": "2027", "value": 0.662, "type": "Forecast" },
-                  { "label": "2028", "value": 0.708, "type": "Forecast" },
-                  { "label": "2029", "value": 0.756, "type": "Forecast" },
-                  { "label": "2030", "value": 0.808, "type": "Forecast" },
-                  { "label": "2031", "value": 0.864, "type": "Forecast" },
-                  { "label": "2032", "value": 0.923, "type": "Forecast" }
-                ],
-                "references": [
-                  { "title": "Lenovo PC Options Industry Analysis – Power Category Report", "note": "Regional base and Brazil/Mexico market observations." },
-                  { "title": "Ipsos PC Accessories User Research – Power Adapters", "note": "Brazil/Mexico price, feature, motivation and channel indicators." }
-                ]
-              },
-              "competitive": {
-                "title": "Competitive Landscape",
-                "summaryPoints": [
-                  "The aftermarket is fragmented and highly sensitive to visible value",
-                  "Fast charging and protection remain required even at lower price points",
-                  "Compact USB-C products compete best when technical claims are easy to verify"
-                ],
-                "body": "Brazil and Mexico are value-driven markets where low price alone is insufficient. Buyers still expect credible charging speed, safety protection and multi-device coverage. Lenovo must make technical proof and compatibility visible while controlling entry price.",
-                "detailPoints": [
-                  "Travel and mobile work are the strongest purchase motivation at 44%.",
-                  "Convenient charging locations reach 38%, while multi-device demand reaches 34%.",
-                  "Local ecommerce execution and certification can differentiate branded products from fragmented value supply."
-                ],
-                "chart": {
-                  "title": "BR + MEX Purchase Motivations",
-                  "type": "bar",
-                  "suffix": "%",
-                  "axisTitle": "Reported Share",
-                  "hoverLabel": "Reported share",
-                  "items": [
-                    { "label": "Travel / mobile work", "value": 44, "valueLabel": "44%" },
-                    { "label": "Convenient locations", "value": 38, "valueLabel": "38%" },
-                    { "label": "Multi-device", "value": 34, "valueLabel": "34%" },
-                    { "label": "Original lacks fast charge", "value": 11, "valueLabel": "11%" }
-                  ]
-                }
-              },
-              "price": {
-                "title": "Price Segmentation",
-                "summaryPoints": [
-                  "Mean surveyed purchase price: USD 36.45",
-                  "69% of reported purchases are below USD 40",
-                  "USD 20-39.99 is the core price band at 49%"
-                ],
-                "body": "The Brazil/Mexico market is concentrated below USD 40, but the product still needs credible charging speed and protection. The core opportunity is a portable, branded USB-C adapter with clear performance proof in the USD 20-39.99 band.",
-                "detailPoints": [
-                  "Under USD 20 represents 20% of reported purchases.",
-                  "USD 20-39.99 is the largest band at 49%.",
-                  "Higher tiers should be reserved for visible upgrades in power, ports and portability."
-                ],
-                "chart": {
-                  "title": "BR + MEX Price Band",
-                  "type": "donut",
-                  "center": "Price Mix",
-                  "items": [
-                    { "label": "Under $20", "value": 20, "valueLabel": "20%" },
-                    { "label": "$20-$39.99", "value": 49, "valueLabel": "49%" },
-                    { "label": "$40-$59.99", "value": 21, "valueLabel": "21%" },
-                    { "label": "$60+", "value": 11, "valueLabel": "11%" }
-                  ]
-                }
-              },
-              "channel": {
-                "title": "Channel Structure",
-                "summaryPoints": [
-                  "Online ecommerce leads at 48%",
-                  "Physical stores remain meaningful at 31%",
-                  "Product pages need clear wattage, safety and compatibility proof"
-                ],
-                "body": "Online commerce is the leading Brazil/Mexico channel, but nearly one-third of purchases still come through physical stores. Portfolio planning therefore needs strong ecommerce content and locally compliant retail-ready packaging.",
-                "detailPoints": [
-                  "Online ecommerce accounts for 48% of surveyed purchases.",
-                  "Physical stores account for 31%, while official brand websites account for 21%.",
-                  "Local marketplaces, distributors and after-sales confidence remain important execution factors."
-                ],
-                "chart": {
-                  "title": "BR + MEX Channel Mix",
-                  "type": "donut",
-                  "center": "Channel Mix",
-                  "items": [
-                    { "label": "Online", "value": 48, "valueLabel": "48%" },
-                    { "label": "Physical", "value": 31, "valueLabel": "31%" },
-                    { "label": "Brand Website", "value": 21, "valueLabel": "21%" }
-                  ]
-                }
-              },
-              "user": {
-                "title": "User Research Insights",
-                "summaryPoints": [
-                  "63% of surveyed Brazil/Mexico users purchased an adapter themselves",
-                  "Top needs are fast charging, protection and multi-port compatibility",
-                  "Travel and mobile work make portability a central product requirement"
-                ],
-                "rows": [
-                  {
-                    "title": "Top Needs",
-                    "items": [
-                      { "label": "Fast Charging", "value": 66, "valueLabel": "66%" },
-                      { "label": "Protection", "value": 60, "valueLabel": "60%" },
-                      { "label": "Multi-port", "value": 59, "valueLabel": "59%" }
-                    ],
-                    "conclusion": "Value-tier products still need credible charging speed, safety and device coverage."
-                  },
-                  {
-                    "title": "Buying Context",
-                    "items": [
-                      { "label": "Self-purchased", "value": 63, "valueLabel": "63%" },
-                      { "label": "Stable Output", "value": 47, "valueLabel": "47%" },
-                      { "label": "Travel / Mobile Work", "value": 44, "valueLabel": "44%" }
-                    ],
-                    "conclusion": "Portable, reliable adapters fit the region's self-directed and mobile purchase context."
-                  }
-                ]
-              },
-              "policy": {
-                "title": "Policy & Standards",
-                "effectiveSummary": "Mexico energy-efficiency rules and Brazil Anatel conformity requirements make testing, labeling and local certification launch-critical.",
-                "futureSummary": "Future planning should monitor scope updates and reserve time for local homologation, importer and packaging changes.",
-                "items": [
-                  { "title": "Mexico NOM-029-ENER-2017", "status": "Effective", "url": "https://platiica.economia.gob.mx/normalizacion/nom-029-ener-2017/", "text": "External power supplies require energy-efficiency evidence, test methods, marking and label readiness." },
-                  { "title": "Brazil Anatel Act 5155", "status": "Effective", "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155", "text": "Covered chargers require conformity assessment, mechanical and thermal safety tests, and certification traceability." },
-                  { "title": "Local Homologation Planning", "status": "Future direction", "text": "Launch plans should reserve lead time for local testing, importer records and certification renewals." },
-                  { "title": "Label & Scope Monitoring", "status": "Future direction", "text": "Product and packaging teams should monitor changing USB power-interface scope and local disclosure requirements." }
-                ]
-              },
-              "opportunity": {
-                "corePoints": [
-                  "Market: Value-driven, price-sensitive and channel-fragmented",
-                  "Core opportunity: Portable USB-C adapters in the USD 20-39.99 band",
-                  "Winning product: Fast charging, protection and multi-port value",
-                  "Lenovo advantage: Trusted compatibility with clear certification and ecommerce proof"
-                ]
-              }
-            }
-          }
-        ]
-      },
-      "markets": [
-        {
-          "code": "US",
-          "label": "US",
-          "sample": 354,
-          "buyerBase": 242,
-          "featureBase": 156,
-          "selfPurchased": 68,
-          "meanPrice": 65.18,
-          "motivationConvenience": 34,
-          "motivationTravel": 34,
-          "motivationMultiDevice": 27,
-          "motivationFastCharging": 20,
-          "featureFastCharging": 53,
-          "featureMultiPort": 56,
-          "featureProtection": 53,
-          "featureStableOutput": 51,
-          "channelOnline": 29,
-          "channelPhysical": 41,
-          "channelBrandWebsite": 30,
-          "cardNote": "Self-purchase 68% · physical retail 41% · mean price $65.18",
-          "note": "Highest self-purchased rate at 68%; physical store remains the leading purchase channel at 41%.",
-          "story": {
-            "behavior": "US adapter buyers are highly self-directed: 68% purchased their own work adapter, and the average paid price is $65.18. The US is a mature, high-purchasing-power market where PC and phone OEM chargers remain strong, so third-party brands win mainly through fast charging, compact size, capacity, and service differentiation.",
-            "demand": "Survey demand is balanced rather than single-feature-led: multi-port compatibility is 56%, fast charging is 53%, intelligent protection is 53%, and stable output is 51%. This means US messaging should not rely on wattage alone; safety, compatibility, and device coverage need to be visible together.",
-            "implication": "For Lenovo, the US structure supports premium laptop-compatible and multi-port GaN adapters, but the route-to-market should combine physical retail credibility with online spec comparison. Anchor pricing against leading third-party brands while emphasizing Lenovo PC safety and compatibility."
-          },
-          "insights": [
-            "US is the most self-directed adapter market: 68% of buyers purchased their own work adapter.",
-            "Demand is balanced across multi-port, fast charging, protection, and stable output, so the winning message should bundle compatibility and safety rather than over-indexing on one spec.",
-            "Physical retail still matters at 41%, even though online research shapes comparison behavior."
-          ],
-          "charts": [
-            {
-              "title": "Feature Priority",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Multi-port",
-                  "value": 56,
-                  "valueLabel": "56%"
-                },
-                {
-                  "label": "Fast charging",
-                  "value": 53,
-                  "valueLabel": "53%"
-                },
-                {
-                  "label": "Protection",
-                  "value": 53,
-                  "valueLabel": "53%"
-                },
-                {
-                  "label": "Stable output",
-                  "value": 51,
-                  "valueLabel": "51%"
-                }
-              ]
-            },
-            {
-              "title": "Purchase Channel",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Physical store",
-                  "value": 41,
-                  "valueLabel": "41%"
-                },
-                {
-                  "label": "Brand website",
-                  "value": 30,
-                  "valueLabel": "30%"
-                },
-                {
-                  "label": "Online commerce",
-                  "value": 29,
-                  "valueLabel": "29%"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "code": "JP",
-          "label": "Japan",
-          "sample": 378,
-          "buyerBase": 218,
-          "featureBase": 187,
-          "selfPurchased": 58,
-          "meanPrice": 35.04,
-          "motivationConvenience": 49,
-          "motivationTravel": 42,
-          "motivationMultiDevice": 32,
-          "motivationFastCharging": 24,
-          "featureFastCharging": 49,
-          "featureMultiPort": 52,
-          "featureProtection": 58,
-          "featureStableOutput": 56,
-          "channelOnline": 47,
-          "channelPhysical": 33,
-          "channelBrandWebsite": 20,
-          "cardNote": "Online 47% · safety 58% · mean price $35.04",
-          "note": "Japan is more price restrained, with safety and output stability more important than aggressive fast-charging claims.",
-          "story": {
-            "behavior": "Japan has 58% self-purchased adapter users and the lowest mean purchase price at $35.04. Strong local brands, fierce competition, and lower electronics replacement rates push products toward localized design, compactness, reliability, and refined service.",
-            "demand": "Safety is the top product signal at 58%, followed by stable output at 56% and multi-port compatibility at 52%. 45W-100W is the mainstream adapter power range at roughly 78-80%, while 100W-240W is a smaller high-end block.",
-            "implication": "Lenovo should avoid overbuilding the Japan adapter story around only high wattage. The stronger proposition is compact USB-C, reliable output, safety certification, and localized appearance or packaging that can compete against local accessory brands."
-          },
-          "insights": [
-            "Japan is a compact, safety-led market: price is lower, local brands are strong, and consumers reward refinement over aggressive wattage claims.",
-            "Safety and output stability are stronger signals than fast charging, which means reliability needs to be visible in the product story.",
-            "The mainstream power structure is concentrated around 45W-100W, while 100W+ should be positioned as premium rather than default."
-          ],
-          "charts": [
-            {
-              "title": "Feature Priority",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Protection",
-                  "value": 58,
-                  "valueLabel": "58%"
-                },
-                {
-                  "label": "Stable output",
-                  "value": 56,
-                  "valueLabel": "56%"
-                },
-                {
-                  "label": "Multi-port",
-                  "value": 52,
-                  "valueLabel": "52%"
-                },
-                {
-                  "label": "Fast charging",
-                  "value": 49,
-                  "valueLabel": "49%"
-                }
-              ]
-            },
-            {
-              "title": "Adapter Power Mix",
-              "type": "stacked",
-              "items": [
-                {
-                  "label": "45W-100W",
-                  "value": 79,
-                  "valueLabel": "78-80%"
-                },
-                {
-                  "label": "100W-240W",
-                  "value": 15,
-                  "valueLabel": "15%"
-                },
-                {
-                  "label": "Below 45W",
-                  "value": 5,
-                  "valueLabel": "5%"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "code": "DE+UK+SE",
-          "label": "Europe / UK",
-          "sample": 295,
-          "buyerBase": 135,
-          "featureBase": 130,
-          "selfPurchased": 46,
-          "meanPrice": 77.05,
-          "motivationConvenience": 35,
-          "motivationTravel": 24,
-          "motivationMultiDevice": 27,
-          "motivationFastCharging": 13,
-          "featureFastCharging": 58,
-          "featureMultiPort": 56,
-          "featureProtection": 52,
-          "featureStableOutput": 62,
-          "channelOnline": 32,
-          "channelPhysical": 35,
-          "channelBrandWebsite": 33,
-          "cardNote": "Stable output 62% · brand site 33% · mean price $77.05",
-          "note": "Stable power output is the strongest feature signal at 62%; official brand website reaches 33%.",
-          "story": {
-            "behavior": "The DE/UK/SE block has a lower self-purchase rate at 46%, but the highest mean adapter price at $77.05. The European market, represented by the UK, is steadily growing with strong online habits and fragmented offline channels that require local distributor control.",
-            "demand": "Stable output is the clearest feature priority at 62%, with fast charging at 58% and multi-port compatibility at 56%. Longer cable demand above 2m is also more visible in this market block.",
-            "implication": "For Lenovo, Europe / UK should emphasize stable output, certification, durable cable setup, and PC compatibility. Online content is important, but official brand website and distributor-supported offline coverage both matter because buyer confidence and service signals are stronger here than in pure price-led markets."
-          },
-          "insights": [
-            "Europe / UK is the highest mean-price block, so it can support a stronger reliability and certification story.",
-            "Stable output is the clearest product requirement, followed by fast charging and multi-port compatibility.",
-            "Channel execution is mixed: physical stores, brand websites, and online commerce are all meaningful, so one-channel-only planning is risky."
-          ],
-          "charts": [
-            {
-              "title": "Feature Priority",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Stable output",
-                  "value": 62,
-                  "valueLabel": "62%"
-                },
-                {
-                  "label": "Fast charging",
-                  "value": 58,
-                  "valueLabel": "58%"
-                },
-                {
-                  "label": "Multi-port",
-                  "value": 56,
-                  "valueLabel": "56%"
-                },
-                {
-                  "label": "Protection",
-                  "value": 52,
-                  "valueLabel": "52%"
-                }
-              ]
-            },
-            {
-              "title": "Purchase Channel",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Physical store",
-                  "value": 35,
-                  "valueLabel": "35%"
-                },
-                {
-                  "label": "Brand website",
-                  "value": 33,
-                  "valueLabel": "33%"
-                },
-                {
-                  "label": "Online commerce",
-                  "value": 32,
-                  "valueLabel": "32%"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "code": "IN",
-          "label": "IN",
-          "sample": 262,
-          "buyerBase": 159,
-          "featureBase": 183,
-          "selfPurchased": 61,
-          "meanPrice": 41.1,
-          "motivationConvenience": 48,
-          "motivationTravel": 44,
-          "motivationMultiDevice": 45,
-          "motivationFastCharging": 26,
-          "featureFastCharging": 79,
-          "featureMultiPort": 64,
-          "featureProtection": 58,
-          "featureStableOutput": 56,
-          "channelOnline": 53,
-          "channelPhysical": 29,
-          "channelBrandWebsite": 18,
-          "cardNote": "Fast charging 79% · online 53% · brand consideration 75%",
-          "note": "Fast charging is the clearest feature signal at 79%; online e-commerce is 53%.",
-          "story": {
-            "behavior": "India shows 61% self-purchased adapter users and a mean paid price of $41.10. Brand is unusually important at 75%, and the category is associated with safety and reliability because the market includes a mixed range of products.",
-            "demand": "India has the strongest feature intensity: fast charging is 79%, multi-port compatibility is 64%, charging power range is 63%, and USB-C / Type-C preference reaches 65%. Portability is also important for mobile scenarios.",
-            "implication": "For Lenovo, India needs a trust-led value proposition: branded safety, USB-C compatibility, clear power-range claims, and online commerce execution. Price still matters, but big-brand reassurance is a real differentiator."
-          },
-          "insights": [
-            "India is the most feature-intense market, with fast charging at 79% and brand consideration at 75%.",
-            "USB-C clarity and charging power range both matter, which suggests buyers compare technical confidence before purchase.",
-            "Online commerce is the leading channel at 53%, making product-page specification quality and trust badges important."
-          ],
-          "charts": [
-            {
-              "title": "Decision Signal",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Fast charging",
-                  "value": 79,
-                  "valueLabel": "79%"
-                },
-                {
-                  "label": "Brand",
-                  "value": 75,
-                  "valueLabel": "75%"
-                },
-                {
-                  "label": "USB-C",
-                  "value": 65,
-                  "valueLabel": "65%"
-                },
-                {
-                  "label": "Power range",
-                  "value": 63,
-                  "valueLabel": "63%"
-                }
-              ]
-            },
-            {
-              "title": "Purchase Channel",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Online commerce",
-                  "value": 53,
-                  "valueLabel": "53%"
-                },
-                {
-                  "label": "Physical store",
-                  "value": 29,
-                  "valueLabel": "29%"
-                },
-                {
-                  "label": "Brand website",
-                  "value": 18,
-                  "valueLabel": "18%"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "code": "SA",
-          "label": "SA",
-          "sample": 320,
-          "buyerBase": 193,
-          "featureBase": 159,
-          "selfPurchased": 60,
-          "meanPrice": 75.76,
-          "motivationConvenience": 41,
-          "motivationTravel": 43,
-          "motivationMultiDevice": 35,
-          "motivationFastCharging": 35,
-          "featureFastCharging": 56,
-          "featureMultiPort": 68,
-          "featureProtection": 63,
-          "featureStableOutput": 38,
-          "channelOnline": 32,
-          "channelPhysical": 41,
-          "channelBrandWebsite": 26,
-          "cardNote": "Multi-port 68% · physical retail 41% · mean price $75.76",
-          "note": "Original adapter not supporting fast charging is an important motivation at 35%; physical store is 41%.",
-          "story": {
-            "behavior": "SA has a 60% self-purchase rate and a relatively high mean paid price of $75.76. Matching the laptop brand is less essential here, and Anker appears as the leading personally purchased adapter brand.",
-            "demand": "Multi-port compatibility is the leading feature signal at 68%, followed by intelligent protection at 63% and fast charging at 56%. Fast charging is also an important replacement motivation because 35% say the original adapter does not support it.",
-            "implication": "For Lenovo, SA should be treated as a performance-and-convenience market. The portfolio should highlight multi-device use, fast charging upgrades from the original adapter, and safety protection, while keeping physical retail content strong."
-          },
-          "insights": [
-            "SA is a performance-upgrade market: 35% cite lack of fast charging on the original adapter as a purchase motivation.",
-            "Multi-port compatibility is the strongest product signal at 68%, which makes multi-device charging a front-page message.",
-            "Physical retail is the top channel at 41%, so in-store specification clarity and visible safety claims matter."
-          ],
-          "charts": [
-            {
-              "title": "Feature Priority",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Multi-port",
-                  "value": 68,
-                  "valueLabel": "68%"
-                },
-                {
-                  "label": "Protection",
-                  "value": 63,
-                  "valueLabel": "63%"
-                },
-                {
-                  "label": "Fast charging",
-                  "value": 56,
-                  "valueLabel": "56%"
-                },
-                {
-                  "label": "Stable output",
-                  "value": 38,
-                  "valueLabel": "38%"
-                }
-              ]
-            },
-            {
-              "title": "Purchase Motivation",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Travel/mobile work",
-                  "value": 43,
-                  "valueLabel": "43%"
-                },
-                {
-                  "label": "Convenient locations",
-                  "value": 41,
-                  "valueLabel": "41%"
-                },
-                {
-                  "label": "Multi-device",
-                  "value": 35,
-                  "valueLabel": "35%"
-                },
-                {
-                  "label": "Original lacks fast charge",
-                  "value": 35,
-                  "valueLabel": "35%"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "code": "BR+MEX",
-          "label": "BR + MEX",
-          "sample": 223,
-          "buyerBase": 140,
-          "featureBase": 116,
-          "selfPurchased": 63,
-          "meanPrice": 36.45,
-          "motivationConvenience": 38,
-          "motivationTravel": 44,
-          "motivationMultiDevice": 34,
-          "motivationFastCharging": 11,
-          "featureFastCharging": 66,
-          "featureMultiPort": 59,
-          "featureProtection": 60,
-          "featureStableOutput": 47,
-          "channelOnline": 48,
-          "channelPhysical": 31,
-          "channelBrandWebsite": 21,
-          "cardNote": "Online 48% · fast charging 66% · mean price $36.45",
-          "note": "Travel or mobile work motivation is 44%; fast-charging feature consideration is 66%.",
-          "story": {
-            "behavior": "Brazil and Mexico show a 63% self-purchase rate and a value-oriented mean paid price of $36.45. Most price interest is below $40, with $20-$39.99 accounting for 49% of reported purchase prices.",
-            "demand": "Travel or mobile work is the strongest motivation at 44%, while fast charging is the most important feature signal at 66%. Intelligent protection at 60% and multi-port compatibility at 59% mean value-tier products still need credible safety and device coverage.",
-            "implication": "For Lenovo, BR + MEX should prioritize portable, reliable, value-priced USB-C adapters. Online e-commerce is the leading channel at 48%, so product cards need clear wattage, safety certification, and fast-charging proof."
-          },
-          "insights": [
-            "BR + MEX is value-led: the mean paid price is $36.45 and 69% of purchases sit below $40.",
-            "Fast charging still matters at 66%, so low price cannot mean weak performance claims.",
-            "Travel and mobile work lead purchase motivation, making compact, portable, USB-C-first products the clearest fit."
-          ],
-          "charts": [
-            {
-              "title": "Price Band",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Under $20",
-                  "value": 20,
-                  "valueLabel": "20%"
-                },
-                {
-                  "label": "$20-$39.99",
-                  "value": 49,
-                  "valueLabel": "49%"
-                },
-                {
-                  "label": "$40-$59.99",
-                  "value": 21,
-                  "valueLabel": "21%"
-                },
-                {
-                  "label": "$60+",
-                  "value": 11,
-                  "valueLabel": "11%"
-                }
-              ]
-            },
-            {
-              "title": "Feature Priority",
-              "type": "bar",
-              "items": [
-                {
-                  "label": "Fast charging",
-                  "value": 66,
-                  "valueLabel": "66%"
-                },
-                {
-                  "label": "Protection",
-                  "value": 60,
-                  "valueLabel": "60%"
-                },
-                {
-                  "label": "Multi-port",
-                  "value": 59,
-                  "valueLabel": "59%"
-                },
-                {
-                  "label": "Stable output",
-                  "value": 47,
-                  "valueLabel": "47%"
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      "demandMetrics": [
-        {
-          "field": "featureFastCharging",
-          "label": "Fast charging"
-        },
-        {
-          "field": "featureMultiPort",
-          "label": "Multi-port compatibility"
-        },
-        {
-          "field": "featureProtection",
-          "label": "Intelligent protection"
-        }
-      ],
-      "channelMetrics": [
-        {
-          "field": "channelOnline",
-          "label": "Online e-commerce"
-        },
-        {
-          "field": "channelPhysical",
-          "label": "Physical store"
-        },
-        {
-          "field": "channelBrandWebsite",
-          "label": "Official brand website"
-        }
-      ],
-      "industryCountries": [
-        {
-          "country": "USA",
-          "headline": "Mature market with OEM competition and strong third-party premium plays.",
-          "metrics": "US power category is about RMB 23.8B, including about RMB 8.8B for power adapters. Anker adapter revenue is about RMB 1.5B, share is 17-18%, growth is 10%, and 60-80W accounts for 72% of adapter structure."
-        },
-        {
-          "country": "Japan",
-          "headline": "Fierce local-brand competition pushes compact, localized, reliable designs.",
-          "metrics": "Japan power category is about RMB 7.6B, including about RMB 3.9B for adapters. Anker adapter revenue is about RMB 0.7B, share is 18%, 45-100W accounts for 78-80%, and 100-240W is about 15%."
-        },
-        {
-          "country": "UK",
-          "headline": "Online-first European market, with adapters weaker than PC-suitable power banks.",
-          "metrics": "Europe is about RMB 5.3-6.7B and the UK is about RMB 0.8-1B. UK adapter revenue is much smaller than power bank revenue, about 30% of UK power bank revenue, and growth is slower."
-        },
-        {
-          "country": "India",
-          "headline": "Brand trust, safety, power range, and USB-C clarity are unusually important.",
-          "metrics": "Brand consideration is 75%, charging power range is 63%, fast charging is 79%, USB-C / Type-C preference is 65%, and online e-commerce is 53%."
-        },
-        {
-          "country": "SA",
-          "headline": "Upgrade demand centers on fast charging and multi-device use.",
-          "metrics": "Self-purchase is 60%, mean price is $75.76, multi-port compatibility is 68%, intelligent protection is 63%, and physical stores are 41%."
-        },
-        {
-          "country": "Brazil/Mexico",
-          "headline": "Value-led market where portability and fast charging still matter.",
-          "metrics": "Self-purchase is 63%, mean price is $36.45, 69% of reported purchase prices are below $40, fast charging is 66%, and online e-commerce is 48%."
-        }
-      ]
-    },
-    "power_bank": {
-      "title": "Power Bank Country Market Structure",
-      "source": "Ipsos PC Accessories User Research - Power Bank, pp.4, 6, 26-33; Lenovo PC Options Industry Analysis - Power Category Report, pp.15, 18, 21, 24, 29-32.",
-      "markets": [
-        {
-          "code": "DE+UK+SE",
-          "label": "DE + UK + SE",
-          "sample": 274,
-          "buyerBase": 120,
-          "featureBase": 143,
-          "selfPurchased": 45,
-          "meanPrice": 101.77,
-          "motivationTravel": 79,
-          "motivationCapacity": 38,
-          "motivationMultiDevice": 38,
-          "motivationFastCharging": 15,
-          "featureBatteryCapacity": 71,
-          "featureFastCharging": 50,
-          "featureMultiPort": 52,
-          "featurePowerRange": 48,
-          "featureStableOutput": 48,
-          "channelOnline": 51,
-          "channelPhysical": 24,
-          "channelBrandWebsite": 25,
-          "note": "Highest mean purchase price at $101.77; official brand website reaches 25%."
-        },
-        {
-          "code": "SA",
-          "label": "SA",
-          "sample": 360,
-          "buyerBase": 181,
-          "featureBase": 213,
-          "selfPurchased": 55,
-          "meanPrice": 80.36,
-          "motivationTravel": 74,
-          "motivationCapacity": 57,
-          "motivationMultiDevice": 61,
-          "motivationFastCharging": 27,
-          "featureBatteryCapacity": 56,
-          "featureFastCharging": 53,
-          "featureMultiPort": 66,
-          "featurePowerRange": 55,
-          "featureStableOutput": 43,
-          "channelOnline": 42,
-          "channelPhysical": 40,
-          "channelBrandWebsite": 18,
-          "note": "Multi-device charging motivation is 61%; physical store is 40%."
-        },
-        {
-          "code": "US",
-          "label": "US",
-          "sample": 257,
-          "buyerBase": 137,
-          "featureBase": 149,
-          "selfPurchased": 56,
-          "meanPrice": 87.28,
-          "motivationTravel": 71,
-          "motivationCapacity": 49,
-          "motivationMultiDevice": 39,
-          "motivationFastCharging": 18,
-          "featureBatteryCapacity": 70,
-          "featureFastCharging": 57,
-          "featureMultiPort": 53,
-          "featurePowerRange": 58,
-          "featureStableOutput": 58,
-          "channelOnline": 40,
-          "channelPhysical": 43,
-          "channelBrandWebsite": 17,
-          "note": "Physical store is the top channel at 43%; mean purchase price is $87.28."
-        },
-        {
-          "code": "IN",
-          "label": "IN",
-          "sample": 362,
-          "buyerBase": 235,
-          "featureBase": 272,
-          "selfPurchased": 66,
-          "meanPrice": 61.39,
-          "motivationTravel": 84,
-          "motivationCapacity": 53,
-          "motivationMultiDevice": 53,
-          "motivationFastCharging": 26,
-          "featureBatteryCapacity": 78,
-          "featureFastCharging": 74,
-          "featureMultiPort": 62,
-          "featurePowerRange": 63,
-          "featureStableOutput": 55,
-          "channelOnline": 64,
-          "channelPhysical": 23,
-          "channelBrandWebsite": 12,
-          "note": "Highest self-purchased rate at 66%; online e-commerce is 64%."
-        },
-        {
-          "code": "JP",
-          "label": "JP",
-          "sample": 242,
-          "buyerBase": 118,
-          "featureBase": 140,
-          "selfPurchased": 48,
-          "meanPrice": 87.44,
-          "motivationTravel": 69,
-          "motivationCapacity": 39,
-          "motivationMultiDevice": 36,
-          "motivationFastCharging": 27,
-          "featureBatteryCapacity": 67,
-          "featureFastCharging": 43,
-          "featureMultiPort": 48,
-          "featurePowerRange": 39,
-          "featureStableOutput": 59,
-          "channelOnline": 56,
-          "channelPhysical": 32,
-          "channelBrandWebsite": 12,
-          "note": "Stable output is 59%; safety certification is a Top 3 factor in the report."
-        },
-        {
-          "code": "BR+MEX",
-          "label": "BR + MEX",
-          "sample": 311,
-          "buyerBase": 177,
-          "featureBase": 196,
-          "selfPurchased": 56,
-          "meanPrice": 57.1,
-          "motivationTravel": 81,
-          "motivationCapacity": 47,
-          "motivationMultiDevice": 50,
-          "motivationFastCharging": 12,
-          "featureBatteryCapacity": 72,
-          "featureFastCharging": 67,
-          "featureMultiPort": 57,
-          "featurePowerRange": 39,
-          "featureStableOutput": 50,
-          "channelOnline": 58,
-          "channelPhysical": 33,
-          "channelBrandWebsite": 9,
-          "note": "Convenient travel / portable charging is 81%; mean purchase price is $57.10."
-        }
-      ],
-      "demandMetrics": [
-        {
-          "field": "featureBatteryCapacity",
-          "label": "Battery capacity"
-        },
-        {
-          "field": "featureFastCharging",
-          "label": "Fast charging"
-        },
-        {
-          "field": "featureMultiPort",
-          "label": "Multiple ports"
-        }
-      ],
-      "channelMetrics": [
-        {
-          "field": "channelOnline",
-          "label": "Online e-commerce"
-        },
-        {
-          "field": "channelPhysical",
-          "label": "Physical store"
-        },
-        {
-          "field": "channelBrandWebsite",
-          "label": "Official brand website"
-        }
-      ],
-      "industryCountries": [
-        {
-          "country": "USA",
-          "headline": "Largest single Anker market with strong power bank layout.",
-          "metrics": "Power bank sales revenue 4.5 billion; market share 30%; growth 15-16%; 5000-12000mAh is 52%.",
-          "sourcePage": "Industry report p.15"
-        },
-        {
-          "country": "Japan",
-          "headline": "Second largest Anker market with fierce local competition.",
-          "metrics": "Power bank sales revenue about 1 billion; market share 27%; growth about 30%; 5000-12000mAh is 50%.",
-          "sourcePage": "Industry report p.18"
-        },
-        {
-          "country": "Indonesia",
-          "headline": "Star growth market focused on middle-high price ranges.",
-          "metrics": "Sales revenue about 1 billion; growth about 40%; market share about 50-60%; $80-200 mid price range contributes 55-60%.",
-          "sourcePage": "Industry report p.21"
-        },
-        {
-          "country": "UK",
-          "headline": "High share market where high-power PC power banks perform well.",
-          "metrics": "Power bank sales revenue 0.3 billion; market share 60%; growth about 10%; UK star products priced GBP69.99 and GBP79.99.",
-          "sourcePage": "Industry report p.24"
-        }
-      ]
-    }
-  },
-  "products": [
-    {
-      "id": "adapter_multi_port_150w_gan",
-      "categoryId": "adapter",
-      "name": "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
-      "shortName": "150W Laptop GaN",
-      "image": "assets/products/adapter-multi-port-150w-gan.webp",
-      "listPrice": 89.99,
-      "attributes": {
-        "wattage": 150,
-        "wattageBand": "100W and above",
-        "features": [
-          "GaN",
-          "multi-port",
-          "laptop"
-        ],
-        "compatibility": "laptop",
-        "powerMode": "Wired",
-        "ports": 3,
-        "portCountBand": "3+ ports",
-        "interfaceProtocols": [
-          "USB-C PD 3.1"
-        ],
-        "scenarios": [
-          "laptop",
-          "commercial"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_multi_port_150w_gan_40aw150beu",
-        "adapter_multi_port_150w_gan_40aw150buk",
-        "adapter_multi_port_150w_gan_40aw150bus"
-      ],
-      "partNumbers": [
-        "40AW150BEU",
-        "40AW150BUK",
-        "40AW150BUS"
-      ],
-      "tags": [
-        "laptop",
-        "GaN",
-        "multi-port"
-      ]
-    },
-    {
-      "id": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "Lenovo Multi-port USB-C 100W GaN Charger",
-      "shortName": "100W Multi-port",
-      "image": "assets/products/adapter-multi-port-100w-gan-black.avif",
-      "images": [
-        {
-          "label": "Black",
-          "src": "assets/products/adapter-multi-port-100w-gan-black.avif"
-        },
-        {
-          "label": "White",
-          "src": "assets/products/adapter-multi-port-100w-gan-white.avif"
-        }
-      ],
-      "listPrice": 74.99,
-      "attributes": {
-        "wattage": 100,
-        "wattageBand": "100W and above",
-        "features": [
-          "GaN",
-          "multi-port"
-        ],
-        "compatibility": "multi",
-        "powerMode": "Wired",
-        "ports": 3,
-        "portCountBand": "3+ ports",
-        "interfaceProtocols": [
-          "USB-C PD 3.1",
-          "PPS"
-        ],
-        "scenarios": [
-          "multi-device",
-          "consumer"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_multi_port_100w_gan_40aw100beu",
-        "adapter_multi_port_100w_gan_40aw100buk",
-        "adapter_multi_port_100w_gan_40aw100bus",
-        "adapter_multi_port_100w_gan_g0a6100beu",
-        "adapter_multi_port_100w_gan_g0a6100buk",
-        "adapter_multi_port_100w_gan_g0a6100seu",
-        "adapter_multi_port_100w_gan_g0a6100suk"
-      ],
-      "partNumbers": [
-        "40AW100BEU",
-        "40AW100BUK",
-        "40AW100BUS",
-        "G0A6100BEU",
-        "G0A6100BUK",
-        "G0A6100SEU",
-        "G0A6100SUK"
-      ],
-      "tags": [
-        "multi",
-        "GaN",
-        "multi-port"
-      ]
-    },
-    {
-      "id": "adapter_65w_usbc_ac_travel",
-      "categoryId": "adapter",
-      "name": "Lenovo 65W USB-C AC Travel Adapter",
-      "shortName": "65W AC Travel",
-      "image": "assets/products/adapter-65w-usbc-ac-travel.avif",
-      "listPrice": 49.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "USB-C",
-          "travel",
-          "AC"
-        ],
-        "compatibility": "laptop",
-        "powerMode": "Wired",
-        "ports": 1,
-        "portCountBand": "1 port",
-        "interfaceProtocols": [
-          "USB-C PD"
-        ],
-        "scenarios": [
-          "travel",
-          "commercial"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_65w_usbc_ac_travel_40aw0065ww",
-        "adapter_65w_usbc_ac_travel_g0a6n065ww"
-      ],
-      "partNumbers": [
-        "40AW0065WW",
-        "G0A6N065WW"
-      ],
-      "tags": [
-        "laptop",
-        "USB-C",
-        "travel"
-      ]
-    },
-    {
-      "id": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "Lenovo 65W USB-C Wall Adapter",
-      "shortName": "65W USB-C Wall",
-      "image": "assets/products/adapter-65w-usbc-wall.avif",
-      "listPrice": 29.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "USB-C",
-          "wall",
-          "compact"
-        ],
-        "compatibility": "mobile",
-        "powerMode": "Wired",
-        "ports": 1,
-        "portCountBand": "1 port",
-        "interfaceProtocols": [
-          "USB-C PD"
-        ],
-        "scenarios": [
-          "daily carry",
-          "consumer"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_65w_usbc_wall_4x21l54608",
-        "adapter_65w_usbc_wall_4x21l54610",
-        "adapter_65w_usbc_wall_4x21l54612",
-        "adapter_65w_usbc_wall_4x21l54614",
-        "adapter_65w_usbc_wall_4x21l54618",
-        "adapter_65w_usbc_wall_4x21l54620",
-        "adapter_65w_usbc_wall_4x21l54622",
-        "adapter_65w_usbc_wall_4x21l83772",
-        "adapter_65w_usbc_wall_4x21l83773",
-        "adapter_65w_usbc_wall_gx21l58554",
-        "adapter_65w_usbc_wall_gx21l58555",
-        "adapter_65w_usbc_wall_gx21l58557",
-        "adapter_65w_usbc_wall_gx21l58559",
-        "adapter_65w_usbc_wall_gx21l58564",
-        "adapter_65w_usbc_wall_gx21l58566",
-        "adapter_65w_usbc_wall_gx21l58568",
-        "adapter_65w_usbc_wall_gx21l83770",
-        "adapter_65w_usbc_wall_gx21l83771"
-      ],
-      "partNumbers": [
-        "4X21L54608",
-        "4X21L54610",
-        "4X21L54612",
-        "4X21L54614",
-        "4X21L54618",
-        "4X21L54620",
-        "4X21L54622",
-        "4X21L83772",
-        "4X21L83773",
-        "GX21L58554",
-        "GX21L58555",
-        "GX21L58557",
-        "GX21L58559",
-        "GX21L58564",
-        "GX21L58566",
-        "GX21L58568",
-        "GX21L83770",
-        "GX21L83771"
-      ],
-      "tags": [
-        "mobile",
-        "USB-C",
-        "wall"
-      ]
-    },
-    {
-      "id": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "Lenovo 65W Mini USB-C GaN Charger",
-      "shortName": "65W Mini GaN",
-      "image": "assets/products/adapter-65w-mini-gan.avif",
-      "listPrice": 34.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "GaN",
-          "mini",
-          "USB-C"
-        ],
-        "compatibility": "mobile",
-        "powerMode": "Wired",
-        "ports": 1,
-        "portCountBand": "1 port",
-        "interfaceProtocols": [
-          "USB-C PD",
-          "PPS"
-        ],
-        "scenarios": [
-          "mobile",
-          "travel"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_65w_mini_gan_40aw65wbeu",
-        "adapter_65w_mini_gan_40aw65wbuk",
-        "adapter_65w_mini_gan_g0a665wbeu",
-        "adapter_65w_mini_gan_g0a665wbuk"
-      ],
-      "partNumbers": [
-        "40AW65WBEU",
-        "40AW65WBUK",
-        "G0A665WBEU",
-        "G0A665WBUK"
-      ],
-      "tags": [
-        "mobile",
-        "GaN",
-        "mini"
-      ]
-    },
-    {
-      "id": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "Lenovo GaN Nano 65W Adapter",
-      "shortName": "65W GaN Nano",
-      "image": "assets/products/adapter-gan-nano-65w.avif",
-      "listPrice": 49.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "GaN",
-          "nano",
-          "laptop"
-        ],
-        "compatibility": "laptop",
-        "powerMode": "Wired",
-        "ports": 1,
-        "portCountBand": "1 port",
-        "interfaceProtocols": [
-          "USB-C PD"
-        ],
-        "scenarios": [
-          "laptop",
-          "commercial"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_gan_nano_65w_40awgn65ar",
-        "adapter_gan_nano_65w_40awgn65au",
-        "adapter_gan_nano_65w_40awgn65eu",
-        "adapter_gan_nano_65w_40awgn65kr",
-        "adapter_gan_nano_65w_40awgn65th",
-        "adapter_gan_nano_65w_40awgn65uk",
-        "adapter_gan_nano_65w_40awgn65ul",
-        "adapter_gan_nano_65w_40awgn65us",
-        "adapter_gan_nano_65w_g0a6gn65au",
-        "adapter_gan_nano_65w_g0a6gn65eu",
-        "adapter_gan_nano_65w_g0a6gn65kr",
-        "adapter_gan_nano_65w_g0a6gn65th",
-        "adapter_gan_nano_65w_g0a6gn65uk",
-        "adapter_gan_nano_65w_g0a6gn65ul",
-        "adapter_gan_nano_65w_g0a6gn65us"
-      ],
-      "partNumbers": [
-        "40AWGN65AR",
-        "40AWGN65AU",
-        "40AWGN65EU",
-        "40AWGN65KR",
-        "40AWGN65TH",
-        "40AWGN65UK",
-        "40AWGN65UL",
-        "40AWGN65US",
-        "G0A6GN65AU",
-        "G0A6GN65EU",
-        "G0A6GN65KR",
-        "G0A6GN65TH",
-        "G0A6GN65UK",
-        "G0A6GN65UL",
-        "G0A6GN65US"
-      ],
-      "tags": [
-        "laptop",
-        "GaN",
-        "nano"
-      ]
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "Lenovo Dual USB-C 65W GaN Charger",
-      "shortName": "65W Dual USB-C",
-      "image": "assets/products/adapter-dual-usbc-65w-gan-black.avif",
-      "images": [
-        {
-          "label": "Black",
-          "src": "assets/products/adapter-dual-usbc-65w-gan-black.avif"
-        },
-        {
-          "label": "White",
-          "src": "assets/products/adapter-dual-usbc-65w-gan-white.avif"
-        }
-      ],
-      "listPrice": 59.99,
-      "attributes": {
-        "wattage": 65,
-        "wattageBand": "45W to 99W",
-        "features": [
-          "GaN",
-          "dual USB-C",
-          "multi-port"
-        ],
-        "compatibility": "multi",
-        "powerMode": "Wired",
-        "ports": 2,
-        "portCountBand": "2 ports",
-        "interfaceProtocols": [
-          "USB-C PD",
-          "PPS"
-        ],
-        "scenarios": [
-          "multi-device",
-          "consumer"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "adapter_dual_usbc_65w_gan_40aw065beu",
-        "adapter_dual_usbc_65w_gan_40aw065buk",
-        "adapter_dual_usbc_65w_gan_40aw065bus",
-        "adapter_dual_usbc_65w_gan_g0a6065beu",
-        "adapter_dual_usbc_65w_gan_g0a6065buk",
-        "adapter_dual_usbc_65w_gan_g0a6065bus",
-        "adapter_dual_usbc_65w_gan_g0a6065weu",
-        "adapter_dual_usbc_65w_gan_g0a6065wuk",
-        "adapter_dual_usbc_65w_gan_g0a6065wus"
-      ],
-      "partNumbers": [
-        "40AW065BEU",
-        "40AW065BUK",
-        "40AW065BUS",
-        "G0A6065BEU",
-        "G0A6065BUK",
-        "G0A6065BUS",
-        "G0A6065WEU",
-        "G0A6065WUK",
-        "G0A6065WUS"
-      ],
-      "tags": [
-        "multi",
-        "GaN",
-        "dual USB-C"
-      ]
-    },
-    {
-      "id": "bank_hybrid_2in1_140w_10200",
-      "categoryId": "power_bank",
-      "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
-      "shortName": "Hybrid 140W 10.2K",
-      "image": "assets/products/bank-hybrid-2in1-140w-10200.png",
-      "listPrice": 99,
-      "attributes": {
-        "capacityMah": 10200,
-        "capacityBand": "10000-20000mAh",
-        "outputW": 140,
-        "outputBand": "100W and above",
-        "features": [
-          "2-in-1",
-          "hybrid",
-          "high wattage"
-        ],
-        "compatibility": "laptop",
-        "hasCable": "No",
-        "scenarios": [
-          "laptop",
-          "travel"
-        ],
-        "isTwoInOne": true
-      },
-      "variants": [
-        "bank_hybrid_2in1_140w_10200_g0a3140wna"
-      ],
-      "partNumbers": [
-        "G0A3140WNA"
-      ],
-      "tags": [
-        "laptop",
-        "2-in-1",
-        "hybrid"
-      ]
-    },
-    {
-      "id": "bank_140w_smart_laptop",
-      "categoryId": "power_bank",
-      "name": "Lenovo 140W Smart Laptop Power Bank",
-      "shortName": "140W Smart Power Bank",
-      "image": "assets/products/bank-140w-smart-laptop.png",
-      "listPrice": 119,
-      "attributes": {
-        "capacityMah": 20000,
-        "capacityBand": "20000mAh and above",
-        "outputW": 140,
-        "outputBand": "100W and above",
-        "features": [
-          "smart display",
-          "high wattage",
-          "laptop"
-        ],
-        "compatibility": "laptop",
-        "hasCable": "No",
-        "scenarios": [
-          "laptop",
-          "travel"
-        ],
-        "isTwoInOne": false
-      },
-      "variants": [
-        "bank_140w_smart_laptop_40al140www",
-        "bank_140w_smart_laptop_g0a3140www"
-      ],
-      "partNumbers": [
-        "40AL140WWW",
-        "G0A3140WWW"
-      ],
-      "tags": [
-        "laptop",
-        "smart display",
-        "high wattage"
-      ]
-    },
-    {
-      "id": "cable_240w_usb_c_retractable",
-      "categoryId": "power_cable",
-      "name": "Lenovo 240W USB-C Retractable Cable",
-      "shortName": "240W Retractable Cable",
-      "image": "assets/products/cable-240w-usb-c-retractable-black.avif",
-      "images": [
-        {
-          "label": "Black",
-          "src": "assets/products/cable-240w-usb-c-retractable-black.avif"
-        },
-        {
-          "label": "White",
-          "src": "assets/products/cable-240w-usb-c-retractable-white.avif"
-        }
-      ],
-      "listPrice": 24,
-      "attributes": {
-        "connectors": [
-          "USB-C"
-        ],
-        "lengthM": 1.0,
-        "lengthBand": "1m to 2m",
-        "powerW": 240,
-        "powerBand": "200W and above",
-        "features": [
-          "USB-C",
-          "retractable",
-          "240W"
-        ],
-        "retractable": "Yes",
-        "scenarios": [
-          "travel",
-          "laptop"
-        ]
-      },
-      "variants": [
-        "cable_240w_usb_c_retractable_gx91v57058",
-        "cable_240w_usb_c_retractable_gx91v57059"
-      ],
-      "partNumbers": [
-        "GX91V57058",
-        "GX91V57059"
-      ],
-      "tags": [
-        "Yes",
-        "USB-C",
-        "retractable"
-      ]
-    }
-  ],
-  "variants": [
-    {
-      "id": "adapter_multi_port_150w_gan_40aw150beu",
-      "modelId": "adapter_multi_port_150w_gan",
-      "categoryId": "adapter",
-      "name": "40AW150BEU",
-      "partNumber": "40AW150BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_150w_gan_40aw150buk",
-      "modelId": "adapter_multi_port_150w_gan",
-      "categoryId": "adapter",
-      "name": "40AW150BUK",
-      "partNumber": "40AW150BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_150w_gan_40aw150bus",
-      "modelId": "adapter_multi_port_150w_gan",
-      "categoryId": "adapter",
-      "name": "40AW150BUS",
-      "partNumber": "40AW150BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_100w_gan_40aw100beu",
-      "modelId": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "40AW100BEU",
-      "partNumber": "40AW100BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_100w_gan_40aw100buk",
-      "modelId": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "40AW100BUK",
-      "partNumber": "40AW100BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_100w_gan_40aw100bus",
-      "modelId": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "40AW100BUS",
-      "partNumber": "40AW100BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_100w_gan_g0a6100beu",
-      "modelId": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6100BEU",
-      "partNumber": "G0A6100BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_100w_gan_g0a6100buk",
-      "modelId": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6100BUK",
-      "partNumber": "G0A6100BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_100w_gan_g0a6100seu",
-      "modelId": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6100SEU",
-      "partNumber": "G0A6100SEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_multi_port_100w_gan_g0a6100suk",
-      "modelId": "adapter_multi_port_100w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6100SUK",
-      "partNumber": "G0A6100SUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_ac_travel_40aw0065ww",
-      "modelId": "adapter_65w_usbc_ac_travel",
-      "categoryId": "adapter",
-      "name": "40AW0065WW",
-      "partNumber": "40AW0065WW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_ac_travel_g0a6n065ww",
-      "modelId": "adapter_65w_usbc_ac_travel",
-      "categoryId": "adapter",
-      "name": "G0A6N065WW",
-      "partNumber": "G0A6N065WW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l54608",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L54608",
-      "partNumber": "4X21L54608",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l54610",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L54610",
-      "partNumber": "4X21L54610",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l54612",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L54612",
-      "partNumber": "4X21L54612",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l54614",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L54614",
-      "partNumber": "4X21L54614",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l54618",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L54618",
-      "partNumber": "4X21L54618",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l54620",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L54620",
-      "partNumber": "4X21L54620",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l54622",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L54622",
-      "partNumber": "4X21L54622",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l83772",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L83772",
-      "partNumber": "4X21L83772",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_4x21l83773",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "4X21L83773",
-      "partNumber": "4X21L83773",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58554",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58554",
-      "partNumber": "GX21L58554",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58555",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58555",
-      "partNumber": "GX21L58555",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58557",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58557",
-      "partNumber": "GX21L58557",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58559",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58559",
-      "partNumber": "GX21L58559",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58564",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58564",
-      "partNumber": "GX21L58564",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58566",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58566",
-      "partNumber": "GX21L58566",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l58568",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L58568",
-      "partNumber": "GX21L58568",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l83770",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L83770",
-      "partNumber": "GX21L83770",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_usbc_wall_gx21l83771",
-      "modelId": "adapter_65w_usbc_wall",
-      "categoryId": "adapter",
-      "name": "GX21L83771",
-      "partNumber": "GX21L83771",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_40aw65wbeu",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "40AW65WBEU",
-      "partNumber": "40AW65WBEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_40aw65wbuk",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "40AW65WBUK",
-      "partNumber": "40AW65WBUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_g0a665wbeu",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "G0A665WBEU",
-      "partNumber": "G0A665WBEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_65w_mini_gan_g0a665wbuk",
-      "modelId": "adapter_65w_mini_gan",
-      "categoryId": "adapter",
-      "name": "G0A665WBUK",
-      "partNumber": "G0A665WBUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65ar",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65AR",
-      "partNumber": "40AWGN65AR",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65au",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65AU",
-      "partNumber": "40AWGN65AU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65eu",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65EU",
-      "partNumber": "40AWGN65EU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65kr",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65KR",
-      "partNumber": "40AWGN65KR",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65th",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65TH",
-      "partNumber": "40AWGN65TH",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65uk",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65UK",
-      "partNumber": "40AWGN65UK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65ul",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65UL",
-      "partNumber": "40AWGN65UL",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_40awgn65us",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "40AWGN65US",
-      "partNumber": "40AWGN65US",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65au",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65AU",
-      "partNumber": "G0A6GN65AU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65eu",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65EU",
-      "partNumber": "G0A6GN65EU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65kr",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65KR",
-      "partNumber": "G0A6GN65KR",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65th",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65TH",
-      "partNumber": "G0A6GN65TH",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65uk",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65UK",
-      "partNumber": "G0A6GN65UK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65ul",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65UL",
-      "partNumber": "G0A6GN65UL",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_gan_nano_65w_g0a6gn65us",
-      "modelId": "adapter_gan_nano_65w",
-      "categoryId": "adapter",
-      "name": "G0A6GN65US",
-      "partNumber": "G0A6GN65US",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_40aw065beu",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "40AW065BEU",
-      "partNumber": "40AW065BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_40aw065buk",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "40AW065BUK",
-      "partNumber": "40AW065BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_40aw065bus",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "40AW065BUS",
-      "partNumber": "40AW065BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065beu",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065BEU",
-      "partNumber": "G0A6065BEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065buk",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065BUK",
-      "partNumber": "G0A6065BUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065bus",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065BUS",
-      "partNumber": "G0A6065BUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065weu",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065WEU",
-      "partNumber": "G0A6065WEU",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065wuk",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065WUK",
-      "partNumber": "G0A6065WUK",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "adapter_dual_usbc_65w_gan_g0a6065wus",
-      "modelId": "adapter_dual_usbc_65w_gan",
-      "categoryId": "adapter",
-      "name": "G0A6065WUS",
-      "partNumber": "G0A6065WUS",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "bank_hybrid_2in1_140w_10200_g0a3140wna",
-      "modelId": "bank_hybrid_2in1_140w_10200",
-      "categoryId": "power_bank",
-      "name": "G0A3140WNA",
-      "partNumber": "G0A3140WNA",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "bank_140w_smart_laptop_40al140www",
-      "modelId": "bank_140w_smart_laptop",
-      "categoryId": "power_bank",
-      "name": "40AL140WWW",
-      "partNumber": "40AL140WWW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "bank_140w_smart_laptop_g0a3140www",
-      "modelId": "bank_140w_smart_laptop",
-      "categoryId": "power_bank",
-      "name": "G0A3140WWW",
-      "partNumber": "G0A3140WWW",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "cable_240w_usb_c_retractable_gx91v57058",
-      "modelId": "cable_240w_usb_c_retractable",
-      "categoryId": "power_cable",
-      "name": "GX91V57058",
-      "partNumber": "GX91V57058",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    },
-    {
-      "id": "cable_240w_usb_c_retractable_gx91v57059",
-      "modelId": "cable_240w_usb_c_retractable",
-      "categoryId": "power_cable",
-      "name": "GX91V57059",
-      "partNumber": "GX91V57059",
-      "share": 0,
-      "priceMultiplier": 1,
-      "costMultiplier": 1
-    }
-  ],
-  "futureCategorySlots": [
-    "Docking",
-    "Wireless Charger",
-    "Smart Accessories"
-  ],
-  "source": {
-    "sourceDir": "/Users/albert/Desktop/2026.7.13",
-    "sourceFiles": [
-      "Lenovo Multi-port USB-C 150W Laptop GaN Charger.xlsx",
-      "Lenovo Multi-port USB-C 100W GaN Charger.xlsx",
-      "Lenovo 65W USB-C AC Travel Adapter.xlsx",
-      "Lenovo 65W USB-C Wall Adapter.xlsx",
-      "Lenovo 65W Mini USB-C GaN Charger.xlsx",
-      "Lenovo GaN Nano 65W Adapter.xlsx",
-      "Lenovo Dual USB-C 65W GaN Charger.xlsx",
-      "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K).xlsx",
-      "Lenovo 140W Smart Laptop Power Bank.xlsx",
-      "Lenovo 240W USB-C Retractable Cable.xlsx"
-    ],
-    "sourceMode": "real_product_excel",
-    "sourceRows": 2406,
-    "sourceNotes": "Real product sell-in/order data loaded from Lenovo accessory product workbooks."
   },
   "industryBrandReports": {
     "adapter": {
@@ -5538,5 +2938,1711 @@
         }
       ]
     }
+  },
+  "marketStructureReports": {
+    "adapter": {
+      "title": "Power Adapter Country Market Structure",
+      "source": "Ipsos PC Accessories User Research - Power Adapters, pp.4, 6, 26-32; Lenovo PC Options Industry Analysis - Power Category Report, pp.15, 18, 21, 24, 29-32.",
+      "markets": [
+        {
+          "code": "DE+UK+SE",
+          "label": "DE + UK + SE",
+          "sample": 295,
+          "buyerBase": 135,
+          "featureBase": 130,
+          "selfPurchased": 46,
+          "meanPrice": 77.05,
+          "motivationConvenience": 35,
+          "motivationTravel": 24,
+          "motivationMultiDevice": 27,
+          "motivationFastCharging": 13,
+          "featureFastCharging": 58,
+          "featureMultiPort": 56,
+          "featureProtection": 52,
+          "featureStableOutput": 62,
+          "channelOnline": 32,
+          "channelPhysical": 35,
+          "channelBrandWebsite": 33,
+          "note": "Stable power output is the strongest feature signal at 62%; official brand website reaches 33%."
+        },
+        {
+          "code": "SA",
+          "label": "SA",
+          "sample": 320,
+          "buyerBase": 193,
+          "featureBase": 159,
+          "selfPurchased": 60,
+          "meanPrice": 75.76,
+          "motivationConvenience": 41,
+          "motivationTravel": 43,
+          "motivationMultiDevice": 35,
+          "motivationFastCharging": 35,
+          "featureFastCharging": 56,
+          "featureMultiPort": 68,
+          "featureProtection": 63,
+          "featureStableOutput": 38,
+          "channelOnline": 32,
+          "channelPhysical": 41,
+          "channelBrandWebsite": 26,
+          "note": "Original adapter not supporting fast charging is an important motivation at 35%; physical store is 41%."
+        },
+        {
+          "code": "US",
+          "label": "US",
+          "sample": 354,
+          "buyerBase": 242,
+          "featureBase": 156,
+          "selfPurchased": 68,
+          "meanPrice": 65.18,
+          "motivationConvenience": 34,
+          "motivationTravel": 34,
+          "motivationMultiDevice": 27,
+          "motivationFastCharging": 20,
+          "featureFastCharging": 53,
+          "featureMultiPort": 56,
+          "featureProtection": 53,
+          "featureStableOutput": 51,
+          "channelOnline": 29,
+          "channelPhysical": 41,
+          "channelBrandWebsite": 30,
+          "note": "Highest self-purchased rate in the adapter survey at 68%; physical store is 41%."
+        },
+        {
+          "code": "IN",
+          "label": "IN",
+          "sample": 262,
+          "buyerBase": 159,
+          "featureBase": 183,
+          "selfPurchased": 61,
+          "meanPrice": 41.1,
+          "motivationConvenience": 48,
+          "motivationTravel": 44,
+          "motivationMultiDevice": 45,
+          "motivationFastCharging": 26,
+          "featureFastCharging": 79,
+          "featureMultiPort": 64,
+          "featureProtection": 58,
+          "featureStableOutput": 56,
+          "channelOnline": 53,
+          "channelPhysical": 29,
+          "channelBrandWebsite": 18,
+          "note": "Fast charging is the clearest feature signal at 79%; online e-commerce is 53%."
+        },
+        {
+          "code": "JP",
+          "label": "JP",
+          "sample": 378,
+          "buyerBase": 218,
+          "featureBase": 187,
+          "selfPurchased": 58,
+          "meanPrice": 35.04,
+          "motivationConvenience": 49,
+          "motivationTravel": 42,
+          "motivationMultiDevice": 32,
+          "motivationFastCharging": 24,
+          "featureFastCharging": 49,
+          "featureMultiPort": 52,
+          "featureProtection": 58,
+          "featureStableOutput": 56,
+          "channelOnline": 47,
+          "channelPhysical": 33,
+          "channelBrandWebsite": 20,
+          "note": "Convenient use in different locations is 49%; online e-commerce is 47%."
+        },
+        {
+          "code": "BR+MEX",
+          "label": "BR + MEX",
+          "sample": 223,
+          "buyerBase": 140,
+          "featureBase": 116,
+          "selfPurchased": 63,
+          "meanPrice": 36.45,
+          "motivationConvenience": 38,
+          "motivationTravel": 44,
+          "motivationMultiDevice": 34,
+          "motivationFastCharging": 11,
+          "featureFastCharging": 66,
+          "featureMultiPort": 59,
+          "featureProtection": 60,
+          "featureStableOutput": 47,
+          "channelOnline": 48,
+          "channelPhysical": 31,
+          "channelBrandWebsite": 21,
+          "note": "Travel or mobile work motivation is 44%; fast-charging feature consideration is 66%."
+        }
+      ],
+      "demandMetrics": [
+        {
+          "field": "featureFastCharging",
+          "label": "Fast charging"
+        },
+        {
+          "field": "featureMultiPort",
+          "label": "Multi-port compatibility"
+        },
+        {
+          "field": "featureProtection",
+          "label": "Intelligent protection"
+        }
+      ],
+      "channelMetrics": [
+        {
+          "field": "channelOnline",
+          "label": "Online e-commerce"
+        },
+        {
+          "field": "channelPhysical",
+          "label": "Physical store"
+        },
+        {
+          "field": "channelBrandWebsite",
+          "label": "Official brand website"
+        }
+      ],
+      "industryCountries": [
+        {
+          "country": "USA",
+          "headline": "Adapter category faces PC / phone OEM competition.",
+          "metrics": "Adapter sales revenue 1.5 billion; market share 17-18%; growth 10%; 60-80W accounts for 72%.",
+          "sourcePage": "Industry report p.15"
+        },
+        {
+          "country": "Japan",
+          "headline": "Local brands are strong and price pressure is high.",
+          "metrics": "Adapter sales revenue 0.7 billion; market share 18%; 45-100W is mainstream at 78-80%; 100-240W is 15%.",
+          "sourcePage": "Industry report p.18"
+        },
+        {
+          "country": "Indonesia",
+          "headline": "Power category is highly price sensitive.",
+          "metrics": "Anker Indonesia power category sales revenue is about 1 billion; growth about 40%; market share about 50-60%.",
+          "sourcePage": "Industry report p.21"
+        },
+        {
+          "country": "UK",
+          "headline": "Adapter revenue is smaller than power bank revenue.",
+          "metrics": "Anker adapter revenue in the UK is 30% of UK power bank revenue; report notes slower growth and no separate series yet.",
+          "sourcePage": "Industry report p.24"
+        }
+      ]
+    },
+    "power_bank": {
+      "title": "Power Bank Country Market Structure",
+      "source": "Ipsos PC Accessories User Research - Power Bank, pp.4, 6, 26-33; Lenovo PC Options Industry Analysis - Power Category Report, pp.15, 18, 21, 24, 29-32.",
+      "markets": [
+        {
+          "code": "DE+UK+SE",
+          "label": "DE + UK + SE",
+          "sample": 274,
+          "buyerBase": 120,
+          "featureBase": 143,
+          "selfPurchased": 45,
+          "meanPrice": 101.77,
+          "motivationTravel": 79,
+          "motivationCapacity": 38,
+          "motivationMultiDevice": 38,
+          "motivationFastCharging": 15,
+          "featureBatteryCapacity": 71,
+          "featureFastCharging": 50,
+          "featureMultiPort": 52,
+          "featurePowerRange": 48,
+          "featureStableOutput": 48,
+          "channelOnline": 51,
+          "channelPhysical": 24,
+          "channelBrandWebsite": 25,
+          "note": "Highest mean purchase price at $101.77; official brand website reaches 25%."
+        },
+        {
+          "code": "SA",
+          "label": "SA",
+          "sample": 360,
+          "buyerBase": 181,
+          "featureBase": 213,
+          "selfPurchased": 55,
+          "meanPrice": 80.36,
+          "motivationTravel": 74,
+          "motivationCapacity": 57,
+          "motivationMultiDevice": 61,
+          "motivationFastCharging": 27,
+          "featureBatteryCapacity": 56,
+          "featureFastCharging": 53,
+          "featureMultiPort": 66,
+          "featurePowerRange": 55,
+          "featureStableOutput": 43,
+          "channelOnline": 42,
+          "channelPhysical": 40,
+          "channelBrandWebsite": 18,
+          "note": "Multi-device charging motivation is 61%; physical store is 40%."
+        },
+        {
+          "code": "US",
+          "label": "US",
+          "sample": 257,
+          "buyerBase": 137,
+          "featureBase": 149,
+          "selfPurchased": 56,
+          "meanPrice": 87.28,
+          "motivationTravel": 71,
+          "motivationCapacity": 49,
+          "motivationMultiDevice": 39,
+          "motivationFastCharging": 18,
+          "featureBatteryCapacity": 70,
+          "featureFastCharging": 57,
+          "featureMultiPort": 53,
+          "featurePowerRange": 58,
+          "featureStableOutput": 58,
+          "channelOnline": 40,
+          "channelPhysical": 43,
+          "channelBrandWebsite": 17,
+          "note": "Physical store is the top channel at 43%; mean purchase price is $87.28."
+        },
+        {
+          "code": "IN",
+          "label": "IN",
+          "sample": 362,
+          "buyerBase": 235,
+          "featureBase": 272,
+          "selfPurchased": 66,
+          "meanPrice": 61.39,
+          "motivationTravel": 84,
+          "motivationCapacity": 53,
+          "motivationMultiDevice": 53,
+          "motivationFastCharging": 26,
+          "featureBatteryCapacity": 78,
+          "featureFastCharging": 74,
+          "featureMultiPort": 62,
+          "featurePowerRange": 63,
+          "featureStableOutput": 55,
+          "channelOnline": 64,
+          "channelPhysical": 23,
+          "channelBrandWebsite": 12,
+          "note": "Highest self-purchased rate at 66%; online e-commerce is 64%."
+        },
+        {
+          "code": "JP",
+          "label": "JP",
+          "sample": 242,
+          "buyerBase": 118,
+          "featureBase": 140,
+          "selfPurchased": 48,
+          "meanPrice": 87.44,
+          "motivationTravel": 69,
+          "motivationCapacity": 39,
+          "motivationMultiDevice": 36,
+          "motivationFastCharging": 27,
+          "featureBatteryCapacity": 67,
+          "featureFastCharging": 43,
+          "featureMultiPort": 48,
+          "featurePowerRange": 39,
+          "featureStableOutput": 59,
+          "channelOnline": 56,
+          "channelPhysical": 32,
+          "channelBrandWebsite": 12,
+          "note": "Stable output is 59%; safety certification is a Top 3 factor in the report."
+        },
+        {
+          "code": "BR+MEX",
+          "label": "BR + MEX",
+          "sample": 311,
+          "buyerBase": 177,
+          "featureBase": 196,
+          "selfPurchased": 56,
+          "meanPrice": 57.1,
+          "motivationTravel": 81,
+          "motivationCapacity": 47,
+          "motivationMultiDevice": 50,
+          "motivationFastCharging": 12,
+          "featureBatteryCapacity": 72,
+          "featureFastCharging": 67,
+          "featureMultiPort": 57,
+          "featurePowerRange": 39,
+          "featureStableOutput": 50,
+          "channelOnline": 58,
+          "channelPhysical": 33,
+          "channelBrandWebsite": 9,
+          "note": "Convenient travel / portable charging is 81%; mean purchase price is $57.10."
+        }
+      ],
+      "demandMetrics": [
+        {
+          "field": "featureBatteryCapacity",
+          "label": "Battery capacity"
+        },
+        {
+          "field": "featureFastCharging",
+          "label": "Fast charging"
+        },
+        {
+          "field": "featureMultiPort",
+          "label": "Multiple ports"
+        }
+      ],
+      "channelMetrics": [
+        {
+          "field": "channelOnline",
+          "label": "Online e-commerce"
+        },
+        {
+          "field": "channelPhysical",
+          "label": "Physical store"
+        },
+        {
+          "field": "channelBrandWebsite",
+          "label": "Official brand website"
+        }
+      ],
+      "industryCountries": [
+        {
+          "country": "USA",
+          "headline": "Largest single Anker market with strong power bank layout.",
+          "metrics": "Power bank sales revenue 4.5 billion; market share 30%; growth 15-16%; 5000-12000mAh is 52%.",
+          "sourcePage": "Industry report p.15"
+        },
+        {
+          "country": "Japan",
+          "headline": "Second largest Anker market with fierce local competition.",
+          "metrics": "Power bank sales revenue about 1 billion; market share 27%; growth about 30%; 5000-12000mAh is 50%.",
+          "sourcePage": "Industry report p.18"
+        },
+        {
+          "country": "Indonesia",
+          "headline": "Star growth market focused on middle-high price ranges.",
+          "metrics": "Sales revenue about 1 billion; growth about 40%; market share about 50-60%; $80-200 mid price range contributes 55-60%.",
+          "sourcePage": "Industry report p.21"
+        },
+        {
+          "country": "UK",
+          "headline": "High share market where high-power PC power banks perform well.",
+          "metrics": "Power bank sales revenue 0.3 billion; market share 60%; growth about 10%; UK star products priced GBP69.99 and GBP79.99.",
+          "sourcePage": "Industry report p.24"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "adapter_65w_usbc_dc",
+      "categoryId": "adapter",
+      "name": "Lenovo 65W USB-C DC Adapter",
+      "shortName": "65W USB-C DC",
+      "image": "assets/products/adapter-65w-usbc-dc.png",
+      "listPrice": 49.99,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "USB-C",
+          "DC",
+          "vehicle"
+        ],
+        "compatibility": "laptop",
+        "powerMode": "Wired",
+        "ports": 1,
+        "portCountBand": "1 port",
+        "interfaceProtocols": [
+          "USB-C PD"
+        ],
+        "scenarios": [
+          "vehicle",
+          "travel",
+          "commercial"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_65w_usbc_dc_40ak0065ww"
+      ],
+      "partNumbers": [
+        "40AK0065WW"
+      ],
+      "sourceModels": [
+        "Lenovo 65W USB-C DC Adapter"
+      ],
+      "tags": [
+        "laptop",
+        "USB-C",
+        "DC"
+      ]
+    },
+    {
+      "id": "adapter_multi_port_150w_gan",
+      "categoryId": "adapter",
+      "name": "Lenovo Multi-port USB-C 150W Laptop GaN Charger",
+      "shortName": "150W Laptop GaN",
+      "image": "assets/products/adapter-multi-port-150w-gan.webp",
+      "listPrice": 89.99,
+      "attributes": {
+        "wattage": 150,
+        "wattageBand": "100W and above",
+        "features": [
+          "GaN",
+          "multi-port",
+          "laptop"
+        ],
+        "compatibility": "laptop",
+        "powerMode": "Wired",
+        "ports": 3,
+        "portCountBand": "3+ ports",
+        "interfaceProtocols": [
+          "USB-C PD 3.1"
+        ],
+        "scenarios": [
+          "laptop",
+          "commercial"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_multi_port_150w_gan_40aw150beu",
+        "adapter_multi_port_150w_gan_40aw150buk",
+        "adapter_multi_port_150w_gan_40aw150bus",
+        "adapter_multi_port_150w_gan_g0a6150beu"
+      ],
+      "partNumbers": [
+        "40AW150BEU",
+        "40AW150BUK",
+        "40AW150BUS",
+        "G0A6150BEU"
+      ],
+      "sourceModels": [
+        "Lenovo Multi-port USB-C 150W Laptop GaN Charger"
+      ],
+      "tags": [
+        "laptop",
+        "GaN",
+        "multi-port"
+      ]
+    },
+    {
+      "id": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "Lenovo Multi-port USB-C 100W GaN Charger",
+      "shortName": "100W Multi-port",
+      "image": "assets/products/adapter-multi-port-100w-gan-black.avif",
+      "images": [
+        {
+          "label": "Black",
+          "src": "assets/products/adapter-multi-port-100w-gan-black.avif"
+        },
+        {
+          "label": "White",
+          "src": "assets/products/adapter-multi-port-100w-gan-white.avif"
+        }
+      ],
+      "listPrice": 74.99,
+      "attributes": {
+        "wattage": 100,
+        "wattageBand": "100W and above",
+        "features": [
+          "GaN",
+          "multi-port"
+        ],
+        "compatibility": "multi",
+        "powerMode": "Wired",
+        "ports": 3,
+        "portCountBand": "3+ ports",
+        "interfaceProtocols": [
+          "USB-C PD 3.1",
+          "PPS"
+        ],
+        "scenarios": [
+          "multi-device",
+          "consumer"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_multi_port_100w_gan_40aw100beu",
+        "adapter_multi_port_100w_gan_40aw100buk",
+        "adapter_multi_port_100w_gan_40aw100bus",
+        "adapter_multi_port_100w_gan_g0a6100beu",
+        "adapter_multi_port_100w_gan_g0a6100buk",
+        "adapter_multi_port_100w_gan_g0a6100bus",
+        "adapter_multi_port_100w_gan_g0a6100seu",
+        "adapter_multi_port_100w_gan_g0a6100suk",
+        "adapter_multi_port_100w_gan_g0a6100sus"
+      ],
+      "partNumbers": [
+        "40AW100BEU",
+        "40AW100BUK",
+        "40AW100BUS",
+        "G0A6100BEU",
+        "G0A6100BUK",
+        "G0A6100BUS",
+        "G0A6100SEU",
+        "G0A6100SUK",
+        "G0A6100SUS"
+      ],
+      "sourceModels": [
+        "Lenovo Multi-port USB-C 100W GaN Charger-EU Black",
+        "Lenovo Multi-port USB-C 100W GaN Charger-EU Seashell",
+        "Lenovo Multi-port USB-C 100W GaN Charger-UK Black",
+        "Lenovo Multi-port USB-C 100W GaN Charger-UK Seashell",
+        "Lenovo Multi-port USB-C 100W GaN Charger-US Black",
+        "Lenovo Multi-port USB-C 100W GaN Charger-US Seashell"
+      ],
+      "tags": [
+        "multi",
+        "GaN",
+        "multi-port"
+      ]
+    },
+    {
+      "id": "adapter_65w_usbc_ac_travel",
+      "categoryId": "adapter",
+      "name": "Lenovo 65W USB-C AC Travel Adapter",
+      "shortName": "65W AC Travel",
+      "image": "assets/products/adapter-65w-usbc-ac-travel.avif",
+      "listPrice": 49.99,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "USB-C",
+          "travel",
+          "AC"
+        ],
+        "compatibility": "laptop",
+        "powerMode": "Wired",
+        "ports": 1,
+        "portCountBand": "1 port",
+        "interfaceProtocols": [
+          "USB-C PD"
+        ],
+        "scenarios": [
+          "travel",
+          "commercial"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_65w_usbc_ac_travel_40aw0065ww",
+        "adapter_65w_usbc_ac_travel_g0a6n065ww"
+      ],
+      "partNumbers": [
+        "40AW0065WW",
+        "G0A6N065WW"
+      ],
+      "sourceModels": [
+        "Lenovo 65W AC Adapter",
+        "Lenovo 65W USB-C Adapter"
+      ],
+      "tags": [
+        "laptop",
+        "USB-C",
+        "travel"
+      ]
+    },
+    {
+      "id": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "Lenovo 65W USB-C Wall Adapter",
+      "shortName": "65W USB-C Wall",
+      "image": "assets/products/adapter-65w-usbc-wall.avif",
+      "listPrice": 29.99,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "USB-C",
+          "wall",
+          "compact"
+        ],
+        "compatibility": "mobile",
+        "powerMode": "Wired",
+        "ports": 1,
+        "portCountBand": "1 port",
+        "interfaceProtocols": [
+          "USB-C PD"
+        ],
+        "scenarios": [
+          "daily carry",
+          "consumer"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_65w_usbc_wall_4x21l54608",
+        "adapter_65w_usbc_wall_4x21l54610",
+        "adapter_65w_usbc_wall_4x21l54612",
+        "adapter_65w_usbc_wall_4x21l54614",
+        "adapter_65w_usbc_wall_4x21l54618",
+        "adapter_65w_usbc_wall_4x21l54620",
+        "adapter_65w_usbc_wall_4x21l54622",
+        "adapter_65w_usbc_wall_4x21l83772",
+        "adapter_65w_usbc_wall_4x21l83773",
+        "adapter_65w_usbc_wall_gx21l58554",
+        "adapter_65w_usbc_wall_gx21l58555",
+        "adapter_65w_usbc_wall_gx21l58557",
+        "adapter_65w_usbc_wall_gx21l58559",
+        "adapter_65w_usbc_wall_gx21l58564",
+        "adapter_65w_usbc_wall_gx21l58566",
+        "adapter_65w_usbc_wall_gx21l58568",
+        "adapter_65w_usbc_wall_gx21l83770",
+        "adapter_65w_usbc_wall_gx21l83771"
+      ],
+      "partNumbers": [
+        "4X21L54608",
+        "4X21L54610",
+        "4X21L54612",
+        "4X21L54614",
+        "4X21L54618",
+        "4X21L54620",
+        "4X21L54622",
+        "4X21L83772",
+        "4X21L83773",
+        "GX21L58554",
+        "GX21L58555",
+        "GX21L58557",
+        "GX21L58559",
+        "GX21L58564",
+        "GX21L58566",
+        "GX21L58568",
+        "GX21L83770",
+        "GX21L83771"
+      ],
+      "sourceModels": [
+        "Lenovo 65W USB-C Wall Adapter"
+      ],
+      "tags": [
+        "mobile",
+        "USB-C",
+        "wall"
+      ]
+    },
+    {
+      "id": "adapter_65w_mini_gan",
+      "categoryId": "adapter",
+      "name": "Lenovo 65W Mini USB-C GaN Charger",
+      "shortName": "65W Mini GaN",
+      "image": "assets/products/adapter-65w-mini-gan.avif",
+      "listPrice": 34.99,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "GaN",
+          "mini",
+          "USB-C"
+        ],
+        "compatibility": "mobile",
+        "powerMode": "Wired",
+        "ports": 1,
+        "portCountBand": "1 port",
+        "interfaceProtocols": [
+          "USB-C PD",
+          "PPS"
+        ],
+        "scenarios": [
+          "mobile",
+          "travel"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_65w_mini_gan_40aw65wbeu",
+        "adapter_65w_mini_gan_40aw65wbuk",
+        "adapter_65w_mini_gan_g0a665wbeu",
+        "adapter_65w_mini_gan_g0a665wbuk"
+      ],
+      "partNumbers": [
+        "40AW65WBEU",
+        "40AW65WBUK",
+        "G0A665WBEU",
+        "G0A665WBUK"
+      ],
+      "sourceModels": [
+        "Lenovo 65W Mini USB-C GaN Charger (EU Black)",
+        "Lenovo 65W Mini USB-C GaN Charger (UK Black)"
+      ],
+      "tags": [
+        "mobile",
+        "GaN",
+        "mini"
+      ]
+    },
+    {
+      "id": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "Lenovo GaN Nano 65W Adapter",
+      "shortName": "65W GaN Nano",
+      "image": "assets/products/adapter-gan-nano-65w.avif",
+      "listPrice": 49.99,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "GaN",
+          "nano",
+          "laptop"
+        ],
+        "compatibility": "laptop",
+        "powerMode": "Wired",
+        "ports": 1,
+        "portCountBand": "1 port",
+        "interfaceProtocols": [
+          "USB-C PD"
+        ],
+        "scenarios": [
+          "laptop",
+          "commercial"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_gan_nano_65w_40awgn65ar",
+        "adapter_gan_nano_65w_40awgn65au",
+        "adapter_gan_nano_65w_40awgn65eu",
+        "adapter_gan_nano_65w_40awgn65kr",
+        "adapter_gan_nano_65w_40awgn65th",
+        "adapter_gan_nano_65w_40awgn65uk",
+        "adapter_gan_nano_65w_40awgn65ul",
+        "adapter_gan_nano_65w_40awgn65us",
+        "adapter_gan_nano_65w_g0a6gn65au",
+        "adapter_gan_nano_65w_g0a6gn65eu",
+        "adapter_gan_nano_65w_g0a6gn65kr",
+        "adapter_gan_nano_65w_g0a6gn65th",
+        "adapter_gan_nano_65w_g0a6gn65uk",
+        "adapter_gan_nano_65w_g0a6gn65ul",
+        "adapter_gan_nano_65w_g0a6gn65us"
+      ],
+      "partNumbers": [
+        "40AWGN65AR",
+        "40AWGN65AU",
+        "40AWGN65EU",
+        "40AWGN65KR",
+        "40AWGN65TH",
+        "40AWGN65UK",
+        "40AWGN65UL",
+        "40AWGN65US",
+        "G0A6GN65AU",
+        "G0A6GN65EU",
+        "G0A6GN65KR",
+        "G0A6GN65TH",
+        "G0A6GN65UK",
+        "G0A6GN65UL",
+        "G0A6GN65US"
+      ],
+      "sourceModels": [
+        "Lenovo GaN Nano 65W Adapter",
+        "Lenovo GaN Nano 65W Adapter-AR Pin",
+        "Lenovo GaN Nano 65W Adapter-AU Pin",
+        "Lenovo GaN Nano 65W Adapter-EU Pin",
+        "Lenovo GaN Nano 65W Adapter-KR Pin",
+        "Lenovo GaN Nano 65W Adapter-TH Pin",
+        "Lenovo GaN Nano 65W Adapter-UK Pin",
+        "Lenovo GaN Nano 65W Adapter-US Pin"
+      ],
+      "tags": [
+        "laptop",
+        "GaN",
+        "nano"
+      ]
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "Lenovo Dual USB-C 65W GaN Charger",
+      "shortName": "65W Dual USB-C",
+      "image": "assets/products/adapter-dual-usbc-65w-gan-black.avif",
+      "images": [
+        {
+          "label": "Black",
+          "src": "assets/products/adapter-dual-usbc-65w-gan-black.avif"
+        },
+        {
+          "label": "White",
+          "src": "assets/products/adapter-dual-usbc-65w-gan-white.avif"
+        }
+      ],
+      "listPrice": 59.99,
+      "attributes": {
+        "wattage": 65,
+        "wattageBand": "45W to 99W",
+        "features": [
+          "GaN",
+          "dual USB-C",
+          "multi-port"
+        ],
+        "compatibility": "multi",
+        "powerMode": "Wired",
+        "ports": 2,
+        "portCountBand": "2 ports",
+        "interfaceProtocols": [
+          "USB-C PD",
+          "PPS"
+        ],
+        "scenarios": [
+          "multi-device",
+          "consumer"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "adapter_dual_usbc_65w_gan_40aw065beu",
+        "adapter_dual_usbc_65w_gan_40aw065buk",
+        "adapter_dual_usbc_65w_gan_40aw065bus",
+        "adapter_dual_usbc_65w_gan_40aw065wus",
+        "adapter_dual_usbc_65w_gan_g0a6065beu",
+        "adapter_dual_usbc_65w_gan_g0a6065buk",
+        "adapter_dual_usbc_65w_gan_g0a6065bus",
+        "adapter_dual_usbc_65w_gan_g0a6065weu",
+        "adapter_dual_usbc_65w_gan_g0a6065wuk",
+        "adapter_dual_usbc_65w_gan_g0a6065wus"
+      ],
+      "partNumbers": [
+        "40AW065BEU",
+        "40AW065BUK",
+        "40AW065BUS",
+        "40AW065WUS",
+        "G0A6065BEU",
+        "G0A6065BUK",
+        "G0A6065BUS",
+        "G0A6065WEU",
+        "G0A6065WUK",
+        "G0A6065WUS"
+      ],
+      "sourceModels": [
+        "Lenovo Dual USB-C 65W GaN Charger"
+      ],
+      "tags": [
+        "multi",
+        "GaN",
+        "dual USB-C"
+      ]
+    },
+    {
+      "id": "bank_hybrid_2in1_140w_10200",
+      "categoryId": "power_bank",
+      "name": "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)",
+      "shortName": "Hybrid 140W 10.2K",
+      "image": "assets/products/bank-hybrid-2in1-140w-10200-source.png",
+      "listPrice": 99,
+      "attributes": {
+        "capacityMah": 10200,
+        "capacityBand": "10000-20000mAh",
+        "outputW": 140,
+        "outputBand": "100W and above",
+        "features": [
+          "2-in-1",
+          "hybrid",
+          "high wattage"
+        ],
+        "compatibility": "laptop",
+        "hasCable": "No",
+        "scenarios": [
+          "laptop",
+          "travel"
+        ],
+        "isTwoInOne": true
+      },
+      "variants": [
+        "bank_hybrid_2in1_140w_10200_g0a3140wna"
+      ],
+      "partNumbers": [
+        "G0A3140WNA"
+      ],
+      "sourceModels": [
+        "Lenovo Hybrid 2-in-1 Power Bank 140W (10.2K)"
+      ],
+      "tags": [
+        "laptop",
+        "2-in-1",
+        "hybrid"
+      ]
+    },
+    {
+      "id": "bank_140w_smart_laptop",
+      "categoryId": "power_bank",
+      "name": "Lenovo 140W Smart Laptop Power Bank",
+      "shortName": "140W Smart Power Bank",
+      "image": "assets/products/bank-140w-smart-laptop.png",
+      "listPrice": 119,
+      "attributes": {
+        "capacityMah": 20000,
+        "capacityBand": "20000mAh and above",
+        "outputW": 140,
+        "outputBand": "100W and above",
+        "features": [
+          "smart display",
+          "high wattage",
+          "laptop"
+        ],
+        "compatibility": "laptop",
+        "hasCable": "No",
+        "scenarios": [
+          "laptop",
+          "travel"
+        ],
+        "isTwoInOne": false
+      },
+      "variants": [
+        "bank_140w_smart_laptop_40al140www",
+        "bank_140w_smart_laptop_g0a3140www"
+      ],
+      "partNumbers": [
+        "40AL140WWW",
+        "G0A3140WWW"
+      ],
+      "sourceModels": [
+        "Lenovo 140W Smart Laptop Power Bank"
+      ],
+      "tags": [
+        "laptop",
+        "smart display",
+        "high wattage"
+      ]
+    },
+    {
+      "id": "cable_240w_usb_c_retractable",
+      "categoryId": "power_cable",
+      "name": "Lenovo 240W USB-C Retractable Cable",
+      "shortName": "240W Retractable Cable",
+      "image": "assets/products/cable-240w-usb-c-retractable-black.avif",
+      "images": [
+        {
+          "label": "Black",
+          "src": "assets/products/cable-240w-usb-c-retractable-black.avif"
+        },
+        {
+          "label": "White",
+          "src": "assets/products/cable-240w-usb-c-retractable-white.avif"
+        }
+      ],
+      "listPrice": 24,
+      "attributes": {
+        "connectors": [
+          "USB-C"
+        ],
+        "lengthM": 1.0,
+        "lengthBand": "1m to 2m",
+        "powerW": 240,
+        "powerBand": "200W and above",
+        "features": [
+          "USB-C",
+          "retractable",
+          "240W"
+        ],
+        "retractable": "Yes",
+        "scenarios": [
+          "travel",
+          "laptop"
+        ]
+      },
+      "variants": [
+        "cable_240w_usb_c_retractable_gx91v57058",
+        "cable_240w_usb_c_retractable_gx91v57059"
+      ],
+      "partNumbers": [
+        "GX91V57058",
+        "GX91V57059"
+      ],
+      "sourceModels": [
+        "Lenovo 240W USB-C Retractable Cable - Black",
+        "Lenovo 240W USB-C Retractable Cable - White"
+      ],
+      "tags": [
+        "Yes",
+        "USB-C",
+        "retractable"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "id": "adapter_65w_usbc_dc_40ak0065ww",
+      "modelId": "adapter_65w_usbc_dc",
+      "categoryId": "adapter",
+      "name": "40AK0065WW",
+      "partNumber": "40AK0065WW",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_150w_gan_40aw150beu",
+      "modelId": "adapter_multi_port_150w_gan",
+      "categoryId": "adapter",
+      "name": "40AW150BEU",
+      "partNumber": "40AW150BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_150w_gan_40aw150buk",
+      "modelId": "adapter_multi_port_150w_gan",
+      "categoryId": "adapter",
+      "name": "40AW150BUK",
+      "partNumber": "40AW150BUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_150w_gan_40aw150bus",
+      "modelId": "adapter_multi_port_150w_gan",
+      "categoryId": "adapter",
+      "name": "40AW150BUS",
+      "partNumber": "40AW150BUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_150w_gan_g0a6150beu",
+      "modelId": "adapter_multi_port_150w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6150BEU",
+      "partNumber": "G0A6150BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_40aw100beu",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "40AW100BEU",
+      "partNumber": "40AW100BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_40aw100buk",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "40AW100BUK",
+      "partNumber": "40AW100BUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_40aw100bus",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "40AW100BUS",
+      "partNumber": "40AW100BUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_g0a6100beu",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6100BEU",
+      "partNumber": "G0A6100BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_g0a6100buk",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6100BUK",
+      "partNumber": "G0A6100BUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_g0a6100bus",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6100BUS",
+      "partNumber": "G0A6100BUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_g0a6100seu",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6100SEU",
+      "partNumber": "G0A6100SEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_g0a6100suk",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6100SUK",
+      "partNumber": "G0A6100SUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_multi_port_100w_gan_g0a6100sus",
+      "modelId": "adapter_multi_port_100w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6100SUS",
+      "partNumber": "G0A6100SUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_ac_travel_40aw0065ww",
+      "modelId": "adapter_65w_usbc_ac_travel",
+      "categoryId": "adapter",
+      "name": "40AW0065WW",
+      "partNumber": "40AW0065WW",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_ac_travel_g0a6n065ww",
+      "modelId": "adapter_65w_usbc_ac_travel",
+      "categoryId": "adapter",
+      "name": "G0A6N065WW",
+      "partNumber": "G0A6N065WW",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l54608",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L54608",
+      "partNumber": "4X21L54608",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l54610",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L54610",
+      "partNumber": "4X21L54610",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l54612",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L54612",
+      "partNumber": "4X21L54612",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l54614",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L54614",
+      "partNumber": "4X21L54614",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l54618",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L54618",
+      "partNumber": "4X21L54618",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l54620",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L54620",
+      "partNumber": "4X21L54620",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l54622",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L54622",
+      "partNumber": "4X21L54622",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l83772",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L83772",
+      "partNumber": "4X21L83772",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_4x21l83773",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "4X21L83773",
+      "partNumber": "4X21L83773",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l58554",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L58554",
+      "partNumber": "GX21L58554",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l58555",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L58555",
+      "partNumber": "GX21L58555",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l58557",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L58557",
+      "partNumber": "GX21L58557",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l58559",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L58559",
+      "partNumber": "GX21L58559",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l58564",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L58564",
+      "partNumber": "GX21L58564",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l58566",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L58566",
+      "partNumber": "GX21L58566",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l58568",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L58568",
+      "partNumber": "GX21L58568",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l83770",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L83770",
+      "partNumber": "GX21L83770",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_usbc_wall_gx21l83771",
+      "modelId": "adapter_65w_usbc_wall",
+      "categoryId": "adapter",
+      "name": "GX21L83771",
+      "partNumber": "GX21L83771",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_mini_gan_40aw65wbeu",
+      "modelId": "adapter_65w_mini_gan",
+      "categoryId": "adapter",
+      "name": "40AW65WBEU",
+      "partNumber": "40AW65WBEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_mini_gan_40aw65wbuk",
+      "modelId": "adapter_65w_mini_gan",
+      "categoryId": "adapter",
+      "name": "40AW65WBUK",
+      "partNumber": "40AW65WBUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_mini_gan_g0a665wbeu",
+      "modelId": "adapter_65w_mini_gan",
+      "categoryId": "adapter",
+      "name": "G0A665WBEU",
+      "partNumber": "G0A665WBEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_65w_mini_gan_g0a665wbuk",
+      "modelId": "adapter_65w_mini_gan",
+      "categoryId": "adapter",
+      "name": "G0A665WBUK",
+      "partNumber": "G0A665WBUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65ar",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65AR",
+      "partNumber": "40AWGN65AR",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65au",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65AU",
+      "partNumber": "40AWGN65AU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65eu",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65EU",
+      "partNumber": "40AWGN65EU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65kr",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65KR",
+      "partNumber": "40AWGN65KR",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65th",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65TH",
+      "partNumber": "40AWGN65TH",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65uk",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65UK",
+      "partNumber": "40AWGN65UK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65ul",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65UL",
+      "partNumber": "40AWGN65UL",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_40awgn65us",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "40AWGN65US",
+      "partNumber": "40AWGN65US",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_g0a6gn65au",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "G0A6GN65AU",
+      "partNumber": "G0A6GN65AU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_g0a6gn65eu",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "G0A6GN65EU",
+      "partNumber": "G0A6GN65EU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_g0a6gn65kr",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "G0A6GN65KR",
+      "partNumber": "G0A6GN65KR",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_g0a6gn65th",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "G0A6GN65TH",
+      "partNumber": "G0A6GN65TH",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_g0a6gn65uk",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "G0A6GN65UK",
+      "partNumber": "G0A6GN65UK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_g0a6gn65ul",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "G0A6GN65UL",
+      "partNumber": "G0A6GN65UL",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_gan_nano_65w_g0a6gn65us",
+      "modelId": "adapter_gan_nano_65w",
+      "categoryId": "adapter",
+      "name": "G0A6GN65US",
+      "partNumber": "G0A6GN65US",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_40aw065beu",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "40AW065BEU",
+      "partNumber": "40AW065BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_40aw065buk",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "40AW065BUK",
+      "partNumber": "40AW065BUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_40aw065bus",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "40AW065BUS",
+      "partNumber": "40AW065BUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_40aw065wus",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "40AW065WUS",
+      "partNumber": "40AW065WUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065beu",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065BEU",
+      "partNumber": "G0A6065BEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065buk",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065BUK",
+      "partNumber": "G0A6065BUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065bus",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065BUS",
+      "partNumber": "G0A6065BUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065weu",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065WEU",
+      "partNumber": "G0A6065WEU",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065wuk",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065WUK",
+      "partNumber": "G0A6065WUK",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "adapter_dual_usbc_65w_gan_g0a6065wus",
+      "modelId": "adapter_dual_usbc_65w_gan",
+      "categoryId": "adapter",
+      "name": "G0A6065WUS",
+      "partNumber": "G0A6065WUS",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "bank_hybrid_2in1_140w_10200_g0a3140wna",
+      "modelId": "bank_hybrid_2in1_140w_10200",
+      "categoryId": "power_bank",
+      "name": "G0A3140WNA",
+      "partNumber": "G0A3140WNA",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "bank_140w_smart_laptop_40al140www",
+      "modelId": "bank_140w_smart_laptop",
+      "categoryId": "power_bank",
+      "name": "40AL140WWW",
+      "partNumber": "40AL140WWW",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "bank_140w_smart_laptop_g0a3140www",
+      "modelId": "bank_140w_smart_laptop",
+      "categoryId": "power_bank",
+      "name": "G0A3140WWW",
+      "partNumber": "G0A3140WWW",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "cable_240w_usb_c_retractable_gx91v57058",
+      "modelId": "cable_240w_usb_c_retractable",
+      "categoryId": "power_cable",
+      "name": "GX91V57058",
+      "partNumber": "GX91V57058",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    },
+    {
+      "id": "cable_240w_usb_c_retractable_gx91v57059",
+      "modelId": "cable_240w_usb_c_retractable",
+      "categoryId": "power_cable",
+      "name": "GX91V57059",
+      "partNumber": "GX91V57059",
+      "share": 0,
+      "priceMultiplier": 1,
+      "costMultiplier": 1
+    }
+  ],
+  "futureCategorySlots": [
+    "Docking",
+    "Wireless Charger",
+    "Smart Accessories"
+  ],
+  "source": {
+    "sourceFile": "/Users/albert/Downloads/data (1).xlsx",
+    "sourceFiles": [
+      "power 26:10:14.xlsx",
+      "data (1).xlsx"
+    ],
+    "sourceMode": "consolidated_real_product_excel",
+    "sourceRows": 7375,
+    "sourceNotes": "Observed monthly product sell-in/order data merged from the existing dashboard source and the 2026/10/18 Lenovo 65W USB-C DC Adapter update."
   }
 }

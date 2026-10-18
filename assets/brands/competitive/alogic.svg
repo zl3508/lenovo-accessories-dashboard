@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" role="img" aria-labelledby="title">
+  <title id="title">ALOGIC</title>
+  <rect width="320" height="120" rx="18" fill="#fff"/>
+  <path d="M38 80 77 38h28L66 80Zm52 0 23-25 23 25Z" fill="#20242a"/>
+  <text x="150" y="77" font-family="Arial, Helvetica, sans-serif" font-size="39" font-weight="800" fill="#20242a">ALOGIC</text>
+</svg>

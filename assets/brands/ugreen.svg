@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" role="img" aria-labelledby="title">
-  <title>UGREEN</title>
-  <rect width="320" height="160" rx="28" fill="#0f766e"/>
-  <text x="160" y="96" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="50" font-weight="700" text-anchor="middle">UGREEN</text>
+  <title>UGREEN</title><rect width="320" height="160" rx="20" fill="#fff"/>
+  <circle cx="45" cy="80" r="22" fill="none" stroke="#28b463" stroke-width="10"/><circle cx="45" cy="80" r="5" fill="#28b463"/>
+  <text x="184" y="97" fill="#202124" font-family="Arial Black,Arial,sans-serif" font-size="51" font-weight="900" letter-spacing="-3" text-anchor="middle">UGREEN</text>
 </svg>

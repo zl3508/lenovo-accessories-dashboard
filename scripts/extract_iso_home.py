@@ -392,7 +392,7 @@ def build_dashboard(workbook_path: Path):
     return {
         "meta": {
             "sourceFile": workbook_path.name,
-            "dataCutoff": "2026/9/28",
+            "dataCutoff": "2026/10/14",
             "period": "FY2627 Q2",
             "unit": "M$ (Ship Rev)",
             "scope": "Power",

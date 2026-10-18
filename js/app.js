@@ -10,20 +10,26 @@ const DATA_FILES = {
   countryMarkets: "data/country_market_profiles.json",
   metadata: "data/metadata.json",
   powerHome: "data/iso_power/home_dashboard.json",
+  competitorDatabase: "data/competitor_database.json",
+  adapterAssets: "data/adapter_product_assets.json",
 };
 
-const DATA_VERSION = "20260929-accessory-power-landing";
+const DATA_VERSION = "20261019-market-trend-style-v19";
 
 const state = {
   categoryId: null,
   productId: null,
-  categoryView: "market",
+  categoryView: "overview",
   marketModule: "global",
   granularity: "quarter",
   detailGranularity: "quarter",
-  selectedPeriod: { category: null, detail: null },
-  selectedCategoryPeriods: [],
+  selectedPeriod: { category: "FY2627 Q2", detail: null },
+  selectedCategoryPeriods: ["FY2627 Q2"],
+  selectedCategoryMonths: ["2026-07", "2026-08", "2026-09"],
+  selectedCategoryYears: [],
   categoryPeriodMenuOpen: false,
+  globalTimeMenuOpen: false,
+  globalTimeTab: "quarter",
   dimension: "segment",
   segmentFilter: "all",
   partNumber: "all",
@@ -33,6 +39,10 @@ const state = {
   competitorBrand: {},
   competitorLenovoProduct: {},
   competitorCountry: {},
+  competitorDbFilters: {},
+  competitorDbBrand: {},
+  adapterCompetitiveFilters: {},
+  adapterCompetitiveBrand: null,
   policyRegion: {},
   structureBrand: {},
   structureMarket: {},
@@ -64,13 +74,33 @@ const state = {
   homeTopModelFilters: { geo: "all", segment: "all", dib: "all", channel: "all" },
   homeTopPartnerFilters: { geo: "all", segment: "all", dib: "all" },
   categoryOverviewMetrics: {},
+  categoryOverviewSegments: {},
   categoryOverviewProducts: {},
   categoryContributionGeo: {},
+  categoryContributionSegment: {},
   categoryProductSelectorOpen: false,
   categoryTrendProducts: {},
   categoryTrendProductSelectorOpen: false,
   categoryTrendMode: {},
+  quarterComparisonMode: {},
+  categoryTrendGeo: {},
+  categoryTrendGeos: {},
+  categoryTrendGeoMenuOpen: false,
+  categoryTrendPeriods: {},
+  categoryTrendPeriodMenuOpen: false,
+  expandedTrendChart: null,
+  categoryRankingGeo: {},
+  quarterComparisonYears: {},
+  categoryTrendVisibleSeries: {},
   categoryGeoSelected: {},
+  categoryGeoProducts: {},
+  categoryGeoMetric: {},
+  categoryGeoProductSelectorOpen: false,
+  categoryGeoPeriods: {},
+  categoryGeoTimeMenuOpen: false,
+  categoryGeoChartModes: {},
+  detailPanelPns: {},
+  selectedComplianceIndex: {},
 };
 
 const data = {};
@@ -84,11 +114,460 @@ const app = document.querySelector("#app");
 const topNav = document.querySelector("#topNav");
 const homeButton = document.querySelector("#homeButton");
 const sourceStatus = document.querySelector("#sourceStatus");
+let adapterLogoDrag = null;
 
 const granularityLabels = {
+  month: "Month",
   quarter: "Quarter",
   year: "Year",
 };
+
+const marketOverviewSupplements = {
+  adapter: {
+    eyebrow: "Global Overview",
+    heading: "Global Laptop Charger TAM Scope",
+    subtitle: "Market Size, Region, Technology and Channel Summary",
+    body: "The global laptop charger market is expanding steadily, driven by USB-C PD standardization, demand for replacement and multi-device charging, and the adoption of compact GaN designs. Market growth is global, but product preferences and channel strategies remain highly localized.",
+    bullets: [
+      "Growth is not a short spike: the market moves from $3.45B in 2020 to $7.08B in 2032, with 2025-2032 CAGR at 6.85%.",
+      "APAC is the largest structural block at 40.21%, while North America and Europe together remain the key premium and enterprise demand pools.",
+      "65W-100W is the mainstream power band, but 100W+ becomes strategically important as USB-C PD 3.1 and high-performance laptops expand.",
+      "Online retail leads globally, but country-level execution still requires different balances of online, offline, OEM, and brand-owned channels.",
+    ],
+    metrics: [
+      { label: "Global laptop charger market", value: "$4.45B", note: "2025 market size" },
+      { label: "2026 Forecast", value: "$4.94B", note: "2026 market size" },
+      { label: "2026 YoY Growth", value: "10.97%", note: "2025 to 2026" },
+      { label: "Top Power Segment", value: "65W-100W", note: "42.88% share" },
+    ],
+    trend: {
+      eyebrow: "Market Size Trend",
+      title: "2020–2032 Global Laptop Charger Market Size",
+      forecastStartYear: 2026,
+      note: "The market recovered after a temporary decline in 2022 and is projected to expand from $4.45 billion in 2025 to $7.08 billion by 2032. Growth remains positive throughout the forecast period, although annual growth rates vary significantly.",
+      items: [
+        { label: "2020", value: 3450.2, valueLabel: "$3.45B" },
+        { label: "2021", value: 3753.68, valueLabel: "$3.75B" },
+        { label: "2022", value: 3534.93, valueLabel: "$3.53B" },
+        { label: "2023", value: 3736.81, valueLabel: "$3.74B" },
+        { label: "2024", value: 4156.65, valueLabel: "$4.16B" },
+        { label: "2025", value: 4450, valueLabel: "$4.45B" },
+        { label: "2026", value: 4938.32, valueLabel: "$4.94B" },
+        { label: "2027", value: 5006.36, valueLabel: "$5.01B" },
+        { label: "2028", value: 5405.9, valueLabel: "$5.41B" },
+        { label: "2029", value: 5756.41, valueLabel: "$5.76B" },
+        { label: "2030", value: 6254.99, valueLabel: "$6.25B" },
+        { label: "2031", value: 6843.2, valueLabel: "$6.84B" },
+        { label: "2032", value: 7075.9, valueLabel: "$7.08B" },
+      ],
+    },
+    conclusions: [
+      {
+        title: "Regional Summary",
+        body: "APAC leads the market by scale, while North America and Europe together contribute 48.82% of global value and remain important premium and enterprise markets.",
+        summaryPoints: [
+          "APAC leads the market by scale, supported by a large consumer base and electronics manufacturing ecosystem.",
+          "North America and Europe together contribute 48.82% of global value and remain important premium and enterprise markets.",
+        ],
+        points: [
+          "APAC accounts for more than 40% of the global market, supported by its large consumer base and established electronics manufacturing ecosystem.",
+          "Regional execution remains highly differentiated, requiring localized product, pricing and channel strategies.",
+        ],
+        chart: {
+          title: "2025 Region Share",
+          type: "donut",
+          center: "2025 Share",
+          legendSide: "left",
+          showLabels: false,
+          items: [
+            { label: "APAC", value: 1789.13, valueLabel: "$1,789.13M", description: "China, Japan, India, South Korea and Southeast Asia" },
+            { label: "North America", value: 1157.84, valueLabel: "$1,157.84M", description: "USA, Canada and Mexico" },
+            { label: "Europe", value: 1014.58, valueLabel: "$1,014.58M", description: "UK, Germany, France, Italy and Spain" },
+            { label: "Latin America", value: 288.74, valueLabel: "$288.74M", description: "Brazil, Mexico, Argentina and Chile" },
+            { label: "MEA", value: 199.71, valueLabel: "$199.71M", description: "Middle East and Africa: Saudi Arabia, UAE, South Africa and Egypt" },
+          ],
+        },
+      },
+      {
+        title: "Product & Technology Structure Summary",
+        body: "The market is concentrated below 100W, with the 65W–100W segment leading narrowly. GaN has reached meaningful scale, although silicon-based chargers still dominate total market value.",
+        summaryPoints: [
+          "The market is concentrated below 100W, with the 65W–100W segment leading narrowly.",
+          "GaN has reached meaningful scale, although silicon-based chargers still dominate total market value.",
+        ],
+        points: [
+          "65W–100W represents the largest power segment, but below-65W products remain almost equally important.",
+          "Above-100W chargers remain a smaller, high-performance segment serving premium laptops, gaming devices and workstations.",
+          "GaN supports smaller and more efficient form factors, while silicon remains dominant due to cost and supply-chain maturity.",
+        ],
+        charts: [
+          {
+            title: "2025 Power Output Share",
+            type: "donut",
+            center: "2025 Power",
+            items: [
+              { label: "65W-100W", value: 1908.27, valueLabel: "$1,908.27M" },
+              { label: "Below 65W", value: 1828.29, valueLabel: "$1,828.29M" },
+              { label: "Above 100W", value: 713.44, valueLabel: "$713.44M" },
+            ],
+          },
+          {
+            title: "2025 Technology Mix",
+            type: "donut",
+            center: "2025 Mix",
+            items: [
+              { label: "Silicon Based", value: 3076.26, valueLabel: "$3,076.26M" },
+              { label: "GaN", value: 1373.74, valueLabel: "$1,373.74M" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Channel Summary",
+        body: "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery. Offline and OEM channels remain relevant where buyers value immediate service, warranty support, product compatibility and direct brand relationships.",
+        summaryPoints: [
+          "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery.",
+          "Offline and OEM channels remain relevant where buyers value immediate service, warranty support, compatibility and direct brand relationships.",
+        ],
+        points: [
+          "Online retail accounts for more than 58% of global market value, supported by broad product selection, price transparency and convenient delivery.",
+          "Offline and OEM channels remain relevant where buyers value immediate service, warranty support, product compatibility and direct brand relationships.",
+        ],
+        chart: {
+          title: "2025 Channel Share",
+          type: "donut",
+          center: "2025 Share",
+          legendSide: "right",
+          showLabels: false,
+          items: [
+            { label: "Online Retail", value: 2593.62, valueLabel: "$2,593.62M", description: "E-commerce marketplaces and brand-owned online stores" },
+            { label: "Offline Stores", value: 1098.49, valueLabel: "$1,098.49M", description: "Physical electronics retailers, distributors and resellers" },
+            { label: "Direct OEM Sales", value: 757.89, valueLabel: "$757.89M", description: "PC-bundled or direct sales through device manufacturers" },
+          ],
+        },
+      },
+    ],
+  },
+  power_bank: {
+    eyebrow: "Global Overview",
+    heading: "Global Laptop Power Bank (65W+) TAM Scope",
+    subtitle: "Output Power, Capacity, Regional Scale and Portfolio Direction",
+    body: "This analysis focuses on laptop-class power banks delivering 65W or more, matching Lenovo's high-power portfolio scope. The category is expanding with mobile work, gaming laptops and USB-C PD adoption, while buyers balance sustained laptop output, capacity, portability and the 100Wh air-travel threshold.",
+    metrics: [
+      { label: "Laptop power bank market", value: "$2.535B", note: "2025 global estimate" },
+      { label: "2032 Forecast", value: "$4.706B", note: "Global laptop power banks" },
+      { label: "2025–2032 CAGR", value: "9.24%", note: "Published forecast" },
+      { label: "65W+ Revenue Share", value: "81.09%", note: "65–100W plus above 100W" },
+    ],
+    trend: {
+      eyebrow: "Market Size Trend",
+      title: "2025–2032 Global Laptop Power Bank Market",
+      forecastStartYear: 2026,
+      note: "Published worldwide laptop power bank market forecast; values shown in USD millions.",
+      items: [
+        { label: "2025", value: 2535.00, valueLabel: "$2.535B" },
+        { label: "2026", value: 2737.96, valueLabel: "$2.738B" },
+        { label: "2027", value: 3044.41, valueLabel: "$3.044B" },
+        { label: "2028", value: 3407.70, valueLabel: "$3.408B" },
+        { label: "2029", value: 3708.02, valueLabel: "$3.708B" },
+        { label: "2030", value: 3998.19, valueLabel: "$3.998B" },
+        { label: "2031", value: 4373.76, valueLabel: "$4.374B" },
+        { label: "2032", value: 4706.07, valueLabel: "$4.706B" },
+      ],
+    },
+    conclusions: [
+      {
+        title: "65W+ Output Power Structure",
+        summaryPoints: [
+          "65–100W is the largest laptop power bank segment, representing 54.86% of 2025 revenue.",
+          "Above 100W adds 26.23%, taking the combined 65W+ opportunity to 81.09%.",
+        ],
+        points: [
+          "The 65–100W tier is the mainstream laptop sweet spot for office, travel and hybrid-work charging.",
+          "Above 100W serves higher-performance laptops, multi-device charging and shorter top-up windows.",
+          "Below 65W is only 18.91% of laptop power bank revenue and is outside the primary Lenovo analysis scope.",
+        ],
+        chart: {
+          title: "2025 Revenue Share by Output Power",
+          type: "donut",
+          center: "Laptop Market",
+          legendSide: "right",
+          items: [
+            { label: "65W–100W", value: 54.86, valueLabel: "54.86%" },
+            { label: "Above 100W", value: 26.23, valueLabel: "26.23%" },
+            { label: "Below 65W", value: 18.91, valueLabel: "18.91%" },
+          ],
+        },
+      },
+      {
+        title: "Capacity & Travel Design",
+        summaryPoints: [
+          "20,000–40,000mAh leads with 57.94% of 2025 laptop power bank revenue.",
+          "The 100Wh carry-on threshold makes roughly 20K–27K mAh the practical premium travel zone.",
+        ],
+        points: [
+          "Below 20,000mAh accounts for 25.68%, favoring portability but offering less laptop runtime.",
+          "Above 40,000mAh holds 16.38% and targets runtime-led professional or off-grid use, with greater travel and weight constraints.",
+          "Portfolio design should prioritize clear Wh labeling, USB-C PD 3.1, multi-port power allocation and real-time status displays.",
+        ],
+        chart: {
+          title: "2025 Revenue Share by Capacity",
+          type: "donut",
+          center: "Laptop Market",
+          items: [
+            { label: "20K–40K mAh", value: 57.94, valueLabel: "57.94%" },
+            { label: "Below 20K mAh", value: 25.68, valueLabel: "25.68%" },
+            { label: "Above 40K mAh", value: 16.38, valueLabel: "16.38%" },
+          ],
+        },
+      },
+      {
+        title: "Regional Opportunity & Portfolio Focus",
+        summaryPoints: [
+          "Asia Pacific is the largest region at 42.44%, followed by North America at 27.42% and Europe at 22.78%.",
+          "Lenovo should separate mainstream 65–100W travel products from premium 100W+ multi-device products.",
+        ],
+        points: [
+          "Asia Pacific represented about $1.076B in 2025, supported by manufacturing scale and growing mobile-work demand.",
+          "North America and Europe together represent 50.20%, making certification, travel compliance and premium productivity messaging important.",
+          "Priority differentiators are sustained laptop output, intelligent power allocation, integrated cables, compact construction and accurate displays.",
+        ],
+        chart: {
+          title: "2025 Revenue Share by Region",
+          type: "donut",
+          center: "$2.535B",
+          legendSide: "left",
+          items: [
+            { label: "Asia Pacific", value: 42.44, valueLabel: "42.44%" },
+            { label: "North America", value: 27.42, valueLabel: "27.42%" },
+            { label: "Europe", value: 22.78, valueLabel: "22.78%" },
+            { label: "Latin America", value: 4.50, valueLabel: "4.50%" },
+            { label: "Middle East & Africa", value: 2.86, valueLabel: "2.86%" },
+          ],
+        },
+      },
+    ],
+    sources: [
+      { title: "PW Consulting – Worldwide Power Bank for Laptop Market 2026", url: "https://pmarketresearch.com/worldwide-power-bank-for-laptop-market-research/" },
+    ],
+  },
+  power_cable: {
+    eyebrow: "Global Overview",
+    heading: "Global Power Cable TAM Scope",
+    subtitle: "Market Direction, Power Capability, Use Case and Channel Summary",
+    body: "Power cables are shifting from undifferentiated accessories to performance-critical components. USB-C adoption, laptop common-charger rules and USB PD Extended Power Range make wattage, data rate, E-marker implementation, durability and certified labeling central to product selection.",
+    metrics: [
+      { label: "USB-C charging cable market", value: "~$6.1B*", note: "2025 modeled baseline" },
+      { label: "2030 Forecast", value: "$9.0B", note: "Published market projection" },
+      { label: "Maximum USB PD", value: "240W", note: "USB PD 3.1 / EPR" },
+      { label: "Certified Cable Marks", value: "60W / 240W", note: "USB-IF power labeling" },
+    ],
+    trend: {
+      eyebrow: "Market Size Trend",
+      title: "2025–2030 USB-C Charging Cable Market Size*",
+      note: "* Directional planning series modeled backward from the published $9.0B 2030 projection at an implied 8.1% CAGR.",
+      items: [
+        { label: "2025", value: 6100, valueLabel: "$6.10B*" },
+        { label: "2026", value: 6594, valueLabel: "$6.59B*" },
+        { label: "2027", value: 7128, valueLabel: "$7.13B*" },
+        { label: "2028", value: 7706, valueLabel: "$7.71B*" },
+        { label: "2029", value: 8330, valueLabel: "$8.33B*" },
+        { label: "2030", value: 9000, valueLabel: "$9.00B" },
+      ],
+    },
+    conclusions: [
+      {
+        title: "Regional & Regulatory Summary",
+        summaryPoints: [
+          "USB-C is becoming the default charging interface across mobile and PC ecosystems.",
+          "EU common-charger requirements extend to laptops from 28 April 2026.",
+        ],
+        points: [
+          "Europe is the clearest regulation-led adoption market, while Asia remains central to manufacturing scale.",
+          "North America and developed Asian markets concentrate demand for premium USB4, high-data-rate and high-power cables.",
+          "Regulatory harmonization expands the addressable market but increases the importance of truthful capability labeling.",
+        ],
+        chart: {
+          title: "Strategic Demand Drivers",
+          type: "donut",
+          center: "Planning Index",
+          legendSide: "left",
+          showLabels: false,
+          items: [
+            { label: "USB-C Device Adoption", value: 38, valueLabel: "38 index" },
+            { label: "Fast / High-power Charging", value: 30, valueLabel: "30 index" },
+            { label: "Replacement & Bundling", value: 20, valueLabel: "20 index" },
+            { label: "High-speed Data", value: 12, valueLabel: "12 index" },
+          ],
+        },
+      },
+      {
+        title: "Product & Technology Summary",
+        summaryPoints: [
+          "The commercial power tiers are converging around clearly labeled 60W and 240W USB-C cables.",
+          "Premium value comes from combining power, data, video, durability and cable-management features.",
+        ],
+        points: [
+          "USB PD 3.1 supports up to 240W through 28V, 36V and 48V Extended Power Range modes.",
+          "USB-IF requires compliant USB-C to USB-C cable categories to carry 60W or 240W power markings.",
+          "E-marker design, connector temperature, bend life and signal integrity are key quality gates for laptop-class products.",
+        ],
+        charts: [
+          {
+            title: "Power Tier Architecture",
+            type: "donut",
+            center: "Portfolio",
+            items: [
+              { label: "60W Everyday", value: 45, valueLabel: "Mainstream" },
+              { label: "100W Legacy 5A", value: 25, valueLabel: "Installed base" },
+              { label: "240W EPR", value: 30, valueLabel: "Growth tier" },
+            ],
+          },
+          {
+            title: "Value Proposition",
+            type: "donut",
+            center: "Planning Mix",
+            items: [
+              { label: "Power Delivery", value: 40, valueLabel: "40 index" },
+              { label: "Durability", value: 25, valueLabel: "25 index" },
+              { label: "Data / Video", value: 20, valueLabel: "20 index" },
+              { label: "Portability", value: 15, valueLabel: "15 index" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Channel Summary",
+        summaryPoints: [
+          "Online comparison makes certified wattage, data rate, length and connector type decisive listing attributes.",
+          "OEM bundles and enterprise procurement reward compatibility, traceability and lifecycle reliability.",
+        ],
+        points: [
+          "E-commerce favors a good/better/best architecture organized by wattage, length, construction and data speed.",
+          "Retail packaging needs clear 60W/240W and data-rate communication to reduce consumer confusion and returns.",
+          "PC OEM and commercial channels can differentiate through validated compatibility, warranty and bundle attach.",
+        ],
+        chart: {
+          title: "Channel Role",
+          type: "donut",
+          center: "Planning Mix",
+          legendSide: "right",
+          showLabels: false,
+          items: [
+            { label: "Online Retail", value: 50, valueLabel: "Primary discovery" },
+            { label: "OEM / Commercial", value: 30, valueLabel: "Compatibility-led" },
+            { label: "Physical Retail", value: 20, valueLabel: "Immediate replacement" },
+          ],
+        },
+      },
+    ],
+    sources: [
+      { title: "USB-IF – Cables and Connectors", url: "https://usb.org/cable_connector" },
+      { title: "USB-IF – USB Power Delivery up to 240W", url: "https://www.usb.org/usb-charger-pd" },
+      { title: "European Commission – Common Charger", url: "https://single-market-economy.ec.europa.eu/sectors/electrical-and-electronic-engineering-industries-eei/radio-equipment-directive-red/one-common-charging-solution-all_en" },
+      { title: "The Business Research Company – USB-C Charging Cable Market", url: "https://www.thebusinessresearchcompany.com/report/usb-c-charging-cable-global-market-report" },
+    ],
+  },
+};
+
+Object.assign(marketOverviewSupplements.power_cable, {
+  heading: "Global Consumer Electronics Charging Cable TAM Scope",
+  subtitle: "Connector, Material, Application and High-power Upgrade Summary",
+  body: "This analysis covers consumer-electronics charging cables for phones, tablets, laptops, wearables and adjacent devices. USB-C standardization, higher charging power, certified E-Marker designs and demand for durable premium construction are shifting the category from basic replacement accessories toward performance-led products.",
+  metrics: [
+    { label: "Charging cable market", value: "$4.32B", note: "2025 global estimate" },
+    { label: "2035 Forecast", value: "$8.50B", note: "Published global forecast" },
+    { label: "2026–2035 CAGR", value: "6.7%", note: "Published forecast" },
+    { label: "USB-C Revenue", value: "$2.25B", note: "52.1% of 2025 market" },
+  ],
+  trend: {
+    eyebrow: "Market Size Trend",
+    title: "2025–2035 Consumer Electronics Charging Cable Market",
+    forecastStartYear: 2026,
+    note: "2025, 2026 and 2035 are published values; 2027–2034 follow the published 6.7% CAGR for planning continuity.",
+    items: [
+      { label: "2025", value: 4320, valueLabel: "$4.32B" },
+      { label: "2026", value: 4730, valueLabel: "$4.73B" },
+      { label: "2027", value: 5047, valueLabel: "$5.05B" },
+      { label: "2028", value: 5385, valueLabel: "$5.39B" },
+      { label: "2029", value: 5746, valueLabel: "$5.75B" },
+      { label: "2030", value: 6131, valueLabel: "$6.13B" },
+      { label: "2031", value: 6542, valueLabel: "$6.54B" },
+      { label: "2032", value: 6980, valueLabel: "$6.98B" },
+      { label: "2033", value: 7448, valueLabel: "$7.45B" },
+      { label: "2034", value: 7947, valueLabel: "$7.95B" },
+      { label: "2035", value: 8500, valueLabel: "$8.50B" },
+    ],
+  },
+  conclusions: [
+    {
+      title: "Connector Migration",
+      summaryPoints: [
+        "USB-C generated $2.25B in 2025, equal to about 52.1% of the global charging-cable market.",
+        "USB-C is projected to reach $6.12B by 2035 as common-charger rules and higher-power devices consolidate demand.",
+      ],
+      points: [
+        "Micro-USB generated $605M in 2025 and is expected to contract as legacy devices age out.",
+        "Multi-connector cables retained a 10% share by serving households and travel use cases with mixed device generations.",
+        "The remaining connector mix is derived from the published total after deducting disclosed USB-C, Micro-USB and multi-connector values.",
+      ],
+      chart: {
+        title: "2025 Revenue Share by Connector", type: "donut", center: "$4.32B", legendSide: "left",
+        items: [
+          { label: "USB-C", value: 52.08, valueLabel: "52.08%" },
+          { label: "Lightning / Other", value: 23.91, valueLabel: "23.91%" },
+          { label: "Micro-USB", value: 14.00, valueLabel: "14.00%" },
+          { label: "Multi-Connector", value: 10.00, valueLabel: "10.00%" },
+        ],
+      },
+    },
+    {
+      title: "Material Premiumization",
+      summaryPoints: [
+        "Nylon-braided cables generated $1.21B in 2025 and are forecast to grow at 9.4% through 2035.",
+        "PVC remained a major volume material at $1.30B, while silicone held a 10% share.",
+      ],
+      points: [
+        "Braided construction supports premium positioning through visible durability and perceived longevity.",
+        "TPE balances flexibility and cost for mainstream USB-C assortments; its 2025 share is derived as the remainder of disclosed material values.",
+        "High-power Lenovo products should emphasize bend life, connector reinforcement, E-Marker certification and clear 60W/240W labeling.",
+      ],
+      chart: {
+        title: "2025 Revenue Share by Material", type: "donut", center: "$4.32B",
+        items: [
+          { label: "TPE / Other", value: 31.90, valueLabel: "31.90%" },
+          { label: "PVC", value: 30.09, valueLabel: "30.09%" },
+          { label: "Nylon Braided", value: 28.01, valueLabel: "28.01%" },
+          { label: "Silicone", value: 10.00, valueLabel: "10.00%" },
+        ],
+      },
+    },
+    {
+      title: "Application & High-power Opportunity",
+      summaryPoints: [
+        "Smartphones generated $2.25B in 2025, while laptops and tablets are projected to reach $2.72B by 2035.",
+        "Laptop and tablet cables are expected to grow at 8.4%, supporting certified 65W–240W product expansion.",
+      ],
+      points: [
+        "Laptop charging has higher performance and compatibility stakes than basic phone-cable replacement demand.",
+        "USB PD 3.1 and 240W E-Marker capability create a premium upgrade cycle for gaming, mobile workstation and multi-device users.",
+        "The 2025 laptops-and-tablets share is derived from the disclosed total after subtracting smartphones, wearables and other applications.",
+      ],
+      chart: {
+        title: "2025 Revenue Share by Application", type: "donut", center: "$4.32B", legendSide: "right",
+        items: [
+          { label: "Smartphones", value: 52.08, valueLabel: "52.08%" },
+          { label: "Laptops & Tablets", value: 27.93, valueLabel: "27.93%" },
+          { label: "Wearables & Hearables", value: 11.99, valueLabel: "11.99%" },
+          { label: "Other Devices", value: 8.00, valueLabel: "8.00%" },
+        ],
+      },
+    },
+  ],
+  sources: [
+    { title: "Global Market Insights – Consumer Electronics Charging Cable Market", url: "https://www.gminsights.com/industry-analysis/consumer-electronics-charging-cable-market" },
+  ],
+});
 
 const categoryViews = {
   market: "Market Analysis",
@@ -100,6 +579,278 @@ const categoryViews = {
 const marketModules = {
   global: "Global Overview",
   geo: "Country Overview",
+  compliance: "Regulatory Compliance",
+};
+
+const categoryCountrySupplements = {
+  power_bank: {
+    heading: "Power Bank Country Market Summary",
+    body: "Representative markets are selected from Lenovo's six-market user research and do not mirror the Adapter country list. The comparison focuses on purchase motivation, feature priorities, price and channel behavior.",
+    markets: [
+      { country: "India", region: "AP", headline: "Online-led growth market", facts: ["Travel motivation: 84%", "Battery capacity: 78%", "Online channel: 64%", "Mean price: $61.39"] },
+      { country: "United States", region: "NA", headline: "Premium omnichannel market", facts: ["Travel motivation: 71%", "Fast charging: 57%", "Physical stores: 43%", "Mean price: $87.28"] },
+      { country: "DE + UK + SE", region: "EMEA", headline: "Highest observed price level", facts: ["Travel motivation: 79%", "Battery capacity: 71%", "Brand website: 25%", "Mean price: $101.77"] },
+      { country: "Saudi Arabia", region: "EMEA", headline: "Multi-device charging market", facts: ["Multi-device motivation: 61%", "Multiple ports: 66%", "Physical stores: 40%", "Mean price: $80.36"] },
+      { country: "Japan", region: "AP", headline: "Safety and stable-output market", facts: ["Stable output: 59%", "Battery capacity: 67%", "Online channel: 56%", "Mean price: $87.44"] },
+      { country: "Brazil + Mexico", region: "LA", headline: "Portable value market", facts: ["Travel motivation: 81%", "Fast charging: 67%", "Online channel: 58%", "Mean price: $57.10"] },
+    ],
+  },
+  power_cable: {
+    heading: "Power Cable Country Market Summary",
+    body: "Representative markets are selected by regulatory relevance, PC ecosystem demand and USB-C adoption. Cable planning should localize certification, labeling, length, durability and channel packaging rather than duplicate the Adapter market list.",
+    markets: [
+      { country: "European Union", region: "EMEA", headline: "Common-charger adoption market", facts: ["Laptop rules: 28 Apr 2026", "USB-C interface priority", "60W / 240W labeling", "CE and packaging compliance"] },
+      { country: "United States", region: "NA", headline: "Premium replacement and PC market", facts: ["USB-C laptop installed base", "Retail and e-commerce", "High-power EPR opportunity", "Compatibility and warranty"] },
+      { country: "Japan", region: "AP", headline: "Quality and compact-design market", facts: ["Strong safety expectations", "Portable cable formats", "Retail detail discipline", "Stable power and durability"] },
+      { country: "China", region: "AP", headline: "Manufacturing and fast-adoption base", facts: ["Large cable supply chain", "USB-C ecosystem scale", "High-power product breadth", "Price-tier competition"] },
+    ],
+  },
+};
+
+const supplementalComplianceReports = {
+  adapter: [
+    {
+      title: "Québec French Product and Packaging Requirements",
+      region: "Québec, Canada",
+      regionGroup: "NA",
+      effectiveDate: "2025-06-01",
+      impactWindow: "current",
+      summary: "Generic and descriptive elements appearing in a trademark on products or permanently attached media must also appear in French; French-language product and packaging rules apply in Québec.",
+      impact: "Review adapter packaging, on-product text, manuals, warranty material and ecommerce assets for Québec French-language compliance.",
+      sourceUrl: "https://www.quebec.ca/nouvelles/actualites/details/protection-du-francais-entree-en-vigueur-de-nouvelles-obligations-pour-les-entreprises-et-poursuite-de-la-mise-en-oeuvre-du-devoir-dexemplarite-de-ladministration-63276",
+      mapKey: "quebec",
+    },
+  ],
+  power_bank: [
+    {
+      title: "Québec French Product and Packaging Requirements",
+      region: "Québec, Canada",
+      regionGroup: "NA",
+      effectiveDate: "2025-06-01",
+      impactWindow: "current",
+      summary: "French-language requirements apply to product, packaging and permanently attached descriptive or generic trademark elements in Québec.",
+      impact: "Localize power-bank packaging, battery warnings, capacity and safety claims, manuals and online product content for Québec.",
+      sourceUrl: "https://www.quebec.ca/nouvelles/actualites/details/protection-du-francais-entree-en-vigueur-de-nouvelles-obligations-pour-les-entreprises-et-poursuite-de-la-mise-en-oeuvre-du-devoir-dexemplarite-de-ladministration-63276",
+      mapKey: "quebec",
+    },
+    {
+      title: "PRC New CCC Requirements for Power Banks",
+      region: "People's Republic of China",
+      regionGroup: "AP",
+      effectiveDate: "2024-08-01",
+      impactWindow: "current",
+      summary: "Power banks sold, imported or used in business activities in mainland China must hold a valid China Compulsory Certification certificate and display the CCC mark.",
+      impact: "Maintain CCC certification, China-market labeling and factory quality controls; plan certificate conversion against the newer GB 47372—2026 implementation timetable.",
+      sourceUrl: "https://www.cnca.gov.cn/zwxx/gg/2023/art/2023/art_9b1f71e55d06483d9cbdd35e791a4e60.html",
+      mapKey: "prc",
+    },
+  ],
+  power_cable: [
+    {
+      title: "Québec French Product and Packaging Requirements",
+      region: "Québec, Canada",
+      regionGroup: "NA",
+      effectiveDate: "2025-06-01",
+      impactWindow: "current",
+      summary: "French-language product and packaging requirements apply in Québec, including relevant generic and descriptive wording.",
+      impact: "Localize cable packaging, wattage/data-rate claims, instructions, warranty wording and ecommerce assets for Québec.",
+      sourceUrl: "https://www.quebec.ca/nouvelles/actualites/details/protection-du-francais-entree-en-vigueur-de-nouvelles-obligations-pour-les-entreprises-et-poursuite-de-la-mise-en-oeuvre-du-devoir-dexemplarite-de-ladministration-63276",
+      mapKey: "quebec",
+    },
+  ],
+};
+
+const powerCableCompetitiveReport = {
+  title: "Power Cable Competitive Landscape",
+  categoryLens: "Power-cable competition is organized around certified power capability, durability, data performance and ecosystem trust.",
+  brands: [
+    {
+      brand: "Anker", role: "Tier 1 · Global Power Specialist",
+      summary: "Anker uses a broad charging ecosystem and strong direct-to-consumer execution to position cables as trusted companions to chargers and power banks.",
+      metrics: [{ label: "Position", value: "Premium scale" }, { label: "Core moat", value: "Charging ecosystem" }, { label: "Source", value: "2025 Annual Report" }],
+      strategy: ["Build cross-sell across chargers, power banks and cables.", "Use material durability and high-wattage claims to support premium pricing.", "Scale through global ecommerce, owned sites and major retailers."],
+      portfolio: ["Everyday USB-C cables", "Braided high-durability cables", "240W laptop-class USB-C cables"],
+      pricing: ["Good-better-best ladder based on power, construction and length.", "Bundle and promotional pricing reinforce ecosystem attachment."],
+      products: [
+        { name: "Anker USB-C to USB-C Cable (240W, Upcycled-Braided)", type: "Power Cable", price: "USD 19.99", positioning: "240W USB-C charging cable with an upcycled braided jacket.", imageUrl: "assets/competitive/cable-anker-a82e2.png", productUrl: "https://www.anker.com/products/a82e2-240w-usb-c-to-usb-c-cable?variant=43795957121174", specs: ["240W", "USB-C to USB-C", "upcycled braid"] },
+        { name: "Anker Prime USB-C Cable (240W, Upcycled-Braided)", type: "Power Cable", price: "USD 29.99", positioning: "Prime-series high-durability 240W USB-C charging cable.", imageUrl: "assets/competitive/cable-anker-a88e2.png", productUrl: "https://www.anker.com/products/a88e2-anker-prime-usb-c-cable-3-ft-240w-upcycled-braided?variant=43931966570646", specs: ["240W", "USB-C to USB-C", "Prime series"] }
+      ],
+    },
+    {
+      brand: "Belkin", role: "Tier 1 · Ecosystem & Retail Trust",
+      summary: "Belkin combines long-standing connectivity expertise, extensive compatibility testing and strong Apple, PC and retail-channel credibility.",
+      metrics: [{ label: "Position", value: "Premium trust" }, { label: "Core moat", value: "Testing & retail" }, { label: "Heritage", value: "40+ years" }],
+      strategy: ["Lead with compatibility, reliability and certified performance.", "Use Apple and broad device ecosystems to reduce purchase risk.", "Emphasize recycled materials and packaging improvements."],
+      portfolio: ["BoostCharge charging cables", "240W braided USB-C cables", "USB-C data and display connectivity"],
+      pricing: ["Premium pricing supported by warranty, testing and retail availability.", "Clear wattage, length and connector labeling simplify choice."],
+      products: [{ name: "Belkin BoostCharge Braided USB-C to USB-C Cable 240W", type: "Power Cable", price: "US list $15.99", positioning: "Premium 240W braided cable designed for high-power USB-C charging.", imageUrl: "assets/competitive/cable-belkin-240.png", productUrl: "https://www.belkin.com/p/usb-c-to-usb-c-cable-240w/CAB015bt1MBK.html", specs: ["240W", "braided", "USB-C to USB-C"] }],
+    },
+    {
+      brand: "UGREEN", role: "Tier 2 · Performance Value Challenger",
+      summary: "UGREEN competes with broad USB-C coverage, aggressive specifications and a value proposition spanning charging, data, display and docking.",
+      metrics: [{ label: "Position", value: "Upper-value" }, { label: "Core moat", value: "Breadth & specs" }, { label: "Focus", value: "USB-C ecosystem" }],
+      strategy: ["Offer high-spec cables at accessible premium price points.", "Cross-sell with Nexode chargers, hubs and docking products.", "Use ecommerce content to communicate power and data specifications."],
+      portfolio: ["100W and 240W USB-C charging cables", "USB4 high-speed cables", "Braided and right-angle form factors"],
+      pricing: ["Specification-led value below premium incumbents.", "Frequent ecommerce promotions and multi-pack offers."],
+      products: [{ name: "UGREEN 240W PD 3.1 USB-C to USB-C Cable", type: "Power Cable", price: "US list $11.99", positioning: "Official 240W EPR charging cable with USB 2.0 data transfer for laptop and multi-device use.", imageUrl: "assets/competitive/cable-ugreen-240.png", productUrl: "https://us.ugreen.com/products/240w-usb-c-to-usb-c-cable", specs: ["240W PD 3.1", "E-marker", "480Mbps", "braided"] }],
+    },
+  ],
+};
+
+const competitiveCompanyResearch = {
+  anker: {
+    financialTitle: "2024 Annual Report / ESG financial table",
+    financials: [
+      "2024 revenue was RMB 24.70bn, up 41.14% year on year; reported sales volume reached 112.12m units.",
+      "This is Anker Innovations group data, not standalone charging-brand or category revenue; use it as a scale indicator rather than adapter, power-bank or cable sales.",
+      "Read-through: rapid group growth supports global channel and portfolio investment, while category decisions still require product- and channel-level evidence."
+    ],
+    financialSourceLabel: "Anker investor disclosure",
+    financialSourceUrl: "https://www.anker-in.com/investor/information-disclosure?stock=a-share"
+  },
+  ugreen: {
+    financialTitle: "2024 Annual Report (SZSE 301606)",
+    financials: [
+      "2024 revenue was RMB 6.170bn (+28.46%); net profit attributable to shareholders was RMB 462m (+19.29%).",
+      "Charging products generated RMB 2.349bn (+50.87%), 38.08% of revenue, with 36.57% gross margin. The segment includes power banks, cables, chargers, power strips and car chargers.",
+      "Overseas revenue was RMB 3.544bn (+46.46%) and online channels contributed 75.06% of total revenue, confirming international ecommerce as a central growth engine."
+    ],
+    financialSourceLabel: "UGREEN 2024 annual report",
+    financialSourceUrl: "https://static.cninfo.com.cn/finalpage/2025-04-24/1223235515.PDF"
+  },
+  baseus: {
+    financialTitle: "Private-company disclosure status",
+    financials: [
+      "Baseus is privately held and does not publish an audited annual report with brand revenue, profit or category margin comparable to a listed company.",
+      "Official materials verify a broad consumer-electronics portfolio and Shenzhen operating base, but not third-party market-share or revenue estimates.",
+      "Read-through: assess Baseus through verified assortment, price, marketplace rank, certification and channel evidence; treat unsupported estimates as directional only."
+    ],
+    financialSourceLabel: "Baseus official company profile",
+    financialSourceUrl: "https://www.baseus.com/pages/about-us"
+  },
+  belkin: {
+    financialTitle: "Foxconn subsidiary / no standalone disclosure",
+    financials: [
+      "Belkin is a wholly owned Foxconn (Hon Hai) subsidiary. Foxconn consolidates it but does not publish standalone Belkin revenue, profit or cable-category financials.",
+      "Foxconn group figures must not be presented as Belkin performance; defensible evidence comes from Belkin's portfolio, compatibility testing, retail presence and sustainability disclosures.",
+      "Read-through: benchmark Belkin on ecosystem trust, certification, warranty and retail execution rather than unverified brand financial estimates."
+    ],
+    financialSourceLabel: "Hon Hai annual-report archive",
+    financialSourceUrl: "https://www.honhai.com/en-us/investor-relations/financial-information/annual-reports"
+  },
+  apple: {
+    financialTitle: "FY2025 Form 10-K / results release",
+    financials: [
+      "Apple reported FY2025 revenue of USD 416.2bn. The filing does not disclose charger or cable revenue as a separate category.",
+      "Adapter and cable economics are embedded in the wider device-and-accessory ecosystem, so group revenue is evidence of installed-base scale rather than accessory market share.",
+      "Read-through: Apple sets reference price, compatibility and design expectations; third-party brands compete through port count, cross-device support and lower price."
+    ],
+    financialSourceLabel: "Apple FY2025 results and Form 10-K",
+    financialSourceUrl: "https://investor.apple.com/investor-relations/sec-filings/default.aspx"
+  },
+  xiaomi: {
+    financialTitle: "2024 Annual Report (HKEX 1810)",
+    financials: [
+      "2024 group revenue was RMB 365.9bn and group gross margin was 20.9%.",
+      "IoT and lifestyle-product revenue reached RMB 104.1bn (+30.0%) with a 20.3% gross margin; power banks sit inside this broad line and are not separately disclosed.",
+      "Read-through: Xiaomi can use its device installed base and value-led ecosystem distribution to scale power accessories, but category profitability cannot be inferred from the group figure alone."
+    ],
+    financialSourceLabel: "Xiaomi 2024 annual report",
+    financialSourceUrl: "https://ir.mi.com/system/files-encrypted/nasdaq_kms/assets/2025/04/24/5-27-15/%E8%8B%B1%E6%96%87.pdf"
+  }
+};
+
+const competitiveCategoryExpansion = {
+  adapter: {
+    tiers: { anker: 1, apple: 1, belkin: 1, ugreen: 2, baseus: 2 },
+    productAdditions: {
+      anker: [],
+      baseus: [{ name: "Baseus GaN2 USB-C Fast Charger 100W", type: "Adapter", price: "US list $79.99", positioning: "Single-port 100W GaN II charger positioned for laptops and travel.", imageUrl: "assets/competitive/adapter-baseus-100.jpg", productUrl: "https://www.baseus.com/products/gan2-usb-c-fast-charger-100w", specs: ["100W", "USB-C", "GaN II", "QC 5.0"] }],
+      ugreen: [{ name: "UGREEN Nexode 300W 5-Port Desktop Charger", type: "Adapter", price: "US list $199.99", positioning: "Desktop flagship designed to power multiple laptops and mobile devices.", imageUrl: "assets/competitive/adapter-ugreen-300.png", productUrl: "https://us.ugreen.com/products/ugreen-300w-desktop-usb-c-gan-charger", specs: ["300W total", "4 USB-C + 1 USB-A", "140W max port", "dual GaN"] }]
+    },
+    brands: [
+      {
+        brand: "Belkin", role: "Tier 1 · Ecosystem & Retail Trust",
+        summary: "Belkin uses Apple-channel credibility, broad retail distribution and safety-led claims to compete in premium multi-device charging.",
+        metrics: [{ label: "Position", value: "Premium trust" }, { label: "Core moat", value: "Retail + testing" }, { label: "Disclosure", value: "Foxconn subsidiary" }],
+        strategy: ["Lead with certified compatibility, safety testing and warranty.", "Sell through Apple-adjacent and mass-retail channels.", "Extend recycled-material claims across charging hardware and packaging."],
+        portfolio: ["BoostCharge and BoostCharge Pro wall chargers", "Multi-port GaN chargers", "Charging stations and wireless charging"],
+        pricing: ["Premium pricing supported by retail trust, warranty and compatibility claims.", "Bundles combine chargers and certified cables to lift basket value."],
+        products: [{ name: "Belkin BoostCharge Pro 140W 4-Port GaN Wall Charger", type: "Adapter", price: "Bundle reference $113.98", positioning: "Four-port PD 3.1 GaN charger for laptops, tablets and phones.", imageUrl: "assets/competitive/adapter-belkin-140.jpg", productUrl: "https://www.belkin.com/p/140w-gan-wall-charger-and-240w-usb-c-cable-bundle/SBS021.html", specs: ["140W total", "3 USB-C + 1 USB-A", "PD 3.1", "GaN"] }]
+      },
+      {
+        brand: "Apple", role: "Tier 1 · Device Ecosystem Reference",
+        summary: "Apple anchors premium reference pricing and compatibility expectations through first-party accessories tied directly to Mac, iPad and iPhone use cases.",
+        metrics: [{ label: "Position", value: "OEM premium" }, { label: "Core moat", value: "Installed base" }, { label: "FY2025 revenue", value: "$416.2bn group" }],
+        strategy: ["Optimize first-party compatibility and a minimal SKU architecture.", "Use device launches and fast-charge support to pull accessory demand.", "Protect premium pricing through brand, retail and service integration."],
+        portfolio: ["20W to 140W USB-C power adapters", "Dual-port compact adapters", "MagSafe and device-specific charging"],
+        pricing: ["Premium list pricing with limited promotional complexity.", "Cable sold separately supports modular accessory attach."],
+        products: [{ name: "Apple 140W USB-C Power Adapter", type: "Adapter", price: "US list $99", positioning: "First-party fast charger for MacBook Pro and USB-C devices.", imageUrl: "assets/competitive/adapter-apple-140.jpg", productUrl: "https://www.apple.com/shop/product/mw2m3am/a/140w-usb-c-power-adapter", specs: ["140W", "USB-C", "Mac fast charging", "cable sold separately"] }]
+      }
+    ]
+  },
+  power_bank: {
+    tiers: { anker: 1, xiaomi: 1, belkin: 1, ugreen: 2, baseus: 2 },
+    productAdditions: {
+      anker: [],
+      baseus: [{ name: "Baseus Blade H1 Power Bank 20K 100W", type: "Power Bank", price: "US list $99.99", positioning: "Slim high-output battery designed for laptop bags and multi-device charging.", imageUrl: "assets/competitive/pb-baseus-h1.jpg", productUrl: "https://www.baseus.com/products/blade-h1-digital-display-power-bank-20000mah-100w", specs: ["20,000mAh", "100W PD", "4-device charging", "digital display"] }],
+      ugreen: [{ name: "UGREEN Nexode Power Bank 20K 130W", type: "Power Bank", price: "US list $79.99", positioning: "Integrated-cable power bank balancing laptop output with travel portability.", imageUrl: "assets/competitive/pb-ugreen-130.png", productUrl: "https://us.ugreen.com/products/ugreen-130w-power-bank-20000mah", specs: ["20,000mAh", "130W total", "80W recharge", "built-in cable"] }]
+    },
+    brands: [
+      {
+        brand: "Xiaomi", role: "Tier 1 · Ecosystem Scale Player",
+        summary: "Xiaomi links value-led power banks to a large smartphone and AIoT installed base, using proprietary fast charging alongside broad USB-C compatibility.",
+        metrics: [{ label: "Position", value: "Scale value" }, { label: "IoT revenue", value: "RMB 104.1bn" }, { label: "IoT growth", value: "+30.0%" }],
+        strategy: ["Use Xiaomi device compatibility and HyperCharge as differentiation.", "Cover both high-output performance and everyday magnetic formats.", "Scale through Mi retail, ecommerce and authorized distributors."],
+        portfolio: ["High-output integrated-cable power banks", "20,000mAh mainstream batteries", "Magnetic and compact everyday formats"],
+        pricing: ["Value-led ecosystem pricing below specialist premium brands.", "Portfolio ladders capacity, wired output and magnetic convenience."],
+        products: [
+          { name: "Xiaomi 165W Power Bank 10000 (Integrated Cable)", type: "Power Bank", price: "Price varies by market", positioning: "Compact performance battery with 120W single-port output and 165W combined output.", imageUrl: "assets/competitive/pb-xiaomi-165.png", productUrl: "https://www.mi.com/global/product/xiaomi-165w-power-bank-10000-integrated-cable/", specs: ["10,000mAh", "165W dual-port", "120W single port", "integrated USB-C"] },
+          { name: "Mi 50W Power Bank 20000", type: "Power Bank", price: "Price varies by market", positioning: "Mainstream high-capacity battery for phones, tablets and compatible laptops.", imageUrl: "assets/competitive/pb-xiaomi-50.png", productUrl: "https://www.mi.com/global/product/mi-50w-power-bank-20000/specs/", specs: ["20,000mAh", "50W max", "USB-C + 2 USB-A", "74Wh"] }
+        ]
+      },
+      {
+        brand: "Belkin", role: "Tier 1 · Retail Trust Specialist",
+        summary: "Belkin prioritizes safe, travel-ready charging, integrated cables and retail confidence over headline output leadership.",
+        metrics: [{ label: "Position", value: "Premium mainstream" }, { label: "Core moat", value: "Retail + warranty" }, { label: "Disclosure", value: "No standalone P&L" }],
+        strategy: ["Pair simple capacity choices with trusted compatibility and warranty.", "Use integrated cables to reduce travel friction.", "Increase recycled-plastic and plastic-free packaging claims."],
+        portfolio: ["10K and 20K BoostCharge batteries", "Integrated-cable power banks", "Magnetic wireless formats"],
+        pricing: ["Mainstream-premium pricing anchored by retail availability and warranty.", "Capacity and cable integration create clear price steps."],
+        products: [{ name: "Belkin BoostCharge Power Bank 20K with Integrated Cable", type: "Power Bank", price: "US list $49.99", positioning: "Travel-friendly 20K battery with integrated USB-C and three-device charging.", imageUrl: "assets/competitive/pb-belkin-20k.jpg", productUrl: "https://www.belkin.com/p/power-bank-20k-with-integrated-cable/BPB024fqBL.html", specs: ["20,000mAh", "30W PD", "integrated USB-C", "3-device charging"] }]
+      }
+    ]
+  },
+  power_cable: {
+    tiers: { anker: 1, apple: 1, belkin: 1, ugreen: 2, baseus: 2 },
+    productAdditions: {
+      anker: [],
+      belkin: [{ name: "Belkin Connect Thunderbolt 5 Cable", type: "Power Cable", price: "US list $53.99", positioning: "Certified premium cable combining 240W charging, high-speed data and display support.", imageUrl: "assets/competitive/cable-belkin-tb5.jpg", productUrl: "https://www.belkin.com/p/thunderbolt-5-cable/INZ005fq1MBK.html", specs: ["240W PD", "80/120Gbps", "Thunderbolt 5", "8K support"] }],
+      ugreen: [{ name: "UGREEN Nexode 240W USB-C Cable with Display", type: "Power Cable", price: "US list $28.99", positioning: "Charging-first cable with real-time voltage, current and power display.", imageUrl: "assets/competitive/cable-ugreen-display.png", productUrl: "https://us.ugreen.com/products/ugreen-240w-usb-c-cable", specs: ["240W PD 3.1", "touch display", "480Mbps", "E-marker"] }]
+    },
+    brands: [
+      {
+        brand: "Apple", role: "Tier 1 · Device Ecosystem Reference",
+        summary: "Apple defines first-party reference products for simple high-power charging and high-performance Thunderbolt connectivity.",
+        metrics: [{ label: "Position", value: "OEM premium" }, { label: "Core moat", value: "Mac ecosystem" }, { label: "Disclosure", value: "No cable segment" }],
+        strategy: ["Use a narrow, clearly specified first-party assortment.", "Separate charging-only and high-bandwidth professional use cases.", "Tie compatibility directly to Mac, iPad and iPhone hardware."],
+        portfolio: ["60W and 240W woven charge cables", "Thunderbolt 4 and 5 Pro cables", "USB-C to MagSafe and device-specific cables"],
+        pricing: ["Premium pricing supported by first-party compatibility.", "Large price step between charging cable and professional high-bandwidth cable."],
+        products: [
+          { name: "Apple 240W USB-C Charge Cable (2m)", type: "Power Cable", price: "US list $29", positioning: "Woven charging cable for USB-C devices with USB 2 data rates.", imageUrl: "assets/competitive/cable-apple-240.jpg", productUrl: "https://www.apple.com/shop/product/MYQT3AM/A/240w-usb-c-charge-cable-2-m", specs: ["240W", "2m", "woven", "USB 2 data"] },
+          { name: "Apple Thunderbolt 5 Pro Cable (1m)", type: "Power Cable", price: "US list $69", positioning: "Professional cable for data, displays and up to 240W charging.", imageUrl: "assets/competitive/cable-apple-tb5.jpg", productUrl: "https://www.apple.com/shop/product/mdw94am/a/thunderbolt-5-usb-c-pro-cable-1-m", specs: ["240W", "up to 120Gbps", "DisplayPort 2.1", "braided"] }
+        ]
+      },
+      {
+        brand: "Baseus", role: "Tier 2 · Design & Value Challenger",
+        summary: "Baseus competes through accessible pricing, durable constructions and feature-led cable variants across everyday charging needs.",
+        metrics: [{ label: "Position", value: "Design value" }, { label: "Core moat", value: "Assortment speed" }, { label: "Disclosure", value: "Private company" }],
+        strategy: ["Use wide length, color and connector coverage to capture ecommerce search demand.", "Pair high-wattage claims with E-marker and durability messaging.", "Cross-sell cables with chargers and power banks."],
+        portfolio: ["100W braided USB-C charging cables", "Temperature-controlled FrostCore cables", "Display and retractable cable formats"],
+        pricing: ["Accessible price points with frequent direct-store promotions.", "Premium variants add materials, display or temperature-control features."],
+        products: [{ name: "Baseus FrostCore USB-C to USB-C Cable 100W", type: "Power Cable", price: "US list $18.99", positioning: "Temperature-controlled 100W cable with reinforced construction.", imageUrl: "assets/competitive/cable-baseus-frost.jpg", productUrl: "https://www.baseus.com/products/frostcore-fast-charging-data-cable-usb-c-to-usb-c-100w", specs: ["100W PD", "E-marker", "smart temperature control", "1.2m / 2m"] }]
+      }
+    ]
+  }
 };
 
 const marketRegionModules = {
@@ -153,6 +904,7 @@ const dimensionLabels = {
 
 const palette = ["#e2231a", "#1f2328", "#6b7280", "#b91c1c", "#374151", "#0f766e", "#d97706", "#2563eb"];
 const redScale = ["#f5c7c3", "#e98079", "#e2231a", "#b91c1c", "#7f1d1d"];
+const overviewPalette = ["#d8646a", "#e79a98", "#b95c7d", "#9ecae1", "#7a7d82", "#7d83cf", "#343a40"];
 const powerOrder = ["45W and below", "60W and below", "65W", "45W to 99W", "100W to 199W", "100W and above", "200W and above"];
 const priceBands = ["<$25", "$25-45", "$45-65", "$65+"];
 const revenueMetricOptions = [
@@ -197,6 +949,8 @@ async function init() {
     Object.assign(data, Object.fromEntries(entries));
     indexData();
     syncRouteFromHash();
+    const requestedView = new URLSearchParams(window.location.search).get("view");
+    if (["overview", "competitive", "market", "products"].includes(requestedView)) state.categoryView = requestedView;
     window.addEventListener("hashchange", () => {
       syncRouteFromHash();
       render();
@@ -208,6 +962,7 @@ async function init() {
     app.addEventListener("click", handleClick);
     app.addEventListener("change", handleChange);
     app.addEventListener("input", handleInput);
+    app.addEventListener("pointerdown", handleAdapterLogoPointerDown);
     app.addEventListener("toggle", (event) => {
       if (event.target.matches(".geo-na-card-disclosure") && event.target.open) {
         requestAnimationFrame(() => drawMarketAnalysis(state.categoryId));
@@ -215,14 +970,29 @@ async function init() {
       if (event.target.matches(".period-multi-select")) {
         state.categoryPeriodMenuOpen = event.target.open;
       }
-      if (event.target.matches(".category-contribution-product-selector")) {
-        state.categoryProductSelectorOpen = event.target.open;
+      if (event.target.matches(".category-product-selector, .category-metric-settings, .category-geo-multi-selector, .category-time-multi-selector") && event.target.open) {
+        app.querySelectorAll(".category-product-selector[open], .category-metric-settings[open], .category-geo-multi-selector[open], .category-time-multi-selector[open]").forEach((details) => {
+          if (details !== event.target) details.open = false;
+        });
+      }
+      if (event.target.matches(".category-geo-multi-selector")) {
+        state.categoryTrendGeoMenuOpen = event.target.open;
+      }
+      if (event.target.matches(".category-time-multi-selector")) {
+        if (event.target.matches(".geo-time-selector")) state.categoryGeoTimeMenuOpen = event.target.open;
+        else state.categoryTrendPeriodMenuOpen = event.target.open;
       }
       if (event.target.matches(".category-trend-product-selector")) {
         state.categoryTrendProductSelectorOpen = event.target.open;
       }
     }, true);
     topNav.addEventListener("click", handleClick);
+    topNav.addEventListener("change", handleChange);
+    topNav.addEventListener("toggle", (event) => {
+      if (event.target.matches(".global-time-selector")) {
+        state.globalTimeMenuOpen = event.target.open;
+      }
+    }, true);
     render();
   } catch (error) {
     app.innerHTML = `
@@ -250,9 +1020,9 @@ function syncRouteFromHash() {
   state.productId = parts[1] && indexes.products.has(parts[1]) ? parts[1] : null;
   if (!state.categoryId) {
     state.productId = null;
-    state.categoryView = "market";
+    state.categoryView = "overview";
   } else if (state.categoryId !== previousCategoryId && !state.productId) {
-    state.categoryView = "market";
+    state.categoryView = "overview";
   }
   if (state.productId) {
     const product = indexes.products.get(state.productId);
@@ -289,12 +1059,53 @@ function renderSourceStatus() {
 }
 
 function renderTopNav() {
-  topNav.innerHTML = data.catalog.categories
+  const overallActive = !state.categoryId && state.homeView === "overall" ? "is-active" : "";
+  const categoryButtons = `<button class="nav-pill ${overallActive}" type="button" data-action="power-overall">Power Overall</button>` + data.catalog.categories
     .map((category) => {
       const active = state.categoryId === category.id ? "is-active" : "";
       return `<button class="nav-pill ${active}" type="button" data-route-category="${category.id}">${category.label}</button>`;
     })
     .join("");
+  const showGlobalTime = state.categoryId || state.homeView === "overall";
+  topNav.innerHTML = `
+    <div class="top-nav-categories">${categoryButtons}</div>
+    ${showGlobalTime ? `<div class="top-nav-status"><div class="top-nav-updated"><small>Updated</small><strong>2026/10/18</strong></div>${renderGlobalTimeSelector()}</div>` : ""}
+  `;
+}
+
+function renderGlobalTimeSelector() {
+  const monthOptions = getPeriodOptions("month");
+  const quarterOptions = getPeriodOptions("quarter");
+  const yearOptions = getPeriodOptions("year");
+  const selected = ensureSelectedCategoryPeriods();
+  const selectedSet = new Set(selected);
+  const monthSet = new Set(state.selectedCategoryMonths || []);
+  const yearSet = new Set(state.selectedCategoryYears || []);
+  const activeValues = state.globalTimeTab === "month"
+    ? [...monthSet]
+    : state.globalTimeTab === "year"
+      ? [...yearSet]
+      : selected;
+  const label = activeValues.length ? `${activeValues.length}` : "0";
+  return `
+    <details class="category-time-multi-selector global-time-selector" ${state.globalTimeMenuOpen ? "open" : ""}>
+      <summary aria-label="Choose global time periods"><span class="time-selector-icon" aria-hidden="true"></span><span>Time</span><small>${label}</small></summary>
+      <div class="category-time-multi-menu global-time-menu">
+        <nav class="global-time-tabs" aria-label="Time granularity">
+          ${[["year", "Year"], ["quarter", "Quarter"], ["month", "Month"]].map(([key, text]) => `<button type="button" data-action="global-time-tab" data-time-tab="${key}" class="${state.globalTimeTab === key ? "is-active" : ""}">${text}</button>`).join("")}
+        </nav>
+        <section class="global-time-panel ${state.globalTimeTab === "month" ? "is-active" : ""}">
+          ${monthOptions.map((month) => `<label><input type="checkbox" data-action="global-time-month" value="${escapeAttr(month)}" ${monthSet.has(month) ? "checked" : ""}><span>${escapeHtml(month)}</span></label>`).join("")}
+        </section>
+        <section class="global-time-panel ${state.globalTimeTab === "year" ? "is-active" : ""}">
+          ${yearOptions.map((year) => `<label><input type="checkbox" data-action="global-time-year" value="${escapeAttr(year)}" ${yearSet.has(year) ? "checked" : ""}><span>${escapeHtml(year)}</span></label>`).join("")}
+        </section>
+        <section class="global-time-panel ${state.globalTimeTab === "quarter" ? "is-active" : ""}">
+          ${quarterOptions.map((period) => `<label><input type="checkbox" data-action="global-time-quarter" value="${escapeAttr(period)}" ${selectedSet.has(period) ? "checked" : ""}><span>${escapeHtml(period)}</span></label>`).join("")}
+        </section>
+      </div>
+    </details>
+  `;
 }
 
 function renderHome() {
@@ -322,7 +1133,7 @@ function renderHome() {
           <p class="eyebrow">Product Categories</p>
           <h2>Select a Category</h2>
         </div>
-        <p class="metric-definition"><span>Revenue refers to Ship Rev</span><span>Updated 2026/9/28</span></p>
+        <p class="metric-definition"><span>Revenue refers to Ship Rev</span><span>Updated 2026/10/18</span></p>
       </section>
 
       <section class="category-grid">
@@ -369,7 +1180,7 @@ function renderAccessoryPowerKpis() {
           <p class="eyebrow">Executive Snapshot</p>
           <h2 id="accessory-kpi-heading">Revenue Performance</h2>
         </div>
-        <p class="metric-definition"><span>Revenue refers to Ship Rev</span><span>Updated 2026/9/28</span></p>
+        <p class="metric-definition"><span>Revenue refers to Ship Rev</span><span>Updated 2026/10/18</span></p>
       </header>
       <div class="accessory-kpi-grid">
         ${orderedKpis.map(renderAccessoryPowerKpi).join("")}
@@ -419,76 +1230,95 @@ function renderPowerHomeDashboard() {
   if (!dashboard?.meta) {
     return `<section class="power-home-shell"><div class="plot-fallback">Power dashboard data is unavailable.</div></section>`;
   }
+  const activeTimeLabel = state.granularity === "quarter"
+    ? selectedCategoryPeriodsLabel(ensureSelectedCategoryPeriods())
+    : selectedPeriod();
   return `
     <section class="power-home-shell" aria-label="Power executive performance dashboard">
       <header class="power-home-head">
         <div>
-          <p class="eyebrow">Power Category</p>
-          <h1>${escapeHtml(dashboard.meta.period)} Performance</h1>
-          <p>Executive shipment view for the Power portfolio.</p>
+          <h1>Power Overall Performance</h1>
+          <p>Adapter&nbsp;&nbsp; Power Bank&nbsp;&nbsp; Power Cable</p>
         </div>
         <dl class="power-home-meta">
-          <div><dt>Updated</dt><dd>${escapeHtml(dashboard.meta.dataCutoff)}</dd></div>
-          <div><dt>Unit</dt><dd>${escapeHtml(dashboard.meta.unit)}</dd></div>
-          <div><dt>Scope</dt><dd>${escapeHtml(dashboard.meta.newBusiness)}</dd></div>
+          <div><dt>Time</dt><dd>${escapeHtml(activeTimeLabel)}</dd></div>
+          <div><dt>Unit</dt><dd>M$ Dollar</dd></div>
         </dl>
       </header>
 
       <div class="power-kpi-grid">
-        ${dashboard.kpis.map(renderPowerKpi).join("")}
+        ${powerOverallKpis().map(renderPowerKpi).join("")}
       </div>
 
-      <div class="power-analysis-grid power-analysis-grid-four">
-        ${renderPowerChartCard({
-          title: "Power YTD MT Attain",
-          subtitle: "By quarter",
-          id: "power-quarter-attain",
-          control: renderHomeSelect("home-power-scope", state.homePowerScope, [
-            ["total", "Total"], ["consumer", "Consumer"], ["commercial", "Commercial"],
-          ], "Scope"),
-        })}
-        ${renderPowerChartCard({
-          title: "Power YoY Comparison",
-          subtitle: "FY2526 Q2 vs FY2627 Q2",
-          id: "power-geo-yoy",
-        })}
-        ${renderPowerRankingCard("model")}
-        ${renderPowerRankingCard("partner")}
-      </div>
-
-      <div class="power-analysis-grid power-analysis-grid-three">
-        ${renderPowerChartCard({
-          title: "YoY Growth % Comparison",
-          subtitle: "By week · w/o New Biz",
-          id: "power-weekly-yoy",
-        })}
-        ${renderPowerChartCard({
-          title: "QTD MT Attain",
-          subtitle: "By Geo · w/o New Biz",
-          id: "power-geo-attain",
-        })}
-        ${renderPowerChartCard({
-          title: "QTD MT Attain",
-          subtitle: "By Segment · w/o New Biz",
-          id: "power-segment-attain",
-        })}
-      </div>
-
-      <p class="power-modeled-note">* Modeled estimate where the workbook does not expose a Power-specific quarter MT target.</p>
+      ${renderPowerOverallCategoryOverview()}
     </section>
+  `;
+}
+
+function powerOverallKpis() {
+  if (!hasActiveGlobalTime()) return [];
+  const definitions = [
+    { label: "Power", categoryId: null },
+    { label: "Adapter", categoryId: "adapter" },
+    { label: "Power Bank", categoryId: "power_bank" },
+    { label: "Power Cable", categoryId: "power_cable" },
+  ];
+  const selectedKeys = state.granularity === "quarter"
+    ? ensureSelectedCategoryPeriods()
+    : [selectedPeriod()];
+  const matchesSelectedTime = (row, keys) => keys.includes(periodKey(row.date, state.granularity));
+  const priorKeys = selectedKeys.map((key) => {
+    if (state.granularity === "year") return priorFiscalYear(key);
+    if (state.granularity === "quarter") {
+      const parsed = parseFiscalPeriodLabel(key);
+      return parsed ? `${priorFiscalYear(parsed.fiscalYear)} ${parsed.fiscalQuarter}` : key;
+    }
+    const match = String(key).match(/^(\d{4})-(\d{2})$/);
+    return match ? `${Number(match[1]) - 1}-${match[2]}` : key;
+  });
+  const periodLabel = selectedKeys.length === 1 ? selectedKeys[0] : selectedCategoryPeriodsLabel(selectedKeys);
+  return definitions.map(({ label, categoryId }) => {
+    const rows = data.productMetrics.filter((row) => !categoryId || row.categoryId === categoryId);
+    const current = rows.filter((row) => matchesSelectedTime(row, selectedKeys))
+      .reduce((sum, row) => sum + Number(row.shipRevenue || 0), 0);
+    const prior = rows.filter((row) => matchesSelectedTime(row, priorKeys))
+      .reduce((sum, row) => sum + Number(row.shipRevenue || 0), 0);
+    return {
+      label,
+      period: periodLabel,
+      valueM: current / 1_000_000,
+      yoy: prior ? (current - prior) / prior : 0,
+    };
+  });
+}
+
+function renderPowerOverallCategoryOverview() {
+  if (!hasActiveGlobalTime()) return `<section class="empty-state"><div><h3>No time selected</h3><p>Select a year, quarter, or month to display data.</p></div></section>`;
+  const products = data.catalog.products;
+  return `
+    <div class="view-stack category-overview-stack power-overall-category-overview">
+      <section class="module-block category-performance-content">
+        ${renderPerformanceOverview("power_overall", products)}
+      </section>
+      <section class="module-block">
+        <div class="module-head"><span>Overview Module</span><h2>Geo Contribution</h2></div>
+        ${renderCategoryGeoContribution("power_overall", products)}
+      </section>
+    </div>
   `;
 }
 
 function renderPowerKpi(item) {
   const isUp = (item.yoy || 0) >= 0;
   const marker = item.modeled ? "*" : "";
+  const value = Number.isFinite(item.valueM) ? item.valueM.toFixed(2) : "0.00";
   return `
     <article class="power-kpi-card ${isUp ? "is-up" : "is-down"}">
       <div>
         <span>${escapeHtml(item.label)}</span>
         <small>${escapeHtml(item.period)}</small>
       </div>
-      <strong>$${formatCompactDecimal(item.valueM)}M${marker}</strong>
+      <strong>$${value}M${marker}</strong>
       <p><span aria-hidden="true">${isUp ? "↑" : "↓"}</span> ${formatSignedPercent(item.yoy)} YoY</p>
     </article>
   `;
@@ -570,6 +1400,11 @@ function drawPowerHomeDashboard() {
   drawPowerRanking("partner");
   drawPowerWeeklyYoy();
   drawPowerAttainBreakdowns();
+  const products = data.catalog.products;
+  drawPerformanceRevenueTrend("power_overall", products);
+  drawQuarterComparison("power_overall", products);
+  drawPerformanceContribution("power_overall", products);
+  drawCategoryGeoContribution("power_overall", products);
 }
 
 function powerChartLayout(overrides = {}) {
@@ -673,7 +1508,8 @@ function selectedPowerRankingRows(type) {
   for (const row of filtered) grouped.set(row.name, (grouped.get(row.name) || 0) + row.shipRevenueM);
   return [...grouped.entries()]
     .map(([name, shipRevenueM]) => ({ name, shipRevenueM }))
-    .sort((a, b) => b.shipRevenueM - a.shipRevenueM)
+    .filter((row) => Number.isFinite(row.shipRevenueM) && row.shipRevenueM > 0)
+    .sort((a, b) => (b.shipRevenueM - a.shipRevenueM) || a.name.localeCompare(b.name))
     .slice(0, 10);
 }
 
@@ -812,7 +1648,7 @@ function renderCategoryCard(category) {
       </header>
       <p>${escapeHtml(descriptions[category.id] || category.description)}</p>
       <div class="category-metrics category-metrics--ship-revenue">
-        ${renderCategoryShipRevenue("Current", fiscalYearTotal.shipRevenue, "FY2526 YTD", priorFiscalYearTotal.shipRevenue)}
+        ${renderCategoryShipRevenue("FY2627 YTD", fiscalYearTotal.shipRevenue, "FY2526 YTD", priorFiscalYearTotal.shipRevenue)}
         ${renderCategoryShipRevenue("FY2627 Q2", quarterTotal.shipRevenue, "FY2526 Q2", priorQuarterTotal.shipRevenue)}
       </div>
     </button>
@@ -896,18 +1732,17 @@ function renderCategory(categoryId) {
   const category = indexes.categories.get(categoryId);
   ensureCategoryFilterState(categoryId);
   app.innerHTML = `
-    <div class="view-stack" style="--accent:${category.accent}">
+    <div class="view-stack category-page-stack" style="--accent:${category.accent}">
       <section class="page-head">
         <div>
           <p class="eyebrow">Product Category</p>
           <h1>${escapeHtml(category.label)}</h1>
         </div>
-        <div class="toolbar-group">
-          <button class="ghost-button" type="button" data-action="home">← Home</button>
-          ${renderGranularityButtons(state.granularity, "category")}
-        </div>
+        <button class="ghost-button" type="button" data-action="home">← Home</button>
       </section>
-      ${renderCategoryTabs()}
+      <div class="category-sticky-nav">
+        ${renderCategoryTabs()}
+      </div>
       ${renderModuleTabs(categoryId)}
       <div id="categoryViewMount"></div>
     </div>
@@ -917,10 +1752,12 @@ function renderCategory(categoryId) {
   if (state.categoryView === "competitive") {
     mount.innerHTML = renderCompetitiveAnalysis(categoryId);
     drawCompetitiveAnalysis(categoryId);
+    bindAdapterCompetitiveInteractions(categoryId);
   } else if (state.categoryView === "overview") {
     mount.innerHTML = renderCategoryOverview(categoryId);
     const overviewProducts = data.catalog.products.filter((product) => product.categoryId === categoryId);
     drawPerformanceRevenueTrend(categoryId, overviewProducts);
+    drawQuarterComparison(categoryId, overviewProducts);
     drawPerformanceContribution(categoryId, overviewProducts);
     drawCategoryGeoContribution(categoryId, overviewProducts);
   } else if (state.categoryView === "products") {
@@ -930,6 +1767,17 @@ function renderCategory(categoryId) {
     mount.innerHTML = renderMarketAnalysis(categoryId);
     drawMarketAnalysis(categoryId);
   }
+}
+
+function bindAdapterCompetitiveInteractions(categoryId) {
+  if (categoryId !== "adapter") return;
+  document.querySelectorAll('[data-action="adapter-brand-cloud"]').forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      state.adapterCompetitiveBrand = button.dataset.brand;
+      render();
+    });
+  });
 }
 
 function renderCategoryTabs() {
@@ -945,10 +1793,13 @@ function renderCategoryTabs() {
 function renderModuleTabs(categoryId) {
   const modules = state.categoryView === "market" ? marketModules : null;
   if (!modules) return "";
-  const active = selectedMarketModule();
+  const visibleModules = Object.entries(modules).filter(([key]) => key !== "compliance" && !(key === "geo" && ["power_bank", "power_cable"].includes(categoryId)));
+  const requested = selectedMarketModule();
+  const active = visibleModules.some(([key]) => key === requested) ? requested : "global";
+  if (active !== requested) state.marketModule = active;
   return `
     <section class="module-tabs" aria-label="${state.categoryView} modules">
-      ${Object.entries(modules)
+      ${visibleModules
         .map(([key, label]) => `<button class="${active === key ? "is-active" : ""}" type="button" data-action="module-view" data-module="${key}">${escapeHtml(label)}</button>`)
         .join("")}
     </section>
@@ -956,11 +1807,14 @@ function renderModuleTabs(categoryId) {
 }
 
 function renderMarketAnalysis(categoryId) {
-  const active = selectedMarketModule();
+  const requested = selectedMarketModule();
+  const active = requested === "compliance" || (requested === "geo" && ["power_bank", "power_cable"].includes(categoryId)) ? "global" : requested;
   const moduleMarkup = active === "global"
     ? renderGlobalMarketModule(categoryId)
     : active === "geo"
     ? renderGeoOverviewModule(categoryId)
+    : active === "compliance"
+    ? renderRegulatoryCompliance(categoryId)
     : renderRegionalMarketModule(categoryId, active);
   return `
     <div class="view-stack">
@@ -972,15 +1826,7 @@ function renderMarketAnalysis(categoryId) {
 function renderGeoOverviewModule(categoryId) {
   const overview = data.countryMarkets?.[categoryId];
   if (!overview) {
-    return `
-      <section class="module-block">
-        <div class="module-head">
-          <span>Country Overview</span>
-          <h2>Country Market Summary</h2>
-          <p>No country market summary has been configured for this category yet.</p>
-        </div>
-      </section>
-    `;
+    return renderSupplementalCountryOverview(categoryId);
   }
   const selectedRegion = state.geoRegionDetail[categoryId];
   if (selectedRegion) return renderRegionCountryWorkspace(categoryId, overview, selectedRegion);
@@ -993,6 +1839,95 @@ function renderGeoOverviewModule(categoryId) {
       </section>
     </section>
   `;
+}
+
+function renderSupplementalCountryOverview(categoryId) {
+  const report = categoryCountrySupplements[categoryId];
+  if (!report) return `<section class="module-block"><div class="module-head"><span>Country Overview</span><h2>Country Market Summary</h2><p>No country market summary has been configured for this category yet.</p></div></section>`;
+  return `
+    <section class="module-block supplemental-country-overview">
+      <div class="module-head">
+        <span>Country Overview</span>
+        <h2>${escapeHtml(report.heading)}</h2>
+        <p>${escapeHtml(report.body)}</p>
+      </div>
+      <div class="supplemental-country-grid">
+        ${report.markets.map((market, index) => `
+          <article class="supplemental-country-card">
+            <span>${String(index + 1).padStart(2, "0")} · ${escapeHtml(market.region)}</span>
+            <h3>${escapeHtml(market.country)}</h3>
+            <p>${escapeHtml(market.headline)}</p>
+            <ol>${market.facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ol>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderRegulatoryCompliance(categoryId) {
+  const reports = complianceReports(categoryId);
+  const current = reports.filter((report) => (report.impactWindow || "current") === "current");
+  const future = reports.filter((report) => report.impactWindow === "future");
+  const selectedIndex = Math.min(state.selectedComplianceIndex[categoryId] || 0, Math.max(0, reports.length - 1));
+  state.selectedComplianceIndex[categoryId] = selectedIndex;
+  const selected = reports[selectedIndex];
+  const renderItems = (items) => items.length ? items.map((report, index) => `
+    <article class="compliance-card">
+      <header><span>${String(index + 1).padStart(2, "0")}</span><div><small>${escapeHtml(report.regionGroup || "Global")} · ${escapeHtml(report.region || "")}</small><h3>${escapeHtml(report.title)}</h3></div></header>
+      <ol>
+        <li><strong>Effective Time</strong><span>${escapeHtml(report.effectiveDate || "Current / monitor")}</span></li>
+        <li><strong>Requirement</strong><span>${escapeHtml(report.summary || "")}</span></li>
+        <li><strong>Portfolio Impact</strong><span>${escapeHtml(report.impact || "")}</span></li>
+      </ol>
+      ${report.sourceUrl ? `<a href="${escapeAttr(report.sourceUrl)}" target="_blank" rel="noopener noreferrer">Official source ↗</a>` : ""}
+    </article>
+  `).join("") : `<div class="policy-empty"><strong>No confirmed item loaded</strong><p>Add an authoritative source when a requirement is confirmed.</p></div>`;
+  return `
+    <section class="module-block compliance-overview">
+      <div class="module-head">
+        <span>Regulatory Compliance</span>
+        <h2>${escapeHtml(categoryLabel(categoryId))} Regulatory Compliance</h2>
+        <p>Requirements are separated from market demand analysis. Each item lists effective timing, the requirement itself and its portfolio impact.</p>
+      </div>
+      <section class="compliance-map-workspace">
+        <div id="complianceWorldMap" class="plot compliance-world-map" aria-label="World map of regulatory locations"></div>
+        ${selected ? `
+          <article class="compliance-map-detail">
+            <span>Selected regulation · ${escapeHtml(selected.regionGroup || "Global")}</span>
+            <h3>${escapeHtml(selected.title)}</h3>
+            <p>${escapeHtml(selected.region || "")}</p>
+            <ol>
+              <li><strong>1 · Effective Time</strong><span>${escapeHtml(selected.effectiveDate || "Current / monitor")}</span></li>
+              <li><strong>2 · Requirement</strong><span>${escapeHtml(selected.summary || "")}</span></li>
+              <li><strong>3 · Portfolio Impact</strong><span>${escapeHtml(selected.impact || "")}</span></li>
+            </ol>
+            ${selected.sourceUrl ? `<a href="${escapeAttr(selected.sourceUrl)}" target="_blank" rel="noopener noreferrer">Official source ↗</a>` : ""}
+          </article>
+        ` : ""}
+      </section>
+      <section class="compliance-group"><header><h3>Current / Effective</h3><span>${current.length} items</span></header><div class="compliance-grid">${renderItems(current)}</div></section>
+      <section class="compliance-group"><header><h3>Future / Monitor</h3><span>${future.length} items</span></header><div class="compliance-grid">${renderItems(future)}</div></section>
+    </section>
+  `;
+}
+
+function complianceReports(categoryId) {
+  return [...(data.catalog.policyReports?.[categoryId] || []), ...(supplementalComplianceReports[categoryId] || [])];
+}
+
+function complianceLocation(report) {
+  const key = report.mapKey || `${report.title || ""} ${report.region || ""}`.toLowerCase();
+  if (/qu[eé]bec/.test(key)) return { name: "Québec, Canada", lat: 46.8139, lon: -71.2080 };
+  if (/prc|china|ccc/.test(key)) return { name: "PRC", lat: 39.9042, lon: 116.4074 };
+  if (/california/.test(key)) return { name: "California, USA", lat: 38.5816, lon: -121.4944 };
+  if (/mexico/.test(key)) return { name: "Mexico", lat: 19.4326, lon: -99.1332 };
+  if (/brazil/.test(key)) return { name: "Brazil", lat: -15.7939, lon: -47.8828 };
+  if (/japan/.test(key)) return { name: "Japan", lat: 35.6762, lon: 139.6503 };
+  if (/australia/.test(key)) return { name: "Australia / New Zealand", lat: -33.8688, lon: 151.2093 };
+  if (/european union|\beu\b/.test(key)) return { name: "European Union", lat: 50.8503, lon: 4.3517 };
+  if (/united states|external power|battery charger/.test(key)) return { name: "United States", lat: 38.9072, lon: -77.0369 };
+  return { name: report.region || "Global", lat: 20, lon: 0 };
 }
 
 function renderRegionEntryCard(region) {
@@ -1018,7 +1953,7 @@ function renderRegionEntryCard(region) {
 function renderRegionCountryWorkspace(categoryId, overview, regionId) {
   const region = (overview.regions || []).find((item) => item.id === regionId);
   if (!region) return renderGeoOverviewModuleFallback(regionId);
-  const tabs = [...(region.countryTabs || []), { id: "policy", label: "Policy & Standards" }];
+  const tabs = [...(region.countryTabs || [])];
   const configuredTab = state.geoCountryTab[categoryId];
   const activeTab = tabs.some((tab) => tab.id === configuredTab) ? configuredTab : tabs[0]?.id;
   state.geoCountryTab[categoryId] = activeTab;
@@ -1033,9 +1968,7 @@ function renderRegionCountryWorkspace(categoryId, overview, regionId) {
         <nav class="country-region-tabs" aria-label="${escapeAttr(region.label)} country and policy views">
           ${tabs.map((item) => `<button class="${item.id === activeTab ? "is-active" : ""}" type="button" data-action="country-tab" data-tab-id="${escapeAttr(item.id)}">${escapeHtml(item.label)}</button>`).join("")}
         </nav>
-        ${activeTab === "policy"
-          ? renderRegionPolicyView(region)
-          : renderRegionCountryPanel(overview, country, tab?.label || country?.label)}
+        ${renderRegionCountryPanel(overview, country, tab?.label || country?.label)}
       </section>
     </section>
   `;
@@ -1978,7 +2911,23 @@ function renderIndustryFlow(steps) {
 }
 
 function industryBrandReport(categoryId) {
-  return data.catalog.industryBrandReports?.[categoryId] || null;
+  const report = data.catalog.industryBrandReports?.[categoryId] || (categoryId === "power_cable" ? powerCableCompetitiveReport : null);
+  if (!report) return null;
+  const expansion = competitiveCategoryExpansion[categoryId] || {};
+  const enrichBrand = (brand) => {
+    const key = idFromText(brand.brand);
+    return {
+      ...brand,
+      ...(competitiveCompanyResearch[key] || {}),
+      marketTier: expansion.tiers?.[key] || brand.marketTier || 3,
+      products: [...(brand.products || []), ...(expansion.productAdditions?.[key] || [])],
+    };
+  };
+  return {
+    ...report,
+    brands: [...(report.brands || []).map(enrichBrand), ...(expansion.brands || []).map(enrichBrand)]
+      .sort((a, b) => (a.marketTier || 3) - (b.marketTier || 3)),
+  };
 }
 
 function idFromText(value) {
@@ -2092,6 +3041,14 @@ function renderMarketStructureOverview(report) {
           `;}).join("")}
         </div>
       ` : ""}
+      ${overview.sources?.length ? `
+        <footer class="structure-overview-sources">
+          <strong>Sources</strong>
+          <div>${overview.sources.map((source) => source.url
+            ? `<a href="${escapeAttr(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title)} ↗</a>`
+            : `<span>${escapeHtml(source.title)}${source.note ? ` · ${escapeHtml(source.note)}` : ""}</span>`).join("")}</div>
+        </footer>
+      ` : ""}
     </section>
   `;
 }
@@ -2099,6 +3056,12 @@ function renderMarketStructureOverview(report) {
 function renderStructurePlotPanel(chart, chartId) {
   const legendSide = chart.legendSide === "left" || chart.legendSide === "right" ? chart.legendSide : null;
   const legendTotal = (chart.items || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+  const legendValue = (item) => {
+    const label = item.valueLabel || fmtExactNumber(item.value);
+    return /%\s*$/.test(label)
+      ? label
+      : `${label} · ${legendTotal ? ((Number(item.value) || 0) / legendTotal * 100).toFixed(2) : "0.00"}%`;
+  };
   const legend = legendSide ? `
     <div class="structure-chart-legend" aria-label="${escapeAttr(chart.title || "Chart")} legend">
       ${(chart.items || []).map((item, index) => `
@@ -2106,7 +3069,7 @@ function renderStructurePlotPanel(chart, chartId) {
           <i style="--legend-color:${escapeAttr(structureChartColor(index))}"></i>
           <div>
             <strong>${escapeHtml(item.label)}</strong>
-            <span>${escapeHtml(item.valueLabel || fmtExactNumber(item.value))} · ${legendTotal ? ((Number(item.value) || 0) / legendTotal * 100).toFixed(2) : "0.00"}%</span>
+            <span>${escapeHtml(legendValue(item))}</span>
             ${item.description ? `<small>${escapeHtml(item.description)}</small>` : ""}
           </div>
         </div>
@@ -2117,7 +3080,6 @@ function renderStructurePlotPanel(chart, chartId) {
     <div class="structure-mini-chart structure-plot-panel ${legendSide ? `has-side-legend legend-${legendSide}` : ""}">
       <div class="structure-mini-chart-head">
         <strong>${escapeHtml(chart.title || "Share")}</strong>
-        <span>${escapeHtml(chart.center || "Selected period")}</span>
       </div>
       <div class="structure-pie-layout">
         ${legendSide === "left" ? legend : ""}
@@ -2356,7 +3318,10 @@ function renderIndustryNote(item) {
 }
 
 function marketStructureReport(categoryId) {
-  return data.catalog.marketStructureReports?.[categoryId] || null;
+  const base = data.catalog.marketStructureReports?.[categoryId] || null;
+  const overview = marketOverviewSupplements[categoryId];
+  if (!overview) return base;
+  return { ...(base || {}), title: base?.title || `${categoryLabel(categoryId)} Market Structure`, overview };
 }
 
 function rankedMarketMetrics(market, metrics) {
@@ -2396,51 +3361,407 @@ function marketImplicationText(market, report, topDemand, topChannel) {
 }
 
 function renderCompetitiveAnalysis(categoryId) {
+  if (categoryId === "adapter" && data.competitorDatabase?.products?.length) return renderAdapterCompetitiveAnalysis();
+  if (data.competitorDatabase?.products?.length) return renderCompetitorDatabaseAnalysis(categoryId);
   const report = industryBrandReport(categoryId);
   return `
     <div class="view-stack">
       <section class="competitor-analysis-part">
-        <div class="module-head">
-          <span>Company Profiles</span>
-          <h2>Company Profiles</h2>
-          <p>Review the companies shaping the ${escapeHtml(indexes.categories.get(categoryId)?.label || "category")} market. Select a company module to open its detailed positioning, strategy, and representative products.</p>
-        </div>
-        ${report?.brands?.length ? `<div class="company-profile-grid">${report.brands.map(renderCompanyProfileCard).join("")}</div>` : renderCompanyProfileEmpty(categoryId)}
+        ${report?.brands?.length ? `
+          <div class="company-profile-grid">${report.brands.map(renderCompanyProfileCard).join("")}</div>
+        ` : renderCompanyProfileEmpty(categoryId)}
       </section>
     </div>
   `;
 }
 
-function renderCompanyProfileCard(brand) {
-  const details = [
-    brand.strategy?.length ? renderCompanyDetailGroup("Strategic Focus", brand.strategy) : "",
-    brand.portfolio?.length ? renderCompanyDetailGroup("Portfolio Architecture", brand.portfolio) : "",
-    brand.pricing?.length ? renderCompanyDetailGroup("Pricing and Promotion", brand.pricing) : "",
-    brand.countries?.length ? renderCompanyCountryDetails(brand.countries) : "",
-    brand.products?.length ? renderCompanyProducts(brand.products) : "",
-  ].filter(Boolean).join("");
+function renderAdapterCompetitiveAnalysis() {
+  const rows = adapterAnalysisRows();
+  const brands = [...new Set(rows.map((row) => row.brand))].sort();
+  if (!state.adapterCompetitiveBrand || !brands.includes(state.adapterCompetitiveBrand)) state.adapterCompetitiveBrand = brands[0];
+  const selectedProducts = rows.filter((row) => row.brand === state.adapterCompetitiveBrand);
   return `
-    <details class="company-profile-card">
-      <summary>
-        <img class="company-logo-image" src="${escapeAttr(brandLogoPath(brand))}" alt="${escapeAttr(brand.brand)} logo" loading="lazy">
-        <span class="company-profile-summary">
-          <span class="tag">${escapeHtml(brand.role || "Market Participant")}</span>
-          <strong>${escapeHtml(brand.brand)}</strong>
-          <span>${escapeHtml(brand.summary || "Company profile available in the category report.")}</span>
-        </span>
-        <span class="company-profile-caret" aria-hidden="true">+</span>
-      </summary>
-      <div class="company-profile-detail">
-        ${brand.metrics?.length ? `<div class="company-profile-metrics">${brand.metrics.map(renderIndustryMetric).join("")}</div>` : ""}
-        ${details || `<p class="product-meta">No additional company detail is loaded for this category.</p>`}
-      </div>
-    </details>
+    <div class="view-stack adapter-competitive-view">
+      <section class="adapter-competitive-hero">
+        <div class="adapter-competitive-title">
+          <p class="eyebrow">Competitor product database</p>
+          <h2>Adapter Competitive Analysis</h2>
+          <div class="adapter-title-kpis"><div><strong>${fmtExactNumber(brands.length)}</strong><span>Brands</span></div><div><strong>${fmtExactNumber(rows.length)}</strong><span>Verified products</span></div></div>
+        </div>
+        <div class="adapter-logo-wall" aria-label="Brand logo collection">${brands.map((brand) => {
+          const logo = adapterBrandLogoPath(brand);
+          const website = data.adapterAssets?.brandSites?.[brand] || rows.find((row) => row.brand === brand)?.source_url || "#";
+          return `<a href="${escapeAttr(website)}" target="_blank" rel="noreferrer" title="Open ${escapeAttr(brand)} official website">${logo ? `<img src="${escapeAttr(logo)}" alt="${escapeAttr(brand)} logo">` : `<strong>${escapeHtml(brand)}</strong>`}<span>${escapeHtml(brand)}</span></a>`;
+        }).join("")}</div>
+      </section>
+
+      ${renderAdapterAnalysisModule("power", "Power Contribution", adapterModuleControls("power", ["port", "scenario"]), ["adapterPowerPie", "adapterPowerBrandBar"])}
+      ${renderAdapterAnalysisModule("price", "Price Analysis", adapterModuleControls("price", ["port", "scenario"]), ["adapterPriceHeatmap", "adapterPortPriceHeatmap"], ["Power × Price Heatmap", "Port × Price Heatmap"])}
+      ${renderAdapterAnalysisModule("port", "Port Contribution", adapterModuleControls("port", ["power", "scenario"]), ["adapterPortPie", "adapterPortBrandBar"])}
+      ${renderAdapterAnalysisModule("scenario", "Scenario Analysis", adapterModuleControls("scenario", ["price", "power"]), ["adapterScenarioBrandBar", "adapterScenarioPie"], ["Scenario Mix by Brand", "Selected Brand Scenario Share"])}
+
+      <section class="adapter-brand-cloud-module">
+        <header><div><span>05</span><h3>Brand Sample Cloud</h3><p>Select a brand to review matching database samples and official links.</p></div></header>
+        <div class="adapter-brand-cloud">${brands.map((brand) => {
+          const count = rows.filter((row) => row.brand === brand).length;
+          return `<button type="button" data-action="adapter-brand-cloud" data-brand="${escapeAttr(brand)}" class="${brand === state.adapterCompetitiveBrand ? "is-active" : ""}" style="--brand-weight:${Math.min(30, 13 + count * 0.55)}px">${escapeHtml(brand)}<small>${count}</small></button>`;
+        }).join("")}</div>
+        <div class="adapter-brand-samples"><h4>${escapeHtml(state.adapterCompetitiveBrand)} samples</h4><div>${selectedProducts.map((row) => `<a href="${escapeAttr(row.source_url)}" target="_blank" rel="noreferrer"><span>${competitorProductImageTag(row)}</span><strong>${escapeHtml(row.product_name)}</strong><small>${row.advertised_power_w}W · ${row.resolvedPorts} port${row.resolvedPorts === 1 ? "" : "s"} · ${escapeHtml(row.scenario)}</small></a>`).join("")}</div></div>
+      </section>
+    </div>
+  `;
+}
+
+function renderAdapterAnalysisModule(module, title, controls, chartIds, subtitles = []) {
+  return `<section class="adapter-module-block" data-adapter-module="${escapeAttr(module)}"><div class="adapter-module-heading"><p>Competitor module</p><h3>${escapeHtml(title)}</h3></div><div class="adapter-analysis-module is-${escapeAttr(module)}"><header>${controls}</header><div class="adapter-analysis-chart-grid ${chartIds.length === 1 ? "is-single" : ""}">${chartIds.map((id, index) => `<article>${subtitles[index] ? `<h4>${escapeHtml(subtitles[index])}</h4>` : ""}<div id="${escapeAttr(id)}" class="plot adapter-analysis-plot"></div></article>`).join("")}</div></div></section>`;
+}
+
+const competitorCategoryName = { adapter: "Adapter", power_bank: "Power Bank", power_cable: "Power Cable" };
+
+function competitorNumber(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function competitorPowerBand(categoryId, value) {
+  const watts = competitorNumber(value);
+  if (watts === null) return "Unknown";
+  if (categoryId === "adapter") {
+    if (watts <= 69) return "65–69W";
+    if (watts <= 99) return "70–99W";
+    if (watts <= 139) return "100–139W";
+    if (watts <= 199) return "140–199W";
+    return "≥200W";
+  }
+  if (categoryId === "power_cable") {
+    if (watts === 60) return "60W";
+    if (watts === 100) return "100W";
+    if (watts === 140) return "140W";
+    if (watts === 240) return "240W";
+    return "Other";
+  }
+  return watts < 100 ? "65–99W" : watts < 140 ? "100–139W" : watts < 200 ? "140–199W" : "≥200W";
+}
+
+function competitorCapacityBand(value) {
+  const capacity = competitorNumber(value);
+  if (capacity === null) return "Unknown";
+  if (capacity <= 10000) return "≤10,000";
+  if (capacity <= 20000) return "10,001–20,000";
+  if (capacity <= 27000) return "20,001–27,000";
+  return ">27,000";
+}
+
+function competitorPowerBankForm(row) {
+  const text = `${row.form_factor || ""} ${row.product_name || ""}`.toLowerCase();
+  if (/2-in-1|2 in 1|hybrid/.test(text)) return "2-in-1";
+  if (/retract/.test(text)) return "Retractable cable";
+  if (/built.?in|integrated/.test(text)) return "Built-in cable";
+  return "Standard";
+}
+
+function competitorCableLengths(value) {
+  const matches = String(value || "").toLowerCase().replace(/ｍ/g, "m").match(/\d+(?:\.\d+)?\s*(?:ft|feet|m|cm)/g) || [];
+  return [...new Set(matches.map((token) => {
+    const amount = Number.parseFloat(token);
+    if (token.includes("cm")) return amount / 100;
+    if (token.includes("ft") || token.includes("feet")) return amount * 0.3048;
+    return amount;
+  }).filter((value) => Number.isFinite(value) && value > 0).map((value) => Math.round(value * 100) / 100))];
+}
+
+function competitorCableLengthBand(row) {
+  const lengths = competitorCableLengths(row.length_options);
+  if (!lengths.length) return "Unknown";
+  const value = Math.min(...lengths);
+  if (value <= 1) return "≤1m";
+  if (value <= 2) return "1.01–2m";
+  if (value <= 3) return "2.01–3m";
+  return ">3m";
+}
+
+function competitorCableProtocol(row) {
+  const text = `${row.protocols || ""} ${row.product_name || ""}`.toLowerCase();
+  if (/thunderbolt/.test(text)) return "Thunderbolt";
+  if (/usb\s?4/.test(text)) return "USB4";
+  if (/pd\s?3\.1|charging|charge cable|power/.test(text)) return "Charging cable";
+  return "Unknown";
+}
+
+function adapterPortCount(row) {
+  const direct = competitorNumber(row.total_outputs);
+  if (direct !== null && direct > 0) return direct;
+  const usbC = competitorNumber(row.usb_c_outputs);
+  const usbA = competitorNumber(row.usb_a_outputs);
+  if (usbC !== null || usbA !== null) return (usbC || 0) + (usbA || 0);
+  const text = `${row.product_name || ""} ${row.evidence_excerpt || ""}`;
+  if (row.brand === "Xtorm") {
+    if (/65W Fast Travel|67W GaN2/i.test(text)) return 2;
+    if (/100W GaN2|140W GaN2/i.test(text)) return 3;
+  }
+  const patterns = [
+    /(?:^|\D)(\d+)\s*[- ]?ports?\b/i,
+    /(?:^|\D)(\d+)\s*USB(?:-| )?(?:C|A)?\s*ports?\b/i,
+    /(?:^|\D)(\d+)C\s*[+＋]\s*(\d+)(?:A|U)\b/i,
+    /(?:C|Type-C)(?:\(TM\))?\s*[×x]\s*(\d+).*?(?:A|USB-A)\s*[×x]\s*(\d+)/i,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (!match) continue;
+    return match[2] ? Number(match[1]) + Number(match[2]) : Number(match[1]);
+  }
+  if (/\b(?:dual|duo)\b/i.test(text)) return 2;
+  if (/\b(?:trio|triple)\b/i.test(text)) return 3;
+  if (/\bquad\b/i.test(text)) return 4;
+  if (/\b(?:single|solo)\b/i.test(text)) return 1;
+  if (/\bUSB-C (?:AC |GaN |LC |wall |laptop )?(?:power )?(?:adapter|charger)\b/i.test(row.product_name || "")) return 1;
+  return null;
+}
+
+function adapterScenario(row) {
+  const text = `${row.form_factor || ""} ${row.product_name || ""}`.toLowerCase();
+  if (/travel|multi-country|universal adapter/.test(text)) return "Travel";
+  if (/desktop|station|inline/.test(text)) return "Desktop";
+  if (/retract/.test(text)) return "Retractable";
+  if (/slim|flat/.test(text)) return "Slim";
+  if (/legacy|4\.5mm|7\.4mm|smart ac/.test(text)) return "OEM / Legacy";
+  return "Wall charger";
+}
+
+function adapterPriceBand(row) {
+  const price = competitorNumber(row.price_min);
+  if (price === null) return null;
+  if (price < 40) return "<$40";
+  if (price < 70) return "$40–69";
+  if (price < 100) return "$70–99";
+  return "$100+";
+}
+
+function adapterAnalysisRows() {
+  return (data.competitorDatabase?.products || [])
+    .filter((row) => row.category === "Adapter")
+    .map((row) => ({ ...row, resolvedPorts: adapterPortCount(row), scenario: adapterScenario(row) }))
+    .filter((row) => row.resolvedPorts !== null && row.resolvedPorts > 0);
+}
+
+function adapterModuleFilters(module) {
+  state.adapterCompetitiveFilters[module] ||= {};
+  return state.adapterCompetitiveFilters[module];
+}
+
+function adapterFilteredRows(module) {
+  const filters = adapterModuleFilters(module);
+  return adapterAnalysisRows().filter((row) => {
+    if (filters.brand && filters.brand !== "all" && row.brand !== filters.brand) return false;
+    if (filters.port && filters.port !== "all" && String(row.resolvedPorts) !== filters.port) return false;
+    if (filters.scenario && filters.scenario !== "all" && row.scenario !== filters.scenario) return false;
+    if (filters.power && filters.power !== "all" && competitorPowerBand("adapter", row.advertised_power_w) !== filters.power) return false;
+    if (filters.price && filters.price !== "all" && adapterPriceBand(row) !== filters.price) return false;
+    return true;
+  });
+}
+
+function adapterFilterSelect(module, key, label, options, value = "all") {
+  return `<label><span>${escapeHtml(label)}</span><select data-action="adapter-competitor-filter" data-module="${escapeAttr(module)}" data-key="${escapeAttr(key)}">${[{ value: "all", label: `All ${label.toLowerCase()}` }, ...options].map((option) => `<option value="${escapeAttr(option.value)}" ${option.value === value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}</select></label>`;
+}
+
+function adapterModuleControls(module, keys) {
+  const rows = adapterAnalysisRows();
+  const filters = adapterModuleFilters(module);
+  const options = {
+    brand: [...new Set(rows.map((row) => row.brand))].sort().map((value) => ({ value, label: value })),
+    form: [...new Set(rows.map((row) => row.form_factor))].sort().map((value) => ({ value, label: value })),
+    port: [...new Set(rows.map((row) => row.resolvedPorts))].sort((a, b) => a - b).map((value) => ({ value: String(value), label: `${value} port${value === 1 ? "" : "s"}` })),
+    scenario: [...new Set(rows.map((row) => row.scenario))].sort().map((value) => ({ value, label: value })),
+    power: ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W"].map((value) => ({ value, label: value })),
+    price: ["<$40", "$40–69", "$70–99", "$100+"].map((value) => ({ value, label: value })),
+  };
+  const labels = { brand: "Brand", form: "Form", port: "Port", scenario: "Form / Scenario", power: "Power", price: "Price" };
+  return `<div class="adapter-module-controls"><div class="adapter-fixed-filter"><span>Brand</span><strong>All Brand</strong></div>${keys.map((key) => adapterFilterSelect(module, key, labels[key], options[key], filters[key] || "all")).join("")}</div>`;
+}
+
+function adapterBrandLogoPath(brand) {
+  return data.adapterAssets?.brands?.[brand] || null;
+}
+
+function adapterProductImage(row) {
+  const downloaded = data.adapterAssets?.products?.[row.source_url];
+  if (downloaded && !downloaded.includes("-search.") && !downloaded.includes("-page.")) return downloaded;
+  const text = `${row.brand} ${row.product_name}`.toLowerCase();
+  if (text.includes("anker") && text.includes("160w")) return "assets/competitive/adapter-anker-a2687.png";
+  if (text.includes("anker") && text.includes("140w")) return "assets/competitive/adapter-anker-a2697.png";
+  if (text.includes("anker") && text.includes("100w")) return "assets/competitive/adapter-anker-a121b.png";
+  if (text.includes("ugreen") && text.includes("300w")) return "assets/competitive/adapter-ugreen-300.png";
+  if (text.includes("ugreen") && text.includes("160w")) return "assets/competitive/adapter-ugreen-160.png";
+  if (text.includes("baseus") && text.includes("100w")) return "assets/competitive/adapter-baseus-100.jpg";
+  if (text.includes("baseus") && text.includes("65w")) return "assets/competitive/adapter-baseus-65.jpg";
+  if (text.includes("belkin") && text.includes("140w")) return "assets/competitive/adapter-belkin-140.jpg";
+  if (text.includes("apple") && text.includes("140w")) return "assets/competitive/adapter-apple-140.jpg";
+  return adapterBrandLogoPath(row.brand);
+}
+
+function competitorProductImageTag(row, className = "") {
+  const logo = adapterBrandLogoPath(row.brand);
+  const image = adapterProductImage(row) || logo;
+  return `<img${className ? ` class="${escapeAttr(className)}"` : ""} src="${escapeAttr(image)}" data-logo-fallback="${escapeAttr(logo)}" alt="${escapeAttr(row.product_name)}" loading="lazy" onerror="this.onerror=null;this.src=this.dataset.logoFallback">`;
+}
+
+function competitorDbRows(categoryId) {
+  const category = competitorCategoryName[categoryId];
+  const filters = state.competitorDbFilters[categoryId] || {};
+  return (data.competitorDatabase?.products || []).filter((row) => {
+    if (row.category !== category) return false;
+    if (categoryId === "power_cable" && !(competitorNumber(row.advertised_power_w) > 0)) return false;
+    const pending = /pending/i.test(row.status || "");
+    if (categoryId === "power_bank" && (filters.verification || "confirmed") === "confirmed" && pending) return false;
+    if (categoryId === "power_bank" && filters.verification === "pending" && !pending) return false;
+    const bandValue = categoryId === "power_bank" ? competitorCapacityBand(row.capacity_mah) : competitorPowerBand(categoryId, row.advertised_power_w);
+    if (filters.band && filters.band !== "all" && bandValue !== filters.band) return false;
+    const formValue = categoryId === "power_bank" ? competitorPowerBankForm(row) : (row.form_factor || "Unknown");
+    if (filters.form && filters.form !== "all" && formValue !== filters.form) return false;
+    if (categoryId === "adapter" && filters.port === "multi" && !(competitorNumber(row.total_outputs) > 1)) return false;
+    if (categoryId === "adapter" && filters.port === "single" && competitorNumber(row.total_outputs) !== 1) return false;
+    if (categoryId === "power_cable" && filters.length && filters.length !== "all" && competitorCableLengthBand(row) !== filters.length) return false;
+    if (categoryId === "power_cable" && filters.protocol && filters.protocol !== "all" && competitorCableProtocol(row) !== filters.protocol) return false;
+    if (filters.currency && filters.currency !== "all" && row.currency !== filters.currency) return false;
+    return true;
+  });
+}
+
+function competitorFilterSelect(action, label, value, options) {
+  return `<label><span>${escapeHtml(label)}</span><select data-action="${escapeAttr(action)}">${options.map((option) => `<option value="${escapeAttr(option.value)}" ${option.value === value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}</select></label>`;
+}
+
+function renderCompetitorDatabaseAnalysis(categoryId) {
+  const filters = state.competitorDbFilters[categoryId] || {};
+  const rows = competitorDbRows(categoryId);
+  const total = (data.competitorDatabase?.products || []).filter((row) => row.category === competitorCategoryName[categoryId] && (categoryId !== "power_cable" || competitorNumber(row.advertised_power_w) > 0));
+  const bands = categoryId === "adapter"
+    ? ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W", "Unknown"]
+    : categoryId === "power_bank"
+      ? ["≤10,000", "10,001–20,000", "20,001–27,000", ">27,000", "Unknown"]
+      : ["60W", "100W", "140W", "240W", "Other", "Unknown"];
+  const brands = new Set(rows.map((row) => row.brand));
+  const brandList = [...brands].sort();
+  const forms = [...new Set(total.map((row) => categoryId === "power_bank" ? competitorPowerBankForm(row) : (row.form_factor || "Unknown")))].sort();
+  return `
+    <div class="view-stack competitor-db-view adapter-competitive-view">
+      <section class="adapter-competitive-hero">
+        <div class="adapter-competitive-title"><p class="eyebrow">Competitor product database</p><h2>${escapeHtml(competitorCategoryName[categoryId])} Competitive Analysis</h2><div class="adapter-title-kpis"><div><strong>${fmtExactNumber(brands.size)}</strong><span>Brands</span></div><div><strong>${fmtExactNumber(rows.length)}</strong><span>Products</span></div></div></div>
+        <div class="adapter-logo-wall" aria-label="Brand official websites">${brandList.map((brand) => `<a href="${escapeAttr(data.adapterAssets?.brandSites?.[brand] || rows.find((row) => row.brand === brand)?.source_url || "#")}" target="_blank" rel="noreferrer" title="Open ${escapeAttr(brand)} official website"><img src="${escapeAttr(adapterBrandLogoPath(brand))}" alt="${escapeAttr(brand)} logo"><span>${escapeHtml(brand)}</span></a>`).join("")}</div>
+      </section>
+      ${categoryId === "power_bank" ? renderPowerBankCompetitorModules(filters, bands, forms, total) : renderCableCompetitorModules(filters, bands, forms, total)}
+      ${renderCompetitorProductLibrary(categoryId, rows)}
+    </div>
+  `;
+}
+
+function competitorModuleControls(categoryId, keys, filters, bands, forms, total) {
+  const currencies = [...new Set(total.map((row) => row.currency).filter(Boolean))].sort();
+  const controls = {
+    band: competitorFilterSelect("competitor-db-band", categoryId === "power_bank" ? "Capacity band" : "Power band", filters.band || "all", [{ value: "all", label: "All bands" }, ...bands.map((value) => ({ value, label: value }))]),
+    form: competitorFilterSelect("competitor-db-form", "Factor", filters.form || "all", [{ value: "all", label: "All factors" }, ...forms.map((value) => ({ value, label: value }))]),
+    length: competitorFilterSelect("competitor-db-length", "Length", filters.length || "all", [{ value: "all", label: "All lengths" }, ...["≤1m", "1.01–2m", "2.01–3m", ">3m", "Unknown"].map((value) => ({ value, label: value }))]),
+    verification: competitorFilterSelect("competitor-db-verification", "Verification", filters.verification || "confirmed", [{ value: "confirmed", label: "Confirmed ≥65W" }, { value: "pending", label: "Pending" }, { value: "all", label: "All records" }]),
+    currency: competitorFilterSelect("competitor-db-currency", "Currency", filters.currency || "all", [{ value: "all", label: "All currencies" }, ...currencies.map((value) => ({ value, label: value }))]),
+  };
+  return `<div class="adapter-module-controls"><div class="adapter-fixed-filter"><span>Brand</span><strong>All Brand</strong></div>${keys.map((key) => controls[key]).join("")}</div>`;
+}
+
+function renderDbModule(title, controls, charts) {
+  return `<section class="adapter-module-block"><div class="adapter-module-heading"><p>Competitor module</p><h3>${escapeHtml(title)}</h3></div><section class="adapter-analysis-module"><header>${controls}</header><div class="adapter-analysis-chart-grid">${charts.map(([id, label]) => `<article><h4>${escapeHtml(label)}</h4><div id="competitorDbChart${id}" class="plot adapter-analysis-plot"></div></article>`).join("")}</div></section></section>`;
+}
+
+function renderPowerBankCompetitorModules(filters, bands, forms, total) {
+  return [
+    renderDbModule("Capacity Contribution", competitorModuleControls("power_bank", ["form", "verification"], filters, bands, forms, total), [[1, "Capacity Share"], [2, "Capacity Mix by Brand"]]),
+    renderDbModule("Price Analysis", competitorModuleControls("power_bank", ["form", "verification", "currency"], filters, bands, forms, total), [[3, "Capacity vs Price"], [4, "Single-port Power vs Price"]]),
+    renderDbModule("Max Single-port Power Contribution", competitorModuleControls("power_bank", ["band", "form", "verification"], filters, bands, forms, total), [[5, "Single-port Power Share"], [6, "Single-port Power Mix by Brand"]]),
+    renderDbModule("Factor Contribution", competitorModuleControls("power_bank", ["band", "verification"], filters, bands, forms, total), [[7, "Factor Share"], [8, "Factor Mix by Brand"]]),
+  ].join("");
+}
+
+function renderCableCompetitorModules(filters, bands, forms, total) {
+  return [
+    renderDbModule("Length Contribution", competitorModuleControls("power_cable", ["band", "form"], filters, bands, forms, total), [[1, "Length Share"], [2, "Length Mix by Brand"]]),
+    renderDbModule("Price Analysis", competitorModuleControls("power_cable", ["band", "form", "currency"], filters, bands, forms, total), [[3, "Length vs Price"], [4, "Charging Power vs Price"]]),
+    renderDbModule("Factor Contribution", competitorModuleControls("power_cable", ["band", "length"], filters, bands, forms, total), [[5, "Factor Share"], [6, "Factor Mix by Brand"]]),
+  ].join("");
+}
+
+function renderCompetitorProductLibrary(categoryId, rows) {
+  const brands = [...new Set(rows.map((row) => row.brand))].sort();
+  let selected = state.competitorDbBrand[categoryId];
+  if (!brands.includes(selected)) selected = brands[0];
+  state.competitorDbBrand[categoryId] = selected;
+  const products = rows.filter((row) => row.brand === selected);
+  return `<section class="adapter-module-block"><div class="adapter-module-heading"><p>Competitor module</p><h3>Product Library</h3></div><section class="adapter-brand-cloud-module"><header><div><span>05</span><h3>Brand Product Library</h3><p>Select a brand to view product images and official links.</p></div></header><div class="adapter-brand-cloud">${brands.map((brand) => { const count = rows.filter((row) => row.brand === brand).length; return `<button type="button" data-action="competitor-db-brand-cloud" data-brand="${escapeAttr(brand)}" class="${brand === selected ? "is-active" : ""}" style="--brand-weight:${Math.min(30, 13 + count * .45)}px">${escapeHtml(brand)}<small>${count}</small></button>`; }).join("")}</div><div class="adapter-brand-samples"><h4>${escapeHtml(selected)} products</h4><div>${products.map((row) => `<a href="${escapeAttr(row.source_url)}" target="_blank" rel="noreferrer"><span>${competitorProductImageTag(row)}</span><strong>${escapeHtml(row.product_name)}</strong><small>${categoryId === "power_bank" ? `${row.capacity_mah || "—"}mAh · ${row.single_usb_c_output_w || "—"}W single-port` : `${row.advertised_power_w || "—"}W · ${escapeHtml(row.length_options || "Length unknown")}`}</small></a>`).join("")}</div></div></section></section>`;
+}
+
+function renderCompetitorModuleGroup(title, chartTitles, chartNumbers) {
+  return `<section class="adapter-module-block"><div class="adapter-module-heading"><p>Competitor module</p><h3>${escapeHtml(title)}</h3></div><section class="competitor-db-chart-grid">${chartNumbers.map((number, index) => `<article class="competitor-db-chart-card"><header><h3>${escapeHtml(chartTitles[index])}</h3></header><div id="competitorDbChart${number}" class="plot competitor-db-plot"></div></article>`).join("")}</section></section>`;
+}
+
+function renderCompetitorDatabaseTable(categoryId, rows) {
+  const cols = categoryId === "adapter"
+    ? [["brand", "Brand"], ["product_name", "Product"], ["advertised_power_w", "Nominal W"], ["single_usb_c_output_w", "Single-port W"], ["total_outputs", "Ports"], ["form_factor", "Form"], ["price_min", "Price"]]
+    : categoryId === "power_bank"
+      ? [["brand", "Brand"], ["product_name", "Product"], ["capacity_mah", "Capacity mAh"], ["advertised_power_w", "Nominal W"], ["single_usb_c_output_w", "Single-port W"], ["form_factor", "Form"], ["price_min", "Price"]]
+      : [["brand", "Brand"], ["product_name", "Product"], ["advertised_power_w", "Charging W"], ["length_options", "Length options"], ["form_factor", "Structure"], ["protocols", "Data protocol"], ["price_min", "Price"]];
+  return `<div class="competitor-db-table-wrap"><table><thead><tr><th>Image</th>${cols.map(([, label]) => `<th>${escapeHtml(label)}</th>`).join("")}<th>Source</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${competitorProductImageTag(row, "competitor-product-thumb")}</td>${cols.map(([key]) => `<td>${key === "price_min" ? (row[key] == null ? "—" : `${escapeHtml(row.currency || "")} ${Number(row[key]).toFixed(2)}`) : escapeHtml(row[key] == null || row[key] === "" ? "—" : String(row[key]))}</td>`).join("")}<td><a href="${escapeAttr(row.source_url || "#")}" target="_blank" rel="noreferrer">Open ↗</a></td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function renderCompetitiveStrategyMap(brands) {
+  const tiers = [
+    { label: "Tier 1 · Global Leaders & Ecosystem Owners", brands: brands.filter((brand) => brand.marketTier === 1) },
+    { label: "Tier 2 · Scale & Value Challengers", brands: brands.filter((brand) => brand.marketTier === 2) },
+    { label: "Tier 3 · Focused Specialists", brands: brands.filter((brand) => ![1, 2].includes(brand.marketTier)) },
+  ].filter((tier) => tier.brands.length);
+  return `
+    <section class="competitive-strategy-map" aria-label="Competitive market tiers">
+      <header><span>Strategic Map</span><h3>Market Tier Architecture</h3><p>Brand placement combines scale, channel reach, technology leadership and portfolio breadth. Select a logo to jump to that company's section.</p></header>
+      <div class="competitive-tier-axis"><span>Higher scale / premium authority</span><span>Focused value / specification competition</span></div>
+      ${tiers.map((tier, index) => `
+        <div class="competitive-tier-row is-tier-${index + 1}">
+          <strong>${escapeHtml(tier.label)}</strong>
+          <div>${tier.brands.map((brand) => `<button type="button" data-action="competitive-brand-focus" data-brand="${escapeAttr(idFromText(brand.brand))}"><img src="${escapeAttr(brandLogoPath(brand))}" alt="${escapeAttr(brand.brand)} logo"><span>${escapeHtml(brand.brand)}</span></button>`).join("")}</div>
+        </div>
+      `).join("")}
+    </section>
+  `;
+}
+
+function renderCompanyProfileCard(brand) {
+  const brandId = idFromText(brand.brand);
+  return `
+    <article class="company-profile-card company-showcase" id="company-${escapeAttr(brandId)}">
+      <header class="company-showcase-head">
+        <span class="company-title-eyebrow">Brand Name</span>
+        <div class="company-title-lockup">
+          <img class="company-logo-image" src="${escapeAttr(brandLogoPath(brand))}" alt="${escapeAttr(brand.brand)} logo" loading="lazy">
+          <h3>${escapeHtml(brand.brand)}</h3>
+        </div>
+      </header>
+      ${brand.products?.length ? renderCompanyProducts(brand.products) : `<p class="product-meta">No verified product is currently loaded for this company.</p>`}
+    </article>
+  `;
+}
+
+function renderCompanyFinancials(brand) {
+  return `
+    <section class="company-detail-group company-financial-reading">
+      <h4>Financial Report Reading</h4>
+      <strong>${escapeHtml(brand.financialTitle || "Disclosure review")}</strong>
+      <ul>${brand.financials.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      ${brand.financialSourceUrl ? `<a href="${escapeAttr(brand.financialSourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(brand.financialSourceLabel || "Open primary source")} ↗</a>` : ""}
+    </section>
   `;
 }
 
 function brandLogoPath(brand) {
   const key = idFromText(brand?.brand);
-  return `assets/brands/${["anker", "baseus", "ugreen"].includes(key) ? key : "generic"}.svg`;
+  return `assets/brands/${["anker", "baseus", "ugreen", "belkin", "apple", "xiaomi"].includes(key) ? key : "generic"}.svg`;
 }
 
 function renderCompanyDetailGroup(title, items) {
@@ -2472,28 +3793,31 @@ function renderCompanyCountryDetails(countries) {
 
 function renderCompanyProducts(products) {
   return `
-    <section class="company-detail-group">
-      <h4>Representative Products</h4>
+    <section class="company-detail-group company-product-showcase">
       <div class="company-product-list">
         ${products.map((product) => `
-          <article class="company-product-item">
-            <a class="company-product-image" href="${escapeAttr(product.productUrl || product.amazonUrl || "#")}" target="_blank" rel="noreferrer">
+          <a class="company-product-item" href="${escapeAttr(product.productUrl || product.amazonUrl || "#")}" target="_blank" rel="noreferrer" aria-label="Open ${escapeAttr(product.name)} product page">
+            <span class="company-product-image">
               <img src="${escapeAttr(product.imageUrl || "")}" alt="${escapeAttr(product.name)}" loading="lazy">
-            </a>
-            <div>
+            </span>
+            <span class="company-product-copy">
               <strong>${escapeHtml(product.name)}</strong>
-              <span>${escapeHtml(product.price || "Price varies")}</span>
-              <p>${escapeHtml(product.positioning || "")}</p>
-              <div class="company-product-links">
-                ${product.productUrl ? `<a href="${escapeAttr(product.productUrl)}" target="_blank" rel="noreferrer">Official site</a>` : ""}
-                ${product.amazonUrl ? `<a href="${escapeAttr(product.amazonUrl)}" target="_blank" rel="noreferrer">Amazon</a>` : ""}
-              </div>
-            </div>
-          </article>
+              <em>${escapeHtml(formatCompetitiveUsdPrice(product.price))}</em>
+            </span>
+          </a>
         `).join("")}
       </div>
     </section>
   `;
+}
+
+function formatCompetitiveUsdPrice(value) {
+  const price = String(value || "").trim();
+  if (/^USD\s/i.test(price)) return price;
+  const usd = price.match(/\$\s?([\d,.]+)/);
+  if (usd) return `USD $${usd[1]}`;
+  if (/¥|JPY|price varies/i.test(price)) return "USD price varies";
+  return price ? `USD ${price}` : "USD price varies";
 }
 
 function renderCompanyProfileEmpty(categoryId) {
@@ -2652,8 +3976,12 @@ function renderCompetitorEmptyState(product, country) {
 
 function renderCategoryOverview(categoryId) {
   const visibleProducts = data.catalog.products.filter((product) => product.categoryId === categoryId);
+  if (!hasActiveGlobalTime()) {
+    return `<div class="view-stack category-overview-stack">${renderCategoryPerformanceHero(categoryId, visibleProducts)}<section class="empty-state"><div><h3>No time selected</h3><p>Select a year, quarter, or month to display data.</p></div></section></div>`;
+  }
   return `
     <div class="view-stack category-overview-stack">
+      ${renderCategoryPerformanceHero(categoryId, visibleProducts)}
       <section class="module-block category-performance-content">
         ${renderPerformanceOverview(categoryId, visibleProducts)}
       </section>
@@ -2661,7 +3989,6 @@ function renderCategoryOverview(categoryId) {
         <div class="module-head">
           <span>Overview Module</span>
           <h2>Geo Contribution</h2>
-          <p>Compare selected-period revenue share by geo and track the selected geo across fiscal quarters.</p>
         </div>
         ${renderCategoryGeoContribution(categoryId, visibleProducts)}
       </section>
@@ -2669,22 +3996,257 @@ function renderCategoryOverview(categoryId) {
   `;
 }
 
-function categoryGeoContributionData(categoryId, products) {
+function categoryPerformanceTitle(categoryId) {
+  return ({
+    adapter: "Power Adapter Performance",
+    power_bank: "Power Bank Performance",
+    power_cable: "Power Cable Performance",
+  })[categoryId] || `${overviewScopeLabel(categoryId)} Performance`;
+}
+
+function categoryKpiAmount(rows) {
+  return rows.reduce((sum, row) => sum + Number(row.shipRevenue || 0), 0);
+}
+
+function categoryKpiTrend(current, comparison) {
+  if (!comparison) return current ? { value: 0, text: "New", isUp: true } : { value: 0, text: "0.0%", isUp: true };
+  const value = (current - comparison) / Math.abs(comparison);
+  return { value, text: formatSignedPercent(value), isUp: value >= 0 };
+}
+
+function categoryHeroKpis(categoryId, products) {
   const productIds = new Set(products.map((product) => product.id));
-  const selectedPeriods = new Set(ensureSelectedCategoryPeriods());
+  const rows = data.productMetrics.filter((row) => row.categoryId === categoryId && productIds.has(row.modelId) && rowMatchesActiveDetailPn(row));
+  const segment = categoryOverviewSegment(categoryId, "power");
+  const scopedRows = rows.filter((row) => rowMatchesCategorySegment(row, segment));
+  const years = [...new Set(scopedRows.map((row) => row.fiscalYear).filter(Boolean))].sort((a, b) => periodSortValue(a) - periodSortValue(b));
+  const currentYear = years.at(-1) || "FY2627";
+  const priorYear = priorFiscalYear(currentYear);
+  const selectedQuarterPeriod = state.granularity === "quarter"
+    ? ensureSelectedCategoryPeriods().map(parseFiscalPeriodLabel).filter(Boolean).at(-1)
+    : null;
+  const availableQuarters = [...new Set(scopedRows.filter((row) => row.fiscalYear === currentYear).map((row) => row.fiscalQuarter).filter(Boolean))]
+    .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+  const cutoffQuarter = selectedQuarterPeriod?.fiscalYear === currentYear
+    ? selectedQuarterPeriod.fiscalQuarter
+    : availableQuarters.at(-1);
+  const cutoffNumber = Number(String(cutoffQuarter || "Q4").slice(1));
+  const ytdQuarters = availableQuarters.filter((quarter) => Number(quarter.slice(1)) <= cutoffNumber);
+  const ytdCurrent = categoryKpiAmount(scopedRows.filter((row) => row.fiscalYear === currentYear && ytdQuarters.includes(row.fiscalQuarter)));
+  const ytdPrior = categoryKpiAmount(scopedRows.filter((row) => row.fiscalYear === priorYear && ytdQuarters.includes(row.fiscalQuarter)));
+
+  const selected = categoryPerformancePeriod(categoryId, products);
+  const selectedCurrent = categoryKpiAmount(categoryOverviewRowsForPeriod(categoryId, [...productIds], selected).filter((row) => rowMatchesCategorySegment(row, segment)));
+  const selectedPrior = categoryKpiAmount(categoryOverviewRowsForPeriod(categoryId, [...productIds], selected, true).filter((row) => rowMatchesCategorySegment(row, segment)));
+  const selectedLabel = selected.label;
+
+  return [
+    { label: "Revenue", currentLabel: `${currentYear} YTD`, priorLabel: `${priorYear} YTD`, amount: ytdCurrent, priorAmount: ytdPrior, trend: categoryKpiTrend(ytdCurrent, ytdPrior), suffix: "YoY" },
+    { label: "Revenue", currentLabel: selectedLabel, priorLabel: selected.priorLabel, amount: selectedCurrent, priorAmount: selectedPrior, trend: categoryKpiTrend(selectedCurrent, selectedPrior), suffix: "YoY" },
+  ];
+}
+
+function renderCategoryPerformanceHero(categoryId, products) {
+  const hasTime = hasActiveGlobalTime();
+  const activeTimeLabel = state.granularity === "quarter"
+    ? selectedCategoryPeriodsLabel(ensureSelectedCategoryPeriods())
+    : (selectedPeriod() || "No time selected");
+  return `
+    <section class="category-performance-hero">
+      <header class="power-home-head category-performance-hero-head">
+        <div><h1>${escapeHtml(categoryPerformanceTitle(categoryId))}</h1></div>
+        <dl class="power-home-meta">
+          <div><dt>Time</dt><dd>${escapeHtml(activeTimeLabel)}</dd></div>
+          <div><dt>Unit</dt><dd>M$ Dollar</dd></div>
+        </dl>
+      </header>
+      <div class="category-performance-kpis">
+        ${hasTime ? categoryHeroKpis(categoryId, products).map((item) => `
+          <article class="category-comparison-kpi power-kpi-card ${item.trend.isUp ? "is-up" : "is-down"}">
+            <header><span>${escapeHtml(item.label)}</span><p><span aria-hidden="true">${item.trend.isUp ? "↑" : "↓"}</span>${escapeHtml(item.trend.text)} ${escapeHtml(item.suffix)}</p></header>
+            <div class="category-comparison-values">
+              <section><small>${escapeHtml(item.currentLabel)}</small><strong>${formatCategoryRevenueM(item.amount)}</strong></section>
+              <section><small>${escapeHtml(item.priorLabel)}</small><strong>${formatCategoryRevenueM(item.priorAmount)}</strong></section>
+            </div>
+          </article>
+        `).join("") : ""}
+      </div>
+    </section>
+  `;
+}
+
+function categoryMatchesOverview(row, categoryId) {
+  return categoryId === "power_overall" || row.categoryId === categoryId;
+}
+
+function rowMatchesActiveDetailPn(row) {
+  return !state.productId || state.partNumber === "all" || !state.partNumber || row.partNumber === state.partNumber;
+}
+
+function detailPanelPnKey(panel) { return `${state.productId || "none"}:${panel}`; }
+
+function detailEligiblePns(panel) {
+  if (!state.productId) return [];
+  const segment = categoryOverviewSegment(state.categoryId, panel);
+  return unique(data.productMetrics.filter((row) => row.modelId === state.productId && (segment === "all" || row.segment === segment)).map((row) => row.partNumber).filter(Boolean)).sort();
+}
+
+function detailSelectedPns(panel) {
+  const eligible = detailEligiblePns(panel);
+  const stored = state.detailPanelPns[detailPanelPnKey(panel)];
+  return Array.isArray(stored) ? eligible.filter((pn) => stored.includes(pn)) : eligible;
+}
+
+function detailPnSegment(pn) {
+  const scores = { Consumer: 0, Commercial: 0 };
+  data.productMetrics
+    .filter((row) => row.modelId === state.productId && row.partNumber === pn)
+    .forEach((row) => {
+      if (!(row.segment in scores)) return;
+      scores[row.segment] += Math.abs(Number(row.shipRevenue || 0))
+        + Math.abs(Number(row.orderRevenue || 0))
+        + Math.abs(Number(row.shipQty || 0))
+        + Math.abs(Number(row.orderQty || 0));
+    });
+  return scores.Consumer >= scores.Commercial ? "Consumer" : "Commercial";
+}
+
+function rowMatchesDetailPanelPn(row, panel) {
+  if (!state.productId) return true;
+  return detailSelectedPns(panel).includes(row.partNumber);
+}
+
+function renderDetailPnSelector(panel) {
+  const eligible = detailEligiblePns(panel);
+  const selected = detailSelectedPns(panel);
+  const allSelected = eligible.length > 0 && selected.length === eligible.length;
+  const renderGroup = (segment) => {
+    const pns = eligible.filter((pn) => detailPnSegment(pn) === segment);
+    return `<section class="detail-pn-group"><h4>${segment}</h4>${pns.length ? pns.map((pn) => `<label><input type="checkbox" data-action="detail-pn-select" data-panel="${escapeAttr(panel)}" value="${escapeAttr(pn)}" ${selected.includes(pn) ? "checked" : ""}><span>${escapeHtml(pn)}</span></label>`).join("") : `<p>No PN</p>`}</section>`;
+  };
+  return `<details class="category-product-selector detail-pn-selector"><summary title="Choose PN" aria-label="Choose PN"><span>PN</span><small>${allSelected ? "All" : `${selected.length}/${eligible.length}`}</small></summary><div class="category-product-menu detail-pn-menu"><button class="category-product-all" type="button" data-action="detail-pn-all" data-panel="${escapeAttr(panel)}" aria-pressed="${allSelected}"><span class="category-product-check ${allSelected ? "is-checked" : ""}" aria-hidden="true"></span><span>All PN</span></button><div class="detail-pn-columns">${renderGroup("Consumer")}${renderGroup("Commercial")}</div></div></details>`;
+}
+
+function overviewScopeLabel(categoryId) {
+  if (categoryId === "power_overall") return "Power";
+  return indexes.categories.get(categoryId)?.label || "Product";
+}
+
+function categoryGeoSelectedProductIds(categoryId, products) {
+  const availableIds = products.map((product) => product.id);
+  const selected = state.categoryGeoProducts[categoryId];
+  if (!Array.isArray(selected)) return availableIds;
+  return availableIds.filter((productId) => selected.includes(productId));
+}
+
+function categoryGeoMetric(categoryId) {
+  const field = state.categoryGeoMetric[categoryId] || "shipRevenue";
+  return categoryOverviewMetricOptions.some((option) => option.field === field) ? field : "shipRevenue";
+}
+
+function categoryGeoSelectedPeriods(categoryId) {
+  return ensureSelectedCategoryPeriods();
+}
+
+function renderCategoryGeoTimeSelector(categoryId) {
+  const quarterOptions = getPeriodOptions("quarter");
+  const yearOptions = getPeriodOptions("year");
+  const selected = categoryGeoSelectedPeriods(categoryId);
+  const label = selected.length === quarterOptions.length ? "All" : `${selected.length}`;
+  return `
+    <details class="category-time-multi-selector geo-time-selector" ${state.categoryGeoTimeMenuOpen ? "open" : ""}>
+      <summary aria-label="Choose geo time periods"><span class="time-selector-icon" aria-hidden="true"></span><span>Time</span><small>${label}</small></summary>
+      <div class="category-time-multi-menu geo-time-menu">
+        <section><strong>Year</strong>
+          ${yearOptions.map((year) => `<label><input type="checkbox" data-action="category-geo-time-year" value="${escapeAttr(year)}" ${["Q1","Q2","Q3","Q4"].every((q) => selected.includes(`${year} ${q}`)) ? "checked" : ""}><span>${escapeHtml(year)}</span></label>`).join("")}
+        </section>
+        <section><strong>Quarter</strong>
+          ${quarterOptions.map((period) => `<label><input type="checkbox" data-action="category-geo-time-quarter" value="${escapeAttr(period)}" ${selected.includes(period) ? "checked" : ""}><span>${escapeHtml(period)}</span></label>`).join("")}
+        </section>
+      </div>
+    </details>
+  `;
+}
+
+function categoryGeoMetricOption(categoryId) {
+  const field = categoryGeoMetric(categoryId);
+  return categoryOverviewMetricOptions.find((option) => option.field === field) || categoryOverviewMetricOptions[0];
+}
+
+function categoryGeoContributionData(categoryId, products) {
+  const productIds = new Set(categoryGeoSelectedProductIds(categoryId, products));
+  const selectedPeriods = new Set(categoryGeoSelectedPeriods(categoryId));
+  const metric = categoryGeoMetric(categoryId);
+  const segment = categoryOverviewSegment(categoryId, "geo");
   const totals = new Map();
 
   (data.geoMetrics || []).forEach((row) => {
     const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
-    if (row.categoryId !== categoryId || !productIds.has(row.modelId) || !selectedPeriods.has(period)) return;
+    if (!categoryMatchesOverview(row, categoryId) || !productIds.has(row.modelId) || !rowMatchesActiveDetailPn(row) || !rowMatchesDetailPanelPn(row, "geo") || !selectedPeriods.has(period) || !rowMatchesCategorySegment(row, segment)) return;
     const geo = row.geo || "Unassigned";
-    totals.set(geo, (totals.get(geo) || 0) + Number(row.shipRevenue || 0));
+    totals.set(geo, (totals.get(geo) || 0) + Number(row[metric] || 0));
   });
 
   return [...totals.entries()]
     .map(([geo, value]) => ({ geo, value }))
     .filter((item) => item.value > 0)
     .sort((a, b) => b.value - a.value);
+}
+
+function renderCategoryGeoProductSelector(categoryId, products) {
+  const selectedIds = categoryGeoSelectedProductIds(categoryId, products);
+  const allSelected = !Array.isArray(state.categoryGeoProducts[categoryId]) || selectedIds.length === products.length;
+  const groups = overviewProductGroups(categoryId, products);
+  return `
+    <details class="category-product-selector geo-product-selector">
+      <summary title="Choose products" aria-label="Choose products">
+        <span class="charger-selector-icon" aria-hidden="true"></span>
+        <span>Products</span>
+        <small>${allSelected ? "All" : `${selectedIds.length}/${products.length}`}</small>
+      </summary>
+      <div class="category-product-menu">
+        <button class="category-product-all" type="button" data-action="category-geo-product-all" data-category-id="${escapeAttr(categoryId)}" aria-pressed="${allSelected}">
+          <span class="category-product-check ${allSelected ? "is-checked" : ""}" aria-hidden="true"></span>
+          <span class="category-product-all-icon" aria-hidden="true"></span>
+          <span>All products</span>
+        </button>
+        ${groups.map((group) => `
+          <section class="category-product-group">
+            <h4>${escapeHtml(group.label)}</h4>
+            ${group.products.map((product) => `
+              <label>
+                <input type="checkbox" data-action="category-geo-product" data-category-id="${escapeAttr(categoryId)}" value="${escapeAttr(product.id)}" ${selectedIds.includes(product.id) ? "checked" : ""}>
+                <img src="${escapeAttr(productImageItems(product)[0]?.src || "")}" alt="" loading="lazy">
+                <span>${escapeHtml(product.name)}</span>
+              </label>
+            `).join("")}
+          </section>
+        `).join("")}
+      </div>
+    </details>
+  `;
+}
+
+function renderCategoryGeoMetricSettings(categoryId) {
+  const current = categoryGeoMetric(categoryId);
+  return `
+    <details class="category-metric-settings geo-metric-settings">
+      <summary title="Choose metric" aria-label="Choose metric">
+        <span class="metric-toggle-icon" aria-hidden="true"><i></i><i></i></span>
+      </summary>
+      <div class="category-metric-menu">
+        ${categoryOverviewMetricOptions.map((option) => `
+          <button
+            class="${current === option.field ? "is-active" : ""}"
+            type="button"
+            data-action="category-geo-metric"
+            data-category-id="${escapeAttr(categoryId)}"
+            data-metric="${escapeAttr(option.field)}"
+          >${escapeHtml(option.label)}</button>
+        `).join("")}
+      </div>
+    </details>
+  `;
 }
 
 function selectedCategoryGeo(categoryId, options) {
@@ -2695,39 +4257,48 @@ function selectedCategoryGeo(categoryId, options) {
   return fallback;
 }
 
+function categoryGeoChartMode(chart) {
+  return state.categoryGeoChartModes[chart] || (chart === "geo-share" ? "bar" : "pie");
+}
+
 function renderCategoryGeoContribution(categoryId, products) {
   const contribution = categoryGeoContributionData(categoryId, products);
   const selectedGeo = selectedCategoryGeo(categoryId, contribution);
-  const periodLabel = selectedCategoryPeriodsLabel(ensureSelectedCategoryPeriods());
+  const periodLabel = selectedCategoryPeriodsLabel(categoryGeoSelectedPeriods(categoryId));
+  const metricOption = categoryGeoMetricOption(categoryId);
+  const metricName = metricOption.kind === "quantity" ? "Quantity" : "Revenue";
+  const geoExpanded = state.expandedTrendChart === "geo-share";
+  const countryExpanded = state.expandedTrendChart === "country-share";
+  const sharedControls = `
+    ${renderCategorySegmentControl(categoryId, "geo")}
+    <label class="geo-contribution-select has-geo-icon"><span class="geo-globe-icon" aria-hidden="true"></span><select data-action="category-geo-select" data-category-id="${escapeAttr(categoryId)}">${contribution.map((item) => `<option value="${escapeAttr(item.geo)}" ${item.geo === selectedGeo ? "selected" : ""}>${escapeHtml(displayLocationLabel(item.geo))}</option>`).join("")}</select></label>
+    ${state.productId ? renderDetailPnSelector("geo") : renderCategoryGeoProductSelector(categoryId, products)}
+    ${renderCategoryGeoMetricSettings(categoryId)}
+  `;
+  const expandedControls = (chart) => `
+    ${renderCategorySegmentControl(categoryId, "geo")}
+    ${chart === "geo-share" ? "" : `<label class="geo-contribution-select has-geo-icon"><span class="geo-globe-icon" aria-hidden="true"></span><select data-action="category-geo-select" data-category-id="${escapeAttr(categoryId)}">${contribution.map((item) => `<option value="${escapeAttr(item.geo)}" ${item.geo === selectedGeo ? "selected" : ""}>${escapeHtml(displayLocationLabel(item.geo))}</option>`).join("")}</select></label>`}
+    ${state.productId ? renderDetailPnSelector("geo") : renderCategoryGeoProductSelector(categoryId, products)}
+    ${renderCategoryGeoMetricSettings(categoryId)}
+    <div class="geo-chart-type-toggle" role="group" aria-label="Chart type"><button class="${categoryGeoChartMode(chart) === "pie" ? "is-active" : ""}" type="button" data-action="category-geo-chart-mode" data-chart="${chart}" data-mode="pie">Pie</button><button class="${categoryGeoChartMode(chart) === "bar" ? "is-active" : ""}" type="button" data-action="category-geo-chart-mode" data-chart="${chart}" data-mode="bar">Bar</button></div>
+  `;
   return `
-    <div class="geo-contribution-grid">
-      <article class="geo-contribution-panel">
+    <div class="geo-contribution-grid geo-contribution-grid-unified">
+      <article class="geo-contribution-panel geo-contribution-panel-unified geo-contribution-combined">
         <div class="geo-contribution-panel-head">
-          <div>
-            <span>Ship Revenue</span>
-            <h3>Revenue Share by Geo</h3>
-            <p>${escapeHtml(periodLabel)}</p>
-          </div>
+          <div><span>${escapeHtml(metricOption.label)}</span><h3>Revenue Share by Geo &amp; Countries</h3><p>${escapeHtml(periodLabel)}</p></div>
+          <div class="geo-contribution-controls">${sharedControls}</div>
         </div>
-        <div id="categoryGeoContributionPlot" class="plot geo-contribution-plot"></div>
-      </article>
-      <article class="geo-contribution-panel">
-        <div class="geo-contribution-panel-head">
-          <div>
-            <span>Ship Revenue</span>
-            <h3>${escapeHtml(displayLocationLabel(selectedGeo))} Revenue Trend</h3>
-            <p>All available fiscal quarters</p>
-          </div>
-          <label class="geo-contribution-select">
-            <span>Geo</span>
-            <select data-action="category-geo-select">
-              ${contribution
-                .map((item) => `<option value="${escapeAttr(item.geo)}" ${item.geo === selectedGeo ? "selected" : ""}>${escapeHtml(displayLocationLabel(item.geo))}</option>`)
-                .join("")}
-            </select>
-          </label>
+        <div class="geo-two-chart-grid">
+          <section class="geo-share-card ${geoExpanded ? "is-chart-expanded" : ""}">
+            <div class="geo-share-caption"><div><h4>${metricName} Share by Geo</h4></div><div class="geo-contribution-controls">${geoExpanded ? expandedControls("geo-share") : ""}${renderOverviewExpandButton("geo-share", "geo share")}</div></div>
+            <div id="categoryGeoContributionPlot" class="plot geo-contribution-plot"></div>
+          </section>
+          <section class="geo-share-card ${countryExpanded ? "is-chart-expanded" : ""}">
+            <div class="geo-share-caption"><div><h4>${escapeHtml(displayLocationLabel(selectedGeo))} Country ${metricName} Share</h4></div><div class="geo-contribution-controls">${countryExpanded ? expandedControls("country-share") : ""}${renderOverviewExpandButton("country-share", "country share")}</div></div>
+            <div id="categoryCountryContributionPlot" class="plot geo-contribution-plot"></div>
+          </section>
         </div>
-        <div id="categoryGeoTrendPlot" class="plot geo-contribution-plot"></div>
       </article>
     </div>
   `;
@@ -2751,6 +4322,36 @@ function categoryOverviewMetricOption(categoryId, panel) {
   return categoryOverviewMetricOptions.find((option) => option.field === field) || categoryOverviewMetricOptions[0];
 }
 
+function categoryOverviewSegment(categoryId, panel) {
+  const value = state.categoryOverviewSegments[`${categoryId}:${panel}`];
+  return ["Consumer", "Commercial"].includes(value) ? value : "all";
+}
+
+function rowMatchesCategorySegment(row, segment) {
+  return segment === "all" || row.segment === segment;
+}
+
+function renderCategorySegmentControl(categoryId, panel) {
+  const selected = categoryOverviewSegment(categoryId, panel);
+  return `
+    <label class="category-segment-control">
+      <select
+        data-action="category-overview-segment-select"
+        data-category-id="${escapeAttr(categoryId)}"
+        data-panel="${escapeAttr(panel)}"
+        aria-label="Choose segment"
+      >
+        ${[["all", "All Segment"], ["Consumer", "Consumer"], ["Commercial", "Commercial"]].map(([value, label]) => `<option value="${escapeAttr(value)}" ${selected === value ? "selected" : ""}>${escapeHtml(label)}</option>`).join("")}
+      </select>
+    </label>
+  `;
+}
+
+function renderOverviewExpandButton(chart, label) {
+  const expanded = state.expandedTrendChart === chart;
+  return `<button class="trend-expand-button" type="button" data-action="trend-chart-expand" data-chart="${escapeAttr(chart)}" aria-label="${expanded ? "Close enlarged chart" : `Enlarge ${escapeAttr(label)} chart`}" title="${expanded ? "Close" : "Enlarge"}"><span aria-hidden="true">${expanded ? "×" : "↗"}</span></button>`;
+}
+
 function renderCategoryMetricSettings(categoryId, panel) {
   const current = categoryOverviewMetric(categoryId, panel);
   return `
@@ -2764,6 +4365,7 @@ function renderCategoryMetricSettings(categoryId, panel) {
             class="${current === option.field ? "is-active" : ""}"
             type="button"
             data-action="category-overview-metric"
+            data-category-id="${escapeAttr(categoryId)}"
             data-panel="${escapeAttr(panel)}"
             data-metric="${escapeAttr(option.field)}"
           >${escapeHtml(option.label)}</button>
@@ -2774,7 +4376,7 @@ function renderCategoryMetricSettings(categoryId, panel) {
 }
 
 function renderPerformanceOverview(categoryId, products) {
-  const categoryLabel = indexes.categories.get(categoryId)?.label || "Product";
+  const categoryLabel = overviewScopeLabel(categoryId);
   const period = categoryPerformancePeriod(categoryId, products);
   return `
     <section class="performance-overview">
@@ -2784,11 +4386,20 @@ function renderPerformanceOverview(categoryId, products) {
       </div>
       <div class="module-head performance-contribution-head">
         <span>Overview Module</span>
+        <h2>Time Trend</h2>
+      </div>
+      <div class="products-contribution-stack">
+        <div class="time-trend-grid">
+          ${renderQuarterComparisonPanel(categoryId, "trend")}
+          ${renderPerformanceRevenueTrendPanel(categoryId, products, "trend")}
+        </div>
+      </div>
+      <div class="module-head performance-contribution-head">
+        <span>Overview Module</span>
         <h2>Products Contribution</h2>
       </div>
       <div class="products-contribution-stack">
         ${renderPerformanceContributionPanel(categoryId, products, "contribution", period)}
-        ${renderPerformanceRevenueTrendPanel(categoryId, products, "trend")}
       </div>
     </section>
   `;
@@ -2806,18 +4417,9 @@ function renderCategoryProductSelector(categoryId, products) {
   const hasExplicitSelection = Array.isArray(state.categoryOverviewProducts[categoryId]);
   const checkedIds = selectedIds;
   const allSelected = !hasExplicitSelection || selectedIds.length === products.length;
-  const groups = [
-    {
-      label: "65W Chargers",
-      products: products.filter((product) => Number(product.attributes?.wattage || 0) < 100),
-    },
-    {
-      label: "100W+ Chargers",
-      products: products.filter((product) => Number(product.attributes?.wattage || 0) >= 100),
-    },
-  ].filter((group) => group.products.length);
+  const groups = overviewProductGroups(categoryId, products);
   return `
-    <details class="category-product-selector category-contribution-product-selector" ${state.categoryProductSelectorOpen ? "open" : ""}>
+    <details class="category-product-selector category-contribution-product-selector">
       <summary title="Choose chargers" aria-label="Choose chargers">
         <span class="charger-selector-icon" aria-hidden="true"></span>
         <span>Products</span>
@@ -2828,6 +4430,7 @@ function renderCategoryProductSelector(categoryId, products) {
           class="category-product-all"
           type="button"
           data-action="category-overview-product-all"
+          data-category-id="${escapeAttr(categoryId)}"
           aria-pressed="${allSelected}"
         >
           <span class="category-product-check ${allSelected ? "is-checked" : ""}" aria-hidden="true"></span>
@@ -2842,6 +4445,7 @@ function renderCategoryProductSelector(categoryId, products) {
                 <input
                   type="checkbox"
                   data-action="category-overview-product"
+                  data-category-id="${escapeAttr(categoryId)}"
                   value="${escapeAttr(product.id)}"
                   ${checkedIds.includes(product.id) ? "checked" : ""}
                 >
@@ -2860,6 +4464,25 @@ function renderCategoryProductSelector(categoryId, products) {
   `;
 }
 
+function overviewProductGroups(categoryId, products) {
+  if (categoryId === "power_overall") {
+    return data.catalog.categories.map((category) => ({
+      label: category.label,
+      products: products.filter((product) => product.categoryId === category.id),
+    })).filter((group) => group.products.length);
+  }
+  return [
+    { label: "65W Chargers", products: products.filter((product) => Number(product.attributes?.wattage || 0) < 100) },
+    { label: "100W+ Chargers", products: products.filter((product) => Number(product.attributes?.wattage || 0) >= 100) },
+  ].filter((group) => group.products.length);
+}
+
+function overviewProductsForCategory(categoryId) {
+  return categoryId === "power_overall"
+    ? data.catalog.products
+    : data.catalog.products.filter((product) => product.categoryId === categoryId);
+}
+
 function categoryTrendSelectedProductIds(categoryId, products) {
   const availableIds = products.map((product) => product.id);
   const selected = state.categoryTrendProducts[categoryId];
@@ -2867,36 +4490,113 @@ function categoryTrendSelectedProductIds(categoryId, products) {
   return availableIds.filter((productId) => selected.includes(productId));
 }
 
-function categoryTrendMode(categoryId) {
-  return state.categoryTrendMode[categoryId] === "breakdown" ? "breakdown" : "overall";
+function defaultCategoryTrendPeriods(periods) {
+  const start = periods.indexOf("FY2526 Q1");
+  return start >= 0 ? periods.slice(start) : periods;
 }
 
-function renderCategoryTrendModeControl(categoryId) {
-  const mode = categoryTrendMode(categoryId);
+function renderQuarterComparisonPanel(categoryId, panel) {
+  const option = categoryOverviewMetricOption(categoryId, panel);
+  const expanded = state.expandedTrendChart === "quarter";
   return `
-    <div class="category-trend-mode" role="group" aria-label="Trend display mode">
+    <article class="performance-trend-panel quarter-comparison-panel ${expanded ? "is-chart-expanded" : ""}">
+      <header>
+        <div><span>${escapeHtml(option.label)}</span><h3>Quarter Comparison <small>YoY</small></h3></div>
+        <div class="performance-trend-controls">
+          ${expanded ? renderTrendSharedControls(categoryId, overviewProductsForCategory(categoryId), panel, true) : ""}
+          ${renderOverviewExpandButton("quarter", "quarter comparison")}
+        </div>
+      </header>
+      <div id="quarterComparisonPlot" class="quarter-comparison-plot" aria-label="FY2526 and FY2627 quarter comparison"></div>
+    </article>
+  `;
+}
+
+function renderTrendSharedControls(categoryId, products, panel, quarterOnly = false) {
+  const productIds = new Set(products.map((product) => product.id));
+  const geos = [...new Set((data.geoMetrics || []).filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId)).map((row) => row.geo || "Unassigned"))].sort();
+  const selectedGeos = Array.isArray(state.categoryTrendGeos[categoryId]) ? state.categoryTrendGeos[categoryId] : [];
+  const allGeos = selectedGeos.length === 0;
+  const availablePeriods = sortedPeriods([...new Set(data.productMetrics.filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId)).map((row) => `${row.fiscalYear} ${row.fiscalQuarter}`))]);
+  const storedPeriods = state.categoryTrendPeriods[categoryId];
+  const selectedPeriods = Array.isArray(storedPeriods) ? availablePeriods.filter((period) => storedPeriods.includes(period)) : defaultCategoryTrendPeriods(availablePeriods);
+  const allPeriodsSelected = selectedPeriods.length === availablePeriods.length;
+  return `
+    ${renderCategorySegmentControl(categoryId, panel)}
+    ${quarterOnly ? "" : `<details class="category-time-multi-selector" ${state.categoryTrendPeriodMenuOpen ? "open" : ""}>
+      <summary aria-label="Choose comparison periods" title="Choose comparison periods"><span class="time-selector-icon" aria-hidden="true"></span><span>Time</span><small>${selectedPeriods.length === availablePeriods.length ? "All" : `${selectedPeriods.length}/${availablePeriods.length}`}</small></summary>
+      <div class="category-time-multi-menu">
+        <button type="button" data-action="category-trend-period-all" data-category-id="${escapeAttr(categoryId)}" aria-pressed="${allPeriodsSelected}"><span class="category-product-check ${allPeriodsSelected ? "is-checked" : ""}" aria-hidden="true"></span><span>All periods</span></button>
+        ${availablePeriods.map((period) => `<label><input type="checkbox" data-action="category-trend-period" data-category-id="${escapeAttr(categoryId)}" value="${escapeAttr(period)}" ${selectedPeriods.includes(period) ? "checked" : ""}><span>${escapeHtml(period)}</span></label>`).join("")}
+      </div>
+    </details>`}
+    <details class="category-geo-multi-selector" ${state.categoryTrendGeoMenuOpen ? "open" : ""}>
+      <summary aria-label="Choose trend geos"><span class="geo-globe-icon" aria-hidden="true"></span><span>${allGeos ? "All Geos" : `${selectedGeos.length} Geos`}</span><small>⌄</small></summary>
+      <div class="category-geo-multi-menu">
+        <button type="button" data-action="category-trend-geo-all" data-category-id="${escapeAttr(categoryId)}" aria-pressed="${allGeos}"><span class="category-product-check ${allGeos ? "is-checked" : ""}" aria-hidden="true"></span><span>All Geos</span></button>
+        ${geos.map((geo) => `<label><input type="checkbox" data-action="category-trend-geo" data-category-id="${escapeAttr(categoryId)}" value="${escapeAttr(geo)}" ${selectedGeos.includes(geo) ? "checked" : ""}><span>${escapeHtml(displayLocationLabel(geo))}</span></label>`).join("")}
+      </div>
+    </details>
+    ${state.productId ? renderDetailPnSelector(panel) : renderCategoryTrendProductSelector(categoryId, products)}
+    ${renderCategoryTrendModeControl(categoryId, quarterOnly)}
+    ${renderCategoryMetricSettings(categoryId, panel)}
+  `;
+}
+
+function categoryTrendMode(categoryId) {
+  return ["breakdown", "stacked"].includes(state.categoryTrendMode[categoryId]) ? state.categoryTrendMode[categoryId] : "overall";
+}
+
+function quarterComparisonStateKey(categoryId) {
+  return state.productId ? `${categoryId}:${state.productId}` : categoryId;
+}
+
+function quarterComparisonMode(categoryId) {
+  const mode = state.quarterComparisonMode[quarterComparisonStateKey(categoryId)];
+  return mode === "stacked" ? "stacked" : "overall";
+}
+
+function renderCategoryTrendModeControl(categoryId, quarterOnly = false) {
+  const mode = quarterOnly ? quarterComparisonMode(categoryId) : categoryTrendMode(categoryId);
+  const action = quarterOnly ? "quarter-comparison-mode" : "category-trend-mode";
+  return `
+    <div class="category-trend-mode ${quarterOnly ? "is-quarter-only" : ""}" role="group" aria-label="Trend display mode">
       <button
         class="${mode === "overall" ? "is-active" : ""}"
         type="button"
-        data-action="category-trend-mode"
+        data-action="${action}"
+        data-category-id="${escapeAttr(categoryId)}"
         data-trend-mode="overall"
-        title="Overall: combine selected products into one line"
-        aria-label="Show selected products as one combined line"
+        title="Single bars: sum selected products and geos"
+        aria-label="Show selected products as summed bars"
         aria-pressed="${mode === "overall"}"
       >
-        <span class="trend-mode-icon trend-mode-icon-overall" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="trend-mode-icon trend-mode-icon-single-bars" aria-hidden="true"><i></i></span>
       </button>
       <button
+        class="${mode === "stacked" ? "is-active" : ""}"
+        type="button"
+        data-action="${action}"
+        data-category-id="${escapeAttr(categoryId)}"
+        data-trend-mode="stacked"
+        title="Stacked bars: show every selected product"
+        aria-label="Show product data as stacked bars"
+        aria-pressed="${mode === "stacked"}"
+      >
+        <span class="trend-mode-icon trend-mode-icon-stacked" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+      ${quarterOnly ? "" : `<button
         class="${mode === "breakdown" ? "is-active" : ""}"
         type="button"
         data-action="category-trend-mode"
+        data-category-id="${escapeAttr(categoryId)}"
         data-trend-mode="breakdown"
-        title="Breakdown: show one line per selected product"
-        aria-label="Show one line per selected product"
+        title="Multiple lines: compare selected products or geos"
+        aria-label="Show selected products as multiple lines"
         aria-pressed="${mode === "breakdown"}"
       >
         <span class="trend-mode-icon trend-mode-icon-breakdown" aria-hidden="true"><i></i><i></i><i></i></span>
-      </button>
+      </button>`}
     </div>
   `;
 }
@@ -2906,16 +4606,7 @@ function renderCategoryTrendProductSelector(categoryId, products) {
   const hasExplicitSelection = Array.isArray(state.categoryTrendProducts[categoryId]);
   const checkedIds = hasExplicitSelection ? selectedIds : products.map((product) => product.id);
   const allSelected = selectedIds.length === products.length;
-  const groups = [
-    {
-      label: "65W Chargers",
-      products: products.filter((product) => Number(product.attributes?.wattage || 0) < 100),
-    },
-    {
-      label: "100W+ Chargers",
-      products: products.filter((product) => Number(product.attributes?.wattage || 0) >= 100),
-    },
-  ].filter((group) => group.products.length);
+  const groups = overviewProductGroups(categoryId, products);
   return `
     <details class="category-product-selector category-trend-product-selector" ${state.categoryTrendProductSelectorOpen ? "open" : ""}>
       <summary title="Choose products" aria-label="Choose products">
@@ -2928,6 +4619,7 @@ function renderCategoryTrendProductSelector(categoryId, products) {
           class="category-product-all"
           type="button"
           data-action="category-trend-product-all"
+          data-category-id="${escapeAttr(categoryId)}"
           aria-pressed="${allSelected}"
         >
           <span class="category-product-check ${allSelected ? "is-checked" : ""}" aria-hidden="true"></span>
@@ -2942,6 +4634,7 @@ function renderCategoryTrendProductSelector(categoryId, products) {
                 <input
                   type="checkbox"
                   data-action="category-trend-product"
+                  data-category-id="${escapeAttr(categoryId)}"
                   value="${escapeAttr(product.id)}"
                   ${checkedIds.includes(product.id) ? "checked" : ""}
                 >
@@ -2963,20 +4656,61 @@ function renderCategoryTrendProductSelector(categoryId, products) {
 function renderPerformanceRevenueTrendPanel(categoryId, products, panel) {
   const option = categoryOverviewMetricOption(categoryId, panel);
   const metricTitle = option.kind === "quantity" ? "Quantity" : "Revenue";
+  const productIds = new Set(products.map((product) => product.id));
+  const geos = [...new Set((data.geoMetrics || []).filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId)).map((row) => row.geo || "Unassigned"))].sort();
+  const selectedGeos = Array.isArray(state.categoryTrendGeos[categoryId]) ? state.categoryTrendGeos[categoryId] : [];
+  const allGeos = selectedGeos.length === 0;
+  const availablePeriods = sortedPeriods([...new Set(data.productMetrics.filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId)).map((row) => `${row.fiscalYear} ${row.fiscalQuarter}`))]);
+  const storedPeriods = state.categoryTrendPeriods[categoryId];
+  const selectedPeriods = Array.isArray(storedPeriods) ? availablePeriods.filter((period) => storedPeriods.includes(period)) : defaultCategoryTrendPeriods(availablePeriods);
+  const allPeriodsSelected = selectedPeriods.length === availablePeriods.length;
+  const selectedProductIds = categoryTrendSelectedProductIds(categoryId, products);
+  const selectedProducts = products.filter((product) => selectedProductIds.includes(product.id));
+  const trendSeries = state.productId
+    ? detailSelectedPns(panel).map((pn) => ({ id: pn, label: pn, matches: (row) => row.partNumber === pn }))
+    : selectedProducts.map((product) => ({ id: product.id, label: product.name, matches: (row) => row.modelId === product.id }));
+  const rankingRows = (selectedGeos.length ? (data.geoMetrics || []) : data.productMetrics).filter((row) =>
+    categoryMatchesOverview(row, categoryId)
+    && selectedProductIds.includes(row.modelId)
+    && rowMatchesCategorySegment(row, categoryOverviewSegment(categoryId, panel))
+    && (selectedGeos.length === 0 || selectedGeos.includes(row.geo || "Unassigned")),
+  );
+  const rankedSeries = [...trendSeries].sort((a, b) => {
+    const total = (item) => rankingRows.filter(item.matches).reduce((sum, row) => sum + Number(row[option.field] || 0), 0);
+    return total(b) - total(a);
+  });
+  const visibleKey = state.productId ? `${categoryId}:${state.productId}` : categoryId;
+  const visibleStored = state.categoryTrendVisibleSeries[visibleKey];
+  const visibleSeries = Array.isArray(visibleStored) ? trendSeries.filter((item) => visibleStored.includes(item.id)).map((item) => item.id) : (rankedSeries[0] ? [rankedSeries[0].id] : []);
+  const showSeriesLegend = categoryTrendMode(categoryId) === "breakdown" && selectedGeos.length <= 1;
+  const expanded = state.expandedTrendChart === "trend";
   return `
-    <article class="performance-trend-panel">
+    <article class="performance-trend-panel ${expanded ? "is-chart-expanded" : ""}">
       <header>
         <div>
           <span>${escapeHtml(option.label)}</span>
-          <h3>Adapter ${metricTitle} Trend <small>w/o DIB</small></h3>
+          <h3>${escapeHtml(overviewScopeLabel(categoryId))} ${metricTitle} Trend <small>w/o DIB</small></h3>
         </div>
         <div class="performance-trend-controls">
-          ${renderCategoryTrendProductSelector(categoryId, products)}
-          ${renderCategoryTrendModeControl(categoryId)}
-          ${renderCategoryMetricSettings(categoryId, panel)}
+          ${renderTrendSharedControls(categoryId, products, panel)}
+          ${renderOverviewExpandButton("trend", "revenue trend")}
         </div>
       </header>
-      <div id="performanceRevenueTrendPlot" class="performance-revenue-trend-plot" aria-label="Adapter ${metricTitle.toLowerCase()} trend"></div>
+      <div class="trend-plot-layout ${showSeriesLegend ? "has-series-filter" : ""}">
+      <div id="performanceRevenueTrendPlot" class="performance-revenue-trend-plot" aria-label="${escapeAttr(overviewScopeLabel(categoryId))} ${metricTitle.toLowerCase()} trend"></div>
+        ${showSeriesLegend ? `
+          <aside class="trend-series-filter" aria-label="Trend product legend">
+            <label class="trend-series-all"><input type="checkbox" data-action="trend-series-all" data-category-id="${escapeAttr(categoryId)}" ${visibleSeries.length === trendSeries.length ? "checked" : ""}> <strong>All</strong></label>
+            ${trendSeries.map((item, index) => `
+              <label>
+                <input type="checkbox" data-action="trend-series-product" data-category-id="${escapeAttr(categoryId)}" value="${escapeAttr(item.id)}" ${visibleSeries.includes(item.id) ? "checked" : ""}>
+                <span class="trend-series-swatch" style="--series-color:${palette[index % palette.length]}"></span>
+                <span>${escapeHtml(item.label)}</span>
+              </label>
+            `).join("")}
+          </aside>
+        ` : ""}
+      </div>
     </article>
   `;
 }
@@ -2992,16 +4726,40 @@ function priorFiscalYear(fiscalYear) {
   return `FY${String(Number(match[1]) - 101).padStart(4, "0")}`;
 }
 
+function previousFiscalQuarterPeriod(period) {
+  const parsed = parseFiscalPeriodLabel(period);
+  if (!parsed?.fiscalQuarter) return null;
+  const quarter = Number(parsed.fiscalQuarter.slice(1));
+  if (quarter > 1) return `${parsed.fiscalYear} Q${quarter - 1}`;
+  return `${priorFiscalYear(parsed.fiscalYear)} Q4`;
+}
+
 function availableCategoryQuarters(categoryId, products, fiscalYear) {
   const productIds = new Set(products.map((product) => product.id));
   return [...new Set(data.productMetrics
-    .filter((row) => row.categoryId === categoryId && productIds.has(row.modelId) && row.fiscalYear === fiscalYear)
+    .filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId) && row.fiscalYear === fiscalYear)
     .map((row) => row.fiscalQuarter))]
     .filter(Boolean)
     .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
 }
 
 function categoryPerformancePeriod(categoryId, products) {
+  if (state.granularity === "month") {
+    const dates = state.selectedCategoryMonths || [];
+    const date = dates.at(-1);
+    const priorDates = dates.map((item) => `${Number(item.slice(0, 4)) - 1}${item.slice(4)}`);
+    const currentMeta = date ? fiscalMetaForDate(`${date}-01`) : null;
+    const priorMeta = priorDates.at(-1) ? fiscalMetaForDate(`${priorDates.at(-1)}-01`) : null;
+    return {
+      fiscalYear: currentMeta?.fiscalYear,
+      priorYear: priorMeta?.fiscalYear,
+      quarters: currentMeta?.fiscalQuarter ? [currentMeta.fiscalQuarter] : [],
+      currentDates: dates,
+      priorDates,
+      label: dates.length === 1 ? dates[0] : `${dates.length} months selected`,
+      priorLabel: priorDates.length === 1 ? priorDates[0] : `${priorDates.length} prior-year months`,
+    };
+  }
   if (state.granularity === "quarter") {
     const selected = ensureSelectedCategoryPeriods();
     const parsed = selected.map(parseFiscalPeriodLabel).filter(Boolean);
@@ -3017,12 +4775,14 @@ function categoryPerformancePeriod(categoryId, products) {
       fiscalYear,
       priorYear,
       quarters,
+      currentDates: null,
+      priorDates: null,
       label: `${fiscalYear} ${quarterText}`,
       priorLabel: `${priorYear} ${quarterText}`,
     };
   }
 
-  const fiscalYear = selectedPeriod();
+  const fiscalYear = (state.selectedCategoryYears || []).at(-1) || selectedPeriod();
   const priorYear = priorFiscalYear(fiscalYear);
   const quarters = availableCategoryQuarters(categoryId, products, fiscalYear);
   const isCompleteYear = ["Q1", "Q2", "Q3", "Q4"].every((quarter) => quarters.includes(quarter));
@@ -3030,6 +4790,8 @@ function categoryPerformancePeriod(categoryId, products) {
     fiscalYear,
     priorYear,
     quarters,
+    currentDates: null,
+    priorDates: null,
     label: isCompleteYear ? fiscalYear : `${fiscalYear} YTD`,
     priorLabel: isCompleteYear ? priorYear : `${priorYear} YTD`,
   };
@@ -3037,11 +4799,27 @@ function categoryPerformancePeriod(categoryId, products) {
 
 function categoryOverviewRows(categoryId, productIds, fiscalYear, quarters) {
   return data.productMetrics.filter((row) =>
-    row.categoryId === categoryId
+    categoryMatchesOverview(row, categoryId)
     && productIds.includes(row.modelId)
     && row.fiscalYear === fiscalYear
     && quarters.includes(row.fiscalQuarter),
   );
+}
+
+function categoryOverviewRowsForPeriod(categoryId, productIds, period, prior = false, sourceRows = data.productMetrics) {
+  const dates = prior ? period.priorDates : period.currentDates;
+  if (dates?.length) {
+    return sourceRows.filter((row) => categoryMatchesOverview(row, categoryId)
+      && productIds.includes(row.modelId)
+      && rowMatchesActiveDetailPn(row)
+      && dates.includes(row.date.slice(0, 7)));
+  }
+  const fiscalYear = prior ? period.priorYear : period.fiscalYear;
+  return sourceRows.filter((row) => categoryMatchesOverview(row, categoryId)
+    && productIds.includes(row.modelId)
+    && rowMatchesActiveDetailPn(row)
+    && row.fiscalYear === fiscalYear
+    && period.quarters.includes(row.fiscalQuarter));
 }
 
 function categoryMetricHasData(rows, field) {
@@ -3073,8 +4851,9 @@ function renderPerformanceRevenuePanel(categoryId, products, panel, period) {
   const option = categoryOverviewMetricOption(categoryId, panel);
   const metricTitle = option.kind === "quantity" ? "Quantity" : "Revenue";
   const productIds = products.map((product) => product.id);
-  const currentRows = categoryOverviewRows(categoryId, productIds, period.fiscalYear, period.quarters);
-  const priorRows = categoryOverviewRows(categoryId, productIds, period.priorYear, period.quarters);
+  const segment = categoryOverviewSegment(categoryId, panel);
+  const currentRows = categoryOverviewRowsForPeriod(categoryId, productIds, period).filter((row) => rowMatchesCategorySegment(row, segment));
+  const priorRows = categoryOverviewRowsForPeriod(categoryId, productIds, period, true).filter((row) => rowMatchesCategorySegment(row, segment));
   const available = categoryMetricHasData(currentRows, option.field);
   const current = categoryMetricTotal(currentRows, option.field);
   const prior = categoryMetricTotal(priorRows, option.field);
@@ -3083,9 +4862,9 @@ function renderPerformanceRevenuePanel(categoryId, products, panel, period) {
       <header>
         <div>
           <span>${escapeHtml(option.label)}</span>
-          <h3>Adapter ${metricTitle} <small>w/o DIB</small></h3>
+          <h3>${escapeHtml(overviewScopeLabel(categoryId))} ${metricTitle} <small>w/o DIB</small></h3>
         </div>
-        ${renderCategoryMetricSettings(categoryId, panel)}
+        <div class="performance-panel-controls">${renderCategorySegmentControl(categoryId, panel)}${renderCategoryMetricSettings(categoryId, panel)}</div>
       </header>
       <div class="performance-comparison-body">
         <div class="performance-period-heading">
@@ -3110,77 +4889,58 @@ function renderPerformanceRevenuePanel(categoryId, products, panel, period) {
 function renderPerformanceContributionPanel(categoryId, products, panel, period) {
   const option = categoryOverviewMetricOption(categoryId, panel);
   const metricTitle = option.kind === "quantity" ? "Quantity" : "Revenue";
+  const productIds = new Set(products.map((product) => product.id));
+  const geos = [...new Set((data.geoMetrics || [])
+    .filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId))
+    .map((row) => row.geo || "Unassigned"))]
+    .sort((a, b) => displayLocationLabel(a).localeCompare(displayLocationLabel(b)));
+  const selectedGeo = state.categoryContributionGeo[categoryId] || "all";
+  const selectedSegment = categoryOverviewSegment(categoryId, panel);
   return `
-    <article class="performance-contribution-panel">
+    <article class="performance-contribution-panel ${state.expandedTrendChart === "contribution" ? "is-chart-expanded" : ""}">
       <header>
         <div>
           <span>${escapeHtml(option.label)}</span>
-          <h3>Adapter ${metricTitle} Contribution <small>w/o DIB</small></h3>
+          <h3>${escapeHtml(overviewScopeLabel(categoryId))} ${metricTitle} Contribution <small>w/o DIB</small></h3>
           <p>${escapeHtml(period.label)}</p>
         </div>
         <div class="performance-contribution-controls">
-          ${categoryId === "adapter" ? renderContributionGeoSelector(categoryId) : ""}
+          ${renderCategorySegmentControl(categoryId, panel)}
+          <label class="performance-contribution-geo-select has-geo-icon">
+            <span class="geo-globe-icon" aria-hidden="true"></span>
+            <select data-action="category-contribution-geo" data-category-id="${escapeAttr(categoryId)}" aria-label="Contribution Geo">
+              <option value="all" ${selectedGeo === "all" ? "selected" : ""}>All Geos</option>
+              ${geos.map((geo) => `<option value="${escapeAttr(geo)}" ${selectedGeo === geo ? "selected" : ""}>${escapeHtml(displayLocationLabel(geo))}</option>`).join("")}
+            </select>
+          </label>
           ${renderCategoryProductSelector(categoryId, products)}
           ${renderCategoryMetricSettings(categoryId, panel)}
+          ${renderOverviewExpandButton("contribution", "products contribution")}
         </div>
       </header>
-      <div id="performanceContributionPlot" class="performance-contribution-plot" aria-label="Adapter ${metricTitle.toLowerCase()} contribution"></div>
+      <div id="performanceContributionPlot" class="performance-contribution-plot" aria-label="${escapeAttr(overviewScopeLabel(categoryId))} ${metricTitle.toLowerCase()} contribution"></div>
     </article>
   `;
 }
 
-function contributionGeoOptions(categoryId) {
-  return [...new Set((data.geoMetrics || [])
-    .filter((row) => row.categoryId === categoryId)
-    .map((row) => row.geo || "Unassigned"))].sort();
-}
-
-function selectedContributionGeo(categoryId) {
-  const selected = state.categoryContributionGeo[categoryId];
-  return contributionGeoOptions(categoryId).includes(selected) ? selected : "all";
-}
-
-function renderContributionGeoSelector(categoryId) {
-  const selected = selectedContributionGeo(categoryId);
-  return `
-    <label class="contribution-geo-control">
-      <span>Geo</span>
-      <select data-action="contribution-geo-select" aria-label="Contribution Geo">
-        <option value="all" ${selected === "all" ? "selected" : ""}>All Geos</option>
-        ${contributionGeoOptions(categoryId).map((geo) => `<option value="${escapeAttr(geo)}" ${selected === geo ? "selected" : ""}>${escapeHtml(geo)}</option>`).join("")}
-      </select>
-    </label>
-  `;
-}
-
-function performanceContributionRows(categoryId, products, field, period) {
-  const geo = selectedContributionGeo(categoryId);
-  if (geo === "all") {
-    return productRevenueRanking(categoryId, products, field, period.fiscalYear, period.priorYear, period.quarters)
-      .filter((row) => row.available && row.current > 0);
-  }
-  const totals = new Map();
-  for (const row of data.geoMetrics || []) {
-    if (row.categoryId !== categoryId || row.fiscalYear !== period.fiscalYear
-      || !period.quarters.includes(row.fiscalQuarter) || (row.geo || "Unassigned") !== geo) continue;
-    totals.set(row.modelId, (totals.get(row.modelId) || 0) + Number(row[field] || 0));
-  }
-  return products.map((product) => ({ product, current: totals.get(product.id) || 0 }))
-    .filter((row) => row.current > 0)
-    .sort((a, b) => b.current - a.current);
-}
-
-function productRevenueRanking(categoryId, products, field, currentYear, priorYear, quarters) {
+function productRevenueRanking(categoryId, products, field, period, geo = "all", segment = "all") {
   return products.map((product) => {
-    const currentRows = categoryOverviewRows(categoryId, [product.id], currentYear, quarters);
-    const priorRows = categoryOverviewRows(categoryId, [product.id], priorYear, quarters);
+    const sourceRows = geo === "all" ? data.productMetrics : (data.geoMetrics || []).filter((row) => (row.geo || "Unassigned") === geo);
+    const rowsFor = (prior) => categoryOverviewRowsForPeriod(categoryId, [product.id], period, prior, sourceRows)
+      .filter((row) => segment === "all" || row.segment === segment);
+    const currentRows = rowsFor(false);
+    const priorRows = rowsFor(true);
     return {
       product,
       current: categoryMetricTotal(currentRows, field),
       prior: categoryMetricTotal(priorRows, field),
       available: categoryMetricHasData(currentRows, field),
     };
-  }).sort((a, b) => b.current - a.current);
+  })
+    .sort((a, b) => {
+      if (a.available !== b.available) return a.available ? -1 : 1;
+      return (b.current - a.current) || a.product.name.localeCompare(b.product.name);
+    });
 }
 
 function renderPerformanceRanking(categoryId, products, panel, title, period) {
@@ -3189,10 +4949,13 @@ function renderPerformanceRanking(categoryId, products, panel, title, period) {
     categoryId,
     products,
     option.field,
-    period.fiscalYear,
-    period.priorYear,
-    period.quarters,
+    period,
+    state.categoryRankingGeo[categoryId] || "all",
+    categoryOverviewSegment(categoryId, panel),
   );
+  const productIds = new Set(products.map((product) => product.id));
+  const geos = [...new Set((data.geoMetrics || []).filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId)).map((row) => row.geo || "Unassigned"))].sort();
+  const selectedGeo = state.categoryRankingGeo[categoryId] || "all";
   return `
     <article class="performance-ranking-panel">
       <header>
@@ -3201,12 +4964,26 @@ function renderPerformanceRanking(categoryId, products, panel, title, period) {
           <span>${escapeHtml(option.label)} · ${escapeHtml(period.label)}</span>
         </div>
         <div class="performance-ranking-controls">
+          ${renderCategorySegmentControl(categoryId, panel)}
+          <label class="performance-contribution-geo-select has-geo-icon">
+            <span class="geo-globe-icon" aria-hidden="true"></span>
+            <select data-action="category-ranking-geo" data-category-id="${escapeAttr(categoryId)}" aria-label="Ranking Geo">
+              <option value="all" ${selectedGeo === "all" ? "selected" : ""}>All Geos</option>
+              ${geos.map((geo) => `<option value="${escapeAttr(geo)}" ${selectedGeo === geo ? "selected" : ""}>${escapeHtml(displayLocationLabel(geo))}</option>`).join("")}
+            </select>
+          </label>
           ${renderCategoryMetricSettings(categoryId, panel)}
         </div>
       </header>
       <div class="performance-ranking-list" tabindex="0">
         ${rows.length ? rows.map((row, index) => `
-          <div class="performance-ranking-row">
+          <div
+            class="performance-ranking-row"
+            role="button"
+            tabindex="0"
+            data-route-category="${escapeAttr(row.product.categoryId)}"
+            data-route-product="${escapeAttr(row.product.id)}"
+          >
             <span class="performance-rank">${index + 1}</span>
             <div class="performance-rank-product">
               <strong>${escapeHtml(row.product.name)}</strong>
@@ -3231,7 +5008,7 @@ function renderPerformanceRanking(categoryId, products, panel, title, period) {
             <button
               class="ghost-button compact-button performance-detail-button"
               type="button"
-              data-route-category="${escapeAttr(categoryId)}"
+              data-route-category="${escapeAttr(row.product.categoryId)}"
               data-route-product="${escapeAttr(row.product.id)}"
             >Details</button>
           </div>
@@ -3362,10 +5139,13 @@ function renderMatrixHighlightCard(badge, item, note) {
 
 function renderProductListPage(categoryId) {
   const category = indexes.categories.get(categoryId);
-  const visibleProducts = getFilteredProducts(categoryId);
+  const query = state.search.trim().toLowerCase();
+  const visibleProducts = data.catalog.products.filter((product) =>
+    product.categoryId === categoryId
+    && (!query || `${product.name} ${product.shortName || ""}`.toLowerCase().includes(query)),
+  );
   return `
     <div class="view-stack">
-      ${renderCategoryFilters(categoryId)}
       <section class="product-catalog">
         <div class="section-head">
           <div>
@@ -3392,11 +5172,21 @@ function productImageItems(product) {
 }
 
 function renderProductCard(product) {
-  const latestRows = data.productMetrics.filter((row) => row.modelId === product.id && rowInSelectedPeriod(row));
-  const summary = summarizeProductRows(latestRows);
-  const attrs = product.attributes;
-  const primarySpec = attrs.wattage ? `${attrs.wattage}W` : attrs.outputW ? `${attrs.capacityBand} / ${attrs.outputW}W` : `${attrs.lengthBand} / ${attrs.powerBand}`;
+  const productRows = data.productMetrics.filter((row) => row.modelId === product.id);
+  const fiscalYears = [...new Set(productRows.map((row) => row.fiscalYear).filter(Boolean))].sort((a, b) => periodSortValue(a) - periodSortValue(b));
+  const currentYear = fiscalYears.at(-1) || "FY2627";
+  const priorYear = priorFiscalYear(currentYear);
+  const currentQuarters = [...new Set(productRows.filter((row) => row.fiscalYear === currentYear).map((row) => row.fiscalQuarter).filter(Boolean))];
+  const currentSummary = summarizeProductRows(productRows.filter((row) => row.fiscalYear === currentYear && currentQuarters.includes(row.fiscalQuarter)));
+  const priorSummary = summarizeProductRows(productRows.filter((row) => row.fiscalYear === priorYear && currentQuarters.includes(row.fiscalQuarter)));
   const images = productImageItems(product);
+  const period = categoryPerformancePeriod(product.categoryId, [product]);
+  const selectedCurrentRows = hasActiveGlobalTime() ? categoryOverviewRowsForPeriod(product.categoryId, [product.id], period) : [];
+  const selectedPriorRows = hasActiveGlobalTime() ? categoryOverviewRowsForPeriod(product.categoryId, [product.id], period, true) : [];
+  const kpis = hasActiveGlobalTime() ? [
+    { label: "Revenue", currentLabel: `${currentYear} YTD`, priorLabel: `${priorYear} YTD`, current: Number(currentSummary.shipRevenue || 0), prior: Number(priorSummary.shipRevenue || 0) },
+    { label: "Revenue", currentLabel: period.label, priorLabel: period.priorLabel, current: categoryKpiAmount(selectedCurrentRows), prior: categoryKpiAmount(selectedPriorRows) },
+  ] : [];
   return `
     <article class="product-card">
       <button class="product-card-hit" type="button" data-route-category="${product.categoryId}" data-route-product="${product.id}">
@@ -3417,16 +5207,19 @@ function renderProductCard(product) {
                 ? `<img src="${escapeAttr(images[0].src)}" alt="${escapeAttr(product.name)}" loading="lazy" />`
                 : ""
           }
-          <span class="product-spec-badge">${escapeHtml(primarySpec)}</span>
         </div>
         <div class="product-card-body">
-          <span class="tag">${escapeHtml(primarySpec)}</span>
           <h3>${escapeHtml(product.name)}</h3>
-          <p>${escapeHtml((attrs.features || []).join(" / "))}</p>
-          <div class="mini-metrics">
-            <div><span>Order_Qty</span><strong>${fmtExactNumber(summary.orderQty || summary.unitsNet)}</strong></div>
-            <div><span>Order_Rev</span><strong>${fmtCurrency(summary.orderRevenue || summary.revenueNet)}</strong></div>
-            <div><span>Bklg_Rev</span><strong>${fmtCurrency(summary.backlogRevenue)}</strong></div>
+          <div class="product-ytd-kpis">
+            ${kpis.map((kpi) => `
+              <section class="product-ytd-kpi">
+                <header><span>${kpi.label}</span>${categoryMetricTrend(kpi.current, kpi.prior, true)}</header>
+                <div>
+                  <section><small>${escapeHtml(kpi.currentLabel)}</small><strong>${formatCategoryRevenueM(kpi.current)}</strong></section>
+                  <section><small>${escapeHtml(kpi.priorLabel)}</small><strong>${formatCategoryRevenueM(kpi.prior)}</strong></section>
+                </div>
+              </section>
+            `).join("")}
           </div>
         </div>
       </button>
@@ -3660,6 +5453,21 @@ function displayLocationLabel(value) {
   return label;
 }
 
+function displayCountryShortLabel(value) {
+  const label = displayLocationLabel(value);
+  const aliases = {
+    Spain: "ES", Poland: "PL", France: "FR", Germany: "DE", Italy: "IT",
+    Netherlands: "NL", Portugal: "PT", Sweden: "SE", Israel: "IL", Slovakia: "SK",
+    Czechia: "CZ", Lithuania: "LT", Romania: "RO", Denmark: "DK", Switzerland: "CH",
+    Finland: "FI", Belgium: "BE", Hungary: "HU", Ukraine: "UA", Croatia: "HR",
+    Greece: "GR", Slovenia: "SI", Bulgaria: "BG", Latvia: "LV", Ireland: "IE",
+    "Bosnia and Herzegovina": "BA", Serbia: "RS", Austria: "AT", Georgia: "GE",
+    Cyprus: "CY", Azerbaijan: "AZ", Norway: "NO", Kazakhstan: "KZ",
+    "North Macedonia": "MK", Estonia: "EE",
+  };
+  return aliases[label] || label;
+}
+
 function drawCategoryGeoChart(categoryId, selectedIds) {
   const rows = geoMetricRows({ categoryId, selectedIds });
   const geos = topGeoNames(rows);
@@ -3812,16 +5620,33 @@ function drawGlobalMarketTrend(trend) {
   const years = items.map((item) => Number(item.label));
   const values = items.map((item) => (Number(item.value) || 0) / 1000);
   const growth = values.map((value, index) => (index === 0 ? null : ((value - values[index - 1]) / values[index - 1]) * 100));
-  const labels = years.map((year, index) => ([2025, 2026, 2027, 2032].includes(year) ? `$${values[index].toFixed(2)}B` : ""));
-  const growthLabels = years.map((year, index) => ([2025, 2026].includes(year) ? `${growth[index].toFixed(2)}%` : ""));
-  const forecastStart = years.indexOf(2026);
-  const shapes = forecastStart >= 0
+  const requestedForecastYear = Number(trend.forecastStartYear);
+  const forecastStart = years.findIndex((year) => year >= requestedForecastYear);
+  const forecastBoundaryIndex = forecastStart > 0 ? forecastStart : Math.min(1, years.length - 1);
+  const labelIndexes = new Set([
+    Math.max(0, forecastBoundaryIndex - 1),
+    forecastBoundaryIndex,
+    Math.min(years.length - 1, forecastBoundaryIndex + 1),
+    years.length - 1,
+  ]);
+  const labels = years.map((year, index) => labelIndexes.has(index) ? (items[index].valueLabel || `$${values[index].toFixed(2)}B`).replace("*", "") : "");
+  const growthLabelIndexes = new Set([Math.max(1, forecastBoundaryIndex - 1), forecastBoundaryIndex]);
+  const growthLabels = years.map((year, index) => growthLabelIndexes.has(index) && Number.isFinite(growth[index]) ? `${growth[index].toFixed(2)}%` : "");
+  const finiteGrowth = growth.filter(Number.isFinite);
+  const maxValue = Math.max(...values, 1);
+  const minGrowth = Math.min(...finiteGrowth, 0);
+  const maxGrowth = Math.max(...finiteGrowth, 1);
+  const growthPadding = Math.max(0.6, (maxGrowth - minGrowth) * 0.14);
+  const forecastBoundary = forecastBoundaryIndex > 0
+    ? (years[forecastBoundaryIndex - 1] + years[forecastBoundaryIndex]) / 2
+    : years[0] - 0.5;
+  const shapes = forecastBoundaryIndex >= 0
     ? [{
         type: "rect",
         xref: "x",
         yref: "paper",
-        x0: 2025.5,
-        x1: 2032.5,
+        x0: forecastBoundary,
+        x1: years.at(-1) + 0.5,
         y0: 0,
         y1: 1,
         fillcolor: "rgba(226, 35, 26, 0.055)",
@@ -3831,8 +5656,8 @@ function drawGlobalMarketTrend(trend) {
         type: "line",
         xref: "x",
         yref: "paper",
-        x0: 2025.5,
-        x1: 2025.5,
+        x0: forecastBoundary,
+        x1: forecastBoundary,
         y0: 0,
         y1: 1,
         line: { color: "#9ca3af", width: 1.5, dash: "dash" },
@@ -3850,7 +5675,7 @@ function drawGlobalMarketTrend(trend) {
         hovertemplate: "<b>%{x}</b><br>Market Size: $%{y:.2f}B<extra></extra>",
         name: "Market Size",
         type: "bar",
-        marker: { color: years.map((year) => year <= 2025 ? "#e98079" : "#f3b7b2") },
+        marker: { color: years.map((year, index) => index < forecastBoundaryIndex ? "#e97d78" : "#efb0aa") },
         cliponaxis: false,
       },
       {
@@ -3869,12 +5694,12 @@ function drawGlobalMarketTrend(trend) {
       },
     ],
     {
-      margin: { l: 58, r: 64, t: 24, b: 54 },
+      margin: { l: 58, r: 68, t: 46, b: 54 },
       barmode: "group",
       shapes,
-      xaxis: { title: "Year", type: "linear", tickmode: "array", tickvals: years, ticktext: years.map(String), range: [2019.5, 2032.5], dtick: 1 },
-      yaxis: { title: "Market Size", ticksuffix: "B", tickprefix: "$" },
-      yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false },
+      xaxis: { title: "Year", type: "linear", tickmode: "array", tickvals: years, ticktext: years.map(String), range: [years[0] - 0.5, years.at(-1) + 0.5], dtick: 1 },
+      yaxis: { title: "Market Size", ticksuffix: "B", tickprefix: "$", range: [0, maxValue * 1.13] },
+      yaxis2: { title: "YoY Growth", ticksuffix: "%", overlaying: "y", side: "right", showgrid: false, zeroline: true, zerolinecolor: "#1f2328", zerolinewidth: 1, range: [minGrowth - growthPadding, maxGrowth + growthPadding] },
       legend: { orientation: "h", y: -0.2, x: 0 },
     },
   );
@@ -3893,6 +5718,11 @@ function drawStructurePiePlot(id, chart) {
   });
   const showLabels = chart.showLabels !== false;
   const hasSideLegend = chart.legendSide === "left" || chart.legendSide === "right";
+  const valuesArePercentages = items.every((item) => /%\s*$/.test(String(item.valueLabel || "")));
+  const pieDomain = hasSideLegend
+    ? { x: chart.legendSide === "right" ? [0.16, 1] : [0.08, 0.92], y: [0.04, 0.96] }
+    : { x: [0, 1], y: [0, 1] };
+  const centerX = (pieDomain.x[0] + pieDomain.x[1]) / 2;
   drawPlot(
     id,
     [{
@@ -3905,17 +5735,27 @@ function drawStructurePiePlot(id, chart) {
       textinfo: showLabels ? "text" : "none",
       textposition: showLabels ? "outside" : "none",
       text: items.map((item) => `${item.label}<br>${item.valueLabel || `$${Number(item.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`}`),
-      texttemplate: showLabels ? "%{text}<br>%{percent:.1%}" : "",
+      texttemplate: showLabels ? (valuesArePercentages ? "%{text}" : "%{text}<br>%{percent:.1%}") : "",
       hovertext: hoverText,
       hovertemplate: "%{hovertext}<extra></extra>",
       marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
-      domain: hasSideLegend ? { x: chart.legendSide === "right" ? [0.16, 1] : [0.08, 0.92], y: [0.04, 0.96] } : undefined,
+      domain: pieDomain,
     }],
     {
       margin: showLabels ? { l: 84, r: 84, t: 34, b: 32 } : { l: 18, r: 18, t: 16, b: 16 },
       showlegend: false,
       hoverlabel: { bgcolor: "#1f2328", font: { color: "#ffffff" } },
       uniformtext: { minsize: 10, mode: "hide" },
+      annotations: chart.center ? [{
+        x: centerX,
+        y: 0.5,
+        xref: "paper",
+        yref: "paper",
+        text: `<b>${escapeHtml(chart.center)}</b>`,
+        showarrow: false,
+        align: "center",
+        font: { size: 18, color: "#5d6673" },
+      }] : [],
     },
   );
 }
@@ -3934,6 +5774,10 @@ function drawMarketAnalysis(categoryId) {
       const tab = region?.countryTabs?.find((item) => item.id === tabId);
       if (tab?.countryId) drawCountryDetail(categoryId, tab.countryId);
     } else drawCountryOverviewMaps(categoryId);
+    return;
+  }
+  if (state.marketModule === "compliance") {
+    drawComplianceWorldMap(categoryId);
     return;
   }
   if (marketModules[state.marketModule]) {
@@ -3964,6 +5808,61 @@ function drawMarketAnalysis(categoryId) {
   drawPowerPortHeatmap("structurePowerPortHeatmap", selectedRows, powerSegments, portSegments, "Units");
   drawPricePowerStructure(categoryId, selectedRows, powerSegments);
   drawScenarioDonut(categoryId, selectedRows);
+}
+
+function drawComplianceWorldMap(categoryId) {
+  const node = document.getElementById("complianceWorldMap");
+  if (!node || !window.Plotly) return;
+  const reports = complianceReports(categoryId);
+  const duplicateCounts = new Map();
+  const locations = reports.map((report) => {
+    const location = complianceLocation(report);
+    const key = `${location.lat}:${location.lon}`;
+    const offset = duplicateCounts.get(key) || 0;
+    duplicateCounts.set(key, offset + 1);
+    return { ...location, lat: location.lat + offset * 1.4, lon: location.lon + offset * 1.8 };
+  });
+  const selectedIndex = Math.min(state.selectedComplianceIndex[categoryId] || 0, Math.max(0, reports.length - 1));
+  Plotly.react(node, [{
+    type: "scattergeo",
+    mode: "markers+text",
+    lat: locations.map((location) => location.lat),
+    lon: locations.map((location) => location.lon),
+    text: locations.map((location) => location.name),
+    textposition: "top center",
+    textfont: { size: 10, color: "#374151" },
+    customdata: reports.map((report, index) => [index, report.title, report.effectiveDate || "Current"]),
+    marker: {
+      size: reports.map((_, index) => index === selectedIndex ? 16 : 11),
+      color: reports.map((_, index) => index === selectedIndex ? "#e2231a" : "#718096"),
+      line: { color: "#ffffff", width: 1.5 },
+      opacity: 0.92,
+    },
+    hovertemplate: "<b>%{customdata[1]}</b><br>%{text}<br>Effective: %{customdata[2]}<extra>Click for details</extra>",
+  }], {
+    margin: { l: 0, r: 0, t: 8, b: 0 },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    geo: {
+      projection: { type: "natural earth" },
+      showland: true,
+      landcolor: "#eef1f5",
+      showocean: true,
+      oceancolor: "#fafbfd",
+      showcountries: true,
+      countrycolor: "#cbd2dc",
+      coastlinecolor: "#cbd2dc",
+      bgcolor: "rgba(0,0,0,0)",
+    },
+    showlegend: false,
+    hoverlabel: { bgcolor: "#1f2328", font: { color: "#ffffff" } },
+  }, { displayModeBar: false, responsive: true });
+  node.removeAllListeners?.("plotly_click");
+  node.on?.("plotly_click", (event) => {
+    const index = Number(event.points?.[0]?.customdata?.[0]);
+    if (!Number.isInteger(index)) return;
+    state.selectedComplianceIndex[categoryId] = index;
+    render();
+  });
 }
 
 function drawCountryOverviewMaps(categoryId) {
@@ -4406,7 +6305,14 @@ function drawScenarioDonut(categoryId, rows) {
 }
 
 function drawCompetitiveAnalysis(categoryId) {
-  return;
+  if (categoryId === "adapter" && data.competitorDatabase?.products?.length) {
+    drawAdapterCompetitiveAnalysis();
+    return;
+  }
+  if (data.competitorDatabase?.products?.length) {
+    drawCompetitorDatabaseAnalysis(categoryId);
+    return;
+  }
   const rows = data.brandMarket.filter((row) => row.categoryId === categoryId && !row.isLenovo);
   const selectedRows = brandRowsForSelectedPeriod(categoryId, false).sort((a, b) => b.marketShare - a.marketShare);
   const periods = periodsThroughSelected(state.granularity, selectedPeriod());
@@ -4452,6 +6358,121 @@ function drawCompetitiveAnalysis(categoryId) {
     ],
     { xaxis: { title: "Weighted Price", tickprefix: "$" }, yaxis: { title: "Weighted Power W" } },
   );
+}
+
+function adapterBrandColors(brands) {
+  return Object.fromEntries(brands.map((brand, index) => [brand, palette[index % palette.length]]));
+}
+
+function drawAdapterCompetitiveAnalysis() {
+  const powerRows = adapterFilteredRows("power");
+  const powerBands = ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W"];
+  const powerCounts = powerBands.map((band) => powerRows.filter((row) => competitorPowerBand("adapter", row.advertised_power_w) === band).length);
+  drawPlot("adapterPowerPie", [{ labels: powerBands, values: powerCounts, type: "pie", hole: 0.56, textinfo: "label+percent", marker: { colors: overviewPalette } }], { showlegend: false, margin: { l: 34, r: 34, t: 24, b: 24 } });
+  const powerBrands = [...new Set(powerRows.map((row) => row.brand))].sort();
+  drawPlot("adapterPowerBrandBar", powerBands.map((band, index) => ({ y: powerBrands, x: powerBrands.map((brand) => powerRows.filter((row) => row.brand === brand && competitorPowerBand("adapter", row.advertised_power_w) === band).length), name: band, type: "bar", orientation: "h", marker: { color: overviewPalette[index] } })), { barmode: "stack", margin: { l: 128, r: 28, t: 8, b: 58 }, xaxis: { title: "Products" }, yaxis: { autorange: "reversed" }, legend: { orientation: "h", y: -0.18 } });
+
+  const priceRows = adapterFilteredRows("price").filter((row) => row.currency === "USD" && competitorNumber(row.price_min) !== null);
+  const heatPower = ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W"];
+  const heatPrice = ["<$40", "$40–69", "$70–99", "$100+"];
+  drawPlot("adapterPriceHeatmap", [{ z: heatPower.map((power) => heatPrice.map((price) => priceRows.filter((row) => competitorPowerBand("adapter", row.advertised_power_w) === power && adapterPriceBand(row) === price).length)), x: heatPrice, y: heatPower, type: "heatmap", colorscale: [[0, "#fff5f4"], [1, "#e2231a"]], texttemplate: "%{z}", customdata: heatPower.map((power) => heatPrice.map((price) => priceRows.filter((row) => competitorPowerBand("adapter", row.advertised_power_w) === power && adapterPriceBand(row) === price).map((row) => row.brand).filter((value, index, values) => values.indexOf(value) === index).join(", "))), hovertemplate: "%{y}<br>%{x}: %{z} products<br>%{customdata}<extra></extra>" }], { margin: { l: 92, r: 42, t: 12, b: 58 }, xaxis: { title: "Price band (USD)" }, yaxis: { title: "Power band", autorange: "reversed" } });
+  const heatPorts = [...new Set(priceRows.map((row) => row.resolvedPorts))].sort((a, b) => a - b);
+  drawPlot("adapterPortPriceHeatmap", [{ z: heatPorts.map((port) => heatPrice.map((price) => priceRows.filter((row) => row.resolvedPorts === port && adapterPriceBand(row) === price).length)), x: heatPrice, y: heatPorts.map((port) => `${port} port${port === 1 ? "" : "s"}`), type: "heatmap", colorscale: [[0, "#fff5f4"], [1, "#e2231a"]], texttemplate: "%{z}", customdata: heatPorts.map((port) => heatPrice.map((price) => priceRows.filter((row) => row.resolvedPorts === port && adapterPriceBand(row) === price).map((row) => row.brand).filter((value, index, values) => values.indexOf(value) === index).join(", "))), hovertemplate: "%{y}<br>%{x}: %{z} products<br>%{customdata}<extra></extra>" }], { margin: { l: 84, r: 42, t: 12, b: 58 }, xaxis: { title: "Price band (USD)" }, yaxis: { title: "Port count", autorange: "reversed", automargin: true } });
+
+  const portRows = adapterFilteredRows("port");
+  const ports = [...new Set(portRows.map((row) => row.resolvedPorts))].sort((a, b) => a - b);
+  drawPlot("adapterPortPie", [{ labels: ports.map((port) => `${port} port${port === 1 ? "" : "s"}`), values: ports.map((port) => portRows.filter((row) => row.resolvedPorts === port).length), type: "pie", hole: 0.56, textinfo: "label+percent", marker: { colors: overviewPalette } }], { showlegend: false, margin: { l: 34, r: 34, t: 24, b: 24 } });
+  const portBrands = [...new Set(portRows.map((row) => row.brand))].sort();
+  drawPlot("adapterPortBrandBar", ports.map((port, index) => ({ x: portBrands, y: portBrands.map((brand) => portRows.filter((row) => row.brand === brand && row.resolvedPorts === port).length), name: `${port} port${port === 1 ? "" : "s"}`, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", xaxis: { title: "Brand", tickangle: -35 }, yaxis: { title: "Products" }, legend: { orientation: "h", y: -0.28 } });
+
+  const scenarioRows = adapterFilteredRows("scenario");
+  const scenarios = [...new Set(scenarioRows.map((row) => row.scenario))].sort();
+  const scenarioBrands = [...new Set(scenarioRows.map((row) => row.brand))].sort();
+  drawPlot("adapterScenarioBrandBar", scenarios.map((scenario, index) => ({ x: scenarioBrands, y: scenarioBrands.map((brand) => scenarioRows.filter((row) => row.brand === brand && row.scenario === scenario).length), name: scenario, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", xaxis: { title: "Brand", tickangle: -35 }, yaxis: { title: "Products" }, legend: { orientation: "h", y: -0.3 } });
+  const selectedScenarioBrand = adapterModuleFilters("scenario").brand;
+  const pieBrand = selectedScenarioBrand && selectedScenarioBrand !== "all" ? selectedScenarioBrand : scenarioBrands[0];
+  const scenarioPieRows = scenarioRows.filter((row) => row.brand === pieBrand);
+  const pieScenarios = [...new Set(scenarioPieRows.map((row) => row.scenario))].sort();
+  drawPlot("adapterScenarioPie", [{ labels: pieScenarios, values: pieScenarios.map((scenario) => scenarioPieRows.filter((row) => row.scenario === scenario).length), type: "pie", hole: 0.56, textinfo: "label+percent", marker: { colors: palette }, hovertemplate: `${pieBrand}<br>%{label}: %{value} products (%{percent})<extra></extra>` }], { showlegend: false, margin: { l: 34, r: 34, t: 24, b: 24 }, annotations: [{ text: pieBrand, x: 0.5, y: 0.5, showarrow: false, font: { size: 14, color: "#5c6570" } }] });
+}
+
+function competitorCount(rows, getter, value) {
+  return rows.filter((row) => getter(row) === value).length;
+}
+
+function competitorBrandTraces(rows, xField, yField, extraText) {
+  return [...new Set(rows.map((row) => row.brand))].sort().map((brand, index) => {
+    const brandRows = rows.filter((row) => row.brand === brand && competitorNumber(row[xField]) !== null && competitorNumber(row[yField]) !== null);
+    return {
+      x: brandRows.map((row) => Number(row[xField])),
+      y: brandRows.map((row) => Number(row[yField])),
+      text: brandRows.map((row) => `<b>${row.product_name}</b><br>${extraText(row)}`),
+      name: brand,
+      type: "scatter",
+      mode: "markers",
+      marker: { size: 10, color: palette[index % palette.length], opacity: 0.74, line: { color: "#ffffff", width: 1 } },
+      hovertemplate: "%{text}<extra>%{fullData.name}</extra>",
+    };
+  }).filter((trace) => trace.x.length);
+}
+
+function drawCompetitorDatabaseAnalysis(categoryId) {
+  const rows = competitorDbRows(categoryId);
+  const selectedCurrency = state.competitorDbFilters[categoryId]?.currency || "all";
+  const priceRows = rows.filter((row) => competitorNumber(row.price_min) !== null && row.currency === (selectedCurrency === "all" ? "USD" : selectedCurrency));
+  if (categoryId === "adapter") drawAdapterCompetitorDatabase(rows, priceRows, selectedCurrency === "all" ? "USD" : selectedCurrency);
+  else if (categoryId === "power_bank") drawPowerBankCompetitorDatabase(rows, priceRows, selectedCurrency === "all" ? "USD" : selectedCurrency);
+  else drawCableCompetitorDatabase(rows, priceRows, selectedCurrency === "all" ? "USD" : selectedCurrency);
+}
+
+function drawAdapterCompetitorDatabase(rows, priceRows, currency) {
+  const bands = ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W", "Unknown"];
+  drawPlot("competitorDbChart1", [{ x: bands, y: bands.map((band) => competitorCount(rows, (row) => competitorPowerBand("adapter", row.advertised_power_w), band)), type: "bar", marker: { color: redScale } }], { xaxis: { title: "Nominal power band" }, yaxis: { title: "Products" }, showlegend: false });
+  drawPlot("competitorDbChart2", competitorBrandTraces(priceRows, "advertised_power_w", "price_min", (row) => `Nominal: ${row.advertised_power_w ?? "—"}W<br>Single-port: ${row.single_usb_c_output_w ?? "Not confirmed"}W<br>${currency} ${Number(row.price_min).toFixed(2)}`), { xaxis: { title: "Nominal Power (W)" }, yaxis: { title: `Price (${currency})` }, legend: { orientation: "h", y: -0.22 } });
+  const portCols = ["1", "2", "3", "4", "5+", "Unknown"];
+  const portKey = (row) => competitorNumber(row.total_outputs) !== null ? (Number(row.total_outputs) >= 5 ? "5+" : String(Number(row.total_outputs))) : "Unknown";
+  drawPlot("competitorDbChart3", [{ z: bands.map((band) => portCols.map((port) => rows.filter((row) => competitorPowerBand("adapter", row.advertised_power_w) === band && portKey(row) === port).length)), x: portCols, y: bands, type: "heatmap", colorscale: [[0, "#fff5f4"], [1, "#e2231a"]], texttemplate: "%{z}", hovertemplate: "%{y}<br>%{x} ports: %{z}<extra></extra>" }], { xaxis: { title: "Port count" }, yaxis: { title: "Power band", autorange: "reversed" } });
+  const brands = [...new Set(rows.map((row) => row.brand))].sort();
+  const forms = [...new Set(rows.map((row) => row.form_factor || "Unknown"))].sort();
+  drawPlot("competitorDbChart4", forms.map((form, index) => ({ x: brands, y: brands.map((brand) => rows.filter((row) => row.brand === brand && (row.form_factor || "Unknown") === form).length), name: form, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", xaxis: { title: "Brand", tickangle: -35 }, yaxis: { title: "Products" }, legend: { orientation: "h", y: -0.32 } });
+  drawPlot("competitorDbChart5", competitorBrandTraces(priceRows, "advertised_power_w", "price_min", (row) => `${row.form_factor || "Unknown"} · ${row.total_outputs || "?"} ports<br>${currency} ${Number(row.price_min).toFixed(2)}`), { xaxis: { title: "Nominal Power (W)" }, yaxis: { title: `Price (${currency})` }, legend: { orientation: "h", y: -0.24 } });
+}
+
+function drawPowerBankCompetitorDatabase(rows, priceRows, currency) {
+  const brands = [...new Set(rows.map((row) => row.brand))].sort();
+  const capacityBands = ["≤10,000", "10,001–20,000", "20,001–27,000", ">27,000", "Unknown"];
+  const singleBand = (row) => { const w = competitorNumber(row.single_usb_c_output_w); return w === null ? "Unknown" : w < 65 ? "<65W" : w < 100 ? "65–99W" : w < 140 ? "100–139W" : "≥140W"; };
+  const singleBands = ["<65W", "65–99W", "100–139W", "≥140W", "Unknown"];
+  const forms = ["Standard", "Built-in cable", "Retractable cable", "2-in-1"];
+  drawContributionPair(1, 2, rows, brands, capacityBands, (row) => competitorCapacityBand(row.capacity_mah), "Capacity band");
+  const priceBands = ["<$40", "$40–69", "$70–99", "$100+"];
+  const priceBand = (row) => adapterPriceBand(row);
+  drawCountHeatmap(3, priceRows, capacityBands, priceBands, (row) => competitorCapacityBand(row.capacity_mah), priceBand, "Capacity band", `Price (${currency})`);
+  drawCountHeatmap(4, priceRows, singleBands, priceBands, singleBand, priceBand, "Max single-port output", `Price (${currency})`);
+  drawContributionPair(5, 6, rows, brands, singleBands, singleBand, "Single-port power");
+  drawContributionPair(7, 8, rows, brands, forms, competitorPowerBankForm, "Factor");
+}
+
+function drawCableCompetitorDatabase(rows, priceRows, currency) {
+  const lengthBands = ["≤1m", "1.01–2m", "2.01–3m", ">3m", "Unknown"];
+  const powerBands = ["60W", "100W", "140W", "240W", "Other", "Unknown"];
+  const priceBands = ["<$40", "$40–69", "$70–99", "$100+"];
+  const brands = [...new Set(rows.map((row) => row.brand))].sort();
+  const forms = [...new Set(rows.map((row) => row.form_factor || "Unknown"))].sort();
+  drawContributionPair(1, 2, rows, brands, lengthBands, competitorCableLengthBand, "Length");
+  drawCountHeatmap(3, priceRows, lengthBands, priceBands, competitorCableLengthBand, adapterPriceBand, "Length", `Price (${currency})`);
+  drawCountHeatmap(4, priceRows, powerBands, priceBands, (row) => competitorPowerBand("power_cable", row.advertised_power_w), adapterPriceBand, "Charging power", `Price (${currency})`);
+  drawContributionPair(5, 6, rows, brands, forms, (row) => row.form_factor || "Unknown", "Factor");
+}
+
+function drawContributionPair(pieNumber, barNumber, rows, brands, groups, getter, axisTitle) {
+  const values = groups.map((group) => rows.filter((row) => getter(row) === group).length);
+  drawPlot(`competitorDbChart${pieNumber}`, [{ labels: groups, values, type: "pie", hole: .56, textinfo: "label+percent", marker: { colors: overviewPalette }, hovertemplate: "%{label}: %{value} products (%{percent})<extra></extra>" }], { showlegend: false, margin: { l: 24, r: 24, t: 24, b: 24 }, annotations: [{ text: `${rows.length}<br>Products`, x: .5, y: .5, showarrow: false, font: { size: 14, color: "#5c6570" } }] });
+  drawPlot(`competitorDbChart${barNumber}`, groups.map((group, index) => ({ x: brands, y: brands.map((brand) => rows.filter((row) => row.brand === brand && getter(row) === group).length), name: group, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", margin: { l: 64, r: 24, t: 40, b: 118 }, xaxis: { title: "Brand", tickangle: -35, automargin: true, tickfont: { size: 10 } }, yaxis: { title: "Products", automargin: true }, legend: { orientation: "h", y: -.34 }, annotations: [], title: { text: axisTitle, font: { size: 12 } } });
+}
+
+function drawCountHeatmap(number, rows, xGroups, yGroups, xGetter, yGetter, xTitle, yTitle) {
+  drawPlot(`competitorDbChart${number}`, [{ z: yGroups.map((y) => xGroups.map((x) => rows.filter((row) => xGetter(row) === x && yGetter(row) === y).length)), x: xGroups, y: yGroups, type: "heatmap", colorscale: [[0, "#fff5f4"], [1, "#e2231a"]], texttemplate: "%{z}", hovertemplate: `%{x}<br>%{y}: %{z} products<extra></extra>` }], { margin: { l: 82, r: 38, t: 24, b: 78 }, xaxis: { title: xTitle, automargin: true, tickangle: -20 }, yaxis: { title: yTitle, automargin: true, autorange: "reversed" } });
 }
 
 function drawCompetitorDemandByPower(categoryId, brandRows, brands, powerSegments) {
@@ -4504,7 +6525,30 @@ function drawPerformanceContribution(categoryId, products) {
   const period = categoryPerformancePeriod(categoryId, products);
   const selectedIds = categoryOverviewSelectedProductIds(categoryId, products);
   const selectedProducts = products.filter((product) => selectedIds.includes(product.id));
-  const rows = performanceContributionRows(categoryId, selectedProducts, option.field, period);
+  const selectedGeo = state.categoryContributionGeo[categoryId] || "all";
+  const selectedSegment = categoryOverviewSegment(categoryId, "contribution");
+  const rows = (selectedGeo === "all"
+    ? productRevenueRanking(
+        categoryId,
+        selectedProducts,
+        option.field,
+        period,
+        "all",
+        selectedSegment,
+      )
+    : selectedProducts.map((product) => {
+        const geoRows = categoryOverviewRowsForPeriod(categoryId, [product.id], period, false, data.geoMetrics || []).filter((row) =>
+          (row.geo || "Unassigned") === selectedGeo
+          && (selectedSegment === "all" || row.segment === selectedSegment)
+        );
+        return {
+          product,
+          current: categoryMetricTotal(geoRows, option.field),
+          prior: 0,
+          available: categoryMetricHasData(geoRows, option.field),
+        };
+      }).sort((a, b) => b.current - a.current)
+  ).filter((row) => row.available && row.current > 0);
   const total = rows.reduce((sum, row) => sum + row.current, 0);
   const totalDisplay = categoryMetricDisplay(total, rows.length > 0, option);
   const chartLabels = rows.map((row) => row.product.name);
@@ -4527,11 +6571,11 @@ function drawPerformanceContribution(categoryId, products) {
           textfont: { size: 11, color: "#1f2328" },
           automargin: true,
           hovertemplate: `<b>%{text}</b><br>${escapeHtml(option.label)}: %{customdata}<br>Share: %{percent}<extra></extra>`,
-          marker: { colors: rows.map((_, index) => palette[index % palette.length]) },
+          marker: { colors: rows.map((_, index) => overviewPalette[index % overviewPalette.length]) },
         }]
       : [],
     {
-      height: 286,
+      height: state.expandedTrendChart === "contribution" ? 620 : 286,
       margin: { l: 20, r: 20, t: 10, b: 10 },
       showlegend: true,
       legend: {
@@ -4563,17 +6607,72 @@ function drawPerformanceContribution(categoryId, products) {
 
 function drawCategoryGeoContribution(categoryId, products) {
   const contribution = categoryGeoContributionData(categoryId, products);
+  const metricOption = categoryGeoMetricOption(categoryId);
+  const isQuantity = metricOption.kind === "quantity";
+  const metricLabel = metricOption.label;
+  const formatMetric = (value) => isQuantity ? fmtExactNumber(value) : formatCategoryRevenueM(value);
+  const geoChartMode = categoryGeoChartMode("geo-share");
+  const countryChartMode = categoryGeoChartMode("country-share");
+  const expandedGeoHeight = Math.max(540, Math.min(760, window.innerHeight - 150));
   const selectedGeo = selectedCategoryGeo(categoryId, contribution);
   const total = contribution.reduce((sum, item) => sum + item.value, 0);
-  const colors = contribution.map((_, index) => palette[index % palette.length]);
+  const colors = contribution.map((_, index) => overviewPalette[index % overviewPalette.length]);
+  const topGeos = [...contribution];
+  const selectedProductIds = new Set(categoryGeoSelectedProductIds(categoryId, products));
+  const fallbackGeos = [...new Set((data.geoMetrics || [])
+    .filter((row) => categoryMatchesOverview(row, categoryId) && selectedProductIds.has(row.modelId))
+    .map((row) => row.geo || "Unassigned"))]
+    .filter((geo) => !topGeos.some((item) => item.geo === geo));
+  fallbackGeos.forEach((geo) => topGeos.push({ geo, value: 0 }));
+
+  drawPlot(
+    "categoryGeoBarPlot",
+    topGeos.length ? [{
+      x: topGeos.map((item) => displayLocationLabel(item.geo)),
+      y: topGeos.map((item) => item.value),
+      type: "bar",
+      marker: { color: topGeos.map((_, index) => overviewPalette[index % overviewPalette.length]), opacity: 0.9 },
+      text: topGeos.map((item) => formatMetric(item.value)),
+      textposition: "outside",
+      textfont: { size: 10, color: "#1f2328" },
+      cliponaxis: false,
+      customdata: topGeos.map((item) => formatMetric(item.value)),
+      hovertemplate: `<b>%{x}</b><br>${metricLabel}: %{customdata}<extra></extra>`,
+    }] : [],
+    {
+      height: state.expandedTrendChart === "geo-contribution" ? 540 : 330,
+      margin: { l: 62, r: 12, t: 36, b: 58 },
+      showlegend: false,
+      xaxis: { title: "Geo", automargin: true },
+      yaxis: {
+        title: metricLabel,
+        tickprefix: isQuantity ? "" : "$",
+        tickformat: "~s",
+        rangemode: "tozero",
+        automargin: true,
+        range: topGeos.length ? [0, Math.max(...topGeos.map((item) => item.value)) * 1.25] : undefined,
+      },
+    },
+  );
 
   drawPlot(
     "categoryGeoContributionPlot",
     contribution.length
-      ? [{
+      ? [geoChartMode === "bar" ? {
+          x: contribution.map((item) => displayLocationLabel(item.geo)),
+          y: contribution.map((item) => item.value),
+          customdata: contribution.map((item) => formatMetric(item.value)),
+          type: "bar",
+          text: contribution.map((item) => formatMetric(item.value)),
+          textposition: "outside",
+          cliponaxis: false,
+          showlegend: false,
+          marker: { color: colors },
+          hovertemplate: `<b>%{x}</b><br>${metricLabel}: %{customdata}<extra></extra>`,
+        } : {
           labels: contribution.map((item) => displayLocationLabel(item.geo)),
           values: contribution.map((item) => item.value),
-          customdata: contribution.map((item) => formatCategoryRevenueM(item.value)),
+          customdata: contribution.map((item) => formatMetric(item.value)),
           type: "pie",
           hole: 0.56,
           sort: false,
@@ -4581,21 +6680,24 @@ function drawCategoryGeoContribution(categoryId, products) {
           textposition: "outside",
           textfont: { size: 12, color: "#1f2328" },
           automargin: true,
-          hovertemplate: "<b>%{label}</b><br>Ship Revenue: %{customdata}<br>Share: %{percent}<extra></extra>",
+          hovertemplate: `<b>%{label}</b><br>${metricLabel}: %{customdata}<br>Share: %{percent}<extra></extra>`,
           marker: { colors, line: { color: "#fff", width: 2 } },
         }]
       : [],
     {
-      height: 330,
-      margin: { l: 44, r: 44, t: 12, b: 12 },
-      showlegend: false,
-      annotations: contribution.length
+      height: state.expandedTrendChart === "geo-share" ? expandedGeoHeight : 330,
+      margin: state.expandedTrendChart === "geo-share" ? { l: 54, r: 54, t: geoChartMode === "bar" ? 70 : 20, b: geoChartMode === "bar" ? 70 : 86 } : { l: 44, r: 44, t: geoChartMode === "bar" ? 46 : 12, b: 20 },
+      showlegend: state.expandedTrendChart === "geo-share",
+      legend: state.expandedTrendChart === "geo-share" ? { orientation: "h", x: 0.5, xanchor: "center", y: -0.08, yanchor: "top" } : undefined,
+      xaxis: geoChartMode === "bar" ? { automargin: true } : {},
+      yaxis: geoChartMode === "bar" ? { automargin: true, rangemode: "tozero", range: contribution.length ? [0, Math.max(...contribution.map((item) => item.value)) * 1.18] : undefined } : {},
+      annotations: contribution.length && geoChartMode === "pie"
         ? [{
             x: 0.5,
             y: 0.5,
             xref: "paper",
             yref: "paper",
-            text: `<b>${formatCategoryRevenueM(total)}</b><br>Total`,
+            text: `<b>${formatMetric(total)}</b><br>Total`,
             showarrow: false,
             font: { size: 14, color: "#1f2328" },
           }]
@@ -4615,51 +6717,73 @@ function drawCategoryGeoContribution(categoryId, products) {
     });
   }
 
-  const productIds = new Set(products.map((product) => product.id));
-  const valuesByPeriod = new Map();
+  const productIds = new Set(categoryGeoSelectedProductIds(categoryId, products));
+  const selectedPeriods = new Set(categoryGeoSelectedPeriods(categoryId));
+  const selectedSegment = categoryOverviewSegment(categoryId, "geo");
+  const valuesByCountry = new Map();
   (data.geoMetrics || []).forEach((row) => {
     if (
-      row.categoryId !== categoryId
+      !categoryMatchesOverview(row, categoryId)
       || !productIds.has(row.modelId)
+      || !rowMatchesActiveDetailPn(row)
+      || !rowMatchesDetailPanelPn(row, "geo")
       || (row.geo || "Unassigned") !== selectedGeo
+      || !selectedPeriods.has(`${row.fiscalYear} ${row.fiscalQuarter}`)
+      || !rowMatchesCategorySegment(row, selectedSegment)
     ) return;
-    const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
-    valuesByPeriod.set(period, (valuesByPeriod.get(period) || 0) + Number(row.shipRevenue || 0));
+    const country = row.country || "Unassigned";
+    valuesByCountry.set(country, (valuesByCountry.get(country) || 0) + Number(row[metricOption.field] || 0));
   });
-  const periods = sortedPeriods([...valuesByPeriod.keys()]);
-  const values = periods.map((period) => valuesByPeriod.get(period) || 0);
+  const countries = [...valuesByCountry.entries()]
+    .map(([country, value]) => ({ country, value }))
+    .filter((item) => item.value > 0)
+    .sort((a, b) => b.value - a.value);
+  const countryTotal = countries.reduce((sum, item) => sum + item.value, 0);
+  const denseCountryChart = countries.length > 8;
+  const countryExpanded = state.expandedTrendChart === "country-share";
+  const countryLabels = countries.map((item) => countryExpanded
+    ? displayLocationLabel(item.country)
+    : displayCountryShortLabel(item.country));
 
   drawPlot(
-    "categoryGeoTrendPlot",
-    periods.length
-      ? [{
-          x: periods,
-          y: values,
-          type: "scatter",
-          mode: "lines+markers+text",
-          name: displayLocationLabel(selectedGeo),
-          line: { color: indexes.categories.get(categoryId)?.accent || "#e2231a", width: 3 },
-          marker: { size: 8 },
-          text: values.map((value) => formatCategoryRevenueM(value)),
-          textposition: "top center",
-          textfont: { size: 10 },
+    "categoryCountryContributionPlot",
+    countries.length
+      ? [countryChartMode === "bar" ? {
+          x: countryLabels,
+          y: countries.map((item) => item.value),
+          customdata: countries.map((item) => formatMetric(item.value)),
+          type: "bar",
+          text: countries.map((item) => formatMetric(item.value)),
+          textposition: "outside",
           cliponaxis: false,
-          customdata: values.map((value) => formatCategoryRevenueM(value)),
-          hovertemplate: `<b>${escapeHtml(displayLocationLabel(selectedGeo))}</b><br>%{x}<br>Ship Revenue: %{customdata}<extra></extra>`,
+          showlegend: false,
+          marker: { color: countries.map((_, index) => overviewPalette[index % overviewPalette.length]) },
+          hovertemplate: `<b>%{x}</b><br>${metricLabel}: %{customdata}<extra></extra>`,
+        } : {
+          labels: countryLabels,
+          values: countries.map((item) => item.value),
+          customdata: countries.map((item) => formatMetric(item.value)),
+          type: "pie",
+          hole: denseCountryChart ? 0.46 : 0.56,
+          domain: denseCountryChart ? { x: [0.04, 0.96], y: [0.03, 0.97] } : undefined,
+          sort: false,
+          textinfo: denseCountryChart ? "none" : "label+percent",
+          texttemplate: denseCountryChart ? "" : "%{label}<br>%{percent}",
+          textposition: "outside",
+          automargin: true,
+          hovertemplate: `<b>%{label}</b><br>${metricLabel}: %{customdata}<br>Share: %{percent}<extra></extra>`,
+          marker: { colors: countries.map((_, index) => overviewPalette[index % overviewPalette.length]), line: { color: "#fff", width: 2 } },
         }]
       : [],
     {
-      height: 330,
-      margin: { l: 72, r: 28, t: 28, b: 72 },
+      height: countryExpanded ? expandedGeoHeight : 330,
+      margin: countryChartMode === "bar"
+        ? { l: 54, r: 36, t: 70, b: denseCountryChart ? 120 : 74 }
+        : denseCountryChart ? { l: 12, r: 12, t: 8, b: 8 } : { l: 44, r: 44, t: 12, b: 12 },
       showlegend: false,
-      xaxis: { title: "Fiscal Quarter", tickangle: -28, automargin: true },
-      yaxis: {
-        title: "Ship Revenue (USD)",
-        tickprefix: "$",
-        tickformat: "~s",
-        automargin: true,
-        rangemode: "tozero",
-      },
+      xaxis: countryChartMode === "bar" ? { automargin: true, tickangle: denseCountryChart ? -38 : 0 } : {},
+      yaxis: countryChartMode === "bar" ? { automargin: true, rangemode: "tozero", range: countries.length ? [0, Math.max(...countries.map((item) => item.value)) * 1.18] : undefined } : {},
+      annotations: countries.length && countryChartMode === "pie" ? [{ x: 0.5, y: 0.5, xref: "paper", yref: "paper", text: `<b>${formatMetric(countryTotal)}</b><br>Total`, showarrow: false }] : [],
     },
   );
 }
@@ -4667,16 +6791,91 @@ function drawCategoryGeoContribution(categoryId, products) {
 function drawPerformanceRevenueTrend(categoryId, products) {
   const option = categoryOverviewMetricOption(categoryId, "trend");
   const mode = categoryTrendMode(categoryId);
+  const selectedGeos = Array.isArray(state.categoryTrendGeos[categoryId]) ? state.categoryTrendGeos[categoryId] : [];
   const selectedIds = categoryTrendSelectedProductIds(categoryId, products);
   const selectedIdSet = new Set(selectedIds);
   const selectedProducts = products.filter((product) => selectedIdSet.has(product.id));
-  const metricRows = data.productMetrics.filter((row) =>
-    row.categoryId === categoryId && selectedIdSet.has(row.modelId),
+  const sourceRows = selectedGeos.length === 0 ? data.productMetrics : (data.geoMetrics || []);
+  const selectedSegment = categoryOverviewSegment(categoryId, "trend");
+  const metricRows = sourceRows.filter((row) =>
+    categoryMatchesOverview(row, categoryId)
+    && selectedIdSet.has(row.modelId)
+    && rowMatchesActiveDetailPn(row)
+    && rowMatchesDetailPanelPn(row, "trend")
+    && rowMatchesCategorySegment(row, selectedSegment)
+    && (selectedGeos.length === 0 || selectedGeos.includes(row.geo || "Unassigned")),
   );
-  const periods = sortedPeriods([...new Set(metricRows.map((row) => `${row.fiscalYear} ${row.fiscalQuarter}`))]);
+  let comparisonProducts = selectedProducts;
+  if (mode === "breakdown" && selectedGeos.length <= 1) {
+    const visibleKey = state.productId ? `${categoryId}:${state.productId}` : categoryId;
+    const storedVisible = state.categoryTrendVisibleSeries[visibleKey];
+    if (Array.isArray(storedVisible)) comparisonProducts = selectedProducts.filter((product) => storedVisible.includes(product.id));
+    else {
+      const top = [...selectedProducts].sort((a, b) => {
+        const total = (product) => metricRows.filter((row) => row.modelId === product.id).reduce((sum, row) => sum + Number(row[option.field] || 0), 0);
+        return total(b) - total(a);
+      })[0];
+      comparisonProducts = top ? [top] : [];
+    }
+  }
+  const availablePeriods = sortedPeriods([...new Set(metricRows.map((row) => `${row.fiscalYear} ${row.fiscalQuarter}`))]);
+  const storedPeriods = state.categoryTrendPeriods[categoryId];
+  const periods = Array.isArray(storedPeriods) ? availablePeriods.filter((period) => storedPeriods.includes(period)) : defaultCategoryTrendPeriods(availablePeriods);
   let traces = [];
+  const isStacked = mode === "stacked";
 
-  if (mode === "breakdown") {
+  if (isStacked) {
+    const stackItems = state.productId
+      ? unique(metricRows.map((row) => row.partNumber).filter(Boolean)).map((pn) => ({
+          id: pn,
+          name: pn,
+          matches: (row) => row.partNumber === pn,
+        }))
+      : selectedProducts.map((product) => ({
+          id: product.id,
+          name: product.shortName || product.name,
+          fullName: product.name,
+          matches: (row) => row.modelId === product.id,
+        }));
+    traces = stackItems.map((item, index) => {
+      const valuesByPeriod = new Map();
+      metricRows.filter(item.matches).forEach((row) => {
+        const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+        valuesByPeriod.set(period, (valuesByPeriod.get(period) || 0) + Number(row[option.field] || 0));
+      });
+      const values = periods.map((period) => valuesByPeriod.get(period) || 0);
+      return {
+        x: periods,
+        y: values,
+        type: "bar",
+        name: item.name,
+        marker: { color: overviewPalette[index % overviewPalette.length], opacity: 0.9 },
+        customdata: values.map((value) => categoryMetricDisplay(value, true, option)),
+        hovertemplate: `<b>${escapeHtml(item.fullName || item.name)}</b><br>%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
+      };
+    }).filter((trace) => trace.y.some((value) => value > 0));
+  } else if (selectedGeos.length > 1 && mode === "breakdown") {
+    traces = selectedGeos.map((geo, index) => {
+      const totals = new Map();
+      metricRows.filter((row) => (row.geo || "Unassigned") === geo).forEach((row) => {
+        const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+        totals.set(period, (totals.get(period) || 0) + Number(row[option.field] || 0));
+      });
+      const values = periods.map((period) => totals.get(period) || 0);
+      return {
+        x: periods,
+        y: values,
+        type: "scatter",
+        mode: "lines+markers",
+        name: displayLocationLabel(geo),
+        line: { color: overviewPalette[index % overviewPalette.length], width: 2.8 },
+        marker: { color: overviewPalette[index % overviewPalette.length], size: 7 },
+        customdata: values.map((value) => categoryMetricDisplay(value, true, option)),
+        _allValuesByPeriod: totals,
+        hovertemplate: `<b>${escapeHtml(displayLocationLabel(geo))}</b><br>%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
+      };
+    });
+  } else if (mode === "breakdown") {
     const labelPositions = [
       "top left",
       "top center",
@@ -4686,10 +6885,33 @@ function drawPerformanceRevenueTrend(categoryId, products) {
       "bottom left",
       "bottom right",
     ];
-    traces = selectedProducts.map((product, index) => {
+    let comparisonItems = state.productId
+      ? unique(metricRows.map((row) => row.partNumber).filter(Boolean)).map((pn) => ({
+          id: pn,
+          name: pn,
+          matches: (row) => row.partNumber === pn,
+        }))
+      : comparisonProducts.map((product) => ({
+          id: product.id,
+          name: product.name,
+          matches: (row) => row.modelId === product.id,
+        }));
+    if (state.productId) {
+      const visibleKey = `${categoryId}:${state.productId}`;
+      const storedVisible = state.categoryTrendVisibleSeries[visibleKey];
+      if (Array.isArray(storedVisible)) comparisonItems = comparisonItems.filter((item) => storedVisible.includes(item.id));
+      else {
+        const top = [...comparisonItems].sort((a, b) => {
+          const total = (item) => metricRows.filter(item.matches).reduce((sum, row) => sum + Number(row[option.field] || 0), 0);
+          return total(b) - total(a);
+        })[0];
+        comparisonItems = top ? [top] : [];
+      }
+    }
+    traces = comparisonItems.map((item, index) => {
       const valuesByPeriod = new Map();
       metricRows
-        .filter((row) => row.modelId === product.id)
+        .filter(item.matches)
         .forEach((row) => {
           const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
           valuesByPeriod.set(period, (valuesByPeriod.get(period) || 0) + Number(row[option.field] || 0));
@@ -4700,30 +6922,31 @@ function drawPerformanceRevenueTrend(categoryId, products) {
           ? ""
           : categoryMetricDisplay(value, true, option),
       );
-      const isDenseBreakdown = selectedProducts.length > 4;
+      const isDenseBreakdown = comparisonItems.length > 4;
       const dashStyles = ["solid", "dash", "dot", "dashdot", "longdash", "longdashdot", "solid"];
       return {
         x: periods,
         y: values,
         type: "scatter",
         mode: isDenseBreakdown ? "lines+markers" : "lines+markers+text",
-        name: product.name,
+        name: item.name,
         line: {
-          color: palette[index % palette.length],
+          color: overviewPalette[index % overviewPalette.length],
           width: isDenseBreakdown ? 2.8 : 2.5,
           dash: dashStyles[index % dashStyles.length],
         },
-        marker: { color: palette[index % palette.length], size: 7 },
+        marker: { color: overviewPalette[index % overviewPalette.length], size: 7 },
         text: isDenseBreakdown ? undefined : displayValues,
         textposition: isDenseBreakdown
           ? undefined
           : periods.map((_, periodIndex) =>
               labelPositions[(index + periodIndex) % labelPositions.length],
             ),
-        textfont: { size: 9, color: palette[index % palette.length] },
+        textfont: { size: 9, color: overviewPalette[index % overviewPalette.length] },
         cliponaxis: false,
         customdata: displayValues,
-        hovertemplate: `<b>${escapeHtml(product.name)}</b><br>%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
+        _allValuesByPeriod: valuesByPeriod,
+        hovertemplate: `<b>${escapeHtml(item.name)}</b><br>%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
       };
     }).filter((trace) => trace.y.some((value) => value !== null));
   } else {
@@ -4741,26 +6964,135 @@ function drawPerformanceRevenueTrend(categoryId, products) {
           type: "scatter",
           mode: "lines+markers+text",
           name: "Selected products total",
-          line: { color: "#e2231a", width: 3 },
-          marker: { color: "#e2231a", size: 7 },
+          line: { color: overviewPalette[0], width: 3 },
+          marker: { color: overviewPalette[0], size: 7 },
           text: displayValues,
           textposition: "top center",
           textfont: { size: 10, color: "#991b1b" },
           cliponaxis: false,
           customdata: displayValues,
+          _allValuesByPeriod: totals,
           hovertemplate: `<b>Selected products total</b><br>%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
         }]
       : [];
   }
 
+  const useBars = traces.length === 1 && mode === "overall";
+  const growthAnnotations = [];
+  if (useBars) {
+    traces = traces.map((trace, traceIndex) => {
+      const valuesByPeriod = new Map();
+      metricRows.forEach((row) => {
+        const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+        valuesByPeriod.set(period, (valuesByPeriod.get(period) || 0) + Number(row[option.field] || 0));
+      });
+      trace.x.forEach((period, index) => {
+        const priorPeriod = previousFiscalQuarterPeriod(period);
+        const current = Number(trace.y[index]);
+        const prior = Number(valuesByPeriod.get(priorPeriod));
+        if (!prior || !Number.isFinite(current)) return;
+        const growth = ((current - prior) / Math.abs(prior)) * 100;
+        const positive = growth >= 0;
+        const traceCount = traces.length;
+        growthAnnotations.push({
+          x: period,
+          y: current,
+          xshift: 0,
+          yshift: 30,
+          text: `<b>${growth >= 0 ? "+" : ""}${growth.toFixed(1)}%</b>`,
+          showarrow: false,
+          bgcolor: positive ? "#e5f5e9" : "#fde8e7",
+          bordercolor: positive ? "#a8d9b5" : "#efb0ac",
+          borderwidth: 1,
+          borderpad: 3,
+          font: { size: 10, color: positive ? "#087a3e" : "#d92d20" },
+        });
+      });
+      return {
+        x: trace.x,
+        y: trace.y,
+        type: "bar",
+        name: trace.name,
+        marker: { color: overviewPalette[traceIndex % overviewPalette.length], opacity: 0.9 },
+        width: 0.34,
+        text: trace.customdata,
+        textposition: "outside",
+        textfont: { size: 10, color: "#1f2328" },
+        cliponaxis: false,
+        customdata: trace.customdata,
+        hovertemplate: trace.hovertemplate,
+      };
+    });
+  } else if (isStacked) {
+    const stackedTotals = new Map();
+    metricRows.forEach((row) => {
+      const period = `${row.fiscalYear} ${row.fiscalQuarter}`;
+      stackedTotals.set(period, (stackedTotals.get(period) || 0) + Number(row[option.field] || 0));
+    });
+    periods.forEach((period) => {
+      const current = Number(stackedTotals.get(period) || 0);
+      const prior = Number(stackedTotals.get(previousFiscalQuarterPeriod(period)) || 0);
+      if (!prior || !Number.isFinite(current)) return;
+      const growth = ((current - prior) / Math.abs(prior)) * 100;
+      const positive = growth >= 0;
+      growthAnnotations.push({
+        x: period,
+        y: current,
+        yshift: 24,
+        text: `<b>${growth >= 0 ? "+" : ""}${growth.toFixed(1)}%</b>`,
+        showarrow: false,
+        bgcolor: positive ? "#e5f5e9" : "#fde8e7",
+        bordercolor: positive ? "#a8d9b5" : "#efb0ac",
+        borderwidth: 1,
+        borderpad: 3,
+        font: { size: 10, color: positive ? "#087a3e" : "#d92d20" },
+      });
+    });
+  } else if (!isStacked) {
+    traces = traces.map((trace) => {
+      const valuesByPeriod = trace._allValuesByPeriod || new Map(trace.x.map((period, index) => [period, trace.y[index]]));
+      const pointData = trace.x.map((period, index) => {
+        const value = trace.y[index];
+        const prior = Number(valuesByPeriod.get(previousFiscalQuarterPeriod(period)));
+        const growth = prior && value !== null ? ((Number(value) - prior) / Math.abs(prior)) * 100 : null;
+        const valueLabel = value === null ? "" : categoryMetricDisplay(value, true, option);
+        const growthLabel = growth === null ? "" : `${growth >= 0 ? "+" : ""}${growth.toFixed(1)}%`;
+        return { valueLabel, growthLabel, growth };
+      });
+      return {
+        ...trace,
+        y: pointData.map((item) => item.growth),
+        mode: "lines+markers+text",
+        text: pointData.map((item) => item.growthLabel),
+        textposition: "top center",
+        textfont: { size: 9, color: pointData.map((item) => item.growth === null ? "#1f2328" : item.growth >= 0 ? "#087a3e" : "#d92d20") },
+        customdata: pointData.map((item) => [item.valueLabel, item.growthLabel || "—"]),
+        hovertemplate: `<b>${escapeHtml(trace.name || "Series")}</b><br>%{x}<br>QoQ: %{customdata[1]}<br>${escapeHtml(option.label)}: %{customdata[0]}<extra></extra>`,
+      };
+    });
+  }
+  const usesGrowthAxis = !useBars && !isStacked;
+  const chartMax = isStacked
+    ? Math.max(0, ...periods.map((_, periodIndex) => traces.reduce((sum, trace) => sum + Number(trace.y?.[periodIndex] || 0), 0)))
+    : Math.max(0, ...traces.flatMap((trace) => (trace.y || []).filter((value) => Number.isFinite(Number(value))).map(Number)));
+  const growthValues = usesGrowthAxis
+    ? traces.flatMap((trace) => (trace.y || []).filter((value) => Number.isFinite(Number(value))).map(Number))
+    : [];
+  const growthMin = growthValues.length ? Math.min(...growthValues) : 0;
+  const growthMax = growthValues.length ? Math.max(...growthValues) : 0;
+  const growthSpan = Math.max(growthMax - growthMin, Math.max(Math.abs(growthMin), Math.abs(growthMax)) * 0.2, 10);
+  const growthRange = growthValues.length ? [growthMin - growthSpan * 0.16, growthMax + growthSpan * 0.22] : undefined;
+  const dynamicBarGap = periods.length <= 1 ? 0.68 : periods.length <= 3 ? 0.42 : periods.length <= 8 ? 0.24 : 0.14;
+
   drawPlot(
     "performanceRevenueTrendPlot",
     traces,
     {
-      height: mode === "breakdown" ? 440 : 300,
-      margin: { l: 78, r: mode === "breakdown" ? 390 : 30, t: 40, b: mode === "breakdown" ? 92 : 64 },
-      showlegend: mode === "breakdown",
-      legend: mode === "breakdown"
+      height: state.expandedTrendChart === "trend" ? 620 : (!useBars && mode === "breakdown" ? 340 : 300),
+      margin: { l: 78, r: 30, t: 52, b: !useBars && mode === "breakdown" ? 82 : 64 },
+      showlegend: isStacked || (traces.length > 1 && (Boolean(state.productId) || !(mode === "breakdown" && selectedGeos.length <= 1))),
+      hovermode: "closest",
+      legend: traces.length > 1
         ? {
             orientation: "v",
             x: 1.01,
@@ -4781,14 +7113,24 @@ function drawPerformanceRevenueTrend(categoryId, products) {
         automargin: true,
         tickangle: mode === "breakdown" ? -32 : 0,
         tickfont: { size: mode === "breakdown" ? 10 : 11 },
+        range: periods.length === 1 ? [-1.15, 1.15] : undefined,
       },
       yaxis: {
-        title: option.kind === "quantity" ? option.label : `${option.label} (USD)`,
-        rangemode: "tozero",
+        title: usesGrowthAxis ? "QoQ Growth Rate" : (option.kind === "quantity" ? option.label : `${option.label} (USD)`),
+        ticksuffix: usesGrowthAxis ? "%" : undefined,
+        zeroline: usesGrowthAxis,
+        zerolinecolor: usesGrowthAxis ? "#9ca3af" : undefined,
+        zerolinewidth: usesGrowthAxis ? 1.25 : undefined,
+        rangemode: usesGrowthAxis ? "normal" : "tozero",
         automargin: true,
-        autorange: true,
+        autorange: usesGrowthAxis ? !growthRange : chartMax <= 0,
+        range: usesGrowthAxis ? growthRange : (chartMax > 0 ? [0, chartMax * 1.34] : undefined),
       },
-      hovermode: mode === "breakdown" ? "x unified" : "closest",
+      barmode: isStacked ? "stack" : (useBars ? "group" : undefined),
+      bargap: dynamicBarGap,
+      bargroupgap: 0.04,
+      annotations: growthAnnotations,
+      hovermode: "closest",
       hoverlabel: {
         bgcolor: "#ffffff",
         bordercolor: "#d9d4cc",
@@ -4796,6 +7138,200 @@ function drawPerformanceRevenueTrend(categoryId, products) {
       },
     },
   );
+}
+
+function drawQuarterComparison(categoryId, products) {
+  const option = categoryOverviewMetricOption(categoryId, "trend");
+  const selectedIds = new Set(categoryTrendSelectedProductIds(categoryId, products));
+  const selectedProducts = products.filter((product) => selectedIds.has(product.id));
+  const selectedGeos = Array.isArray(state.categoryTrendGeos[categoryId]) ? state.categoryTrendGeos[categoryId] : [];
+  const source = selectedGeos.length ? (data.geoMetrics || []) : data.productMetrics;
+  const selectedSegment = categoryOverviewSegment(categoryId, "trend");
+  const quarterExpanded = state.expandedTrendChart === "quarter";
+  // Compact cards always retain the uncluttered FY2526/FY2627 grouped view.
+  // A saved stacked preference is applied only inside the expanded chart.
+  const mode = quarterExpanded && quarterComparisonMode(categoryId) === "stacked" ? "stacked" : "overall";
+  const rows = source.filter((row) =>
+    categoryMatchesOverview(row, categoryId)
+    && selectedIds.has(row.modelId)
+    && rowMatchesActiveDetailPn(row)
+    && rowMatchesDetailPanelPn(row, "trend")
+    && (selectedGeos.length === 0 || selectedGeos.includes(row.geo || "Unassigned"))
+    && rowMatchesCategorySegment(row, selectedSegment)
+    && ["FY2526", "FY2627"].includes(row.fiscalYear),
+  );
+  const quarters = ["Total", "Q1", "Q2", "Q3", "Q4"];
+  const totals = (year) => quarters.map((quarter) => {
+    if (quarter === "Total") {
+      const matching = rows.filter((row) => row.fiscalYear === year);
+      return matching.length ? categoryMetricTotal(matching, option.field) : null;
+    }
+    const matching = rows.filter((row) => row.fiscalYear === year && row.fiscalQuarter === quarter);
+    return matching.length ? categoryMetricTotal(matching, option.field) : null;
+  });
+  const prior = totals("FY2526");
+  const current = totals("FY2627");
+  const aggregateMax = Math.max(0, ...prior.filter(Number.isFinite), ...current.filter(Number.isFinite));
+  const quarterPlotWidth = document.querySelector("#quarterComparisonPlot")?.clientWidth || window.innerWidth;
+  const quarterCompact = !quarterExpanded && quarterPlotWidth < 900;
+  const horizontalMargin = quarterExpanded ? 84 : (quarterPlotWidth < 600 ? 54 : 68);
+  const quarterPlotHeight = quarterExpanded ? 620 : (quarterPlotWidth < 600 ? 320 : 340);
+  const plotAreaWidth = Math.max(280, quarterPlotWidth - (horizontalMargin * 2));
+  const quarterBarGap = quarterExpanded ? 0.36 : 0.3;
+  // Plotly places the two offset groups at +/- one quarter of the usable
+  // category width. Match that center exactly for every YoY annotation.
+  const groupedBarOffset = Math.max(14, Math.min(82, (plotAreaWidth / quarters.length) * ((1 - quarterBarGap) / 4)));
+  const valueFontSize = quarterExpanded ? 11 : (quarterCompact ? 8 : 9);
+  const growthFontSize = quarterExpanded ? 11 : (quarterCompact ? 8 : 9);
+  const formatQuarterValue = (value) => {
+    if (value === null) return "";
+    if (quarterExpanded) return categoryMetricDisplay(value, true, option);
+    if (option.kind === "quantity") {
+      const absolute = Math.abs(value);
+      if (absolute >= 1_000_000) return `${(value / 1_000_000).toFixed(2)}M`;
+      if (absolute >= 1_000) return `${(value / 1_000).toFixed(absolute >= 100_000 ? 0 : 1)}K`;
+      return fmtExactNumber(value);
+    }
+    const absolute = Math.abs(value);
+    if (absolute >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+    if (absolute >= 1_000) return `$${(value / 1_000).toFixed(absolute >= 100_000 ? 0 : 1)}K`;
+    return fmtExactCurrency(value);
+  };
+  const isMinorCompactValue = (value) => quarterCompact && aggregateMax > 0 && Math.abs(Number(value)) < aggregateMax * 0.01;
+  const visibleValue = (value) => value !== null && Number(value) !== 0 && !isMinorCompactValue(value);
+  const valueAnnotations = quarters.flatMap((quarter, index) => {
+    const priorValue = prior[index];
+    const currentValue = current[index];
+    const closePair = !quarterExpanded
+      && Number(priorValue) > 0
+      && Number(currentValue) > 0
+      && aggregateMax > 0
+      && Math.abs(Number(priorValue) - Number(currentValue)) < aggregateMax * 0.07;
+    const priorShift = closePair && Number(priorValue) > Number(currentValue) ? 18 : 3;
+    const currentShift = closePair && Number(currentValue) >= Number(priorValue) ? 18 : 3;
+    const labels = [];
+    if (visibleValue(priorValue)) labels.push({
+      x: quarter,
+      y: priorValue,
+      xshift: -groupedBarOffset,
+      yshift: priorShift,
+      yanchor: "bottom",
+      text: formatQuarterValue(priorValue),
+      showarrow: false,
+      font: { size: valueFontSize, color: "#1f2328" },
+    });
+    if (visibleValue(currentValue)) labels.push({
+      x: quarter,
+      y: currentValue,
+      xshift: groupedBarOffset,
+      yshift: currentShift,
+      yanchor: "bottom",
+      text: formatQuarterValue(currentValue),
+      showarrow: false,
+      font: { size: valueFontSize, color: "#1f2328" },
+    });
+    return labels;
+  });
+  const growthAnnotations = current.map((value, index) => {
+    if (value === null || !Number(prior[index])) return null;
+    const growth = ((value - prior[index]) / Math.abs(prior[index])) * 100;
+    const positive = growth >= 0;
+    const closePair = !quarterExpanded
+      && aggregateMax > 0
+      && Math.abs(Number(value) - Number(prior[index])) < aggregateMax * 0.07;
+    const currentValueShift = closePair && Number(value) >= Number(prior[index]) ? 18 : 3;
+    const growthAnchorValue = Number(value);
+    const growthText = `${growth >= 0 ? "+" : ""}${growth.toFixed(1)}%`;
+    const tailoredGrowthFontSize = growthText.length >= 8
+      ? Math.max(7, growthFontSize - 1)
+      : growthFontSize;
+    const growthGap = mode === "stacked"
+      ? 6
+      : visibleValue(value)
+        ? currentValueShift + valueFontSize + (quarterExpanded ? 9 : 7)
+        : 4;
+    const sameQuarterLabelLift = !quarterExpanded
+      && visibleValue(prior[index])
+      && visibleValue(value)
+      && aggregateMax > 0
+      && Math.abs(Number(value) - Number(prior[index])) < aggregateMax * 0.12
+      ? 35
+      : 0;
+    return {
+      x: quarters[index],
+      y: growthAnchorValue,
+      xshift: groupedBarOffset,
+      yshift: growthGap + sameQuarterLabelLift,
+      xanchor: "center",
+      yanchor: "bottom",
+      text: `<b>${growthText}</b>`, showarrow: false,
+      bgcolor: positive ? "#e5f5e9" : "#fde8e7", bordercolor: positive ? "#a8d9b5" : "#efb0ac",
+      borderwidth: 1, borderpad: quarterExpanded ? 3 : 1, font: { size: tailoredGrowthFontSize, color: positive ? "#087a3e" : "#d92d20" },
+    };
+  }).filter(Boolean);
+  const annotations = mode === "stacked" ? growthAnnotations : [...valueAnnotations, ...growthAnnotations];
+  const formatValues = (values) => values.map((value) => value === null ? "" : categoryMetricDisplay(value, true, option));
+  const productTotals = (productId, year) => quarters.map((quarter) => {
+    const matching = rows.filter((row) => row.modelId === productId && row.fiscalYear === year && (quarter === "Total" || row.fiscalQuarter === quarter));
+    return matching.length ? categoryMetricTotal(matching, option.field) : 0;
+  });
+  let allTraces;
+  if (mode === "stacked") {
+    const stackItems = state.productId
+      ? unique(rows.map((row) => row.partNumber).filter(Boolean)).map((pn) => ({
+          id: pn,
+          name: pn,
+          totals: (year) => quarters.map((quarter) => {
+            const matching = rows.filter((row) => row.partNumber === pn && row.fiscalYear === year && (quarter === "Total" || row.fiscalQuarter === quarter));
+            return matching.length ? categoryMetricTotal(matching, option.field) : 0;
+          }),
+        }))
+      : selectedProducts.map((product) => ({ id: product.id, name: product.name, totals: (year) => productTotals(product.id, year) }));
+    const priorLayerColors = ["#9ecae1", "#83b9d6", "#69a8ca", "#4f96bd", "#3784af", "#25719d", "#155f89", "#0b4d72"];
+    const currentLayerColors = ["#b95c7d", "#a94d70", "#993f64", "#893257", "#79264b", "#691b40", "#581236", "#470a2b"];
+    allTraces = stackItems.flatMap((item, index) => {
+      const productPrior = item.totals("FY2526");
+      const productCurrent = item.totals("FY2627");
+      return [
+        {
+          x: quarters, y: productPrior, type: "bar",
+          name: "FY2526", legendgroup: "FY2526", showlegend: index === 0,
+          offsetgroup: "FY2526", alignmentgroup: "quarter-comparison",
+          marker: { color: priorLayerColors[index % priorLayerColors.length], line: { color: "rgba(255,255,255,.72)", width: 0.7 } },
+          customdata: formatValues(productPrior),
+          hovertemplate: `<b>${escapeHtml(item.name)}</b><br>FY2526 %{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
+        },
+        {
+          x: quarters, y: productCurrent, type: "bar",
+          name: "FY2627", legendgroup: "FY2627", showlegend: index === 0,
+          offsetgroup: "FY2627", alignmentgroup: "quarter-comparison",
+          marker: { color: currentLayerColors[index % currentLayerColors.length], line: { color: "rgba(255,255,255,.72)", width: 0.7 } },
+          customdata: formatValues(productCurrent),
+          hovertemplate: `<b>${escapeHtml(item.name)}</b><br>FY2627 %{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
+        },
+      ];
+    });
+  } else {
+    allTraces = [
+      { x: quarters, y: prior, type: "bar", name: "FY2526", marker: { color: overviewPalette[3] }, customdata: formatValues(prior), hovertemplate: `%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra>FY2526</extra>` },
+      { x: quarters, y: current, type: "bar", name: "FY2627", marker: { color: overviewPalette[2] }, customdata: formatValues(current), hovertemplate: `%{x}<br>${escapeHtml(option.label)}: %{customdata}<extra>FY2627</extra>` },
+    ];
+  }
+  const maxValue = mode === "stacked"
+    ? Math.max(0, ...quarters.map((_, quarterIndex) => Math.max(
+        allTraces.filter((trace) => trace.offsetgroup === "FY2526").reduce((sum, trace) => sum + Number(trace.y[quarterIndex] || 0), 0),
+        allTraces.filter((trace) => trace.offsetgroup === "FY2627").reduce((sum, trace) => sum + Number(trace.y[quarterIndex] || 0), 0),
+      )))
+    : Math.max(0, ...allTraces.flatMap((trace) => trace.y.filter(Number.isFinite)));
+  drawPlot("quarterComparisonPlot", allTraces, {
+    // "stack" + offsetgroup creates two side-by-side year stacks. Using
+    // "relative" collapses both fiscal years into one mixed column.
+    height: quarterPlotHeight, barmode: mode === "stacked" ? "stack" : "group", bargap: quarterBarGap, bargroupgap: 0.05, annotations,
+    margin: { l: horizontalMargin, r: horizontalMargin, t: quarterExpanded ? 76 : 58, b: quarterExpanded ? 74 : 62 }, showlegend: true,
+    legend: { orientation: "h", x: 0.5, xanchor: "center", y: quarterExpanded ? 1.12 : 1.14, yanchor: "bottom", groupclick: "togglegroup", font: { size: quarterExpanded ? 13 : 11 } },
+    xaxis: { title: { text: "Fiscal Quarter", standoff: quarterExpanded ? 28 : 22, font: { size: quarterExpanded ? 14 : 12 } }, tickfont: { size: quarterExpanded ? 13 : 11 }, automargin: false, range: [-0.58, 4.58] },
+    yaxis: { title: { text: option.kind === "quantity" ? option.label : `${option.label} (USD)`, font: { size: quarterExpanded ? 14 : 12 }, standoff: 14 }, tickfont: { size: quarterExpanded ? 12 : 10 }, range: maxValue ? [0, maxValue * (quarterExpanded ? 1.28 : 1.38)] : undefined, rangemode: "tozero", automargin: false },
+  });
 }
 
 function drawProductSharePie(id, summaries, field, label) {
@@ -5191,62 +7727,58 @@ function renderLaunchTable(categoryId) {
 function renderProductDetail(productId) {
   const product = indexes.products.get(productId);
   const category = indexes.categories.get(product.categoryId);
-  const variants = data.catalog.variants.filter((variant) => variant.modelId === productId);
-  const partNumbers = product.partNumbers || variants.map((variant) => variant.partNumber || variant.name);
-  const selectedPartNumber = state.partNumber === "all" || partNumbers.includes(state.partNumber) ? state.partNumber : "all";
-  state.partNumber = selectedPartNumber;
-  if (!["segment", "product", "competitor", "user"].includes(state.dimension)) state.dimension = "segment";
-  const detailKpis = renderDetailKpis(product, selectedPartNumber);
-
+  state.partNumber = "all";
   app.innerHTML = `
-    <div class="detail-shell" style="--accent:${category.accent}">
-      <section class="detail-head">
-        <div>
-          <p class="eyebrow">${escapeHtml(category.label)} · Product Detail</p>
-          <h1>${escapeHtml(product.name)}</h1>
-          <p>${escapeHtml(productDetailSubtitle(product))}</p>
+    <div class="detail-shell product-overview-detail" style="--accent:${category.accent}">
+      <div class="product-detail-toolbar"><button class="ghost-button product-detail-back" type="button" data-route-category="${category.id}" data-route-view="products">← Product List</button></div>
+      <section class="product-detail-overview-hero">
+        <div class="product-detail-overview-copy">
+          <div class="product-detail-title-row"><div><p class="eyebrow">${escapeHtml(category.label)} · Product Detail</p><h1>${escapeHtml(product.name)}</h1></div></div>
+          <div class="product-detail-kpis">${categoryHeroKpis(product.categoryId, [product]).map((item) => `<article class="category-comparison-kpi power-kpi-card ${item.trend.isUp ? "is-up" : "is-down"}"><header><span>${escapeHtml(item.label)}</span><p><span aria-hidden="true">${item.trend.isUp ? "↑" : "↓"}</span>${escapeHtml(item.trend.text)} ${escapeHtml(item.suffix)}</p></header><div class="category-comparison-values"><section><small>${escapeHtml(item.currentLabel)}</small><strong>${formatCategoryRevenueM(item.amount)}</strong></section><section><small>${escapeHtml(item.priorLabel)}</small><strong>${formatCategoryRevenueM(item.priorAmount)}</strong></section></div></article>`).join("")}</div>
         </div>
-        <div class="toolbar-group">
-          <button class="ghost-button" type="button" data-route-category="${category.id}">← ${escapeHtml(category.label)}</button>
-          ${renderGranularityButtons(state.detailGranularity, "detail")}
-        </div>
-      </section>
-
-      <section class="detail-hero">
-        <div class="detail-panel">
-          <div class="spec-grid">
-            ${renderSpecItems(product).join("")}
-          </div>
-        </div>
-        <div class="detail-panel">
-          <div class="dimension-row">
-            <div>
-              <span class="metric-label">Dimension</span>
-              <h3>${dimensionLabels[state.dimension]}</h3>
-            </div>
-            <div class="segmented">
-              ${Object.entries(dimensionLabels)
-                .map(
-                  ([key, label]) =>
-                    `<button type="button" class="${state.dimension === key ? "is-active" : ""}" data-action="dimension" data-dimension="${key}">${escapeHtml(label.split(" ")[0])}</button>`,
-                )
-                .join("")}
-            </div>
-          </div>
-          ${renderDetailSelector(product, partNumbers, selectedPartNumber)}
+        <div class="product-detail-overview-media">
+          <img src="${escapeAttr(productImageItems(product)[0]?.src || "")}" alt="${escapeAttr(product.name)}">
         </div>
       </section>
-
-      <section class="kpi-grid">
-        ${detailKpis}
+      <section class="module-block category-performance-content">
+        <div class="module-head performance-contribution-head"><span>Overview Module</span><h2>Time Trend</h2></div>
+        <div class="time-trend-grid">${renderQuarterComparisonPanel(product.categoryId, "trend")}${renderPerformanceRevenueTrendPanel(product.categoryId, [product], "trend")}</div>
+        <div class="module-head performance-contribution-head"><span>Overview Module</span><h2>Product Contribution</h2></div>
+        ${renderProductPnContributionPanel(product)}
       </section>
-
-      <section class="detail-grid" id="detailCharts"></section>
+      <section class="module-block"><div class="module-head"><span>Overview Module</span><h2>Geo Contribution</h2></div>${renderCategoryGeoContribution(product.categoryId, [product])}</section>
     </div>
   `;
-
-  renderDetailCharts(product, selectedPartNumber);
+  drawQuarterComparison(product.categoryId, [product]);
+  drawPerformanceRevenueTrend(product.categoryId, [product]);
+  drawProductPnContribution(product);
+  drawCategoryGeoContribution(product.categoryId, [product]);
 }
+
+function renderProductPnContributionPanel(product) {
+  const expanded = state.expandedTrendChart === "product-pn-contribution";
+  const geos = unique((data.geoMetrics || []).filter((row) => row.modelId === product.id).map((row) => row.geo || "Unassigned")).sort();
+  const selectedGeo = state.categoryContributionGeo[product.categoryId] || "all";
+  return `<article class="performance-contribution-panel ${expanded ? "is-chart-expanded" : ""}"><header><div><span>Ship Rev</span><h3>${escapeHtml(product.name)} Contribution <small>by PN</small></h3></div><div class="performance-contribution-controls">${renderCategorySegmentControl(product.categoryId, "contribution")}<label class="performance-contribution-geo-select has-geo-icon"><span class="geo-globe-icon" aria-hidden="true"></span><select data-action="category-contribution-geo" data-category-id="${escapeAttr(product.categoryId)}" aria-label="Contribution Geo"><option value="all" ${selectedGeo === "all" ? "selected" : ""}>All Geos</option>${geos.map((geo) => `<option value="${escapeAttr(geo)}" ${selectedGeo === geo ? "selected" : ""}>${escapeHtml(displayLocationLabel(geo))}</option>`).join("")}</select></label>${renderDetailPnSelector("contribution")}${renderCategoryMetricSettings(product.categoryId, "contribution")}${renderOverviewExpandButton("product-pn-contribution", "PN contribution")}</div></header><div class="product-pn-contribution-layout"><div id="productPnContributionPlot" class="performance-contribution-plot"></div><aside id="productPnContributionLegend" class="product-pn-segment-legend" aria-label="PN legend by segment"></aside></div></article>`;
+}
+
+function drawProductPnContribution(product) {
+  const option = categoryOverviewMetricOption(product.categoryId, "contribution");
+  const period = categoryPerformancePeriod(product.categoryId, [product]);
+  const segment = categoryOverviewSegment(product.categoryId, "contribution");
+  const selectedGeo = state.categoryContributionGeo[product.categoryId] || "all";
+  const source = selectedGeo === "all" ? data.productMetrics : (data.geoMetrics || []).filter((row) => (row.geo || "Unassigned") === selectedGeo);
+  const rows = categoryOverviewRowsForPeriod(product.categoryId, [product.id], period, false, source).filter((row) => rowMatchesCategorySegment(row, segment) && rowMatchesDetailPanelPn(row, "contribution"));
+  const totals = new Map();
+  rows.forEach((row) => { const pn = row.partNumber || "Unassigned PN"; totals.set(pn, (totals.get(pn) || 0) + Number(row[option.field] || 0)); });
+  const items = [...totals.entries()].map(([pn, value]) => ({ pn, value, segment: detailPnSegment(pn) })).filter((item) => item.value > 0).sort((a, b) => b.value - a.value);
+  const colors = items.map((_, index) => overviewPalette[index % overviewPalette.length]);
+  drawPlot("productPnContributionPlot", items.length ? [{ labels: items.map((item) => item.pn), values: items.map((item) => item.value), type: "pie", hole: 0.54, textinfo: "percent", textposition: "inside", insidetextorientation: "horizontal", marker: { colors }, hovertemplate: `<b>%{label}</b><br>${escapeHtml(option.label)}: %{value:,.2f}<br>%{percent}<extra></extra>` }] : [], { height: expandedPlotHeight("product-pn-contribution", 280), margin: { l: 24, r: 24, t: 12, b: 12 }, showlegend: false, uniformtext: { minsize: 9, mode: "hide" } });
+  const legend = document.querySelector("#productPnContributionLegend");
+  if (legend) legend.innerHTML = ["Consumer", "Commercial"].map((segment) => `<section><h4>${segment}</h4>${items.filter((item) => item.segment === segment).map((item) => { const index = items.indexOf(item); return `<div><i style="--pn-color:${colors[index]}"></i><span>${escapeHtml(item.pn)}</span></div>`; }).join("") || `<p>No PN</p>`}</section>`).join("");
+}
+
+function expandedPlotHeight(chart, fallback) { return state.expandedTrendChart === chart ? 620 : fallback; }
 
 function productDetailSubtitle(product) {
   const attrs = product.attributes;
@@ -6690,21 +9222,47 @@ function renderGranularityButtons(active, scope) {
 function ensureSelectedCategoryPeriods() {
   const options = getPeriodOptions("quarter");
   const valid = state.selectedCategoryPeriods.filter((period) => options.includes(period));
-  if (!valid.length) {
-    const fallback = options.includes(state.selectedPeriod.category)
-      ? state.selectedPeriod.category
-      : options.at(-1);
-    state.selectedCategoryPeriods = fallback ? [fallback] : [];
-  } else {
-    state.selectedCategoryPeriods = sortedPeriods(valid);
-  }
+  state.selectedCategoryPeriods = sortedPeriods(valid);
   if (state.selectedCategoryPeriods.length) {
     state.selectedPeriod.category = state.selectedCategoryPeriods.at(-1);
+  } else {
+    state.selectedPeriod.category = null;
   }
   return state.selectedCategoryPeriods;
 }
 
+function monthsForFiscalQuarter(period) {
+  const parsed = parseFiscalPeriodLabel(period);
+  if (!parsed?.fiscalQuarter) return [];
+  return (data.catalog?.periodMeta || [])
+    .filter((item) => item.fiscalYear === parsed.fiscalYear && item.fiscalQuarter === parsed.fiscalQuarter)
+    .map((item) => item.monthLabel || item.date?.slice(0, 7))
+    .filter(Boolean);
+}
+
+function quartersForFiscalYear(fiscalYear) {
+  return getPeriodOptions("quarter").filter((period) => parseFiscalPeriodLabel(period)?.fiscalYear === fiscalYear);
+}
+
+function monthsForFiscalYear(fiscalYear) {
+  return (data.catalog?.periodMeta || [])
+    .filter((item) => item.fiscalYear === fiscalYear)
+    .map((item) => item.monthLabel || item.date?.slice(0, 7))
+    .filter(Boolean);
+}
+
+function activeGlobalTimeValues() {
+  if (state.granularity === "year") return state.selectedCategoryYears || [];
+  if (state.granularity === "month") return state.selectedCategoryMonths || [];
+  return ensureSelectedCategoryPeriods();
+}
+
+function hasActiveGlobalTime() {
+  return activeGlobalTimeValues().length > 0;
+}
+
 function selectedCategoryPeriodsLabel(periods) {
+  if (!periods.length) return "No time selected";
   const parsed = periods.map(parseFiscalPeriodLabel).filter(Boolean);
   const fiscalYears = [...new Set(parsed.map((period) => period.fiscalYear))];
   if (periods.length === 1) return periods[0];
@@ -6764,6 +9322,7 @@ function ensureSelectedPeriod(scope, granularity) {
 
 function selectedPeriod(scope = "category") {
   const granularity = scope === "detail" ? state.detailGranularity : state.granularity;
+  if (scope === "category") return activeGlobalTimeValues().at(-1) || null;
   return ensureSelectedPeriod(scope, granularity);
 }
 
@@ -6844,18 +9403,40 @@ function updateSummaryProductCheckboxSelection(stateKey, modelId, checked) {
   setSummaryProductSelection(stateKey, state.categoryId, fallbackIds.filter((id) => current.has(id)));
 }
 
+function handleAdapterLogoPointerDown(event) {
+  const wall = event.target.closest(".adapter-logo-wall");
+  if (!wall || event.button !== 0 || event.target.closest("button, a")) return;
+  adapterLogoDrag = { wall, startX: event.clientX, scrollLeft: wall.scrollLeft, moved: false };
+  wall.setPointerCapture?.(event.pointerId);
+  const move = (moveEvent) => {
+    if (!adapterLogoDrag) return;
+    const delta = moveEvent.clientX - adapterLogoDrag.startX;
+    if (Math.abs(delta) > 5) adapterLogoDrag.moved = true;
+    adapterLogoDrag.wall.scrollLeft = adapterLogoDrag.scrollLeft - delta;
+  };
+  const end = () => {
+    adapterLogoDrag = null;
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", end);
+    window.removeEventListener("pointercancel", end);
+  };
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", end, { once: true });
+  window.addEventListener("pointercancel", end, { once: true });
+}
+
 function selectedOptionValues(select) {
   return Array.from(select.selectedOptions || []).map((option) => option.value);
 }
 
 function handleClick(event) {
-  const button = event.target.closest("button");
+  const button = event.target.closest("button, [data-route-category][data-route-product]");
   if (!button) return;
 
   const routeCategory = button.dataset.routeCategory;
   if (routeCategory) {
     state.homeView = "landing";
-    if (!button.dataset.routeProduct) state.categoryView = button.dataset.routeView || "market";
+    if (!button.dataset.routeProduct) state.categoryView = button.dataset.routeView || "overview";
     routeTo(routeCategory, button.dataset.routeProduct);
     return;
   }
@@ -6868,15 +9449,49 @@ function handleClick(event) {
     routeTo();
   } else if (action === "power-overall") {
     state.homeView = "overall";
-    renderHome();
+    routeTo();
     window.scrollTo({ top: 0, behavior: "instant" });
   } else if (action === "power-home") {
     state.homeView = "landing";
     renderHome();
     window.scrollTo({ top: 0, behavior: "instant" });
+  } else if (action === "global-time-tab") {
+    state.globalTimeTab = ["year", "quarter", "month"].includes(button.dataset.timeTab) ? button.dataset.timeTab : "quarter";
+    state.globalTimeMenuOpen = true;
+    render();
+  } else if (action === "trend-chart-expand") {
+    state.expandedTrendChart = state.expandedTrendChart === button.dataset.chart ? null : button.dataset.chart;
+    render();
+  } else if (action === "category-geo-chart-mode") {
+    state.categoryGeoChartModes[button.dataset.chart] = button.dataset.mode === "bar" ? "bar" : "pie";
+    render();
+  } else if (action === "detail-pn-all") {
+    const panel = button.dataset.panel;
+    const key = detailPanelPnKey(panel);
+    const eligible = detailEligiblePns(panel);
+    const selected = detailSelectedPns(panel);
+    state.detailPanelPns[key] = selected.length === eligible.length ? [] : [...eligible];
+    render();
   } else if (action === "category-view") {
     state.categoryView = button.dataset.view;
     render();
+  } else if (action === "competitor-adapter-core") {
+    state.competitorDbFilters.adapter = { ...(state.competitorDbFilters.adapter || {}), band: "100–139W", port: "multi" };
+    render();
+  } else if (action === "competitor-db-reset") {
+    state.competitorDbFilters[state.categoryId] = state.categoryId === "power_bank" ? { verification: "confirmed" } : {};
+    render();
+  } else if (action === "adapter-brand-cloud") {
+    state.adapterCompetitiveBrand = button.dataset.brand;
+    render();
+  } else if (action === "competitor-db-brand-cloud") {
+    state.competitorDbBrand[state.categoryId] = button.dataset.brand;
+    render();
+  } else if (action === "competitive-brand-focus") {
+    const card = document.getElementById(`company-${button.dataset.brand}`);
+    if (card) {
+      card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   } else if (action === "module-view") {
     if (state.categoryView === "market") state.marketModule = button.dataset.module;
     render();
@@ -6930,24 +9545,63 @@ function handleClick(event) {
     state.selectedModels[state.categoryId] = new Set(visible.map((product) => product.id));
     render();
   } else if (action === "category-overview-product-all") {
-    state.categoryProductSelectorOpen = true;
-    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
-    const selectedIds = categoryOverviewSelectedProductIds(state.categoryId, products);
-    if (selectedIds.length === products.length) state.categoryOverviewProducts[state.categoryId] = [];
-    else delete state.categoryOverviewProducts[state.categoryId];
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
+    const selectedIds = categoryOverviewSelectedProductIds(categoryId, products);
+    if (selectedIds.length === products.length) state.categoryOverviewProducts[categoryId] = [];
+    else delete state.categoryOverviewProducts[categoryId];
+    render();
+  } else if (action === "category-geo-product-all") {
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
+    const selectedIds = categoryGeoSelectedProductIds(categoryId, products);
+    if (selectedIds.length === products.length) state.categoryGeoProducts[categoryId] = [];
+    else delete state.categoryGeoProducts[categoryId];
+    render();
+  } else if (action === "category-geo-metric") {
+    state.categoryGeoMetric[button.dataset.categoryId || state.categoryId] = button.dataset.metric;
     render();
   } else if (action === "category-trend-product-all") {
+    const categoryId = button.dataset.categoryId || state.categoryId;
     state.categoryTrendProductSelectorOpen = true;
-    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
-    const selectedIds = categoryTrendSelectedProductIds(state.categoryId, products);
-    if (selectedIds.length === products.length) state.categoryTrendProducts[state.categoryId] = [];
-    else delete state.categoryTrendProducts[state.categoryId];
+    const products = overviewProductsForCategory(categoryId);
+    const selectedIds = categoryTrendSelectedProductIds(categoryId, products);
+    if (selectedIds.length === products.length) state.categoryTrendProducts[categoryId] = [];
+    else delete state.categoryTrendProducts[categoryId];
+    render();
+  } else if (action === "category-trend-geo-all") {
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    state.categoryTrendGeos[categoryId] = [];
+    state.categoryTrendGeoMenuOpen = true;
+    render();
+  } else if (action === "category-trend-period-all") {
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
+    const productIds = new Set(products.map((product) => product.id));
+    const available = sortedPeriods([...new Set(data.productMetrics.filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId)).map((row) => `${row.fiscalYear} ${row.fiscalQuarter}`))]);
+    const current = Array.isArray(state.categoryTrendPeriods[categoryId]) ? state.categoryTrendPeriods[categoryId] : defaultCategoryTrendPeriods(available);
+    state.categoryTrendPeriods[categoryId] = current.length === available.length ? [] : [...available];
+    state.categoryTrendPeriodMenuOpen = true;
     render();
   } else if (action === "category-overview-metric") {
-    state.categoryOverviewMetrics[`${state.categoryId}:${button.dataset.panel}`] = button.dataset.metric;
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    state.categoryOverviewMetrics[`${categoryId}:${button.dataset.panel}`] = button.dataset.metric;
+    render();
+  } else if (action === "category-overview-segment") {
+    const segment = ["Consumer", "Commercial"].includes(button.dataset.segment) ? button.dataset.segment : "all";
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    state.categoryOverviewSegments[`${categoryId}:${button.dataset.panel}`] = segment;
+    render();
+  } else if (action === "category-contribution-segment") {
+    state.categoryContributionSegment[state.categoryId] = ["Consumer", "Commercial"].includes(button.dataset.segment) ? button.dataset.segment : "all";
     render();
   } else if (action === "category-trend-mode") {
-    state.categoryTrendMode[state.categoryId] = button.dataset.trendMode === "breakdown" ? "breakdown" : "overall";
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    state.categoryTrendMode[categoryId] = ["breakdown", "stacked"].includes(button.dataset.trendMode) ? button.dataset.trendMode : "overall";
+    render();
+  } else if (action === "quarter-comparison-mode") {
+    const categoryId = button.dataset.categoryId || state.categoryId;
+    state.quarterComparisonMode[quarterComparisonStateKey(categoryId)] = button.dataset.trendMode === "stacked" ? "stacked" : "overall";
     render();
   } else if (action === "dimension") {
     state.dimension = button.dataset.dimension;
@@ -7046,13 +9700,185 @@ function industrySlideTotal(carouselId) {
 
 function handleChange(event) {
   const target = event.target;
-  if (target.dataset.action === "contribution-geo-select") {
-    state.categoryContributionGeo[state.categoryId] = target.value;
+  if (target.dataset.action === "adapter-competitor-filter") {
+    const module = target.dataset.module;
+    state.adapterCompetitiveFilters[module] ||= {};
+    state.adapterCompetitiveFilters[module][target.dataset.key] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action?.startsWith("competitor-db-")) {
+    const key = target.dataset.action.replace("competitor-db-", "");
+    state.competitorDbFilters[state.categoryId] ||= {};
+    state.competitorDbFilters[state.categoryId][key] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "detail-part-number-select") {
+    state.partNumber = target.value || "all";
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-overview-segment-select") {
+    const categoryId = target.dataset.categoryId || state.categoryId;
+    const segment = ["Consumer", "Commercial"].includes(target.value) ? target.value : "all";
+    state.categoryOverviewSegments[`${categoryId}:${target.dataset.panel}`] = segment;
+    if (state.productId) delete state.detailPanelPns[detailPanelPnKey(target.dataset.panel)];
+    render();
+    return;
+  }
+  if (target.dataset.action === "detail-pn-select") {
+    const panel = target.dataset.panel;
+    const key = detailPanelPnKey(panel);
+    const selected = new Set(detailSelectedPns(panel));
+    if (target.checked) selected.add(target.value); else selected.delete(target.value);
+    state.detailPanelPns[key] = detailEligiblePns(panel).filter((pn) => selected.has(pn));
+    render();
+    return;
+  }
+  if (target.dataset.action === "global-time-month") {
+    state.granularity = "month";
+    state.globalTimeTab = "month";
+    const months = new Set(state.selectedCategoryMonths || []);
+    if (target.checked) months.add(target.value); else months.delete(target.value);
+    state.selectedCategoryMonths = sortedPeriods([...months]);
+    state.selectedPeriod.category = state.selectedCategoryMonths.at(-1) || null;
+    state.globalTimeMenuOpen = true;
+    render();
+    return;
+  }
+  if (target.dataset.action === "global-time-quarter") {
+    state.granularity = "quarter";
+    state.globalTimeTab = "quarter";
+    const current = new Set(ensureSelectedCategoryPeriods());
+    if (target.checked) current.add(target.value); else current.delete(target.value);
+    state.selectedCategoryPeriods = sortedPeriods([...current]);
+    const months = new Set(state.selectedCategoryMonths || []);
+    monthsForFiscalQuarter(target.value).forEach((month) => target.checked ? months.add(month) : months.delete(month));
+    state.selectedCategoryMonths = sortedPeriods([...months]);
+    state.selectedPeriod.category = state.selectedCategoryPeriods.at(-1) || null;
+    state.globalTimeMenuOpen = true;
+    render();
+    return;
+  }
+  if (target.dataset.action === "global-time-year") {
+    state.granularity = "year";
+    state.globalTimeTab = "year";
+    const years = new Set(state.selectedCategoryYears || []);
+    const quarters = new Set(ensureSelectedCategoryPeriods());
+    const months = new Set(state.selectedCategoryMonths || []);
+    if (target.checked) years.add(target.value); else years.delete(target.value);
+    quartersForFiscalYear(target.value).forEach((period) => target.checked ? quarters.add(period) : quarters.delete(period));
+    monthsForFiscalYear(target.value).forEach((month) => target.checked ? months.add(month) : months.delete(month));
+    state.selectedCategoryYears = sortedPeriods([...years]);
+    state.selectedCategoryPeriods = sortedPeriods([...quarters]);
+    state.selectedCategoryMonths = sortedPeriods([...months]);
+    state.selectedPeriod.category = state.selectedCategoryYears.at(-1) || null;
+    state.globalTimeMenuOpen = true;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-geo-time-quarter") {
+    const current = new Set(categoryGeoSelectedPeriods(state.categoryId));
+    if (target.checked) current.add(target.value); else current.delete(target.value);
+    state.categoryGeoPeriods[state.categoryId] = sortedPeriods([...current]);
+    state.categoryGeoTimeMenuOpen = true;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-geo-time-year") {
+    const current = new Set(categoryGeoSelectedPeriods(state.categoryId));
+    ["Q1", "Q2", "Q3", "Q4"].forEach((quarter) => {
+      const period = `${target.value} ${quarter}`;
+      if (target.checked) current.add(period); else current.delete(period);
+    });
+    state.categoryGeoPeriods[state.categoryId] = sortedPeriods([...current]);
+    state.categoryGeoTimeMenuOpen = true;
+    render();
+    return;
+  }
+  if (target.dataset.action === "trend-series-all") {
+    const categoryId = target.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
+    const available = state.productId ? detailSelectedPns("trend") : categoryTrendSelectedProductIds(categoryId, products);
+    const visibleKey = state.productId ? `${categoryId}:${state.productId}` : categoryId;
+    state.categoryTrendVisibleSeries[visibleKey] = target.checked ? [...available] : [];
+    render();
+    return;
+  }
+  if (target.dataset.action === "trend-series-product") {
+    const categoryId = target.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
+    const available = state.productId ? detailSelectedPns("trend") : categoryTrendSelectedProductIds(categoryId, products);
+    const visible = [...document.querySelectorAll('input[data-action="trend-series-product"]:checked')].map((input) => input.value);
+    const visibleKey = state.productId ? `${categoryId}:${state.productId}` : categoryId;
+    state.categoryTrendVisibleSeries[visibleKey] = available.filter((id) => visible.includes(id));
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-ranking-geo") {
+    state.categoryRankingGeo[target.dataset.categoryId || state.categoryId] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "quarter-comparison-all") {
+    state.quarterComparisonYears[state.categoryId] = target.checked ? ["FY2526", "FY2627"] : [];
+    render();
+    return;
+  }
+  if (target.dataset.action === "quarter-comparison-year") {
+    let selected = state.quarterComparisonYears[state.categoryId] || ["FY2526", "FY2627"];
+    selected = target.checked ? [...new Set([...selected, target.value])] : selected.filter((year) => year !== target.value);
+    state.quarterComparisonYears[state.categoryId] = selected;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-trend-period") {
+    const categoryId = target.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
+    const productIds = new Set(products.map((product) => product.id));
+    const available = sortedPeriods([...new Set(data.productMetrics.filter((row) => categoryMatchesOverview(row, categoryId) && productIds.has(row.modelId)).map((row) => `${row.fiscalYear} ${row.fiscalQuarter}`))]);
+    let selected = Array.isArray(state.categoryTrendPeriods[categoryId]) ? [...state.categoryTrendPeriods[categoryId]] : defaultCategoryTrendPeriods(available);
+    if (target.checked) selected = [...new Set([...selected, target.value])];
+    else if (selected.length > 1) selected = selected.filter((period) => period !== target.value);
+    else { target.checked = true; return; }
+    state.categoryTrendPeriods[categoryId] = available.filter((period) => selected.includes(period));
+    state.categoryTrendPeriodMenuOpen = true;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-trend-geo") {
+    const categoryId = target.dataset.categoryId || state.categoryId;
+    let selected = Array.isArray(state.categoryTrendGeos[categoryId]) ? [...state.categoryTrendGeos[categoryId]] : [];
+    if (target.checked) selected = [...new Set([...selected, target.value])];
+    else selected = selected.filter((geo) => geo !== target.value);
+    state.categoryTrendGeos[categoryId] = selected;
+    state.categoryTrendGeoMenuOpen = true;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-contribution-geo") {
+    state.categoryContributionGeo[target.dataset.categoryId || state.categoryId] = target.value;
+    render();
+    return;
+  }
+  if (target.dataset.action === "category-geo-product") {
+    const categoryId = target.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
+    const availableIds = products.map((product) => product.id);
+    let selectedIds = Array.isArray(state.categoryGeoProducts[categoryId])
+      ? [...state.categoryGeoProducts[categoryId]]
+      : [...availableIds];
+    if (target.checked) selectedIds = [...new Set([...selectedIds, target.value])];
+    else selectedIds = selectedIds.filter((productId) => productId !== target.value);
+    const validIds = availableIds.filter((productId) => selectedIds.includes(productId));
+    if (validIds.length === availableIds.length) delete state.categoryGeoProducts[categoryId];
+    else state.categoryGeoProducts[categoryId] = validIds;
     render();
     return;
   }
   if (target.dataset.action === "category-geo-select") {
-    state.categoryGeoSelected[state.categoryId] = target.value;
+    state.categoryGeoSelected[target.dataset.categoryId || state.categoryId] = target.value;
     render();
     return;
   }
@@ -7062,11 +9888,11 @@ function handleChange(event) {
     return;
   }
   if (target.dataset.action === "category-overview-product") {
-    state.categoryProductSelectorOpen = true;
-    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
+    const categoryId = target.dataset.categoryId || state.categoryId;
+    const products = overviewProductsForCategory(categoryId);
     const availableIds = products.map((product) => product.id);
-    let selectedIds = Array.isArray(state.categoryOverviewProducts[state.categoryId])
-      ? [...state.categoryOverviewProducts[state.categoryId]]
+    let selectedIds = Array.isArray(state.categoryOverviewProducts[categoryId])
+      ? [...state.categoryOverviewProducts[categoryId]]
       : [...availableIds];
     if (target.checked) {
       selectedIds = [...new Set([...selectedIds, target.value])];
@@ -7074,17 +9900,18 @@ function handleChange(event) {
       selectedIds = selectedIds.filter((productId) => productId !== target.value);
     }
     const validIds = availableIds.filter((productId) => selectedIds.includes(productId));
-    if (validIds.length === availableIds.length) delete state.categoryOverviewProducts[state.categoryId];
-    else state.categoryOverviewProducts[state.categoryId] = validIds;
+    if (validIds.length === availableIds.length) delete state.categoryOverviewProducts[categoryId];
+    else state.categoryOverviewProducts[categoryId] = validIds;
     render();
     return;
   }
   if (target.dataset.action === "category-trend-product") {
+    const categoryId = target.dataset.categoryId || state.categoryId;
     state.categoryTrendProductSelectorOpen = true;
-    const products = data.catalog.products.filter((product) => product.categoryId === state.categoryId);
+    const products = overviewProductsForCategory(categoryId);
     const availableIds = products.map((product) => product.id);
-    let selectedIds = Array.isArray(state.categoryTrendProducts[state.categoryId])
-      ? [...state.categoryTrendProducts[state.categoryId]]
+    let selectedIds = Array.isArray(state.categoryTrendProducts[categoryId])
+      ? [...state.categoryTrendProducts[categoryId]]
       : [...availableIds];
     if (target.checked) {
       selectedIds = [...new Set([...selectedIds, target.value])];
@@ -7092,8 +9919,8 @@ function handleChange(event) {
       selectedIds = selectedIds.filter((productId) => productId !== target.value);
     }
     const validIds = availableIds.filter((productId) => selectedIds.includes(productId));
-    if (validIds.length === availableIds.length) delete state.categoryTrendProducts[state.categoryId];
-    else state.categoryTrendProducts[state.categoryId] = validIds;
+    if (validIds.length === availableIds.length) delete state.categoryTrendProducts[categoryId];
+    else state.categoryTrendProducts[categoryId] = validIds;
     render();
     return;
   }
@@ -7114,19 +9941,17 @@ function handleChange(event) {
   }
   if (target.dataset.action === "category-quarter-period") {
     const selectedPeriodValue = target.value;
-    const selectedFiscalYear = parseFiscalPeriodLabel(selectedPeriodValue)?.fiscalYear;
     let selected = ensureSelectedCategoryPeriods();
     if (target.checked) {
-      selected = selected.filter((period) => parseFiscalPeriodLabel(period)?.fiscalYear === selectedFiscalYear);
       if (!selected.includes(selectedPeriodValue)) selected.push(selectedPeriodValue);
-    } else if (selected.length > 1) {
-      selected = selected.filter((period) => period !== selectedPeriodValue);
     } else {
-      target.checked = true;
-      return;
+      selected = selected.filter((period) => period !== selectedPeriodValue);
     }
     state.selectedCategoryPeriods = sortedPeriods(selected);
-    state.selectedPeriod.category = state.selectedCategoryPeriods.at(-1);
+    const months = new Set(state.selectedCategoryMonths || []);
+    monthsForFiscalQuarter(selectedPeriodValue).forEach((month) => target.checked ? months.add(month) : months.delete(month));
+    state.selectedCategoryMonths = sortedPeriods([...months]);
+    state.selectedPeriod.category = state.selectedCategoryPeriods.at(-1) || null;
     state.categoryPeriodMenuOpen = true;
     render();
     return;
@@ -7553,6 +10378,7 @@ function weightedAvg(rows, valueFn, weightFn) {
 function periodKey(dateString, granularity) {
   const fiscal = fiscalMetaForDate(dateString);
   if (fiscal) {
+    if (granularity === "month") return fiscal.monthLabel || dateString.slice(0, 7);
     if (granularity === "year") return fiscal.yearLabel || fiscal.fiscalYear;
     if (granularity === "quarter") return fiscal.quarterLabel || `${fiscal.fiscalYear} ${fiscal.fiscalQuarter}`;
   }
