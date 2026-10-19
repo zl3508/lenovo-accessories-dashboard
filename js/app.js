@@ -14,7 +14,7 @@ const DATA_FILES = {
   adapterAssets: "data/adapter_product_assets.json",
 };
 
-const DATA_VERSION = "20261019-power-kpi-subtitles-v32";
+const DATA_VERSION = "20261019-quarter-dark-palette-v35";
 
 const state = {
   categoryId: null,
@@ -3627,7 +3627,6 @@ function competitorDbRows(categoryId) {
   const filters = state.competitorDbFilters[categoryId] || {};
   return (data.competitorDatabase?.products || []).filter((row) => {
     if (row.category !== category) return false;
-    if (categoryId === "power_cable" && !(competitorNumber(row.advertised_power_w) > 0)) return false;
     const pending = /pending/i.test(row.status || "");
     if (categoryId === "power_bank" && pending) return false;
     const bandValue = categoryId === "power_bank" ? competitorCapacityBand(row.capacity_mah) : competitorPowerBand(categoryId, row.advertised_power_w);
@@ -3649,7 +3648,7 @@ function competitorFilterSelect(action, label, value, options) {
 function renderCompetitorDatabaseAnalysis(categoryId) {
   const filters = state.competitorDbFilters[categoryId] || {};
   const rows = competitorDbRows(categoryId);
-  const total = (data.competitorDatabase?.products || []).filter((row) => row.category === competitorCategoryName[categoryId] && (categoryId !== "power_cable" || competitorNumber(row.advertised_power_w) > 0));
+  const total = (data.competitorDatabase?.products || []).filter((row) => row.category === competitorCategoryName[categoryId]);
   const bands = categoryId === "adapter"
     ? ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W", "Unknown"]
     : categoryId === "power_bank"
@@ -4698,6 +4697,20 @@ function renderPerformanceRevenueTrendPanel(categoryId, products, panel) {
   const visibleStored = state.categoryTrendVisibleSeries[visibleKey];
   const visibleSeries = Array.isArray(visibleStored) ? trendSeries.filter((item) => visibleStored.includes(item.id)).map((item) => item.id) : (rankedSeries[0] ? [rankedSeries[0].id] : []);
   const showSeriesLegend = categoryTrendMode(categoryId) === "breakdown" && selectedGeos.length <= 1;
+  const seriesSegment = (item) => {
+    const segmentTotals = ["Consumer", "Commercial"].map((segment) => ({
+      segment,
+      value: rankingRows.filter((row) => row.segment === segment && item.matches(row)).reduce((sum, row) => sum + Number(row[option.field] || 0), 0),
+    }));
+    return segmentTotals.sort((a, b) => b.value - a.value)[0]?.segment || "Commercial";
+  };
+  const renderTrendSeriesOption = (item, index) => `
+    <label>
+      <input type="checkbox" data-action="trend-series-product" data-category-id="${escapeAttr(categoryId)}" value="${escapeAttr(item.id)}" ${visibleSeries.includes(item.id) ? "checked" : ""}>
+      <span class="trend-series-swatch" style="--series-color:${palette[index % palette.length]}"></span>
+      <span>${escapeHtml(item.label)}</span>
+    </label>
+  `;
   const expanded = state.expandedTrendChart === "trend";
   return `
     <article class="performance-trend-panel ${expanded ? "is-chart-expanded" : ""}">
@@ -4716,13 +4729,9 @@ function renderPerformanceRevenueTrendPanel(categoryId, products, panel) {
         ${showSeriesLegend ? `
           <aside class="trend-series-filter" aria-label="Trend product legend">
             <label class="trend-series-all"><input type="checkbox" data-action="trend-series-all" data-category-id="${escapeAttr(categoryId)}" ${visibleSeries.length === trendSeries.length ? "checked" : ""}> <strong>All</strong></label>
-            ${trendSeries.map((item, index) => `
-              <label>
-                <input type="checkbox" data-action="trend-series-product" data-category-id="${escapeAttr(categoryId)}" value="${escapeAttr(item.id)}" ${visibleSeries.includes(item.id) ? "checked" : ""}>
-                <span class="trend-series-swatch" style="--series-color:${palette[index % palette.length]}"></span>
-                <span>${escapeHtml(item.label)}</span>
-              </label>
-            `).join("")}
+            ${state.productId ? `<div class="trend-series-segment-columns">
+              ${["Consumer", "Commercial"].map((segment) => `<section><h4>${segment}</h4>${trendSeries.map((item, index) => ({ item, index })).filter(({ item }) => seriesSegment(item) === segment).map(({ item, index }) => renderTrendSeriesOption(item, index)).join("") || `<p>No PN</p>`}</section>`).join("")}
+            </div>` : trendSeries.map(renderTrendSeriesOption).join("")}
           </aside>
         ` : ""}
       </div>
@@ -6487,8 +6496,9 @@ function drawCableCompetitorDatabase(rows, priceRows, currency) {
 function drawContributionPair(pieNumber, barNumber, rows, brands, groups, getter, axisTitle) {
   const plotted = groups.map((group) => ({ group, value: rows.filter((row) => getter(row) === group).length })).filter((item) => item.value > 0);
   const plottedTotal = plotted.reduce((sum, item) => sum + item.value, 0);
+  const plottedBrands = brands.filter((brand) => plotted.some((item) => rows.some((row) => row.brand === brand && getter(row) === item.group)));
   drawPlot(`competitorDbChart${pieNumber}`, [{ labels: plotted.map((item) => item.group), values: plotted.map((item) => item.value), type: "pie", hole: .56, textinfo: "label+percent", textposition: "auto", automargin: true, textfont: { size: 12 }, marker: { colors: overviewPalette }, hovertemplate: "%{label}: %{value} products (%{percent})<extra></extra>" }], { showlegend: false, margin: { l: 72, r: 72, t: 68, b: 62 }, annotations: [{ text: `${plottedTotal}<br>Products`, x: .5, y: .5, showarrow: false, font: { size: 14, color: "#5c6570" } }] });
-  drawPlot(`competitorDbChart${barNumber}`, plotted.map((item, index) => ({ x: brands, y: brands.map((brand) => rows.filter((row) => row.brand === brand && getter(row) === item.group).length), name: item.group, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", margin: { l: 64, r: 24, t: 40, b: 118 }, xaxis: { title: "Brand", tickangle: -35, automargin: true, tickfont: { size: 10 } }, yaxis: { title: "Products", automargin: true }, legend: { orientation: "h", y: -.34 }, annotations: [], title: { text: axisTitle, font: { size: 12 } } });
+  drawPlot(`competitorDbChart${barNumber}`, plotted.map((item, index) => ({ x: plottedBrands, y: plottedBrands.map((brand) => rows.filter((row) => row.brand === brand && getter(row) === item.group).length), name: item.group, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", margin: { l: 64, r: 24, t: 40, b: 118 }, xaxis: { title: "Brand", tickangle: -35, automargin: true, tickfont: { size: 10 } }, yaxis: { title: "Products", automargin: true }, legend: { orientation: "h", y: -.34 }, annotations: [], title: { text: axisTitle, font: { size: 12 } } });
 }
 
 function drawCountHeatmap(number, rows, xGroups, yGroups, xGetter, yGetter, xTitle, yTitle) {
@@ -7114,8 +7124,9 @@ function drawPerformanceRevenueTrend(categoryId, products) {
     && Array.isArray(storedVisibleSeries)
     && availableSeriesIds.length > 0
     && availableSeriesIds.every((id) => storedVisibleSeries.includes(id));
-  const showPlotLegend = !allSeriesSelected
-    && (isStacked || (traces.length > 1 && (Boolean(state.productId) || !(mode === "breakdown" && selectedGeos.length <= 1))));
+  const showPlotLegend = !externalSeriesFilterVisible
+    && !allSeriesSelected
+    && (isStacked || (traces.length > 1 && Boolean(state.productId)));
 
   drawPlot(
     "performanceRevenueTrendPlot",
@@ -7319,7 +7330,9 @@ function drawQuarterComparison(categoryId, products) {
           }),
         }))
       : selectedProducts.map((product) => ({ id: product.id, name: product.shortName || product.name, totals: (year) => productTotals(product.id, year) }));
-    const layerColors = ["#d8646a", "#477da8", "#d18a35", "#4f8b68", "#8a67ad", "#bd5c92", "#557f89", "#866044", "#6f7584", "#a84d47", "#4e70bd", "#879548"];
+    // Use a deeper, muted palette so the expanded PN/product layers remain
+    // distinct on large displays without looking washed out.
+    const layerColors = ["#a64049", "#315f8a", "#a86420", "#376b50", "#674887", "#913f70", "#39646e", "#67462e", "#505866", "#813631", "#36569b", "#66752f"];
     allTraces = stackItems.flatMap((item, index) => {
       const productPrior = item.totals("FY2526");
       const productCurrent = item.totals("FY2627");
@@ -7331,7 +7344,7 @@ function drawQuarterComparison(categoryId, products) {
           x: priorX, y: productPrior, type: "bar", width: 0.34,
           name: item.name, legendgroup: item.id, showlegend: false,
           offsetgroup: "FY2526", alignmentgroup: "quarter-comparison",
-          marker: { color: layerColor, opacity: 0.46, line: { color: "rgba(255,255,255,.9)", width: 0.8 } },
+          marker: { color: layerColor, opacity: 0.72, line: { color: "rgba(255,255,255,.9)", width: 0.8 } },
           customdata: formatValues(productPrior),
           hovertemplate: `<b>${escapeHtml(item.name)}</b><br>FY2526 %{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
         },

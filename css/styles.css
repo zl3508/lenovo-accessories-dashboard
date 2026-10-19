@@ -272,6 +272,10 @@ button {
 }
 
 .trend-series-filter .trend-series-all { grid-template-columns: 16px 1fr; }
+.trend-series-segment-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.trend-series-segment-columns section { min-width: 0; }
+.trend-series-segment-columns h4 { margin: 0 0 7px; padding-bottom: 5px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10px; text-transform: uppercase; }
+.trend-series-segment-columns p { margin: 7px 0; color: var(--muted); font-size: 10px; }
 .trend-series-swatch { width: 18px; height: 4px; border-radius: 3px; background: var(--series-color); }
 
 .quarter-legend-swatch { width: 13px; height: 13px; background: #9ecae1; }
