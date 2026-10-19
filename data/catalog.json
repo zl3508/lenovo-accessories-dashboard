@@ -348,7 +348,7 @@
   "categories": [
     {
       "id": "adapter",
-      "label": "Adapter",
+    "label": "Charger",
       "labelZh": "Charging Adapters",
       "description": "Wall, desktop, wireless, and 2-in-1 charging adapters.",
       "accent": "#e2231a"

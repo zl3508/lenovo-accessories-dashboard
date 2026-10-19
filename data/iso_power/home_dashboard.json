@@ -48,13 +48,13 @@
       "id": "full-year-revenue",
       "label": "Full-year Revenue Attainment",
       "period": "FY2627 YTD",
-      "actualM": 32.32246157,
+      "actualM": 64.231958,
       "targetM": 109.63928089083385,
       "attain": 0.2948073109142606,
       "targetModeled": true,
-      "priorActualM": 22.69751533,
+      "priorActualM": 34.601262,
       "priorPeriod": "FY2526 YTD",
-      "yoy": 0.4240528577715468
+      "yoy": 0.8563506906889879
     },
     {
       "id": "full-year-standalone",
@@ -72,13 +72,13 @@
       "id": "quarter-revenue",
       "label": "Current-quarter Revenue Attainment",
       "period": "FY2627 Q2",
-      "actualM": 16.51479053,
+      "actualM": 38.818221,
       "targetM": 27.3,
       "attain": 0.604937382051282,
       "targetModeled": false,
-      "priorActualM": 10.51674984,
+      "priorActualM": 17.062471,
       "priorPeriod": "FY2526 Q2",
-      "yoy": 0.5703321635726957
+      "yoy": 1.2750667978876918
     },
     {
       "id": "quarter-standalone",
@@ -91,6 +91,40 @@
       "priorActualM": 1.42964284,
       "priorPeriod": "FY2526 Q2",
       "yoy": 3.4444782656345128
+    }
+  ],
+  "executiveQuantityKpis": [
+    {
+      "id": "full-year-revenue",
+      "period": "FY2627 YTD",
+      "actual": 1485100,
+      "prior": 932489,
+      "priorPeriod": "FY2526 YTD",
+      "yoy": 0.5926201819007415
+    },
+    {
+      "id": "full-year-standalone",
+      "period": "FY2627 YTD",
+      "actual": 542066,
+      "prior": 111198,
+      "priorPeriod": "FY2526 YTD",
+      "yoy": 3.874782819835249
+    },
+    {
+      "id": "quarter-revenue",
+      "period": "FY2627 Q2",
+      "actual": 792447,
+      "prior": 451835,
+      "priorPeriod": "FY2526 Q2",
+      "yoy": 0.7538393421423816
+    },
+    {
+      "id": "quarter-standalone",
+      "period": "FY2627 Q2",
+      "actual": 312772,
+      "prior": 64132,
+      "priorPeriod": "FY2526 Q2",
+      "yoy": 3.877001184428388
     }
   ],
   "quarterAttain": {

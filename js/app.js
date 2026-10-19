@@ -14,7 +14,7 @@ const DATA_FILES = {
   adapterAssets: "data/adapter_product_assets.json",
 };
 
-const DATA_VERSION = "20261019-hybrid-power-bank-image-v36";
+const DATA_VERSION = "20261019-power-kpi-quantity-charger-v37";
 
 const state = {
   categoryId: null,
@@ -1171,45 +1171,46 @@ function renderAccessoryPowerKpis() {
   if (!kpis.length) return "";
   const order = ["full-year-revenue", "full-year-standalone", "quarter-revenue", "quarter-standalone"];
   const orderedKpis = [...kpis].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  const orderedQuantityKpis = [...(dashboard?.executiveQuantityKpis || [])].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   return `
     <section class="accessory-kpi-section" aria-labelledby="accessory-kpi-heading">
       <header>
-        <div>
-          <p class="eyebrow">Executive Snapshot</p>
-          <h2 id="accessory-kpi-heading">Revenue Performance</h2>
-        </div>
+        <h2 id="accessory-kpi-heading">Revenue Performance</h2>
         <p class="metric-definition"><span>Revenue refers to Ship Rev</span><span>Updated 2026/10/18</span></p>
       </header>
       <div class="accessory-kpi-grid">
-        ${orderedKpis.map(renderAccessoryPowerKpi).join("")}
+        ${orderedKpis.map((item) => renderAccessoryPowerKpi(item, "revenue")).join("")}
       </div>
     </section>
+    ${orderedQuantityKpis.length ? `
+      <section class="accessory-kpi-section accessory-quantity-kpi-section" aria-labelledby="accessory-quantity-kpi-heading">
+        <header>
+          <h2 id="accessory-quantity-kpi-heading">Quantity Performance</h2>
+          <p class="metric-definition"><span>Quantity refers to Ship Qty</span><span>Updated 2026/10/18</span></p>
+        </header>
+        <div class="accessory-kpi-grid">
+          ${orderedQuantityKpis.map((item) => renderAccessoryPowerKpi(item, "quantity")).join("")}
+        </div>
+      </section>
+    ` : ""}
   `;
 }
 
-function renderAccessoryPowerKpi(item) {
+function renderAccessoryPowerKpi(item, metric = "revenue") {
   const isUp = (item.yoy || 0) >= 0;
   const titles = {
     "full-year-revenue": "Power Total",
-    "full-year-standalone": "Standalone",
+    "full-year-standalone": "Standalone w/o DIB",
     "quarter-revenue": "Power Total",
-    "quarter-standalone": "Standalone",
-  };
-  const subtitles = {
-    "full-year-revenue": "Standalone + SBB",
-    "full-year-standalone": "w/o DIB",
-    "quarter-revenue": "Standalone + SBB",
-    "quarter-standalone": "w/o DIB",
+    "quarter-standalone": "Standalone w/o DIB",
   };
   const periodLabel = item.id.startsWith("full-year") ? "FY2627 YTD" : "FY2627 Q2";
-  const priorLabel = `$${formatPowerKpiAmount(item.priorActualM)}M`;
+  const currentLabel = metric === "quantity" ? fmtExactNumber(item.actual || 0) : `$${formatPowerKpiAmount(item.actualM)}M`;
+  const priorLabel = metric === "quantity" ? fmtExactNumber(item.prior || 0) : `$${formatPowerKpiAmount(item.priorActualM)}M`;
   return `
     <article class="accessory-kpi-card ${isUp ? "is-up" : "is-down"}">
       <header>
-        <div>
-          <span>${escapeHtml(titles[item.id] || item.label)}</span>
-          <small>${escapeHtml(subtitles[item.id] || "")}</small>
-        </div>
+        <span>${escapeHtml(titles[item.id] || item.label)}</span>
         <div class="accessory-kpi-trend ${isUp ? "is-up" : "is-down"}">
           <strong>${formatSignedPercent(item.yoy)}</strong>
           <span aria-hidden="true">${isUp ? "↑" : "↓"}</span>
@@ -1218,7 +1219,7 @@ function renderAccessoryPowerKpi(item) {
       <div class="accessory-kpi-compare">
         <div>
           <small>${periodLabel}</small>
-          <strong>$${formatPowerKpiAmount(item.actualM)}M</strong>
+          <strong>${currentLabel}</strong>
         </div>
         <div>
           <small>${escapeHtml(item.priorPeriod || "Previous")}</small>
@@ -1242,7 +1243,7 @@ function renderPowerHomeDashboard() {
       <header class="power-home-head">
         <div>
           <h1>Power Overall Performance</h1>
-          <p>Adapter&nbsp;&nbsp; Power Bank&nbsp;&nbsp; Power Cable</p>
+          <p>Charger&nbsp;&nbsp; Power Bank&nbsp;&nbsp; Power Cable</p>
         </div>
         <dl class="power-home-meta">
           <div><dt>Time</dt><dd>${escapeHtml(activeTimeLabel)}</dd></div>
@@ -1263,7 +1264,7 @@ function powerOverallKpis() {
   if (!hasActiveGlobalTime()) return [];
   const definitions = [
     { label: "Power", categoryId: null },
-    { label: "Adapter", categoryId: "adapter" },
+    { label: "Charger", categoryId: "adapter" },
     { label: "Power Bank", categoryId: "power_bank" },
     { label: "Power Cable", categoryId: "power_cable" },
   ];
@@ -1995,7 +1996,7 @@ function renderRegionCountryPanel(overview, country, displayLabel) {
   return `
     <section class="country-region-panel">
       <header class="country-panel-head">
-        <h3>${escapeHtml(displayLabel)} Adapter Market</h3>
+        <h3>${escapeHtml(displayLabel)} Charger Market</h3>
         ${renderCountrySummaryList(country.summaryPoints || [])}
       </header>
       <section class="geo-detail-grid country-detail-grid">
@@ -2065,7 +2066,7 @@ function renderCountryDetail(categoryId, overview, countryId) {
         <header class="geo-detail-head country-detail-head">
           <button class="ghost-button" type="button" data-action="country-back">← Country Overview</button>
           <span>Country Overview</span>
-          <h2>${escapeHtml(country.label)} Adapter Market</h2>
+          <h2>${escapeHtml(country.label)} Charger Market</h2>
           ${country.summaryPoints?.length
             ? renderCountrySummaryList(country.summaryPoints)
             : `<p>${escapeHtml(country.summary)}</p>`}
@@ -3400,7 +3401,7 @@ function renderAdapterCompetitiveAnalysis() {
       <section class="adapter-competitive-hero">
         <div class="adapter-competitive-title">
           <p class="eyebrow">Competitor product database</p>
-          <h2>Adapter Competitive Analysis</h2>
+          <h2>Charger Competitive Analysis</h2>
           <div class="adapter-title-kpis"><div><strong>${fmtExactNumber(brands.length)}</strong><span>Brands</span></div><div><strong>${fmtExactNumber(rows.length)}</strong><span>Verified products</span></div></div>
         </div>
         <div class="adapter-logo-wall" aria-label="Brand logo collection">${brands.map((brand) => {
@@ -4010,7 +4011,7 @@ function renderCategoryOverview(categoryId) {
 
 function categoryPerformanceTitle(categoryId) {
   return ({
-    adapter: "Power Adapter Performance",
+    adapter: "Charger Performance",
     power_bank: "Power Bank Performance",
     power_cable: "Power Cable Performance",
   })[categoryId] || `${overviewScopeLabel(categoryId)} Performance`;
