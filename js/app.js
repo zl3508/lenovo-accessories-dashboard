@@ -14,7 +14,7 @@ const DATA_FILES = {
   adapterAssets: "data/adapter_product_assets.json",
 };
 
-const DATA_VERSION = "20261019-quarter-dark-palette-v35";
+const DATA_VERSION = "20261019-hybrid-power-bank-image-v36";
 
 const state = {
   categoryId: null,
