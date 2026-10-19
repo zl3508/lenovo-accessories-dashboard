@@ -17,29 +17,29 @@
     {
       "label": "Revenue",
       "period": "FY2526 Q2",
-      "valueM": 17.062051199999992,
-      "yoy": 0.03374027055552853,
+      "valueM": 10.51674984,
+      "yoy": 0.5703321635726957,
       "modeled": false
     },
     {
       "label": "Standalone w/o DIB",
       "period": "FY2526 Q2",
-      "valueM": 11.41280537000001,
-      "yoy": -0.17126242492183297,
+      "valueM": 1.42964284,
+      "yoy": 3.4444782656345128,
       "modeled": false
     },
     {
       "label": "Revenue",
       "period": "FY2627 Q2",
-      "valueM": 31.482931391399966,
-      "yoy": 0.8452020230369477,
+      "valueM": 16.51479053,
+      "yoy": 0.5703321635726957,
       "modeled": false
     },
     {
       "label": "Standalone w/o DIB",
       "period": "FY2627 Q2",
-      "valueM": 15.730985706200006,
-      "yoy": 0.37836274221856736,
+      "valueM": 6.35401653,
+      "yoy": 3.4444782656345128,
       "modeled": false
     }
   ],
@@ -48,49 +48,49 @@
       "id": "full-year-revenue",
       "label": "Full-year Revenue Attainment",
       "period": "FY2627 YTD",
-      "actualM": 56.896668391399984,
+      "actualM": 32.32246157,
       "targetM": 109.63928089083385,
-      "attain": 0.5189441952656652,
+      "attain": 0.2948073109142606,
       "targetModeled": true,
-      "priorActualM": 34.600842310000004,
+      "priorActualM": 22.69751533,
       "priorPeriod": "FY2526 YTD",
-      "yoy": 0.6443723502926477
+      "yoy": 0.4240528577715468
     },
     {
       "id": "full-year-standalone",
       "label": "Full-year Standalone w/o DIB",
       "period": "FY2627 YTD",
-      "actualM": 31.928006216200014,
+      "actualM": 11.30574957,
       "targetM": null,
       "attain": null,
       "targetModeled": false,
-      "priorActualM": 24.624195260000022,
+      "priorActualM": 2.61230733,
       "priorPeriod": "FY2526 YTD",
-      "yoy": 0.29661115334251886
+      "yoy": 3.3278788219761255
     },
     {
       "id": "quarter-revenue",
       "label": "Current-quarter Revenue Attainment",
       "period": "FY2627 Q2",
-      "actualM": 31.482931391399966,
+      "actualM": 16.51479053,
       "targetM": 27.3,
-      "attain": 1.1532209300879108,
+      "attain": 0.604937382051282,
       "targetModeled": false,
-      "priorActualM": 17.062051199999992,
+      "priorActualM": 10.51674984,
       "priorPeriod": "FY2526 Q2",
-      "yoy": 0.8452020230369477
+      "yoy": 0.5703321635726957
     },
     {
       "id": "quarter-standalone",
       "label": "Current-quarter Standalone w/o DIB",
       "period": "FY2627 Q2",
-      "actualM": 15.730985706200006,
+      "actualM": 6.35401653,
       "targetM": null,
       "attain": null,
       "targetModeled": false,
-      "priorActualM": 11.41280537000001,
+      "priorActualM": 1.42964284,
       "priorPeriod": "FY2526 Q2",
-      "yoy": 0.37836274221856736
+      "yoy": 3.4444782656345128
     }
   ],
   "quarterAttain": {

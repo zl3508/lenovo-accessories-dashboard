@@ -14,7 +14,7 @@ const DATA_FILES = {
   adapterAssets: "data/adapter_product_assets.json",
 };
 
-const DATA_VERSION = "20261019-market-trend-style-v19";
+const DATA_VERSION = "20261019-power-kpi-subtitles-v32";
 
 const state = {
   categoryId: null,
@@ -290,7 +290,6 @@ const marketOverviewSupplements = {
         chart: {
           title: "2025 Revenue Share by Output Power",
           type: "donut",
-          center: "Laptop Market",
           legendSide: "right",
           items: [
             { label: "65W–100W", value: 54.86, valueLabel: "54.86%" },
@@ -313,7 +312,6 @@ const marketOverviewSupplements = {
         chart: {
           title: "2025 Revenue Share by Capacity",
           type: "donut",
-          center: "Laptop Market",
           items: [
             { label: "20K–40K mAh", value: 57.94, valueLabel: "57.94%" },
             { label: "Below 20K mAh", value: 25.68, valueLabel: "25.68%" },
@@ -1193,18 +1191,24 @@ function renderAccessoryPowerKpi(item) {
   const isUp = (item.yoy || 0) >= 0;
   const titles = {
     "full-year-revenue": "Power Total",
-    "full-year-standalone": "Standalone w/o DIB",
+    "full-year-standalone": "Standalone",
     "quarter-revenue": "Power Total",
-    "quarter-standalone": "Standalone w/o DIB",
+    "quarter-standalone": "Standalone",
   };
-  const periodLabel = item.id.startsWith("full-year") ? "FY2627" : "FY2627 Q2";
+  const subtitles = {
+    "full-year-revenue": "Standalone + SBB",
+    "full-year-standalone": "w/o DIB",
+    "quarter-revenue": "Standalone + SBB",
+    "quarter-standalone": "w/o DIB",
+  };
+  const periodLabel = item.id.startsWith("full-year") ? "FY2627 YTD" : "FY2627 Q2";
   const priorLabel = `$${formatPowerKpiAmount(item.priorActualM)}M`;
   return `
     <article class="accessory-kpi-card ${isUp ? "is-up" : "is-down"}">
       <header>
         <div>
           <span>${escapeHtml(titles[item.id] || item.label)}</span>
-          <small>${periodLabel}</small>
+          <small>${escapeHtml(subtitles[item.id] || "")}</small>
         </div>
         <div class="accessory-kpi-trend ${isUp ? "is-up" : "is-down"}">
           <strong>${formatSignedPercent(item.yoy)}</strong>
@@ -1213,7 +1217,7 @@ function renderAccessoryPowerKpi(item) {
       </header>
       <div class="accessory-kpi-compare">
         <div>
-          <small>Current</small>
+          <small>${periodLabel}</small>
           <strong>$${formatPowerKpiAmount(item.actualM)}M</strong>
         </div>
         <div>
@@ -1384,7 +1388,7 @@ function formatCompactDecimal(value) {
 }
 
 function formatPowerKpiAmount(value) {
-  return Number.isFinite(value) ? value.toFixed(1) : "0.0";
+  return Number.isFinite(value) ? value.toFixed(2) : "0.00";
 }
 
 function formatSignedPercent(value) {
@@ -1828,13 +1832,24 @@ function renderGeoOverviewModule(categoryId) {
   if (!overview) {
     return renderSupplementalCountryOverview(categoryId);
   }
+  const visibleOverview = categoryId === "adapter" ? {
+    ...overview,
+    regions: (overview.regions || []).map((region) => region.id === "AP" ? {
+      ...region,
+      representatives: "Japan | India",
+      policyFocus: "PSE (Japan) | BIS CRS (India) | Local labeling",
+      characteristics: String(region.characteristics || "").replace(/ and rapid channel expansion in Indonesia/i, ""),
+      countryTabs: (region.countryTabs || []).filter((tab) => tab.countryId !== "ID" && tab.id !== "ID"),
+    } : region),
+    countries: (overview.countries || []).filter((country) => country.id !== "ID"),
+  } : overview;
   const selectedRegion = state.geoRegionDetail[categoryId];
-  if (selectedRegion) return renderRegionCountryWorkspace(categoryId, overview, selectedRegion);
+  if (selectedRegion) return renderRegionCountryWorkspace(categoryId, visibleOverview, selectedRegion);
   return `
     <section class="module-block">
       <section class="geo-overview-module">
         <div class="geo-region-grid">
-          ${(overview.regions || []).map(renderRegionEntryCard).join("")}
+          ${(visibleOverview.regions || []).map(renderRegionEntryCard).join("")}
         </div>
       </section>
     </section>
@@ -3550,10 +3565,10 @@ function adapterModuleFilters(module) {
   return state.adapterCompetitiveFilters[module];
 }
 
-function adapterFilteredRows(module) {
+function adapterFilteredRows(module, options = {}) {
   const filters = adapterModuleFilters(module);
   return adapterAnalysisRows().filter((row) => {
-    if (filters.brand && filters.brand !== "all" && row.brand !== filters.brand) return false;
+    if (!options.ignoreBrand && filters.brand && filters.brand !== "all" && row.brand !== filters.brand) return false;
     if (filters.port && filters.port !== "all" && String(row.resolvedPorts) !== filters.port) return false;
     if (filters.scenario && filters.scenario !== "all" && row.scenario !== filters.scenario) return false;
     if (filters.power && filters.power !== "all" && competitorPowerBand("adapter", row.advertised_power_w) !== filters.power) return false;
@@ -3578,7 +3593,7 @@ function adapterModuleControls(module, keys) {
     price: ["<$40", "$40–69", "$70–99", "$100+"].map((value) => ({ value, label: value })),
   };
   const labels = { brand: "Brand", form: "Form", port: "Port", scenario: "Form / Scenario", power: "Power", price: "Price" };
-  return `<div class="adapter-module-controls"><div class="adapter-fixed-filter"><span>Brand</span><strong>All Brand</strong></div>${keys.map((key) => adapterFilterSelect(module, key, labels[key], options[key], filters[key] || "all")).join("")}</div>`;
+  return `<div class="adapter-module-controls">${adapterFilterSelect(module, "brand", labels.brand, options.brand, filters.brand || "all")}${keys.map((key) => adapterFilterSelect(module, key, labels[key], options[key], filters[key] || "all")).join("")}</div>`;
 }
 
 function adapterBrandLogoPath(brand) {
@@ -3614,8 +3629,7 @@ function competitorDbRows(categoryId) {
     if (row.category !== category) return false;
     if (categoryId === "power_cable" && !(competitorNumber(row.advertised_power_w) > 0)) return false;
     const pending = /pending/i.test(row.status || "");
-    if (categoryId === "power_bank" && (filters.verification || "confirmed") === "confirmed" && pending) return false;
-    if (categoryId === "power_bank" && filters.verification === "pending" && !pending) return false;
+    if (categoryId === "power_bank" && pending) return false;
     const bandValue = categoryId === "power_bank" ? competitorCapacityBand(row.capacity_mah) : competitorPowerBand(categoryId, row.advertised_power_w);
     if (filters.band && filters.band !== "all" && bandValue !== filters.band) return false;
     const formValue = categoryId === "power_bank" ? competitorPowerBankForm(row) : (row.form_factor || "Unknown");
@@ -3624,7 +3638,6 @@ function competitorDbRows(categoryId) {
     if (categoryId === "adapter" && filters.port === "single" && competitorNumber(row.total_outputs) !== 1) return false;
     if (categoryId === "power_cable" && filters.length && filters.length !== "all" && competitorCableLengthBand(row) !== filters.length) return false;
     if (categoryId === "power_cable" && filters.protocol && filters.protocol !== "all" && competitorCableProtocol(row) !== filters.protocol) return false;
-    if (filters.currency && filters.currency !== "all" && row.currency !== filters.currency) return false;
     return true;
   });
 }
@@ -3640,11 +3653,11 @@ function renderCompetitorDatabaseAnalysis(categoryId) {
   const bands = categoryId === "adapter"
     ? ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W", "Unknown"]
     : categoryId === "power_bank"
-      ? ["≤10,000", "10,001–20,000", "20,001–27,000", ">27,000", "Unknown"]
-      : ["60W", "100W", "140W", "240W", "Other", "Unknown"];
+      ? ["≤10,000", "10,001–20,000", "20,001–27,000", ">27,000"]
+      : ["60W", "100W", "140W", "240W"];
   const brands = new Set(rows.map((row) => row.brand));
   const brandList = [...brands].sort();
-  const forms = [...new Set(total.map((row) => categoryId === "power_bank" ? competitorPowerBankForm(row) : (row.form_factor || "Unknown")))].sort();
+  const forms = [...new Set(total.map((row) => categoryId === "power_bank" ? competitorPowerBankForm(row) : (row.form_factor || "Unknown")))].filter((value) => value !== "Unknown").sort();
   return `
     <div class="view-stack competitor-db-view adapter-competitive-view">
       <section class="adapter-competitive-hero">
@@ -3662,7 +3675,7 @@ function competitorModuleControls(categoryId, keys, filters, bands, forms, total
   const controls = {
     band: competitorFilterSelect("competitor-db-band", categoryId === "power_bank" ? "Capacity band" : "Power band", filters.band || "all", [{ value: "all", label: "All bands" }, ...bands.map((value) => ({ value, label: value }))]),
     form: competitorFilterSelect("competitor-db-form", "Factor", filters.form || "all", [{ value: "all", label: "All factors" }, ...forms.map((value) => ({ value, label: value }))]),
-    length: competitorFilterSelect("competitor-db-length", "Length", filters.length || "all", [{ value: "all", label: "All lengths" }, ...["≤1m", "1.01–2m", "2.01–3m", ">3m", "Unknown"].map((value) => ({ value, label: value }))]),
+    length: competitorFilterSelect("competitor-db-length", "Length", filters.length || "all", [{ value: "all", label: "All lengths" }, ...["≤1m", "1.01–2m", "2.01–3m", ">3m"].map((value) => ({ value, label: value }))]),
     verification: competitorFilterSelect("competitor-db-verification", "Verification", filters.verification || "confirmed", [{ value: "confirmed", label: "Confirmed ≥65W" }, { value: "pending", label: "Pending" }, { value: "all", label: "All records" }]),
     currency: competitorFilterSelect("competitor-db-currency", "Currency", filters.currency || "all", [{ value: "all", label: "All currencies" }, ...currencies.map((value) => ({ value, label: value }))]),
   };
@@ -3675,18 +3688,18 @@ function renderDbModule(title, controls, charts) {
 
 function renderPowerBankCompetitorModules(filters, bands, forms, total) {
   return [
-    renderDbModule("Capacity Contribution", competitorModuleControls("power_bank", ["form", "verification"], filters, bands, forms, total), [[1, "Capacity Share"], [2, "Capacity Mix by Brand"]]),
-    renderDbModule("Price Analysis", competitorModuleControls("power_bank", ["form", "verification", "currency"], filters, bands, forms, total), [[3, "Capacity vs Price"], [4, "Single-port Power vs Price"]]),
-    renderDbModule("Max Single-port Power Contribution", competitorModuleControls("power_bank", ["band", "form", "verification"], filters, bands, forms, total), [[5, "Single-port Power Share"], [6, "Single-port Power Mix by Brand"]]),
-    renderDbModule("Factor Contribution", competitorModuleControls("power_bank", ["band", "verification"], filters, bands, forms, total), [[7, "Factor Share"], [8, "Factor Mix by Brand"]]),
+    renderDbModule("Capacity Contribution", competitorModuleControls("power_bank", ["form"], filters, bands, forms, total), [[1, "Capacity Share"], [2, "Capacity Mix by Brand"]]),
+    renderDbModule("Price Analysis", competitorModuleControls("power_bank", ["form"], filters, bands, forms, total), [[3, "Capacity vs Price"], [4, "Single-port Power vs Price"]]),
+    renderDbModule("Max Single-port Power Contribution", competitorModuleControls("power_bank", ["band", "form"], filters, bands, forms, total), [[5, "Single-port Power Share"], [6, "Single-port Power Mix by Brand"]]),
+    renderDbModule("Factor Contribution", competitorModuleControls("power_bank", ["band"], filters, bands, forms, total), [[7, "Factor Share"], [8, "Factor Mix by Brand"]]),
   ].join("");
 }
 
 function renderCableCompetitorModules(filters, bands, forms, total) {
   return [
-    renderDbModule("Length Contribution", competitorModuleControls("power_cable", ["band", "form"], filters, bands, forms, total), [[1, "Length Share"], [2, "Length Mix by Brand"]]),
-    renderDbModule("Price Analysis", competitorModuleControls("power_cable", ["band", "form", "currency"], filters, bands, forms, total), [[3, "Length vs Price"], [4, "Charging Power vs Price"]]),
-    renderDbModule("Factor Contribution", competitorModuleControls("power_cable", ["band", "length"], filters, bands, forms, total), [[5, "Factor Share"], [6, "Factor Mix by Brand"]]),
+    renderDbModule("Length Contribution", competitorModuleControls("power_cable", ["form"], filters, bands, forms, total), [[1, "Length Share"], [2, "Length Mix by Brand"]]),
+    renderDbModule("Price Analysis", competitorModuleControls("power_cable", ["band", "form"], filters, bands, forms, total), [[3, "Length vs Price"], [4, "Charging Power vs Price"]]),
+    renderDbModule("Factor Contribution", competitorModuleControls("power_cable", ["length"], filters, bands, forms, total), [[5, "Factor Share"], [6, "Factor Mix by Brand"]]),
   ].join("");
 }
 
@@ -4553,7 +4566,7 @@ function quarterComparisonStateKey(categoryId) {
 
 function quarterComparisonMode(categoryId) {
   const mode = state.quarterComparisonMode[quarterComparisonStateKey(categoryId)];
-  return mode === "stacked" ? "stacked" : "overall";
+  return mode === "overall" ? "overall" : "stacked";
 }
 
 function renderCategoryTrendModeControl(categoryId, quarterOnly = false) {
@@ -4572,6 +4585,7 @@ function renderCategoryTrendModeControl(categoryId, quarterOnly = false) {
         aria-pressed="${mode === "overall"}"
       >
         <span class="trend-mode-icon trend-mode-icon-single-bars" aria-hidden="true"><i></i></span>
+        ${quarterOnly ? `<span class="quarter-mode-label">Total</span>` : ""}
       </button>
       <button
         class="${mode === "stacked" ? "is-active" : ""}"
@@ -4584,6 +4598,7 @@ function renderCategoryTrendModeControl(categoryId, quarterOnly = false) {
         aria-pressed="${mode === "stacked"}"
       >
         <span class="trend-mode-icon trend-mode-icon-stacked" aria-hidden="true"><i></i><i></i><i></i></span>
+        ${quarterOnly ? `<span class="quarter-mode-label">Layered</span>` : ""}
       </button>
       ${quarterOnly ? "" : `<button
         class="${mode === "breakdown" ? "is-active" : ""}"
@@ -5739,10 +5754,12 @@ function drawStructurePiePlot(id, chart) {
       hovertext: hoverText,
       hovertemplate: "%{hovertext}<extra></extra>",
       marker: { colors: items.map((_, index) => structureChartColor(index)), line: { color: "#ffffff", width: 2 } },
+      automargin: true,
+      textfont: { size: items.length > 6 ? 10 : 12, color: "#1f2328" },
       domain: pieDomain,
     }],
     {
-      margin: showLabels ? { l: 84, r: 84, t: 34, b: 32 } : { l: 18, r: 18, t: 16, b: 16 },
+      margin: showLabels ? { l: 96, r: 96, t: 78, b: 62 } : { l: 18, r: 18, t: 16, b: 16 },
       showlegend: false,
       hoverlabel: { bgcolor: "#1f2328", font: { color: "#ffffff" } },
       uniformtext: { minsize: 10, mode: "hide" },
@@ -6368,7 +6385,7 @@ function drawAdapterCompetitiveAnalysis() {
   const powerRows = adapterFilteredRows("power");
   const powerBands = ["65–69W", "70–99W", "100–139W", "140–199W", "≥200W"];
   const powerCounts = powerBands.map((band) => powerRows.filter((row) => competitorPowerBand("adapter", row.advertised_power_w) === band).length);
-  drawPlot("adapterPowerPie", [{ labels: powerBands, values: powerCounts, type: "pie", hole: 0.56, textinfo: "label+percent", marker: { colors: overviewPalette } }], { showlegend: false, margin: { l: 34, r: 34, t: 24, b: 24 } });
+  drawPlot("adapterPowerPie", [{ labels: powerBands, values: powerCounts, type: "pie", hole: 0.56, textinfo: "label+percent", textposition: "auto", automargin: true, textfont: { size: 12 }, marker: { colors: overviewPalette } }], { showlegend: false, margin: { l: 52, r: 52, t: 42, b: 42 } });
   const powerBrands = [...new Set(powerRows.map((row) => row.brand))].sort();
   drawPlot("adapterPowerBrandBar", powerBands.map((band, index) => ({ y: powerBrands, x: powerBrands.map((brand) => powerRows.filter((row) => row.brand === brand && competitorPowerBand("adapter", row.advertised_power_w) === band).length), name: band, type: "bar", orientation: "h", marker: { color: overviewPalette[index] } })), { barmode: "stack", margin: { l: 128, r: 28, t: 8, b: 58 }, xaxis: { title: "Products" }, yaxis: { autorange: "reversed" }, legend: { orientation: "h", y: -0.18 } });
 
@@ -6381,19 +6398,21 @@ function drawAdapterCompetitiveAnalysis() {
 
   const portRows = adapterFilteredRows("port");
   const ports = [...new Set(portRows.map((row) => row.resolvedPorts))].sort((a, b) => a - b);
-  drawPlot("adapterPortPie", [{ labels: ports.map((port) => `${port} port${port === 1 ? "" : "s"}`), values: ports.map((port) => portRows.filter((row) => row.resolvedPorts === port).length), type: "pie", hole: 0.56, textinfo: "label+percent", marker: { colors: overviewPalette } }], { showlegend: false, margin: { l: 34, r: 34, t: 24, b: 24 } });
+  drawPlot("adapterPortPie", [{ labels: ports.map((port) => `${port} port${port === 1 ? "" : "s"}`), values: ports.map((port) => portRows.filter((row) => row.resolvedPorts === port).length), type: "pie", hole: 0.56, textinfo: "label+percent", textposition: "auto", automargin: true, textfont: { size: 12 }, marker: { colors: overviewPalette } }], { showlegend: false, margin: { l: 52, r: 52, t: 42, b: 42 } });
   const portBrands = [...new Set(portRows.map((row) => row.brand))].sort();
   drawPlot("adapterPortBrandBar", ports.map((port, index) => ({ x: portBrands, y: portBrands.map((brand) => portRows.filter((row) => row.brand === brand && row.resolvedPorts === port).length), name: `${port} port${port === 1 ? "" : "s"}`, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", xaxis: { title: "Brand", tickangle: -35 }, yaxis: { title: "Products" }, legend: { orientation: "h", y: -0.28 } });
 
-  const scenarioRows = adapterFilteredRows("scenario");
+  // Brand selection controls the right-hand detail donut only. The left-hand
+  // market comparison intentionally remains the full-brand benchmark.
+  const scenarioRows = adapterFilteredRows("scenario", { ignoreBrand: true });
   const scenarios = [...new Set(scenarioRows.map((row) => row.scenario))].sort();
   const scenarioBrands = [...new Set(scenarioRows.map((row) => row.brand))].sort();
-  drawPlot("adapterScenarioBrandBar", scenarios.map((scenario, index) => ({ x: scenarioBrands, y: scenarioBrands.map((brand) => scenarioRows.filter((row) => row.brand === brand && row.scenario === scenario).length), name: scenario, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", xaxis: { title: "Brand", tickangle: -35 }, yaxis: { title: "Products" }, legend: { orientation: "h", y: -0.3 } });
+  drawPlot("adapterScenarioBrandBar", scenarios.map((scenario, index) => ({ x: scenarioBrands, y: scenarioBrands.map((brand) => scenarioRows.filter((row) => row.brand === brand && row.scenario === scenario).length), name: scenario, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", margin: { l: 62, r: 24, t: 24, b: scenarioBrands.length > 10 ? 128 : 92 }, xaxis: { title: "Brand", tickangle: scenarioBrands.length > 10 ? -42 : -28, tickfont: { size: scenarioBrands.length > 14 ? 9 : 11 }, automargin: true }, yaxis: { title: "Products", automargin: true }, legend: { orientation: "h", x: 0.5, xanchor: "center", y: -0.32 } });
   const selectedScenarioBrand = adapterModuleFilters("scenario").brand;
   const pieBrand = selectedScenarioBrand && selectedScenarioBrand !== "all" ? selectedScenarioBrand : scenarioBrands[0];
   const scenarioPieRows = scenarioRows.filter((row) => row.brand === pieBrand);
   const pieScenarios = [...new Set(scenarioPieRows.map((row) => row.scenario))].sort();
-  drawPlot("adapterScenarioPie", [{ labels: pieScenarios, values: pieScenarios.map((scenario) => scenarioPieRows.filter((row) => row.scenario === scenario).length), type: "pie", hole: 0.56, textinfo: "label+percent", marker: { colors: palette }, hovertemplate: `${pieBrand}<br>%{label}: %{value} products (%{percent})<extra></extra>` }], { showlegend: false, margin: { l: 34, r: 34, t: 24, b: 24 }, annotations: [{ text: pieBrand, x: 0.5, y: 0.5, showarrow: false, font: { size: 14, color: "#5c6570" } }] });
+  drawPlot("adapterScenarioPie", [{ labels: pieScenarios, values: pieScenarios.map((scenario) => scenarioPieRows.filter((row) => row.scenario === scenario).length), type: "pie", hole: 0.56, textinfo: "label+percent", textposition: "auto", automargin: true, textfont: { size: 12 }, marker: { colors: palette }, hovertemplate: `${pieBrand}<br>%{label}: %{value} products (%{percent})<extra></extra>` }], { showlegend: false, margin: { l: 52, r: 52, t: 42, b: 42 }, annotations: [{ text: pieBrand, x: 0.5, y: 0.5, showarrow: false, font: { size: 14, color: "#5c6570" } }] });
 }
 
 function competitorCount(rows, getter, value) {
@@ -6418,11 +6437,11 @@ function competitorBrandTraces(rows, xField, yField, extraText) {
 
 function drawCompetitorDatabaseAnalysis(categoryId) {
   const rows = competitorDbRows(categoryId);
-  const selectedCurrency = state.competitorDbFilters[categoryId]?.currency || "all";
-  const priceRows = rows.filter((row) => competitorNumber(row.price_min) !== null && row.currency === (selectedCurrency === "all" ? "USD" : selectedCurrency));
-  if (categoryId === "adapter") drawAdapterCompetitorDatabase(rows, priceRows, selectedCurrency === "all" ? "USD" : selectedCurrency);
-  else if (categoryId === "power_bank") drawPowerBankCompetitorDatabase(rows, priceRows, selectedCurrency === "all" ? "USD" : selectedCurrency);
-  else drawCableCompetitorDatabase(rows, priceRows, selectedCurrency === "all" ? "USD" : selectedCurrency);
+  const currency = "USD";
+  const priceRows = rows.filter((row) => competitorNumber(row.price_min) !== null && row.currency === currency);
+  if (categoryId === "adapter") drawAdapterCompetitorDatabase(rows, priceRows, currency);
+  else if (categoryId === "power_bank") drawPowerBankCompetitorDatabase(rows, priceRows, currency);
+  else drawCableCompetitorDatabase(rows, priceRows, currency);
 }
 
 function drawAdapterCompetitorDatabase(rows, priceRows, currency) {
@@ -6440,9 +6459,9 @@ function drawAdapterCompetitorDatabase(rows, priceRows, currency) {
 
 function drawPowerBankCompetitorDatabase(rows, priceRows, currency) {
   const brands = [...new Set(rows.map((row) => row.brand))].sort();
-  const capacityBands = ["≤10,000", "10,001–20,000", "20,001–27,000", ">27,000", "Unknown"];
+  const capacityBands = ["≤10,000", "10,001–20,000", "20,001–27,000", ">27,000"];
   const singleBand = (row) => { const w = competitorNumber(row.single_usb_c_output_w); return w === null ? "Unknown" : w < 65 ? "<65W" : w < 100 ? "65–99W" : w < 140 ? "100–139W" : "≥140W"; };
-  const singleBands = ["<65W", "65–99W", "100–139W", "≥140W", "Unknown"];
+  const singleBands = ["<65W", "65–99W", "100–139W", "≥140W"];
   const forms = ["Standard", "Built-in cable", "Retractable cable", "2-in-1"];
   drawContributionPair(1, 2, rows, brands, capacityBands, (row) => competitorCapacityBand(row.capacity_mah), "Capacity band");
   const priceBands = ["<$40", "$40–69", "$70–99", "$100+"];
@@ -6454,11 +6473,11 @@ function drawPowerBankCompetitorDatabase(rows, priceRows, currency) {
 }
 
 function drawCableCompetitorDatabase(rows, priceRows, currency) {
-  const lengthBands = ["≤1m", "1.01–2m", "2.01–3m", ">3m", "Unknown"];
-  const powerBands = ["60W", "100W", "140W", "240W", "Other", "Unknown"];
+  const lengthBands = ["≤1m", "1.01–2m", "2.01–3m", ">3m"];
+  const powerBands = ["60W", "100W", "140W", "240W"];
   const priceBands = ["<$40", "$40–69", "$70–99", "$100+"];
   const brands = [...new Set(rows.map((row) => row.brand))].sort();
-  const forms = [...new Set(rows.map((row) => row.form_factor || "Unknown"))].sort();
+  const forms = [...new Set(rows.map((row) => row.form_factor || "Unknown"))].filter((value) => value !== "Unknown").sort();
   drawContributionPair(1, 2, rows, brands, lengthBands, competitorCableLengthBand, "Length");
   drawCountHeatmap(3, priceRows, lengthBands, priceBands, competitorCableLengthBand, adapterPriceBand, "Length", `Price (${currency})`);
   drawCountHeatmap(4, priceRows, powerBands, priceBands, (row) => competitorPowerBand("power_cable", row.advertised_power_w), adapterPriceBand, "Charging power", `Price (${currency})`);
@@ -6466,9 +6485,10 @@ function drawCableCompetitorDatabase(rows, priceRows, currency) {
 }
 
 function drawContributionPair(pieNumber, barNumber, rows, brands, groups, getter, axisTitle) {
-  const values = groups.map((group) => rows.filter((row) => getter(row) === group).length);
-  drawPlot(`competitorDbChart${pieNumber}`, [{ labels: groups, values, type: "pie", hole: .56, textinfo: "label+percent", marker: { colors: overviewPalette }, hovertemplate: "%{label}: %{value} products (%{percent})<extra></extra>" }], { showlegend: false, margin: { l: 24, r: 24, t: 24, b: 24 }, annotations: [{ text: `${rows.length}<br>Products`, x: .5, y: .5, showarrow: false, font: { size: 14, color: "#5c6570" } }] });
-  drawPlot(`competitorDbChart${barNumber}`, groups.map((group, index) => ({ x: brands, y: brands.map((brand) => rows.filter((row) => row.brand === brand && getter(row) === group).length), name: group, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", margin: { l: 64, r: 24, t: 40, b: 118 }, xaxis: { title: "Brand", tickangle: -35, automargin: true, tickfont: { size: 10 } }, yaxis: { title: "Products", automargin: true }, legend: { orientation: "h", y: -.34 }, annotations: [], title: { text: axisTitle, font: { size: 12 } } });
+  const plotted = groups.map((group) => ({ group, value: rows.filter((row) => getter(row) === group).length })).filter((item) => item.value > 0);
+  const plottedTotal = plotted.reduce((sum, item) => sum + item.value, 0);
+  drawPlot(`competitorDbChart${pieNumber}`, [{ labels: plotted.map((item) => item.group), values: plotted.map((item) => item.value), type: "pie", hole: .56, textinfo: "label+percent", textposition: "auto", automargin: true, textfont: { size: 12 }, marker: { colors: overviewPalette }, hovertemplate: "%{label}: %{value} products (%{percent})<extra></extra>" }], { showlegend: false, margin: { l: 72, r: 72, t: 68, b: 62 }, annotations: [{ text: `${plottedTotal}<br>Products`, x: .5, y: .5, showarrow: false, font: { size: 14, color: "#5c6570" } }] });
+  drawPlot(`competitorDbChart${barNumber}`, plotted.map((item, index) => ({ x: brands, y: brands.map((brand) => rows.filter((row) => row.brand === brand && getter(row) === item.group).length), name: item.group, type: "bar", marker: { color: palette[index % palette.length] } })), { barmode: "stack", margin: { l: 64, r: 24, t: 40, b: 118 }, xaxis: { title: "Brand", tickangle: -35, automargin: true, tickfont: { size: 10 } }, yaxis: { title: "Products", automargin: true }, legend: { orientation: "h", y: -.34 }, annotations: [], title: { text: axisTitle, font: { size: 12 } } });
 }
 
 function drawCountHeatmap(number, rows, xGroups, yGroups, xGetter, yGetter, xTitle, yTitle) {
@@ -6908,6 +6928,9 @@ function drawPerformanceRevenueTrend(categoryId, products) {
         comparisonItems = top ? [top] : [];
       }
     }
+    // A PN/product must produce exactly one line even if upstream filters or
+    // source rows contain repeated labels.
+    comparisonItems = [...new Map(comparisonItems.map((item) => [item.id, item])).values()];
     traces = comparisonItems.map((item, index) => {
       const valuesByPeriod = new Map();
       metricRows
@@ -7083,6 +7106,16 @@ function drawPerformanceRevenueTrend(categoryId, products) {
   const growthSpan = Math.max(growthMax - growthMin, Math.max(Math.abs(growthMin), Math.abs(growthMax)) * 0.2, 10);
   const growthRange = growthValues.length ? [growthMin - growthSpan * 0.16, growthMax + growthSpan * 0.22] : undefined;
   const dynamicBarGap = periods.length <= 1 ? 0.68 : periods.length <= 3 ? 0.42 : periods.length <= 8 ? 0.24 : 0.14;
+  const externalSeriesFilterVisible = mode === "breakdown" && selectedGeos.length <= 1;
+  const visibleKey = state.productId ? `${categoryId}:${state.productId}` : categoryId;
+  const availableSeriesIds = state.productId ? detailSelectedPns("trend") : selectedIds;
+  const storedVisibleSeries = state.categoryTrendVisibleSeries[visibleKey];
+  const allSeriesSelected = externalSeriesFilterVisible
+    && Array.isArray(storedVisibleSeries)
+    && availableSeriesIds.length > 0
+    && availableSeriesIds.every((id) => storedVisibleSeries.includes(id));
+  const showPlotLegend = !allSeriesSelected
+    && (isStacked || (traces.length > 1 && (Boolean(state.productId) || !(mode === "breakdown" && selectedGeos.length <= 1))));
 
   drawPlot(
     "performanceRevenueTrendPlot",
@@ -7090,9 +7123,11 @@ function drawPerformanceRevenueTrend(categoryId, products) {
     {
       height: state.expandedTrendChart === "trend" ? 620 : (!useBars && mode === "breakdown" ? 340 : 300),
       margin: { l: 78, r: 30, t: 52, b: !useBars && mode === "breakdown" ? 82 : 64 },
-      showlegend: isStacked || (traces.length > 1 && (Boolean(state.productId) || !(mode === "breakdown" && selectedGeos.length <= 1))),
+      // When All is checked, the external checkbox legend already lists every
+      // series; suppress Plotly's duplicate legend beside the chart.
+      showlegend: showPlotLegend,
       hovermode: "closest",
-      legend: traces.length > 1
+      legend: showPlotLegend && traces.length > 1
         ? {
             orientation: "v",
             x: 1.01,
@@ -7148,9 +7183,10 @@ function drawQuarterComparison(categoryId, products) {
   const source = selectedGeos.length ? (data.geoMetrics || []) : data.productMetrics;
   const selectedSegment = categoryOverviewSegment(categoryId, "trend");
   const quarterExpanded = state.expandedTrendChart === "quarter";
-  // Compact cards always retain the uncluttered FY2526/FY2627 grouped view.
-  // A saved stacked preference is applied only inside the expanded chart.
-  const mode = quarterExpanded && quarterComparisonMode(categoryId) === "stacked" ? "stacked" : "overall";
+  // Compact cards always use the Figure 1 grouped comparison. Stacking is an
+  // expanded-view-only analysis: FY2526 and FY2627 remain side by side, with
+  // product (or PN) layers stacked inside Total and each of Q1–Q4.
+  const mode = quarterExpanded ? quarterComparisonMode(categoryId) : "overall";
   const rows = source.filter((row) =>
     categoryMatchesOverview(row, categoryId)
     && selectedIds.has(row.modelId)
@@ -7250,18 +7286,14 @@ function drawQuarterComparison(categoryId, products) {
       : visibleValue(value)
         ? currentValueShift + valueFontSize + (quarterExpanded ? 9 : 7)
         : 4;
-    const sameQuarterLabelLift = !quarterExpanded
-      && visibleValue(prior[index])
-      && visibleValue(value)
-      && aggregateMax > 0
-      && Math.abs(Number(value) - Number(prior[index])) < aggregateMax * 0.12
-      ? 35
-      : 0;
     return {
-      x: quarters[index],
+      x: quarterExpanded ? index + 0.18 : quarters[index],
       y: growthAnchorValue,
-      xshift: groupedBarOffset,
-      yshift: growthGap + sameQuarterLabelLift,
+      xshift: quarterExpanded ? 0 : groupedBarOffset,
+      // Keep compact YoY badges immediately above the FY2627 value label.
+      // Horizontal year offsets already prevent collisions with FY2526, so
+      // an additional same-quarter vertical lift is unnecessary.
+      yshift: growthGap,
       xanchor: "center",
       yanchor: "bottom",
       text: `<b>${growthText}</b>`, showarrow: false,
@@ -7278,34 +7310,36 @@ function drawQuarterComparison(categoryId, products) {
   let allTraces;
   if (mode === "stacked") {
     const stackItems = state.productId
-      ? unique(rows.map((row) => row.partNumber).filter(Boolean)).map((pn) => ({
+      ? unique(rows.map((row) => row.partNumber || "No PN")).map((pn) => ({
           id: pn,
           name: pn,
           totals: (year) => quarters.map((quarter) => {
-            const matching = rows.filter((row) => row.partNumber === pn && row.fiscalYear === year && (quarter === "Total" || row.fiscalQuarter === quarter));
+            const matching = rows.filter((row) => (row.partNumber || "No PN") === pn && row.fiscalYear === year && (quarter === "Total" || row.fiscalQuarter === quarter));
             return matching.length ? categoryMetricTotal(matching, option.field) : 0;
           }),
         }))
-      : selectedProducts.map((product) => ({ id: product.id, name: product.name, totals: (year) => productTotals(product.id, year) }));
-    const priorLayerColors = ["#9ecae1", "#83b9d6", "#69a8ca", "#4f96bd", "#3784af", "#25719d", "#155f89", "#0b4d72"];
-    const currentLayerColors = ["#b95c7d", "#a94d70", "#993f64", "#893257", "#79264b", "#691b40", "#581236", "#470a2b"];
+      : selectedProducts.map((product) => ({ id: product.id, name: product.shortName || product.name, totals: (year) => productTotals(product.id, year) }));
+    const layerColors = ["#d8646a", "#477da8", "#d18a35", "#4f8b68", "#8a67ad", "#bd5c92", "#557f89", "#866044", "#6f7584", "#a84d47", "#4e70bd", "#879548"];
     allTraces = stackItems.flatMap((item, index) => {
       const productPrior = item.totals("FY2526");
       const productCurrent = item.totals("FY2627");
+      const layerColor = layerColors[index % layerColors.length];
+      const priorX = quarters.map((_, quarterIndex) => quarterIndex - 0.18);
+      const currentX = quarters.map((_, quarterIndex) => quarterIndex + 0.18);
       return [
         {
-          x: quarters, y: productPrior, type: "bar",
-          name: "FY2526", legendgroup: "FY2526", showlegend: index === 0,
+          x: priorX, y: productPrior, type: "bar", width: 0.34,
+          name: item.name, legendgroup: item.id, showlegend: false,
           offsetgroup: "FY2526", alignmentgroup: "quarter-comparison",
-          marker: { color: priorLayerColors[index % priorLayerColors.length], line: { color: "rgba(255,255,255,.72)", width: 0.7 } },
+          marker: { color: layerColor, opacity: 0.46, line: { color: "rgba(255,255,255,.9)", width: 0.8 } },
           customdata: formatValues(productPrior),
           hovertemplate: `<b>${escapeHtml(item.name)}</b><br>FY2526 %{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
         },
         {
-          x: quarters, y: productCurrent, type: "bar",
-          name: "FY2627", legendgroup: "FY2627", showlegend: index === 0,
+          x: currentX, y: productCurrent, type: "bar", width: 0.34,
+          name: item.name, legendgroup: item.id, showlegend: true,
           offsetgroup: "FY2627", alignmentgroup: "quarter-comparison",
-          marker: { color: currentLayerColors[index % currentLayerColors.length], line: { color: "rgba(255,255,255,.72)", width: 0.7 } },
+          marker: { color: layerColor, opacity: 0.96, line: { color: "rgba(255,255,255,.9)", width: 0.8 } },
           customdata: formatValues(productCurrent),
           hovertemplate: `<b>${escapeHtml(item.name)}</b><br>FY2627 %{x}<br>${escapeHtml(option.label)}: %{customdata}<extra></extra>`,
         },
@@ -7327,10 +7361,12 @@ function drawQuarterComparison(categoryId, products) {
     // "stack" + offsetgroup creates two side-by-side year stacks. Using
     // "relative" collapses both fiscal years into one mixed column.
     height: quarterPlotHeight, barmode: mode === "stacked" ? "stack" : "group", bargap: quarterBarGap, bargroupgap: 0.05, annotations,
-    margin: { l: horizontalMargin, r: horizontalMargin, t: quarterExpanded ? 76 : 58, b: quarterExpanded ? 74 : 62 }, showlegend: true,
-    legend: { orientation: "h", x: 0.5, xanchor: "center", y: quarterExpanded ? 1.12 : 1.14, yanchor: "bottom", groupclick: "togglegroup", font: { size: quarterExpanded ? 13 : 11 } },
-    xaxis: { title: { text: "Fiscal Quarter", standoff: quarterExpanded ? 28 : 22, font: { size: quarterExpanded ? 14 : 12 } }, tickfont: { size: quarterExpanded ? 13 : 11 }, automargin: false, range: [-0.58, 4.58] },
-    yaxis: { title: { text: option.kind === "quantity" ? option.label : `${option.label} (USD)`, font: { size: quarterExpanded ? 14 : 12 }, standoff: 14 }, tickfont: { size: quarterExpanded ? 12 : 10 }, range: maxValue ? [0, maxValue * (quarterExpanded ? 1.28 : 1.38)] : undefined, rangemode: "tozero", automargin: false },
+    margin: { l: horizontalMargin, r: quarterExpanded ? 280 : horizontalMargin, t: quarterExpanded ? 76 : 58, b: quarterExpanded ? 74 : 62 }, showlegend: true,
+    legend: quarterExpanded
+      ? { orientation: "v", x: 1.02, xanchor: "left", y: 1, yanchor: "top", groupclick: "togglegroup", font: { size: 12 }, title: { text: `${state.productId ? "PN" : "Product"}<br><span style="font-size:10px">Light FY2526 · Solid FY2627</span>` } }
+      : { orientation: "h", x: 0.5, xanchor: "center", y: 1.14, yanchor: "bottom", groupclick: "togglegroup", font: { size: 11 } },
+    xaxis: { title: { text: "Fiscal Quarter", standoff: quarterExpanded ? 28 : 22, font: { size: quarterExpanded ? 14 : 12 } }, tickfont: { size: quarterExpanded ? 13 : 11 }, tickmode: quarterExpanded ? "array" : undefined, tickvals: quarterExpanded ? [0, 1, 2, 3, 4] : undefined, ticktext: quarterExpanded ? quarters : undefined, automargin: true, range: [-0.58, 4.58] },
+    yaxis: { title: { text: option.kind === "quantity" ? option.label : `${option.label} (USD)`, font: { size: quarterExpanded ? 14 : 12 }, standoff: 14 }, tickfont: { size: quarterExpanded ? 12 : 10 }, range: maxValue ? [0, maxValue * (quarterExpanded ? 1.28 : 1.38)] : undefined, rangemode: "tozero", automargin: true },
   });
 }
 
@@ -9186,9 +9222,11 @@ function drawPlot(id, traces, layout = {}) {
     legend: { orientation: "h", y: -0.18, x: 0 },
     hovermode: "closest",
     hoverlabel: { namelength: -1 },
+    ...layout,
+    // Merge axes after the caller layout so chart-specific settings cannot
+    // accidentally remove automatic margins and clip long labels or titles.
     xaxis: { automargin: true, gridcolor: "#ece8df", zerolinecolor: "#dedbd2", ...(layout.xaxis || {}) },
     yaxis: { automargin: true, gridcolor: "#ece8df", zerolinecolor: "#dedbd2", ...(layout.yaxis || {}) },
-    ...layout,
   };
   Plotly.react(node, traces, baseLayout, {
     displayModeBar: false,
