@@ -14,7 +14,7 @@ const DATA_FILES = {
   adapterAssets: "data/adapter_product_assets.json",
 };
 
-const DATA_VERSION = "20261019-power-kpi-quantity-charger-v37";
+const DATA_VERSION = "20261021-remove-future-categories-v38";
 
 const state = {
   categoryId: null,
@@ -1136,10 +1136,6 @@ function renderHome() {
 
       <section class="category-grid">
         ${data.catalog.categories.map((category) => renderCategoryCard(category)).join("")}
-      </section>
-
-      <section class="future-row" aria-label="Future categories">
-        ${data.catalog.futureCategorySlots.map((slot) => `<div class="empty-slot">+ ${escapeHtml(slot)}</div>`).join("")}
       </section>
     </div>
   `;
